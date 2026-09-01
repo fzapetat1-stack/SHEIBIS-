@@ -3340,7 +3340,7 @@ body > div[style*="z-index: 99999"] > div{
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxiKRs7cGsv6I4vHrLLdFTxnq7za68epf_c3DNV1lKFO4ElmWL_CeikcLr85XdHwyb5/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbz6JJ6HwDu_Fij9_m9ZBiJAUqYdi3JIYSErRKIOHBQxb3iUP3S4Jdaw8rpQjZPWhSr6/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 1200,
@@ -4540,7 +4540,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbxiKRs7cGsv6I4vHrLLdFTxnq7za68epf_c3DNV1lKFO4ElmWL_CeikcLr85XdHwyb5/exec
+     https://script.google.com/macros/s/AKfycbz6JJ6HwDu_Fij9_m9ZBiJAUqYdi3JIYSErRKIOHBQxb3iUP3S4Jdaw8rpQjZPWhSr6/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -5439,9 +5439,14 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     stock: 0
                 };
                 const beforeStock = Math.max(0, Number(invItem.stock) || 0);
+                const saleQty = Math.max(0, Number(item.cantidad || 0));
                 invItem.stockBefore = beforeStock;
-                invItem.stock = Math.max(0, beforeStock - Number(item.cantidad || 0));
-                invItem.lastSale = Number(item.cantidad || 0);
+                invItem.stock = Math.max(0, beforeStock - saleQty);
+                invItem.lastSale = saleQty;
+                invItem.initialStock = Number(invItem.initialStock ?? beforeStock) || 0;
+                invItem.entries = Math.max(0, Number(invItem.entries) || 0);
+                invItem.exits = Math.max(0, Number(invItem.exits) || 0) + saleQty;
+                invItem.adjustments = Number(invItem.adjustments) || 0;
                 invItem.lastUpdated = now.toISOString();
                 inventoryRaw[key] = invItem;
             }
@@ -5482,6 +5487,16 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     'sheibis_inventory_master_v1',
                     JSON.stringify(inventoryRaw)
                 );
+                // Registrar cada salida para que el cuadre pueda comprobar:
+                // inicial + entradas - salidas + ajustes = stock actual.
+                for (const item of cart) {
+                    const key = String(item.id);
+                    const x = inventoryRaw[key];
+                    const qty = Math.max(0, Number(item.cantidad || 0));
+                    const after = Math.max(0, Number(x.stock) || 0);
+                    const before = after + qty;
+                    addInventoryMovement(key, 'sale', qty, 'Venta / pedido registrado', orderId, before, after);
+                }
                 saveSession();
 
                 // WhatsApp se abre después de registrar correctamente la compra.
@@ -5623,6 +5638,7 @@ async function updateOnlineUsers() {
                 const data = await apiRequest('onlineHeartbeat', {
                     sessionId: getOnlineSessionId(),
                     userId: currentUser && !currentUser.isGuest ? currentUser.id : '',
+                    nombre: currentUser && currentUser.nombre ? currentUser.nombre : 'INVITADO',
                     tipoUsuario: currentUser && currentUser.isGuest ? 'INVITADO' : 'CLIENTE'
                 });
                 totalUsers.textContent = String(Number(data.count) || 0);
@@ -6584,34 +6600,83 @@ window.premiumMenuAction=async function(action){
     </div>
     </div>
 
-    <section id="sbInventoryView" class="sb-inv-print-area" style="display:none">
+    <style id="sheibis-inventory-v2">
+.sb-inv-v2-summary{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0}
+.sb-inv-v2-card{padding:16px;border:1px solid rgba(212,175,55,.14);border-radius:18px;background:rgba(255,255,255,.025);backdrop-filter:blur(12px)}
+.sb-inv-v2-card span{display:block;font-size:.68rem;color:rgba(255,255,255,.48);letter-spacing:1px;text-transform:uppercase}
+.sb-inv-v2-card strong{display:block;margin-top:5px;font-size:1.35rem;color:var(--gold)}
+.sb-inv-v2-card small{display:block;margin-top:3px;color:rgba(255,255,255,.35)}
+.sb-inv-v2-card.danger strong{color:#ff6b6b}
+.sb-inv-v2-card.good strong{color:#22c55e}
+.sb-inv-v2-tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.sb-inv-v2-btn{border:1px solid rgba(212,175,55,.18);background:rgba(212,175,55,.06);color:#f0d68a;padding:9px 13px;border-radius:12px;cursor:pointer}
+.sb-inv-v2-btn:hover{background:rgba(212,175,55,.12);transform:translateY(-1px)}
+.sb-inv-v2-note{margin:10px 0;padding:12px 14px;border:1px solid rgba(34,197,94,.12);background:rgba(34,197,94,.035);border-radius:14px;color:rgba(255,255,255,.62);font-size:.78rem}
+.sb-inv-v2-table-wrap{overflow:auto}
+.sb-inv-v2-table{min-width:1180px}
+.sb-inv-v2-table th,.sb-inv-v2-table td{white-space:nowrap}
+.sb-inv-reconciled{color:#22c55e;font-weight:700}
+.sb-inv-mismatch{color:#ff6b6b;font-weight:700}
+.sb-inv-ledger{font-size:.68rem;color:rgba(255,255,255,.38);line-height:1.45}
+@media(max-width:800px){.sb-inv-v2-summary{grid-template-columns:repeat(2,minmax(140px,1fr))}}
+</style>
+<section id="sbInventoryView" class="sb-inv-print-area" style="display:none">
   <div class="sb-inv-head">
-    <div class="sb-inv-title"><h3>📦 Inventario de productos</h3><p>Control sencillo y claro: <b>Stock antes</b> muestra cuántas unidades había y <b>Stock después</b> muestra cuántas quedan.</p></div>
+    <div class="sb-inv-title">
+      <h3>📦 Inventario SHEIBIS · Control y cuadre</h3>
+      <p>Control completo de <b>stock antes</b>, <b>entradas</b>, <b>salidas</b>, <b>ajustes</b> y <b>stock después</b>, con verificación automática de datos.</p>
+    </div>
     <div class="sb-inv-actions">
       <button type="button" class="sb-inv-btn" onclick="SB_ADMIN.inventoryRefresh()">↻ Actualizar</button>
+      <button type="button" class="sb-inv-btn" onclick="SB_ADMIN.reconcileInventory(true)">✓ Cuadrar datos</button>
       <button type="button" class="sb-inv-btn" onclick="SB_ADMIN.exportInventoryExcel()">📊 Descargar Excel</button>
       <button type="button" class="sb-inv-btn" onclick="SB_ADMIN.exportInventoryPDF()">📄 Descargar PDF</button>
     </div>
   </div>
-  <div class="sb-inv-note">💡 <b>Ejemplo:</b> si un producto tenía <b>1</b> unidad y el cliente compra 1, el sistema registra <b>Stock antes = 1</b> y automáticamente deja <b>Stock después = 0</b>.</div>
-  <div class="sb-inv-kpis">
-    <div class="sb-inv-kpi"><span>Productos registrados</span><strong id="invKpiProducts">0</strong></div>
-    <div class="sb-inv-kpi"><span>Unidades disponibles</span><strong id="invKpiUnits">0</strong></div>
-    <div class="sb-inv-kpi warn"><span>Stock bajo</span><strong id="invKpiLow">0</strong></div>
-    <div class="sb-inv-kpi danger"><span>Agotados</span><strong id="invKpiOut">0</strong></div>
+
+  <div class="sb-inv-v2-note">
+    💡 <b>Fórmula de control:</b> Stock esperado = Inventario inicial + Entradas − Salidas + Ajustes.
+    El sistema compara ese resultado contra el stock real y permite corregir cualquier diferencia sin borrar el historial.
   </div>
+
+  <div class="sb-inv-v2-summary">
+    <div class="sb-inv-v2-card"><span>Productos</span><strong id="invKpiProducts">0</strong><small>registrados</small></div>
+    <div class="sb-inv-v2-card"><span>Unidades actuales</span><strong id="invKpiUnits">0</strong><small>stock disponible</small></div>
+    <div class="sb-inv-v2-card good"><span>Entradas</span><strong id="invKpiEntries">0</strong><small>unidades ingresadas</small></div>
+    <div class="sb-inv-v2-card"><span>Salidas</span><strong id="invKpiExits">0</strong><small>ventas/salidas</small></div>
+    <div class="sb-inv-v2-card"><span>Stock esperado</span><strong id="invKpiExpected">0</strong><small>según movimientos</small></div>
+    <div class="sb-inv-v2-card danger"><span>Diferencias</span><strong id="invKpiMismatch">0</strong><small>registros por revisar</small></div>
+    <div class="sb-inv-v2-card warn"><span>Stock bajo</span><strong id="invKpiLow">0</strong><small>según umbral</small></div>
+    <div class="sb-inv-v2-card danger"><span>Agotados</span><strong id="invKpiOut">0</strong><small>sin existencias</small></div>
+  </div>
+
   <div class="sb-inv-toolbar">
     <input id="invSearch" class="sb-input" placeholder="🔎 Buscar producto, SKU o categoría..." oninput="SB_ADMIN.renderInventory()">
     <select id="invCategory" class="sb-select" onchange="SB_ADMIN.renderInventory()"><option value="">Todas las categorías</option></select>
-    <select id="invStatus" class="sb-select" onchange="SB_ADMIN.renderInventory()"><option value="">Todos los estados</option><option value="ok">Disponible</option><option value="low">Stock bajo</option><option value="out">Agotado</option></select>
+    <select id="invStatus" class="sb-select" onchange="SB_ADMIN.renderInventory()"><option value="">Todos los estados</option><option value="ok">Disponible</option><option value="low">Stock bajo</option><option value="out">Agotado</option><option value="mismatch">Descuadre</option></select>
   </div>
-  <div class="sb-inv-sheet">
-    <table class="sb-inv-table">
-      <thead><tr><th>Imagen</th><th>SKU</th><th>Producto</th><th>Categoría</th><th>Stock antes</th><th>Stock después</th><th>Estado</th><th>Ajustar</th></tr></thead>
+
+  <div class="sb-inv-v2-tools">
+    <button type="button" class="sb-inv-v2-btn" onclick="SB_ADMIN.reconcileInventory(true)">🧮 Revisar y cuadrar inventario</button>
+    <button type="button" class="sb-inv-v2-btn" onclick="SB_ADMIN.inventoryRefresh()">🔄 Recalcular</button>
+  </div>
+
+  <div class="sb-inv-sheet sb-inv-v2-table-wrap">
+    <table class="sb-inv-table sb-inv-v2-table">
+      <thead>
+        <tr>
+          <th>Imagen</th><th>SKU</th><th>Producto</th><th>Categoría</th>
+          <th>Inicial</th><th>Stock antes</th><th>Entradas</th><th>Salidas</th><th>Ajustes</th>
+          <th>Stock esperado</th><th>Stock después</th><th>Cuadre</th><th>Estado</th><th>Ajustar</th>
+        </tr>
+      </thead>
       <tbody id="sbInventoryBody"></tbody>
     </table>
   </div>
-  <div class="sb-inv-foot"><span>💾 El inventario se guarda automáticamente en este navegador.</span><span>Última actualización: <b id="invUpdatedAt">—</b></span></div>
+  <div class="sb-inv-foot">
+    <span>💾 El inventario se guarda automáticamente en este navegador.</span>
+    <span>Última actualización: <b id="invUpdatedAt">—</b></span>
+  </div>
 </section>
   </div>
 </div>
@@ -6624,16 +6689,44 @@ const PASS='Qwe220##';
 const STORAGE_KEY='sheibis_products_final_v10';
 const CATEGORY_KEY='sheibis_catalogs_final_v1';
 const INVENTORY_KEY='sheibis_inventory_master_v1';
+const INVENTORY_MOVES_KEY='sheibis_inventory_movements_v2';
 let activeCategory=null, originalOpenCatalog=null;
 
 function getInventory(){
   try{return JSON.parse(localStorage.getItem(INVENTORY_KEY)||'{}')||{};}catch(e){return {};}
 }
 function saveInventory(inv){try{localStorage.setItem(INVENTORY_KEY,JSON.stringify(inv));return true;}catch(e){console.error('SHEIBIS inventario',e);return false;}}
+function getInventoryMoves(){try{return JSON.parse(localStorage.getItem(INVENTORY_MOVES_KEY)||'[]')||[];}catch(e){return [];}}
+function saveInventoryMoves(m){try{localStorage.setItem(INVENTORY_MOVES_KEY,JSON.stringify(m.slice(-1000)));return true;}catch(e){console.error('SHEIBIS movimientos',e);return false;}}
 function ensureInventory(){
   const inv=getInventory(), products=getProducts(); let changed=false;
-  products.forEach(p=>{const id=String(p.id); if(!inv[id]){const initial=Math.max(0,Number(p.stock)||0);inv[id]={sku:'SHE-'+String(p.id).padStart(4,'0'),stock:initial,stockBefore:initial,lastSale:0,lastUpdated:new Date().toISOString()};changed=true;}else if(inv[id].stockBefore===undefined){inv[id].stockBefore=Math.max(0,Number(inv[id].stock)||0);changed=true;}});
+  products.forEach(p=>{
+    const id=String(p.id);
+    if(!inv[id]){
+      const initial=Math.max(0,Number(p.stock)||0);
+      inv[id]={sku:'SHE-'+String(p.id).padStart(4,'0'),stock:initial,stockBefore:initial,initialStock:initial,entries:0,exits:0,adjustments:0,lastSale:0,lastUpdated:new Date().toISOString()};
+      changed=true;
+    }else{
+      const x=inv[id];
+      if(x.stockBefore===undefined){x.stockBefore=Math.max(0,Number(x.stock)||0);changed=true;}
+      if(x.initialStock===undefined){x.initialStock=Math.max(0,Number(x.stock)||0);changed=true;}
+      if(x.entries===undefined){x.entries=0;changed=true;}
+      if(x.exits===undefined){x.exits=0;changed=true;}
+      if(x.adjustments===undefined){x.adjustments=0;changed=true;}
+      if(x.lastSale===undefined){x.lastSale=0;changed=true;}
+      if(!x.sku)x.sku='SHE-'+String(p.id).padStart(4,'0');
+    }
+  });
   if(changed)saveInventory(inv); return inv;
+}
+function inventoryExpected(x){
+  return Math.max(0,Number(x.initialStock)||0)+Math.max(0,Number(x.entries)||0)-Math.max(0,Number(x.exits)||0)+Number(x.adjustments||0);
+}
+function addInventoryMovement(id,type,qty,reason,reference,before,after){
+  const n=Math.max(0,Number(qty)||0); if(!n)return;
+  const moves=getInventoryMoves();
+  moves.push({id:String(id),type:String(type),qty:n,reason:String(reason||''),reference:String(reference||''),before:Number(before)||0,after:Number(after)||0,date:new Date().toISOString()});
+  saveInventoryMoves(moves);
 }
 function categoryName(id){const c=getCategories().find(x=>String(x.id)===String(id));return c?.nombre||String(id||'Sin categoría');}
 function inventoryStatus(stock){stock=Number(stock)||0;if(stock<=0)return 'out';if(stock<=2)return 'low';return 'ok';}
@@ -6642,8 +6735,89 @@ function setInventoryStock(id,newStock,soldQty=0){const inv=ensureInventory();if
 
 function getProducts(){return Array.isArray(window.PRODUCTOS)?window.PRODUCTOS:[];}
 function getCategories(){return Array.isArray(window.CATALOGOS)?window.CATALOGOS:[];}
-function saveProducts(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));return true;}catch(e){console.error('SHEIBIS productos',e);return false;}}
-function saveCategories(){try{localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));return true;}catch(e){console.error('SHEIBIS categorías',e);return false;}}
+let globalCatalogSaveTimer=null;
+let globalCatalogSyncBusy=false;
+let globalCatalogLastServerUpdate='';
+
+function queueGlobalCatalogSave_(){
+  clearTimeout(globalCatalogSaveTimer);
+  globalCatalogSaveTimer=setTimeout(async function(){
+    try{
+      await apiRequest('saveCatalog',{categories:getCategories(),products:getProducts()});
+      globalCatalogLastServerUpdate=new Date().toISOString();
+    }catch(e){
+      console.error('SHEIBIS catálogo global',e);
+      // Respaldo local para no perder el cambio si hay un fallo temporal.
+      try{
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+        localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
+      }catch(_){}
+    }
+  },150);
+}
+
+function saveProducts(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+    queueGlobalCatalogSave_();
+    return true;
+  }catch(e){console.error('SHEIBIS productos',e);return false;}
+}
+
+function saveCategories(){
+  try{
+    localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
+    queueGlobalCatalogSave_();
+    return true;
+  }catch(e){console.error('SHEIBIS categorías',e);return false;}
+}
+
+async function syncGlobalCatalog_(force=false){
+  if(globalCatalogSyncBusy)return;
+  if(globalCatalogSaveTimer){clearTimeout(globalCatalogSaveTimer);globalCatalogSaveTimer=null;}
+  globalCatalogSyncBusy=true;
+  try{
+    const data=await apiRequest('getCatalog',{});
+    if(!data || data.ok===false)return;
+
+    // Primera instalación: subimos el catálogo base que ya existe en este HTML.
+    if(data.initialized===false){
+      await apiRequest('saveCatalog',{categories:getCategories(),products:getProducts()});
+      globalCatalogLastServerUpdate=new Date().toISOString();
+      return;
+    }
+
+    const serverProducts=Array.isArray(data.products)?data.products:[];
+    const serverCategories=Array.isArray(data.categories)?data.categories:[];
+
+    // Google Sheets es la FUENTE OFICIAL. Reemplazamos la copia local.
+    if(Array.isArray(window.PRODUCTOS)){
+      window.PRODUCTOS.length=0;
+      serverProducts.forEach(p=>window.PRODUCTOS.push(p));
+    }
+    if(Array.isArray(window.CATALOGOS)){
+      window.CATALOGOS.length=0;
+      serverCategories.forEach(c=>window.CATALOGOS.push(c));
+    }
+
+    try{
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+      localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
+    }catch(_){}
+
+    refreshStore();
+    if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
+      SB_ADMIN.render();
+      SB_ADMIN.renderCategories();
+    }
+  }catch(e){
+    // Si no hay conexión temporal, se mantiene la copia local.
+    console.warn('SHEIBIS · no se pudo sincronizar catálogo global:',e.message);
+  }finally{
+    globalCatalogSyncBusy=false;
+  }
+}
+
 function loadProducts(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const a=JSON.parse(raw);if(!Array.isArray(a)||!Array.isArray(window.PRODUCTOS))return;window.PRODUCTOS.length=0;a.forEach(p=>{if(p&&p.id!==undefined)window.PRODUCTOS.push(p);});}catch(e){console.error('SHEIBIS load products',e);}}
 function makeCategoryId(name){const base=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'categoria';let id=base,n=2;while(getCategories().some(c=>String(c.id)===id)){id=base+'-'+n++;}return id;}
 function loadCategories(){
@@ -6884,7 +7058,7 @@ window.SB_ADMIN={
   clearLogs(){if(!confirm('¿Limpiar todo el registro de actividad?'))return;localStorage.removeItem('sheibis_admin_activity_v11');this.renderActivity();},
 
   backup(){
-    const data={version:'SHEIBIS_ADMIN_V11',createdAt:new Date().toISOString(),products:getProducts(),categories:getCategories(),inventory:ensureInventory(),settings:{lowStockThreshold:Number(localStorage.getItem('sheibis_low_stock_threshold')||2)}};
+    const data={version:'SHEIBIS_ADMIN_V11',createdAt:new Date().toISOString(),products:getProducts(),categories:getCategories(),inventory:ensureInventory(),inventoryMovements:getInventoryMoves(),settings:{lowStockThreshold:Number(localStorage.getItem('sheibis_low_stock_threshold')||2)}};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SHEIBIS_BACKUP_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
     this.log('backup','Respaldo completo creado');this.renderActivity();
@@ -6898,7 +7072,7 @@ window.SB_ADMIN={
       if(!confirm(`Se restaurarán ${data.products.length} productos y ${data.categories.length} categorías. Los datos actuales serán reemplazados. ¿Continuar?`))return;
       window.PRODUCTOS.length=0;data.products.forEach(x=>window.PRODUCTOS.push(x));
       window.CATALOGOS.length=0;data.categories.forEach(x=>window.CATALOGOS.push(x));
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(window.PRODUCTOS));localStorage.setItem(CATEGORY_KEY,JSON.stringify(window.CATALOGOS));localStorage.setItem(INVENTORY_KEY,JSON.stringify(data.inventory));
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(window.PRODUCTOS));localStorage.setItem(CATEGORY_KEY,JSON.stringify(window.CATALOGOS));localStorage.setItem(INVENTORY_KEY,JSON.stringify(data.inventory));localStorage.setItem(INVENTORY_MOVES_KEY,JSON.stringify(Array.isArray(data.inventoryMovements)?data.inventoryMovements:[]));
       if(data.settings?.lowStockThreshold!==undefined)localStorage.setItem('sheibis_low_stock_threshold',String(data.settings.lowStockThreshold));
       refreshStore();this.render();this.renderCategories();this.log('restore','Respaldo restaurado correctamente');this.showTab('dashboard');alert('✓ Respaldo restaurado correctamente.');
     }catch(e){alert('No se pudo restaurar: '+e.message);}
@@ -6931,6 +7105,21 @@ window.SB_ADMIN={
     alert(`✓ Revisión terminada.\n\nIDs duplicados: ${duplicates.length}\nProductos con categoría inválida: ${invalid}\nInventario reparado: sí`);
   },
 
+  reconcileInventory(showAlert=false){
+    const inv=ensureInventory(),products=getProducts();let mismatches=0,repaired=0;
+    products.forEach(p=>{
+      const id=String(p.id),x=inv[id];if(!x)return;
+      const stock=Math.max(0,Number(x.stock)||0),expected=inventoryExpected(x),diff=stock-expected;
+      if(Math.abs(diff)>0.000001){
+        x.adjustments=Number(x.adjustments||0)+diff;
+        x.lastUpdated=new Date().toISOString();
+        addInventoryMovement(id,'reconciliation',Math.abs(diff),'Cuadre automático de datos','CUADRE',stock,stock);
+        mismatches++;repaired++;
+      }
+    });
+    saveInventory(inv);this.log('maintenance',`Cuadre de inventario: ${mismatches} diferencia(s), ${repaired} reparada(s)`);this.renderInventory();
+    if(showAlert)alert(mismatches?`✓ Cuadre terminado.\n\nRegistros con diferencia: ${mismatches}\nDiferencias corregidas: ${repaired}\n\nEl stock actual se conservó y el ajuste quedó registrado.`:'✓ Inventario completamente cuadrado.\n\nNo se encontraron diferencias entre el stock real y el stock esperado.');
+  },
   inventoryRefresh(){ensureInventory();this.renderInventory();},
   renderInventory(){
     const body=document.getElementById('sbInventoryBody');if(!body)return;
@@ -6938,15 +7127,66 @@ window.SB_ADMIN={
     const q=(document.getElementById('invSearch')?.value||'').trim().toLowerCase(),cat=document.getElementById('invCategory')?.value||'',statusFilter=document.getElementById('invStatus')?.value||'';
     const catSel=document.getElementById('invCategory');
     if(catSel){const current=catSel.value;catSel.innerHTML='<option value="">Todas las categorías</option>'+getCategories().map(c=>`<option value="${esc(c.id)}">${esc(c.nombre)}</option>`).join('');catSel.value=current;}
-    let list=products.filter(p=>{const x=inv[String(p.id)]||{},st=inventoryStatus(x.stock);return(!q||[p.nombre,p.id,x.sku,p.categoria,categoryName(p.categoria)].join(' ').toLowerCase().includes(q))&&(!cat||String(p.categoria)===String(cat))&&(!statusFilter||st===statusFilter);});
-    let units=0,low=0,out=0;products.forEach(p=>{const stock=Number(inv[String(p.id)]?.stock)||0;units+=stock;const st=inventoryStatus(stock);if(st==='low')low++;if(st==='out')out++;});
-    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};set('invKpiProducts',products.length);set('invKpiUnits',units);set('invKpiLow',low);set('invKpiOut',out);set('invUpdatedAt',new Date().toLocaleString('es-GT'));
-    if(!list.length){body.innerHTML='<tr><td colspan="8" style="padding:30px;text-align:center;color:rgba(255,255,255,.45)">No hay productos que coincidan con el filtro.</td></tr>';return;}
-    body.innerHTML=list.map(p=>{const id=String(p.id),x=inv[id]||{},stock=Number(x.stock)||0,before=Number(x.stockBefore??stock)||0,st=inventoryStatus(stock),label=st==='out'?'AGOTADO':st==='low'?'STOCK BAJO':'DISPONIBLE',cls=st==='out'?'sb-status-out':st==='low'?'sb-status-low':'sb-status-good';return `<tr><td>${p.imagen?`<img class="sb-inv-img" src="${esc(p.imagen)}" onerror="this.style.display='none'">`:'—'}</td><td><span class="sb-inv-code">${esc(x.sku||'SHE-'+id.padStart(4,'0'))}</span></td><td><span class="sb-inv-product">${esc(p.nombre)}</span><span class="sb-inv-sub">ID #${esc(id)}</span></td><td>${esc(categoryName(p.categoria))}</td><td><span class="sb-stock-before">${before} unidades</span></td><td><input class="sb-inv-edit sb-stock-after ${st==='out'?'sb-stock-out':st==='low'?'sb-stock-low':'sb-stock-good'}" type="number" min="0" step="1" value="${stock}" onchange="SB_ADMIN.inventoryCell('${id}','stock',this.value)"></td><td><span class="sb-status-pill ${cls}">${label}</span></td><td><div class="sb-stock-actions"><button class="sb-stock-btn" title="Sale 1 unidad" onclick="SB_ADMIN.adjustStock('${id}',-1)">−</button><button class="sb-stock-btn" title="Agrega 1 unidad" onclick="SB_ADMIN.adjustStock('${id}',1)">+</button></div></td></tr>`;}).join('');
+    let list=products.filter(p=>{
+      const x=inv[String(p.id)]||{},stock=Math.max(0,Number(x.stock)||0),expected=inventoryExpected(x),st=inventoryStatus(stock),mismatch=Math.abs(stock-expected)>0.000001;
+      return(!q||[p.nombre,p.id,x.sku,p.categoria,categoryName(p.categoria)].join(' ').toLowerCase().includes(q))&&(!cat||String(p.categoria)===String(cat))&&(!statusFilter||(statusFilter==='mismatch'?mismatch:st===statusFilter));
+    });
+    let units=0,low=0,out=0,entries=0,exits=0,expectedTotal=0,mismatchCount=0;
+    products.forEach(p=>{
+      const x=inv[String(p.id)]||{},stock=Math.max(0,Number(x.stock)||0),expected=inventoryExpected(x);
+      units+=stock;entries+=Math.max(0,Number(x.entries)||0);exits+=Math.max(0,Number(x.exits)||0);expectedTotal+=expected;
+      const st=inventoryStatus(stock);if(st==='low')low++;if(st==='out')out++;if(Math.abs(stock-expected)>0.000001)mismatchCount++;
+    });
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('invKpiProducts',products.length);set('invKpiUnits',units);set('invKpiEntries',entries);set('invKpiExits',exits);
+    set('invKpiExpected',expectedTotal);set('invKpiMismatch',mismatchCount);set('invKpiLow',low);set('invKpiOut',out);set('invUpdatedAt',new Date().toLocaleString('es-GT'));
+    if(!list.length){body.innerHTML='<tr><td colspan="14" style="padding:30px;text-align:center;color:rgba(255,255,255,.45)">No hay productos que coincidan con el filtro.</td></tr>';return;}
+    body.innerHTML=list.map(p=>{
+      const id=String(p.id),x=inv[id]||{},stock=Math.max(0,Number(x.stock)||0),before=Math.max(0,Number(x.stockBefore??stock)||0),initial=Math.max(0,Number(x.initialStock)||0),entries=Math.max(0,Number(x.entries)||0),exits=Math.max(0,Number(x.exits)||0),adjustments=Number(x.adjustments)||0,expected=inventoryExpected(x),diff=stock-expected,st=inventoryStatus(stock),label=st==='out'?'AGOTADO':st==='low'?'STOCK BAJO':'DISPONIBLE',cls=st==='out'?'sb-status-out':st==='low'?'sb-status-low':'sb-status-good',reconciled=Math.abs(diff)<0.000001;
+      return `<tr>
+        <td>${p.imagen?`<img class="sb-inv-img" src="${esc(p.imagen)}" onerror="this.style.display='none'">`:'—'}</td>
+        <td><span class="sb-inv-code">${esc(x.sku||'SHE-'+id.padStart(4,'0'))}</span></td>
+        <td><span class="sb-inv-product">${esc(p.nombre)}</span><span class="sb-inv-sub">ID #${esc(id)}</span></td>
+        <td>${esc(categoryName(p.categoria))}</td>
+        <td>${initial}</td>
+        <td><span class="sb-stock-before">${before}</span></td>
+        <td>${entries}</td>
+        <td>${exits}</td>
+        <td>${adjustments>0?'+':''}${adjustments}</td>
+        <td><b>${expected}</b></td>
+        <td><input class="sb-inv-edit sb-stock-after ${st==='out'?'sb-stock-out':st==='low'?'sb-stock-low':'sb-stock-good'}" type="number" min="0" step="1" value="${stock}" onchange="SB_ADMIN.inventoryCell('${id}','stock',this.value)"></td>
+        <td class="${reconciled?'sb-inv-reconciled':'sb-inv-mismatch'}">${reconciled?'✓ CUADRADO':'⚠ DIF. '+diff}</td>
+        <td><span class="sb-status-pill ${cls}">${label}</span></td>
+        <td><div class="sb-stock-actions"><button class="sb-stock-btn" title="Salida de 1 unidad" onclick="SB_ADMIN.adjustStock('${id}',-1)">−</button><button class="sb-stock-btn" title="Entrada de 1 unidad" onclick="SB_ADMIN.adjustStock('${id}',1)">+</button></div></td>
+      </tr>`;
+    }).join('');
   },
-  inventoryCell(id,key,value){const inv=ensureInventory();if(!inv[id])return;const before=Math.max(0,Number(inv[id].stock)||0),after=Math.max(0,Number(value)||0);if(key==='stock'){inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=0;inv[id].lastUpdated=new Date().toISOString();}else inv[id][key]=String(value).trim();saveInventory(inv);this.log('inventory',`Stock actualizado para ID ${id}: ${after}`);this.renderInventory();},
-  adjustStock(id,delta){const inv=ensureInventory();if(!inv[id])return;const before=Math.max(0,Number(inv[id].stock)||0),after=Math.max(0,before+Number(delta||0));inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=delta<0?Math.abs(delta):0;inv[id].lastUpdated=new Date().toISOString();saveInventory(inv);this.log('inventory',`Stock ${delta<0?'reducido':'aumentado'} para ID ${id}`);this.renderInventory();},
-  exportInventoryRows(){const inv=ensureInventory(),rows=[['IMAGEN','SKU','PRODUCTO','CATEGORÍA','STOCK ANTES','STOCK DESPUÉS','ESTADO']];getProducts().forEach(p=>{const x=inv[String(p.id)]||{},stock=Number(x.stock)||0,before=Number(x.stockBefore??stock)||0,st=inventoryStatus(stock);rows.push([p.imagen||'',x.sku||'SHE-'+String(p.id).padStart(4,'0'),p.nombre,categoryName(p.categoria),before,stock,st==='out'?'AGOTADO':st==='low'?'STOCK BAJO':'DISPONIBLE']);});return rows;},
+  inventoryCell(id,key,value){
+    const inv=ensureInventory();if(!inv[id])return;
+    const before=Math.max(0,Number(inv[id].stock)||0),after=Math.max(0,Number(value)||0),delta=after-before,now=new Date().toISOString();
+    if(key==='stock'){
+      inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=delta<0?Math.abs(delta):0;inv[id].adjustments=Number(inv[id].adjustments||0)+delta;inv[id].lastUpdated=now;
+      addInventoryMovement(id,'adjustment',Math.abs(delta),'Ajuste manual','MANUAL',before,after);
+    }else inv[id][key]=String(value).trim();
+    saveInventory(inv);this.log('inventory',`Ajuste de inventario ID ${id}: ${before} → ${after}`);this.renderInventory();
+  },
+  adjustStock(id,delta){
+    const inv=ensureInventory();if(!inv[id])return;
+    const before=Math.max(0,Number(inv[id].stock)||0),change=Number(delta)||0,after=Math.max(0,before+change),realDelta=after-before,now=new Date().toISOString();
+    if(realDelta===0){this.renderInventory();return;}
+    inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=realDelta<0?Math.abs(realDelta):0;
+    if(realDelta>0)inv[id].entries=Number(inv[id].entries||0)+realDelta;else inv[id].exits=Number(inv[id].exits||0)+Math.abs(realDelta);
+    inv[id].lastUpdated=now;saveInventory(inv);
+    addInventoryMovement(id,realDelta>0?'entry':'exit',Math.abs(realDelta),realDelta>0?'Entrada manual':'Salida manual','MANUAL',before,after);
+    this.log('inventory',`Stock ${realDelta<0?'reducido':'aumentado'} para ID ${id}: ${before} → ${after}`);this.renderInventory();
+  },
+  exportInventoryRows(){
+    const inv=ensureInventory(),rows=[['IMAGEN','SKU','PRODUCTO','CATEGORÍA','INICIAL','STOCK ANTES','ENTRADAS','SALIDAS','AJUSTES','STOCK ESPERADO','STOCK DESPUÉS','DIFERENCIA','CUADRE','ESTADO']];
+    getProducts().forEach(p=>{
+      const x=inv[String(p.id)]||{},stock=Math.max(0,Number(x.stock)||0),before=Math.max(0,Number(x.stockBefore??stock)||0),initial=Math.max(0,Number(x.initialStock)||0),entries=Math.max(0,Number(x.entries)||0),exits=Math.max(0,Number(x.exits)||0),adjustments=Number(x.adjustments)||0,expected=inventoryExpected(x),diff=stock-expected,st=inventoryStatus(stock);
+      rows.push([p.imagen||'',x.sku||'SHE-'+String(p.id).padStart(4,'0'),p.nombre,categoryName(p.categoria),initial,before,entries,exits,adjustments,expected,stock,diff,Math.abs(diff)<0.000001?'CUADRADO':'DESCUADRADO',st==='out'?'AGOTADO':st==='low'?'STOCK BAJO':'DISPONIBLE']);
+    });return rows;
+  },
   exportInventoryExcel(){const rows=this.exportInventoryRows(),html=`<html><head><meta charset="UTF-8"><style>table{border-collapse:collapse;font-family:Arial;font-size:12px}th,td{border:1px solid #999;padding:8px}th{background:#d4af37;color:#111;font-weight:bold}td{mso-number-format:"\\@"}</style></head><body><h2>SHEIBIS — INVENTARIO DE PRODUCTOS</h2><table>${rows.map((r,i)=>'<tr>'+r.map(v=>`<${i?'td':'th'}>${esc(v)}</${i?'td':'th'}>`).join('')+'</tr>').join('')}</table></body></html>`,blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8;'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SHEIBIS_INVENTARIO_'+new Date().toISOString().slice(0,10)+'.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);this.log('backup','Inventario exportado a Excel');},
   exportInventoryPDF(){const view=document.getElementById('sbInventoryView');if(!view)return;const was=view.style.display;view.style.display='block';setTimeout(()=>{window.print();view.style.display=was;},100);},
   render(){const el=document.getElementById('sbProductList');if(!el)return;const q=(document.getElementById('sbSearch')?.value||'').trim().toLowerCase();const list=getProducts().filter(p=>!q||[p.nombre,p.id,p.categoria,categoryName(p.categoria)].join(' ').toLowerCase().includes(q));if(!list.length){el.innerHTML='<div style="padding:18px;color:rgba(255,255,255,.55);text-align:center">No hay productos.</div>';return;}el.innerHTML=list.map(p=>{const price=Number(p.precio)||0,before=Number(p.precioAntes)||0,d=before>price?((before-price)/before)*100:(Number(p.descuento)||0);return `<div class="sb-item" data-product-id="${esc(p.id)}">${p.imagen?`<img src="${esc(p.imagen)}" alt="" onerror="this.style.display='none'">`:''}<div class="sb-info"><strong>${esc(p.nombre)}</strong><small>${esc(categoryName(p.categoria))} · Q${price.toFixed(2)}${before>price?` · antes Q${before.toFixed(2)} · -${d.toFixed(0)}%`:''}</small></div><div class="sb-actions"><button type="button" class="sb-btn sb-edit" data-action="edit" data-id="${esc(p.id)}">✏️</button><button type="button" class="sb-btn sb-del" data-action="delete" data-id="${esc(p.id)}">🗑️</button></div></div>`;}).join('');},
@@ -7000,6 +7240,10 @@ document.addEventListener('click',function(e){
 
 document.addEventListener('DOMContentLoaded',function(){
   loadCategories();loadProducts();ensureInventory();refreshCategorySelect();refreshStore();SB_ADMIN.renderCategories();
+  // Catálogo compartido: todos los usuarios leen Google Sheets.
+  syncGlobalCatalog_(true);
+  setInterval(function(){syncGlobalCatalog_();},5000);
+  window.addEventListener('focus',function(){syncGlobalCatalog_(true);});
   const logo=document.querySelector('.brand-top');
   if(logo){let n=0,t;logo.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();n++;clearTimeout(t);t=setTimeout(()=>n=0,2000);if(n>=5){n=0;clearTimeout(t);SB_ADMIN.openLogin();}},true);}
 }); 
