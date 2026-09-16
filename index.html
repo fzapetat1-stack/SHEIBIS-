@@ -3384,10 +3384,10 @@ body.sheibis-modal-open{overflow:hidden;}
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzSNp638u_mkaECc-UTwBHkmM2XFlH1tAvznUMCEQF6QPpNXZ48bgYj4KbJ3vvazJQ/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzFlA3lPFpRsUKqk0JjKgj-KR-Ymk5H0ERJxRQiMs2GWRJwjiUB95V8RUOgWAa70obG/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
-            splashDelay: 1200,
+            splashDelay: 250,
             pointsThreshold: 10,
             minPriceForPoints: 60,
             maxFreeProductsPerOrder: 2,
@@ -4584,7 +4584,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbz6JJ6HwDu_Fij9_m9ZBiJAUqYdi3JIYSErRKIOHBQxb3iUP3S4Jdaw8rpQjZPWhSr6/exec
+     https://script.google.com/macros/s/AKfycbzFlA3lPFpRsUKqk0JjKgj-KR-Ymk5H0ERJxRQiMs2GWRJwjiUB95V8RUOgWAa70obG/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -7365,10 +7365,11 @@ document.addEventListener('click',function(e){
 
 document.addEventListener('DOMContentLoaded',function(){
   loadCategories();loadProducts();ensureInventory();refreshCategorySelect();refreshStore();SB_ADMIN.renderCategories();
-  // Catálogo compartido: todos los usuarios leen Google Sheets.
-  syncGlobalCatalog_(true);
-  setInterval(function(){syncGlobalCatalog_();},5000);
-  window.addEventListener('focus',function(){syncGlobalCatalog_(true);});
+  // Catálogo compartido: primero entra el usuario; la red se sincroniza después.
+  // Esto evita que una respuesta lenta de Apps Script retrase el inicio.
+  setTimeout(function(){ syncGlobalCatalog_(true); },2000);
+  setInterval(function(){ syncGlobalCatalog_(); },60000);
+  window.addEventListener('focus',function(){ setTimeout(function(){ syncGlobalCatalog_(true); },300); });
   const logo=document.querySelector('.brand-top');
   if(logo){let n=0,t;logo.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();n++;clearTimeout(t);t=setTimeout(()=>n=0,2000);if(n>=5){n=0;clearTimeout(t);SB_ADMIN.openLogin();}},true);}
 }); 
