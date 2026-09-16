@@ -2833,6 +2833,9 @@ body > div[style*="z-index: 99999"] > div{
 @media(max-width:850px){.sb-inv-kpis{grid-template-columns:repeat(2,1fr)}.sb-inv-toolbar{grid-template-columns:1fr}.sb-admin-tabs{position:sticky;top:0;z-index:10}}@media(max-width:480px){.sb-inv-kpis{grid-template-columns:1fr 1fr}.sb-inv-kpi strong{font-size:1rem}}
 @media print{body *{visibility:hidden!important}.sb-inv-print-area,.sb-inv-print-area *{visibility:visible!important}.sb-inv-print-area{position:absolute!important;left:0;top:0;width:100%!important;background:#fff!important;color:#111!important}.sb-inv-print-area .sb-inv-table{min-width:0!important;color:#111!important}.sb-inv-print-area .sb-inv-table th,.sb-inv-print-area .sb-inv-table td{color:#111!important;background:#fff!important;border:1px solid #bbb!important}.sb-inv-print-area .sb-inv-actions,.sb-inv-print-area .sb-inv-toolbar,.sb-inv-print-area .sb-inv-kpis,.sb-inv-print-area .sb-inv-foot{display:none!important}.sb-inv-print-area .sb-inv-note{display:block!important;color:#111!important;background:#fff!important;border:1px solid #bbb!important}}
 </style>
+<style id="sheibis-category-order-css">
+.sb-category-order-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 8px;padding:12px 14px;border:1px solid rgba(212,175,55,.18);border-radius:12px;background:linear-gradient(135deg,rgba(212,175,55,.08),rgba(255,255,255,.025));}.sb-category-order-head b{display:block;color:#f0d68a;font-size:.72rem;letter-spacing:.6px}.sb-category-order-head small{display:block;color:rgba(255,255,255,.45);font-size:.62rem;margin-top:3px}.sb-category-order-head span{color:#7ff0aa;font-size:.62rem;font-weight:800;white-space:nowrap}.sb-category-order-help{font-size:.65rem;color:rgba(255,255,255,.48);padding:0 3px 10px}.sb-category-order-save{display:flex;justify-content:flex-end;margin-top:10px}.sb-category-order-item{cursor:grab;transition:.2s;border-color:rgba(212,175,55,.08)}.sb-category-order-item:active{cursor:grabbing}.sb-category-order-item.sb-dragging{opacity:.45;transform:scale(.99)}.sb-order-number{width:28px;height:28px;min-width:28px;border-radius:9px;display:grid;place-items:center;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.2);color:#d4af37;font-size:.68rem;font-weight:900}.sb-order-actions{display:flex;gap:4px}.sb-order-btn{width:30px;height:30px;padding:0;background:rgba(255,255,255,.055);color:#fff;border:1px solid rgba(255,255,255,.09)}.sb-order-btn:hover:not(:disabled){border-color:#d4af37;color:#d4af37}.sb-order-btn:disabled{opacity:.22;cursor:not-allowed}@media(max-width:600px){.sb-category-order-head{align-items:flex-start;flex-direction:column}.sb-order-actions{order:3}.sb-category-order-item{flex-wrap:wrap}.sb-category-order-item .sb-info{min-width:calc(100% - 100px)}}
+</style>
 <style id="sheibis-private-admin-final">
 #sbAdminTrigger{position:fixed;right:8px;bottom:8px;width:22px;height:22px;border:1px solid transparent;background:transparent;opacity:.02;border-radius:50%;z-index:99990;cursor:pointer}
 #sbAdminTrigger:hover{opacity:.12;border-color:#d4af37}
@@ -3384,7 +3387,7 @@ body.sheibis-modal-open{overflow:hidden;}
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzFlA3lPFpRsUKqk0JjKgj-KR-Ymk5H0ERJxRQiMs2GWRJwjiUB95V8RUOgWAa70obG/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzm5jN6R3n7O81vv7zRDSb4RYMJMZUF4wsyKd9NZG_zhDTltJIdMVzZOs03HuVJThT6/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -3400,9 +3403,9 @@ body.sheibis-modal-open{overflow:hidden;}
         // Los productos siguen usando el ID de la categoría, por lo que cambiar
         // el nombre de una categoría no rompe los productos existentes.
         var CATALOGOS = window.CATALOGOS = [
-            { id: "belleza", nombre: "Belleza", icono: "fa-spa", imagen: "", descripcion: "Descubre nuestra selección de belleza.", proximamente: false },
-            { id: "objetos", nombre: "Objetos", icono: "fa-gem", imagen: "", descripcion: "Encuentra objetos especiales para ti.", proximamente: false },
-            { id: "accesorios", nombre: "Accesorios", icono: "fa-gem", imagen: "", descripcion: "Accesorios seleccionados para complementar tu estilo.", proximamente: false }
+            { id: "belleza", nombre: "Belleza", icono: "fa-spa", imagen: "", descripcion: "Descubre nuestra selección de belleza.", proximamente: false, orden: 1 },
+            { id: "objetos", nombre: "Objetos", icono: "fa-gem", imagen: "", descripcion: "Encuentra objetos especiales para ti.", proximamente: false, orden: 2 },
+            { id: "accesorios", nombre: "Accesorios", icono: "fa-gem", imagen: "", descripcion: "Accesorios seleccionados para complementar tu estilo.", proximamente: false, orden: 3 }
         ];
 
 var PRODUCTOS = window.PRODUCTOS = [
@@ -6617,7 +6620,10 @@ window.premiumMenuAction=async function(action){
         <button type="button" class="sb-btn sb-main" onclick="SB_ADMIN.addCategory()">＋ Agregar categoría</button>
       </div>
 
+      <div class="sb-category-order-head"><div><b>↕ ORDEN GLOBAL DE CATÁLOGOS</b><small>El orden que coloques aquí será el mismo para todos los usuarios.</small></div><span id="sbCategoryOrderStatus">Sin cambios</span></div>
+      <div class="sb-category-order-help">Arrastra una categoría o usa <b>↑</b> y <b>↓</b>. Después pulsa <b>GUARDAR ORDEN</b>. El cambio se guarda en Google Sheets.</div>
       <div id="sbCategoryList" class="sb-list"></div>
+      <div class="sb-category-order-save"><button type="button" class="sb-btn sb-main" onclick="SB_ADMIN.saveCategoryOrder()">💾 GUARDAR ORDEN GLOBAL</button></div>
 
       <form id="sbCategoryForm" class="sb-form" onsubmit="return false;" style="margin-top:14px">
         <input id="sbCatId" type="hidden">
@@ -6855,6 +6861,28 @@ function setInventoryStock(id,newStock,soldQty=0){const inv=ensureInventory();if
 
 function getProducts(){return Array.isArray(window.PRODUCTOS)?window.PRODUCTOS:[];}
 function getCategories(){return Array.isArray(window.CATALOGOS)?window.CATALOGOS:[];}
+function normalizeCategoryOrder_(){
+  const cats=getCategories();
+  cats.forEach((c,i)=>{if(!Number(c.orden)||Number(c.orden)<1)c.orden=i+1;});
+  cats.sort((a,b)=>Number(a.orden)-Number(b.orden));
+  cats.forEach((c,i)=>c.orden=i+1);
+  return cats;
+}
+function moveCategory_(index,direction){
+  const cats=normalizeCategoryOrder_();
+  const target=index+direction;
+  if(target<0||target>=cats.length)return false;
+  [cats[index],cats[target]]=[cats[target],cats[index]];
+  cats.forEach((c,i)=>c.orden=i+1);
+  return true;
+}
+async function saveCategoryOrderGlobal_(){
+  const cats=normalizeCategoryOrder_();
+  localStorage.setItem(CATEGORY_KEY,JSON.stringify(cats));
+  await apiRequest('saveCategoryOrder',{categories:cats.map((c,i)=>({id:String(c.id),orden:i+1}))});
+  globalCatalogLastServerUpdate=new Date().toISOString();
+  return true;
+}
 let globalCatalogSaveTimer=null;
 let globalCatalogSyncBusy=false;
 let globalCatalogLastServerUpdate='';
@@ -6923,6 +6951,7 @@ async function syncGlobalCatalog_(force=false){
     if(Array.isArray(window.CATALOGOS)){
       window.CATALOGOS.length=0;
       serverCategories.forEach(c=>window.CATALOGOS.push(c));
+       normalizeCategoryOrder_();
     }
 
     try{
@@ -6957,7 +6986,8 @@ function loadCategories(){
           if(c&&c.id&&c.nombre) cats.push({
             id:String(c.id),nombre:String(c.nombre),
             icono:c.icono||'fa-folder-open',imagen:c.imagen||'',
-            descripcion:c.descripcion||'',proximamente:c.proximamente!==false
+            descripcion:c.descripcion||'',proximamente:c.proximamente!==false,
+            orden:Number(c.orden)||0
           });
         });
       }
@@ -6986,16 +7016,21 @@ function refreshStore(){
 
 function renderCategoryList(){
   const el=document.getElementById('sbCategoryList');if(!el)return;
-  const cats=getCategories();
+  const cats=normalizeCategoryOrder_();
   if(!cats.length){el.innerHTML='<div style="padding:14px;color:rgba(255,255,255,.55);text-align:center">No hay categorías.</div>';return;}
   const count=document.getElementById('sbCategoryCount');if(count)count.textContent=cats.length;
-  el.innerHTML=cats.map(c=>`
-    <div class="sb-item" data-category-id="${esc(c.id)}">
+  el.innerHTML=cats.map((c,i)=>`
+    <div class="sb-item sb-category-order-item" data-category-id="${esc(c.id)}" draggable="true" data-order-index="${i}">
+      <div class="sb-order-number">${i+1}</div>
       ${c.imagen?`<img src="${esc(c.imagen)}" alt="" onerror="this.style.display='none'">`:`<div style="width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.07);color:#d4af37"><i class="fas ${esc(c.icono||'fa-folder-open')}"></i></div>`}
       <div class="sb-info"><strong>${esc(c.nombre)}</strong><small>${c.proximamente!==false?'Próximamente':'Activo'} · ${getProducts().filter(p=>String(p.categoria)===String(c.id)).length} productos</small></div>
+      <div class="sb-order-actions">
+        <button type="button" class="sb-btn sb-order-btn" data-order-action="up" data-id="${esc(c.id)}" title="Subir" ${i===0?'disabled':''}>↑</button>
+        <button type="button" class="sb-btn sb-order-btn" data-order-action="down" data-id="${esc(c.id)}" title="Bajar" ${i===cats.length-1?'disabled':''}>↓</button>
+      </div>
       <div class="sb-actions">
         <button type="button" class="sb-btn sb-edit" data-cat-action="edit" data-id="${esc(c.id)}" title="Editar">✏️</button>
-        <button type="button" class="sb-btn" style="border-color:rgba(255,80,80,.35);color:#ff8a8a" data-cat-action="delete" data-id="${esc(c.id)}" title="Eliminar">🗑️</button>
+        <button type="button" class="sb-btn sb-del" data-cat-action="delete" data-id="${esc(c.id)}" title="Eliminar">🗑️</button>
       </div>
     </div>`).join('');
 }
@@ -7315,6 +7350,32 @@ window.SB_ADMIN={
   exportInventoryExcel(){const rows=this.exportInventoryRows(),html=`<html><head><meta charset="UTF-8"><style>table{border-collapse:collapse;font-family:Arial;font-size:12px}th,td{border:1px solid #999;padding:8px}th{background:#d4af37;color:#111;font-weight:bold}td{mso-number-format:"\\@"}</style></head><body><h2>SHEIBIS — INVENTARIO DE PRODUCTOS</h2><table>${rows.map((r,i)=>'<tr>'+r.map(v=>`<${i?'td':'th'}>${esc(v)}</${i?'td':'th'}>`).join('')+'</tr>').join('')}</table></body></html>`,blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8;'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SHEIBIS_INVENTARIO_'+new Date().toISOString().slice(0,10)+'.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);this.log('backup','Inventario exportado a Excel');},
   exportInventoryPDF(){const view=document.getElementById('sbInventoryView');if(!view)return;const was=view.style.display;view.style.display='block';setTimeout(()=>{window.print();view.style.display=was;},100);},
   render(){const el=document.getElementById('sbProductList');if(!el)return;const q=(document.getElementById('sbSearch')?.value||'').trim().toLowerCase();const list=getProducts().filter(p=>!q||[p.nombre,p.id,p.categoria,categoryName(p.categoria)].join(' ').toLowerCase().includes(q));if(!list.length){el.innerHTML='<div style="padding:18px;color:rgba(255,255,255,.55);text-align:center">No hay productos.</div>';return;}el.innerHTML=list.map(p=>{const price=Number(p.precio)||0,before=Number(p.precioAntes)||0,d=before>price?((before-price)/before)*100:(Number(p.descuento)||0);return `<div class="sb-item" data-product-id="${esc(p.id)}">${p.imagen?`<img src="${esc(p.imagen)}" alt="" onerror="this.style.display='none'">`:''}<div class="sb-info"><strong>${esc(p.nombre)}</strong><small>${esc(categoryName(p.categoria))} · Q${price.toFixed(2)}${before>price?` · antes Q${before.toFixed(2)} · -${d.toFixed(0)}%`:''}</small></div><div class="sb-actions"><button type="button" class="sb-btn sb-edit" data-action="edit" data-id="${esc(p.id)}">✏️</button><button type="button" class="sb-btn sb-del" data-action="delete" data-id="${esc(p.id)}">🗑️</button></div></div>`;}).join('');},
+  async saveCategoryOrder(){
+    const status=document.getElementById('sbCategoryOrderStatus');
+    try{
+      normalizeCategoryOrder_();
+      if(status){status.textContent='Guardando...';status.style.color='#f0d68a';}
+      await saveCategoryOrderGlobal_();
+      refreshStore();
+      this.renderCategories();
+      this.renderDashboard();
+      this.log('category','Orden global de categorías actualizado');
+      if(status){status.textContent='✓ Guardado en Google Sheets';status.style.color='#7ff0aa';}
+      alert('✓ Orden global guardado correctamente.
+
+Todos los usuarios recibirán este mismo orden al sincronizar la tienda.');
+    }catch(e){
+      console.error('SHEIBIS orden categorías',e);
+      if(status){status.textContent='❌ No se pudo guardar';status.style.color='#ff8a8a';}
+      alert('No se pudo guardar el orden global: '+e.message);
+    }
+  },
+  moveCategory(id,direction){
+    const cats=normalizeCategoryOrder_(),index=cats.findIndex(c=>String(c.id)===String(id));
+    if(index<0||!moveCategory_(index,direction))return;
+    renderCategoryList();
+    const status=document.getElementById('sbCategoryOrderStatus');if(status){status.textContent='Cambios pendientes · pulsa GUARDAR ORDEN';status.style.color='#f0d68a';}
+  },
   renderCategories(){renderCategoryList();},
 
   add(){this.cancelForm();const f=document.getElementById('sbProductForm');if(!f)return;refreshCategorySelect();f.reset();document.getElementById('sbId').value='';document.getElementById('sbPrice').value='';document.getElementById('sbPriceBefore').value='';document.getElementById('sbAgotado').checked=false;f.classList.add('show');this.updateDiscountPreview();document.getElementById('sbStatus').textContent='Nuevo producto: precio actual + precio antes calculan el descuento automáticamente.';document.getElementById('sbName')?.focus();},
@@ -7328,7 +7389,7 @@ window.SB_ADMIN={
     this.cancelCategoryForm();const f=document.getElementById('sbCategoryForm');if(!f)return;f.reset();document.getElementById('sbCatId').value='';document.getElementById('sbCatIcon').value='fa-folder-open';document.getElementById('sbCatComing').value='proximamente';document.getElementById('sbCatAdvanced').style.display='none';f.classList.add('show');document.getElementById('sbCategoryStatus').textContent='Solo necesitas escribir el nombre. Los demás detalles pueden editarse después.';document.getElementById('sbCatName')?.focus();
   },
   editCategory(id){const c=getCategories().find(x=>String(x.id)===String(id));if(!c)return;document.getElementById('sbCatId').value=c.id;document.getElementById('sbCatName').value=c.nombre||'';document.getElementById('sbCatIcon').value=c.icono||'fa-folder-open';document.getElementById('sbCatImage').value=c.imagen||'';document.getElementById('sbCatDesc').value=c.descripcion||'';document.getElementById('sbCatComing').value=c.proximamente===false?'activo':'proximamente';document.getElementById('sbCatAdvanced').style.display='block';document.getElementById('sbCategoryForm').classList.add('show');document.getElementById('sbCategoryStatus').textContent='Editando catálogo: '+c.nombre;document.getElementById('sbCatName')?.focus();},
-  saveCategory(){try{const name=document.getElementById('sbCatName')?.value.trim()||'',rawId=document.getElementById('sbCatId')?.value||'',icon=document.getElementById('sbCatIcon')?.value.trim()||'fa-folder-open',image=document.getElementById('sbCatImage')?.value.trim()||'',desc=document.getElementById('sbCatDesc')?.value.trim()||'',coming=document.getElementById('sbCatComing')?.value!=='activo';if(!name){document.getElementById('sbCategoryStatus').textContent='⚠️ Escribe el nombre del catálogo.';return;}const cats=getCategories(),duplicate=cats.find(c=>String(c.nombre).trim().toLowerCase()===name.toLowerCase()&&String(c.id)!==String(rawId));if(duplicate){document.getElementById('sbCategoryStatus').textContent='⚠️ Ya existe una categoría con ese nombre.';return;}if(rawId){const c=cats.find(x=>String(x.id)===String(rawId));if(!c)return;c.nombre=name;c.icono=icon;c.imagen=image;c.descripcion=desc;c.proximamente=coming;this.log('category',`Categoría editada: ${name}`);}else{cats.push({id:makeCategoryId(name),nombre:name,icono:'fa-folder-open',imagen:'',descripcion:'',proximamente:true});this.log('category',`Categoría creada: ${name}`);}if(!saveCategories()){document.getElementById('sbCategoryStatus').textContent='❌ No se pudo guardar la categoría.';return;}this.renderCategories();refreshStore();if(document.getElementById('sbInventoryView')?.style.display!=='none')this.renderInventory();this.cancelCategoryForm();this.renderDashboard();}catch(e){console.error('SHEIBIS category save',e);document.getElementById('sbCategoryStatus').textContent='❌ Error: '+e.message;}},
+  saveCategory(){try{const name=document.getElementById('sbCatName')?.value.trim()||'',rawId=document.getElementById('sbCatId')?.value||'',icon=document.getElementById('sbCatIcon')?.value.trim()||'fa-folder-open',image=document.getElementById('sbCatImage')?.value.trim()||'',desc=document.getElementById('sbCatDesc')?.value.trim()||'',coming=document.getElementById('sbCatComing')?.value!=='activo';if(!name){document.getElementById('sbCategoryStatus').textContent='⚠️ Escribe el nombre del catálogo.';return;}const cats=getCategories(),duplicate=cats.find(c=>String(c.nombre).trim().toLowerCase()===name.toLowerCase()&&String(c.id)!==String(rawId));if(duplicate){document.getElementById('sbCategoryStatus').textContent='⚠️ Ya existe una categoría con ese nombre.';return;}if(rawId){const c=cats.find(x=>String(x.id)===String(rawId));if(!c)return;c.nombre=name;c.icono=icon;c.imagen=image;c.descripcion=desc;c.proximamente=coming;this.log('category',`Categoría editada: ${name}`);}else{cats.push({id:makeCategoryId(name),nombre:name,icono:'fa-folder-open',imagen:'',descripcion:'',proximamente:true,orden:cats.length+1});this.log('category',`Categoría creada: ${name}`);}if(!saveCategories()){document.getElementById('sbCategoryStatus').textContent='❌ No se pudo guardar la categoría.';return;}this.renderCategories();refreshStore();if(document.getElementById('sbInventoryView')?.style.display!=='none')this.renderInventory();this.cancelCategoryForm();this.renderDashboard();}catch(e){console.error('SHEIBIS category save',e);document.getElementById('sbCategoryStatus').textContent='❌ Error: '+e.message;}},
   deleteCategory(id){const cats=getCategories(),idx=cats.findIndex(c=>String(c.id)===String(id));if(idx<0)return;const cat=cats[idx],used=getProducts().filter(p=>String(p.categoria)===String(id));if(used.length){alert(`No se puede eliminar "${cat.nombre}" porque tiene ${used.length} producto(s) asignado(s). Primero cambia esos productos a otra categoría.`);return;}if(!confirm(`¿Eliminar la categoría "${cat.nombre}"?\n\nEsta acción no se puede deshacer.`))return;cats.splice(idx,1);if(!saveCategories()){alert('No se pudo guardar la eliminación.');return;}this.log('delete',`Categoría eliminada: ${cat.nombre}`);if(String(activeCategory)===String(id))activeCategory=null;refreshCategorySelect();this.renderCategories();refreshStore();this.renderDashboard();},
   cancelCategoryForm(){document.getElementById('sbCategoryForm')?.classList.remove('show');const adv=document.getElementById('sbCatAdvanced');if(adv)adv.style.display='none';const s=document.getElementById('sbCategoryStatus');if(s)s.textContent='';},
 
@@ -7353,6 +7414,8 @@ window.SB_ADMIN={
   unlock(){const p=document.getElementById('sbV11UnlockPass');if(!p||p.value!==PASS){if(p){p.value='';p.placeholder='Contraseña incorrecta';p.focus();}return;}p.value='';document.getElementById('sbV11Lock').classList.remove('show');this.log('security','Panel desbloqueado');this.installLock();}
 };
 document.addEventListener('click',function(e){
+  const ob=e.target.closest('#sbCategoryList [data-order-action]');
+  if(ob){e.preventDefault();e.stopPropagation();const id=ob.dataset.id;SB_ADMIN.moveCategory(id,ob.dataset.orderAction==='up'?-1:1);return;}
   const b=e.target.closest('#sbProductList [data-action]');
   if(b){e.preventDefault();e.stopPropagation();const id=b.dataset.id;if(b.dataset.action==='edit')SB_ADMIN.edit(id);else if(b.dataset.action==='delete')SB_ADMIN.remove(id);return;}
   const c=e.target.closest('#sbCategoryList [data-cat-action]');
@@ -7363,8 +7426,14 @@ document.addEventListener('click',function(e){
   }
 });
 
+let sbDraggedCategoryId=null;
+document.addEventListener('dragstart',function(e){const item=e.target.closest('#sbCategoryList [data-category-id]');if(!item)return;sbDraggedCategoryId=item.dataset.categoryId;item.classList.add('sb-dragging');e.dataTransfer.effectAllowed='move';});
+document.addEventListener('dragend',function(e){const item=e.target.closest('#sbCategoryList [data-category-id]');if(item)item.classList.remove('sb-dragging');sbDraggedCategoryId=null;});
+document.addEventListener('dragover',function(e){const item=e.target.closest('#sbCategoryList [data-category-id]');if(item)e.preventDefault();});
+document.addEventListener('drop',function(e){const target=e.target.closest('#sbCategoryList [data-category-id]');if(!target||!sbDraggedCategoryId)return;e.preventDefault();const cats=normalizeCategoryOrder_();const from=cats.findIndex(c=>String(c.id)===String(sbDraggedCategoryId));const to=cats.findIndex(c=>String(c.id)===String(target.dataset.categoryId));if(from<0||to<0||from===to)return;const moved=cats.splice(from,1)[0];cats.splice(to,0,moved);cats.forEach((c,i)=>c.orden=i+1);renderCategoryList();const status=document.getElementById('sbCategoryOrderStatus');if(status){status.textContent='Cambios pendientes · pulsa GUARDAR ORDEN';status.style.color='#f0d68a';}});
+
 document.addEventListener('DOMContentLoaded',function(){
-  loadCategories();loadProducts();ensureInventory();refreshCategorySelect();refreshStore();SB_ADMIN.renderCategories();
+  loadCategories();loadProducts();ensureInventory();normalizeCategoryOrder_();refreshCategorySelect();refreshStore();SB_ADMIN.renderCategories();
   // Catálogo compartido: primero entra el usuario; la red se sincroniza después.
   // Esto evita que una respuesta lenta de Apps Script retrase el inicio.
   setTimeout(function(){ syncGlobalCatalog_(true); },2000);
