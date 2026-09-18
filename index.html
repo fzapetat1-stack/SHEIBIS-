@@ -5779,195 +5779,228 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         // ================================================================
         // 15. SOLICITAR APROBACIÓN — WHATSAPP
         // ================================================================
-        window.requestApproval = async function() {
-            if (!currentUser || currentUser.isGuest === true) {
-                showToast('⚠️ Como INVITADO puedes explorar y usar el carrito. Para realizar un pedido debes crear una cuenta.', {
-                    title: 'Cuenta requerida', icon: 'fa-user-lock', duration: 5500
-                });
-                showAuth('login');
-                return;
-            }
-
-            if (!Array.isArray(cart) || cart.length === 0) {
-                showToast('Agrega al menos un producto antes de solicitar la aprobación.', {
-                    title: 'Carrito vacío', icon: 'fa-cart-shopping', duration: 4500
-                });
-                return;
-            }
-
-            const btn = document.querySelector('.btn-whatsapp');
-            if (btn && btn.disabled) return;
-            if (btn) {
-                btn.disabled = true;
-                btn.dataset.originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando pedido...';
-            }
-
-            // WhatsApp se prepara INMEDIATAMENTE con el clic para evitar bloqueos del navegador.
-            let whatsappWindow = null;
+        window.requestApproval = function() {
+            /*
+             * WHATSAPP DIRECTO — MISMO COMPORTAMIENTO QUE "ABRIR WHATSAPP"
+             * El enlace se abre inmediatamente dentro del clic del usuario.
+             * Así no depende de popups después de un await ni de que termine
+             * Google Apps Script para abrir WhatsApp.
+             */
             try {
-                whatsappWindow = window.open('about:blank', '_blank');
-                if (whatsappWindow) {
-                    whatsappWindow.document.title = 'SHEIBIS · Preparando WhatsApp';
-                    whatsappWindow.document.body.innerHTML = '<div style="font-family:Arial,sans-serif;text-align:center;margin-top:20vh;color:#555;">Preparando tu solicitud de pedido…</div>';
-                }
-            } catch (e) {
-                console.warn('SHEIBIS · No se pudo preparar WhatsApp:', e);
-            }
-
-            try {
-                const { points } = calculatePointsForOrder(cart);
-                const total = cart.reduce((sum, item) => sum + (Number(item.precio) || 0) * (Number(item.cantidad) || 0), 0);
-                const paymentSelect = document.getElementById('cartPaymentMethod');
-                const metodoPago = paymentSelect ? String(paymentSelect.value || 'Efectivo') : 'Efectivo';
-
-                // La sincronización es útil para mostrar inventario actualizado, pero un fallo temporal
-                // no debe impedir que la solicitud llegue a WhatsApp. El servidor valida la venta.
-                try { await syncGlobalInventory_(true); } catch (syncError) {
-                    console.warn('SHEIBIS · sincronización de inventario no disponible:', syncError.message);
-                }
-
-                const inventoryRaw = JSON.parse(localStorage.getItem('sheibis_inventory_master_v1') || '{}');
-                for (const item of cart) {
-                    const available = Math.max(0, Number((inventoryRaw[String(item.id)] || {}).stock) || 0);
-                    if (available < Number(item.cantidad || 0)) {
-                        if (whatsappWindow && !whatsappWindow.closed) whatsappWindow.close();
-                        showToast(`No hay suficiente inventario de "${item.nombre}". Disponible: ${available}.`, {
-                            title: 'Producto no disponible', icon: 'fa-box-open', duration: 6500
-                        });
-                        return;
-                    }
-                }
-
-                const orderId = 'SHE-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
-                const now = new Date();
-                const orderNumber = orderId;
-                const totalPointsBefore = Number(userPoints) || 0;
-                const totalPointsAfter = totalPointsBefore + points;
-
-                const orderItems = cart.map(i => ({
-                    id: i.id, nombre: i.nombre,
-                    cantidad: Number(i.cantidad || 0), precio: Number(i.precio || 0)
-                }));
-
-                const orderDetails = orderItems.map((item, index) => {
-                    const subtotal = item.precio * item.cantidad;
-                    return `  ${index + 1}. ${item.nombre} x${item.cantidad} → Q${subtotal.toFixed(2)}`;
-                }).join('\n');
-
-                const message =
-                    `🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n` +
-                    `────────────────────\n` +
-                    `📋 *Cliente:* ${currentUser.nombre}\n` +
-                    `📧 *Email:* ${currentUser.email}\n` +
-                    `🆔 *Pedido:* ${orderId}\n` +
-                    `📅 *Fecha:* ${now.toLocaleString()}\n` +
-                    `────────────────────\n` +
-                    `📦 *Detalle del Pedido*\n${orderDetails}\n` +
-                    `────────────────────\n` +
-                    `💰 *TOTAL: Q${total.toFixed(2)}*\n` +
-                    `💳 *Método de Pago:* ${metodoPago}\n` +
-                    `⭐ *Puntos generados:* ${points} pts\n` +
-                    `🏆 *Puntos acumulados:* ${totalPointsAfter} pts\n` +
-                    `────────────────────`;
-
-                const orderData = {
-                    orderId, orderNumber, userId: currentUser.id,
-                    nombre: currentUser.nombre || '', email: currentUser.email || '',
-                    date: now.toISOString(), total: total.toFixed(2),
-                    items: orderItems, itemsText: orderDetails,
-                    status: 'Pedido recibido', metodoPago: metodoPago, estadoPaquete: 0,
-                    pointsEarned: points, pointsBefore: totalPointsBefore, pointsAfter: totalPointsAfter
-                };
-
-                const previousOrders = Array.isArray(userOrders) ? userOrders : [];
-                const updatedOrders = [...previousOrders, orderData];
-
-                // Registrar pedido. El servidor debe hacer el descuento global/atómico del inventario.
-                const orderResult = await apiRequest('createOrder', { order: orderData });
-
-                const serverInventoryAfterSale = orderResult && (orderResult.inventory || orderResult.inventario);
-                if (serverInventoryAfterSale) {
-                    if (Array.isArray(serverInventoryAfterSale)) {
-                        serverInventoryAfterSale.forEach(x => { if (x && x.id !== undefined) inventoryRaw[String(x.id)] = x; });
-                    } else {
-                        Object.keys(serverInventoryAfterSale).forEach(id => { inventoryRaw[String(id)] = serverInventoryAfterSale[id]; });
-                    }
-                } else {
-                    cart.forEach(item => {
-                        const key = String(item.id);
-                        const x = inventoryRaw[key] || { sku: 'SHE-' + key.padStart(4, '0'), stock: 0 };
-                        const before = Math.max(0, Number(x.stock) || 0);
-                        const qty = Math.max(0, Number(item.cantidad) || 0);
-                        x.stockBefore = before;
-                        x.stock = Math.max(0, before - qty);
-                        x.lastSale = qty;
-                        x.initialStock = Number(x.initialStock ?? before) || 0;
-                        x.entries = Math.max(0, Number(x.entries) || 0);
-                        x.exits = Math.max(0, Number(x.exits) || 0) + qty;
-                        x.adjustments = Number(x.adjustments) || 0;
-                        x.lastUpdated = now.toISOString();
-                        inventoryRaw[key] = x;
+                if (!currentUser || currentUser.isGuest === true) {
+                    showToast('⚠️ Debes iniciar sesión para solicitar un pedido.', {
+                        title: 'Cuenta requerida',
+                        icon: 'fa-user-lock',
+                        duration: 5000
                     });
+                    return;
                 }
-                saveInventory(inventoryRaw);
 
-                await apiRequest('updateUser', {
-                    id: currentUser.id,
-                    fields: {
-                        orders: JSON.stringify(updatedOrders),
-                        totalOrders: Number(currentUser.totalOrders || 0) + 1,
-                        puntos: totalPointsAfter,
-                        estadoPaquete: 0
+                if (!Array.isArray(cart) || cart.length === 0) {
+                    showToast('🛒 Tu carrito está vacío. Agrega productos antes de solicitar la aprobación.', {
+                        title: 'Carrito vacío',
+                        icon: 'fa-shopping-cart',
+                        duration: 4500
+                    });
+                    return;
+                }
+
+                /* Validación local únicamente cuando existe inventario conocido. */
+                try {
+                    const inv = typeof getInventory === 'function' ? getInventory() : {};
+                    for (const item of cart) {
+                        const productId = String(item.id ?? item.productId ?? '');
+                        const record = inv && inv[productId];
+                        if (record && record.stock !== undefined) {
+                            const available = Math.max(0, Number(record.stock) || 0);
+                            const requested = Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1);
+                            if (available < requested) {
+                                const productName = item.nombre || item.name || item.productName || 'Producto';
+                                showToast(
+                                    available <= 0
+                                        ? `❌ ${productName} ya no está disponible.`
+                                        : `⚠️ ${productName}: solo quedan ${available} unidad(es).`,
+                                    {
+                                        title: available <= 0 ? 'Producto agotado' : 'Stock insuficiente',
+                                        icon: available <= 0 ? 'fa-box-open' : 'fa-triangle-exclamation',
+                                        duration: 5500
+                                    }
+                                );
+                                return;
+                            }
+                        }
                     }
+                } catch (inventoryError) {
+                    console.warn('SHEIBIS · validación local de inventario omitida:', inventoryError);
+                }
+
+                const paymentSelect = document.getElementById('paymentMethod');
+                const paymentMethod = paymentSelect
+                    ? String(paymentSelect.value || 'Efectivo')
+                    : 'Efectivo';
+
+                const userPointsBefore = Number(currentUser.puntos ?? userPoints ?? 0) || 0;
+                const total = cart.reduce((sum, item) => {
+                    const price = Number(item.precio ?? item.price ?? 0) || 0;
+                    const qty = Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1);
+                    return sum + price * qty;
+                }, 0);
+
+                const pointsEarned = Math.floor(total / 10);
+                const pointsAfter = userPointsBefore + pointsEarned;
+                const now = new Date();
+                const orderId = 'ORD-' + now.getTime() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+                const orderNumber = String(orderId);
+
+                const details = cart.map((item, index) => {
+                    const name = String(item.nombre || item.name || item.productName || 'Producto');
+                    const price = Number(item.precio ?? item.price ?? 0) || 0;
+                    const qty = Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1);
+                    const subtotal = price * qty;
+                    return `${index + 1}. ${name}\n   Cantidad: ${qty} × Q${price.toFixed(2)} = Q${subtotal.toFixed(2)}`;
+                }).join('\n\n');
+
+                const customerName = String(currentUser.nombre || currentUser.name || 'Cliente');
+                const customerEmail = String(currentUser.email || '');
+                const dateText = now.toLocaleString('es-GT', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
                 });
 
-                userOrders = updatedOrders;
-                currentUser.orders = JSON.stringify(updatedOrders);
-                currentUser.totalOrders = Number(currentUser.totalOrders || 0) + 1;
-                currentUser.puntos = totalPointsAfter;
-                currentUser.estadoPaquete = '0';
-                userPoints = totalPointsAfter;
-                saveSession();
+                const message = [
+                    '🛍️ *SOLICITUD DE APROBACIÓN — SHEIBIS*',
+                    '',
+                    `👤 *Cliente:* ${customerName}`,
+                    customerEmail ? `📧 *Correo:* ${customerEmail}` : '',
+                    `🧾 *Pedido:* ${orderNumber}`,
+                    `📅 *Fecha:* ${dateText}`,
+                    '',
+                    '📦 *DETALLES DEL PEDIDO*',
+                    details,
+                    '',
+                    `💰 *TOTAL: Q${total.toFixed(2)}*`,
+                    `💳 *Método de pago:* ${paymentMethod}`,
+                    `⭐ *Puntos generados:* ${pointsEarned}`,
+                    `🏆 *Puntos acumulados:* ${pointsAfter}`,
+                    '',
+                    'Hola SHEIBIS, deseo solicitar la aprobación de este pedido. Gracias.'
+                ].filter(Boolean).join('\n');
 
-                // Abre el chat del número de Guatemala 40512960 con el mensaje listo.
+                /*
+                 * ESTA ES LA PARTE CLAVE:
+                 * exactamente como el botón "Abrir WhatsApp" de Contacto:
+                 * window.open(...) se ejecuta directamente dentro del clic.
+                 */
                 const phone = String(CONFIG.phoneNumber || '40512960').replace(/\D/g, '');
-                const whatsappNumber = phone.length === 8 ? '502' + phone : phone;
+                const whatsappNumber = phone.length === 8 ? phone : (phone.length === 10 && phone.startsWith('502') ? phone : '50240512960');
                 const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+                const whatsappWindow = window.open(whatsappUrl, '_blank');
 
-                if (whatsappWindow && !whatsappWindow.closed) {
-                    whatsappWindow.location.replace(whatsappUrl);
-                } else {
-                    const fallbackWindow = window.open(whatsappUrl, '_blank');
-                    if (!fallbackWindow) {
-                        showToast('WhatsApp fue bloqueado por el navegador. Permite ventanas emergentes para SHEIBIS.', {
-                            title: 'WhatsApp bloqueado', icon: 'fa-brands fa-whatsapp', duration: 8000
-                        });
+                /* Si el navegador devuelve null, intentamos navegación directa. */
+                if (!whatsappWindow) {
+                    window.location.href = whatsappUrl;
+                    return;
+                }
+
+                /*
+                 * WhatsApp ya se abrió. Ahora registramos el pedido sin bloquear
+                 * la apertura del chat. Si el servidor falla, el usuario conserva
+                 * su mensaje de WhatsApp y recibe una notificación del problema.
+                 */
+                (async function registerOrderAfterWhatsApp() {
+                    try {
+                        const orderData = {
+                            orderId,
+                            orderNumber,
+                            userId: currentUser.id,
+                            nombre: customerName,
+                            email: customerEmail,
+                            fecha: now.toISOString(),
+                            estado: 'Pendiente de aprobación',
+                            metodoPago: paymentMethod,
+                            tipoPedido: 'WhatsApp',
+                            detalles: cart.map(item => ({
+                                id: item.id,
+                                nombre: item.nombre || item.name || item.productName || 'Producto',
+                                precio: Number(item.precio ?? item.price ?? 0) || 0,
+                                cantidad: Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1),
+                                subtotal: (Number(item.precio ?? item.price ?? 0) || 0) * Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1)
+                            })),
+                            total,
+                            puntosGanados: pointsEarned,
+                            puntosAcumulados: pointsAfter
+                        };
+
+                        try {
+                            const result = await apiRequest('createOrder', { order: orderData });
+                            if (result && result.inventory) {
+                                try {
+                                    const localInv = getInventory();
+                                    Object.keys(result.inventory).forEach(id => {
+                                        localInv[String(id)] = { ...localInv[String(id)], ...result.inventory[id] };
+                                    });
+                                    saveInventory(localInv);
+                                } catch (_) {}
+                            }
+                        } catch (orderError) {
+                            console.error('SHEIBIS · pedido no registrado en servidor:', orderError);
+                            showToast('⚠️ WhatsApp se abrió correctamente, pero el pedido no pudo registrarse automáticamente en el servidor.', {
+                                title: 'Aviso de pedido',
+                                icon: 'fa-triangle-exclamation',
+                                duration: 6500
+                            });
+                        }
+
+                        try {
+                            const updatedOrders = Array.isArray(userOrders) ? userOrders.slice() : [];
+                            updatedOrders.push({
+                                ...orderData,
+                                status: 'Pendiente de aprobación'
+                            });
+                            await apiRequest('updateUser', {
+                                id: currentUser.id,
+                                fields: {
+                                    puntos: pointsAfter,
+                                    orders: JSON.stringify(updatedOrders),
+                                    totalOrders: updatedOrders.length
+                                }
+                            });
+                            userOrders = updatedOrders;
+                            currentUser.puntos = pointsAfter;
+                            currentUser.orders = JSON.stringify(updatedOrders);
+                            currentUser.totalOrders = updatedOrders.length;
+                            userPoints = pointsAfter;
+                            saveSession();
+                        } catch (userError) {
+                            console.warn('SHEIBIS · actualización de usuario omitida:', userError);
+                        }
+
+                        try {
+                            if (typeof clearCart === 'function') clearCart();
+                            else {
+                                cart.length = 0;
+                                updateCartUI();
+                            }
+                        } catch (_) {}
+
+                        try {
+                            if (menuBadgeOrders) menuBadgeOrders.textContent = userOrders.length;
+                            if (menuUserPoints) menuUserPoints.textContent = `✦ ${userPoints} puntos`;
+                            if (pointsDisplay) pointsDisplay.textContent = userPoints;
+                        } catch (_) {}
+
+                    } catch (error) {
+                        console.error('SHEIBIS · error posterior al abrir WhatsApp:', error);
                     }
-                }
+                })();
 
-                menuBadgeOrders.textContent = userOrders.length;
-                menuUserPoints.textContent = `✦ ${userPoints} puntos`;
-                pointsDisplay.textContent = userPoints;
-                updateCartUI();
-                cart = [];
-                updateCartUI();
-                cartEl.classList.remove('active');
-
-                showToast(`✅ Pedido registrado. +${points} puntos agregados.`, {
-                    title: 'Pedido preparado', icon: 'fa-whatsapp', duration: 6000
-                });
             } catch (error) {
-                console.error('SHEIBIS · Error registrando pedido:', error);
-                if (whatsappWindow && !whatsappWindow.closed) whatsappWindow.close();
-                showToast('No se pudo registrar el pedido. Revisa la conexión e inténtalo nuevamente.', {
-                    title: 'No se pudo completar', icon: 'fa-triangle-exclamation', duration: 7000
+                console.error('SHEIBIS · WhatsApp:', error);
+                showToast('❌ No se pudo abrir WhatsApp. Verifica que el navegador permita ventanas emergentes.', {
+                    title: 'WhatsApp',
+                    icon: 'fa-whatsapp',
+                    duration: 6000
                 });
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = btn.dataset.originalText || '<i class="fab fa-whatsapp"></i> Solicitar Aprobación';
-                }
             }
         };
         // ================================================================
