@@ -2788,6 +2788,286 @@ body > div[style*="z-index: 99999"] > div{
 }
 .password-eye-btn:hover{background:rgba(255,255,255,.08);opacity:1;transform:translateY(-50%) scale(1.05);}
 .password-eye-btn i{color:#fff !important;font-size:15px;}
+
+/* ================================================================
+   SHEIBIS · CARRITO ULTRA ESTÉTICO — SOLO DISEÑO
+   No modifica funciones ni lógica.
+   ================================================================ */
+#cart{
+    width:min(480px,calc(100vw - 22px)) !important;
+    right:11px !important;
+    top:76px !important;
+    max-height:calc(100vh - 88px) !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    border:1px solid rgba(255,255,255,.13) !important;
+    border-radius:28px !important;
+    background:
+      radial-gradient(circle at 88% 0%,rgba(231,196,90,.18),transparent 30%),
+      radial-gradient(circle at 0% 100%,rgba(255,255,255,.055),transparent 32%),
+      linear-gradient(145deg,rgba(18,25,39,.985),rgba(5,10,18,.995)) !important;
+    box-shadow:0 30px 100px rgba(0,0,0,.72),0 0 0 1px rgba(231,196,90,.045),0 0 65px rgba(231,196,90,.075) !important;
+    backdrop-filter:blur(28px) saturate(150%) !important;
+    -webkit-backdrop-filter:blur(28px) saturate(150%) !important;
+    isolation:isolate;
+}
+#cart::before{
+    content:"";
+    position:absolute;inset:0;pointer-events:none;z-index:-1;
+    background:linear-gradient(125deg,rgba(255,255,255,.09),transparent 24%,transparent 68%,rgba(231,196,90,.045));
+}
+#cart h3{
+    position:relative;
+    display:flex !important;
+    align-items:center;
+    gap:11px;
+    margin:0 !important;
+    padding:21px 23px 18px !important;
+    font-size:1.05rem !important;
+    font-weight:800 !important;
+    letter-spacing:.2px;
+    color:#fff !important;
+    border-bottom:1px solid rgba(255,255,255,.07) !important;
+    background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.008));
+}
+#cart h3::after{
+    content:"";
+    position:absolute;left:23px;bottom:-1px;width:62px;height:2px;
+    border-radius:99px;background:linear-gradient(90deg,#e7c45a,transparent);
+    box-shadow:0 0 18px rgba(231,196,90,.35);
+}
+#cart h3 i{
+    width:36px;height:36px;display:grid;place-items:center;
+    border-radius:12px;
+    color:#e7c45a;
+    background:rgba(231,196,90,.09);
+    border:1px solid rgba(231,196,90,.16);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 25px rgba(231,196,90,.07);
+}
+#cartItems{
+    max-height:42vh;
+    overflow:auto;
+    padding:8px 18px 2px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(231,196,90,.28) transparent;
+}
+#cartItems::-webkit-scrollbar{width:5px}
+#cartItems::-webkit-scrollbar-track{background:transparent}
+#cartItems::-webkit-scrollbar-thumb{background:rgba(231,196,90,.28);border-radius:99px}
+#cart .cart-item{
+    position:relative;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:12px;
+    align-items:center;
+    margin:7px 0;
+    padding:14px 13px !important;
+    border:1px solid rgba(255,255,255,.075) !important;
+    border-radius:17px;
+    background:linear-gradient(135deg,rgba(255,255,255,.052),rgba(255,255,255,.018));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 8px 24px rgba(0,0,0,.12);
+    transition:transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease;
+}
+#cart .cart-item:hover{
+    transform:translateY(-1px);
+    border-color:rgba(231,196,90,.22) !important;
+    background:linear-gradient(135deg,rgba(231,196,90,.075),rgba(255,255,255,.022));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 12px 28px rgba(0,0,0,.2);
+}
+#cart .cart-item .item-name{
+    min-width:0;
+    color:#f4f6f8 !important;
+    font-size:.78rem !important;
+    line-height:1.35;
+    font-weight:700 !important;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+#cart .cart-item .item-price{
+    display:block;
+    margin:0 0 6px !important;
+    color:#e7c45a !important;
+    font-size:.82rem !important;
+    text-align:right;
+    font-weight:850 !important;
+}
+#cart .cart-item-edit{
+    grid-column:1 / -1;
+    margin-top:2px !important;
+    padding-top:9px;
+    border-top:1px solid rgba(255,255,255,.055);
+}
+#cart .cart-item-qty{
+    gap:5px !important;
+    padding:3px;
+    border-radius:11px;
+    background:rgba(0,0,0,.16);
+    border:1px solid rgba(255,255,255,.06);
+}
+#cart .cart-qty-btn{
+    width:30px !important;height:30px !important;
+    border-radius:9px !important;
+    border:1px solid rgba(255,255,255,.08) !important;
+    background:rgba(255,255,255,.045) !important;
+    color:#fff !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+#cart .cart-qty-btn:hover{
+    color:#111 !important;
+    border-color:#e7c45a !important;
+    background:#e7c45a !important;
+    transform:translateY(-1px);
+}
+#cart .cart-qty-value{
+    min-width:30px !important;
+    font-size:.78rem;
+    color:#fff !important;
+}
+#cart .cart-item-remove{
+    width:31px;height:31px;
+    border-radius:9px !important;
+    color:rgba(255,120,120,.7) !important;
+    background:rgba(255,80,80,.045) !important;
+    border:1px solid rgba(255,100,100,.07) !important;
+}
+#cart .cart-item-remove:hover{
+    color:#fff !important;
+    background:rgba(220,65,65,.18) !important;
+    border-color:rgba(255,100,100,.25) !important;
+}
+#cart .cart-empty{
+    padding:38px 15px 34px !important;
+    opacity:1 !important;
+    border:1px dashed rgba(255,255,255,.08);
+    border-radius:18px;
+    margin:10px 0;
+    background:rgba(255,255,255,.018);
+}
+#cart .cart-empty i{
+    width:66px;height:66px;display:grid;place-items:center;margin:0 auto 13px !important;
+    border-radius:21px;
+    font-size:1.55rem !important;
+    color:#e7c45a;
+    opacity:1 !important;
+    background:rgba(231,196,90,.08);
+    border:1px solid rgba(231,196,90,.14);
+}
+#cart .cart-empty p:first-of-type{
+    color:#eef1f5;
+    opacity:.9 !important;
+    font-size:.86rem;
+    font-weight:750;
+}
+#cart .cart-empty p:last-of-type{opacity:.42 !important}
+#cart .cart-payment-selector{
+    margin:13px 18px 10px !important;
+    padding:14px !important;
+    border-radius:18px !important;
+    border:1px solid rgba(231,196,90,.13) !important;
+    background:linear-gradient(135deg,rgba(231,196,90,.07),rgba(255,255,255,.025)) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+#cart .cart-payment-selector label{
+    display:flex !important;align-items:center;gap:6px;
+    margin:0 0 9px !important;
+    color:#f1f3f6 !important;
+    font-size:.68rem !important;
+    font-weight:800 !important;
+    letter-spacing:.8px !important;
+    text-transform:uppercase;
+}
+#cart .cart-payment-selector label i{color:#e7c45a;margin:0 !important}
+#cart .cart-payment-selector select{
+    appearance:none;
+    -webkit-appearance:none;
+    padding:12px 40px 12px 13px !important;
+    border-radius:12px !important;
+    border:1px solid rgba(255,255,255,.09) !important;
+    color:#fff !important;
+    font-weight:700 !important;
+    background:#111a28 !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+    background-image:linear-gradient(45deg,transparent 50%,#e7c45a 50%),linear-gradient(135deg,#e7c45a 50%,transparent 50%);
+    background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
+    background-size:5px 5px,5px 5px;
+    background-repeat:no-repeat;
+}
+#cart .cart-payment-selector select:hover{border-color:rgba(231,196,90,.3) !important}
+#cart .cart-points-summary{
+    margin:11px 18px 10px !important;
+    padding:13px 15px !important;
+    border-radius:18px !important;
+    border:1px solid rgba(231,196,90,.12) !important;
+    background:linear-gradient(135deg,rgba(231,196,90,.055),rgba(255,255,255,.018)) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
+}
+#cart .points-row{gap:10px}
+#cart .points-earn,#cart .points-total{font-size:.67rem !important}
+#cart .progress-container{margin-top:10px !important}
+#cart .progress-bar-track{height:6px !important;border-radius:99px !important;background:rgba(255,255,255,.055) !important;overflow:hidden}
+#cart .progress-bar-fill{border-radius:99px !important;box-shadow:0 0 14px rgba(231,196,90,.28)}
+#cart .progress-badge{font-size:.57rem !important}
+#cart .cart-total{
+    display:flex !important;
+    justify-content:space-between;
+    align-items:center;
+    margin:13px 18px 0 !important;
+    padding:15px 16px;
+    border-radius:17px;
+    border:1px solid rgba(255,255,255,.075);
+    background:rgba(255,255,255,.025);
+    font-size:.72rem !important;
+    color:rgba(255,255,255,.56) !important;
+    text-align:left !important;
+    text-shadow:none !important;
+}
+#cart .cart-total span{
+    color:#f1cb5b !important;
+    font-size:1.35rem;
+    font-weight:900;
+    letter-spacing:.2px;
+    text-shadow:0 0 24px rgba(231,196,90,.14);
+}
+#cart .cart-actions{
+    display:grid !important;
+    grid-template-columns:1fr 1.65fr;
+    gap:9px !important;
+    margin:11px 18px 0 !important;
+}
+#cart .cart-actions .btn{
+    min-height:47px;
+    padding:11px 13px !important;
+    border-radius:14px !important;
+    font-size:.67rem !important;
+    letter-spacing:.8px !important;
+    font-weight:800 !important;
+}
+#cart .btn-danger{
+    color:#ff9a9a !important;
+    border:1px solid rgba(255,110,110,.13) !important;
+    background:rgba(255,90,90,.045) !important;
+}
+#cart .btn-danger:hover{background:rgba(255,90,90,.11) !important;transform:translateY(-2px) !important}
+#cart .btn-whatsapp{
+    background:linear-gradient(135deg,#27d86b,#119b79) !important;
+    box-shadow:0 10px 28px rgba(37,211,102,.12),inset 0 1px 0 rgba(255,255,255,.2) !important;
+}
+#cart .btn-whatsapp:hover{transform:translateY(-2px) !important;box-shadow:0 14px 35px rgba(37,211,102,.2),inset 0 1px 0 rgba(255,255,255,.22) !important}
+#cart > div:last-child{
+    margin:10px 18px 17px !important;
+    padding:0 6px;
+    opacity:.42 !important;
+    line-height:1.4;
+}
+@media (max-width:560px){
+    #cart{right:8px !important;top:68px !important;width:calc(100vw - 16px) !important;border-radius:24px !important}
+    #cartItems{max-height:37vh;padding-left:12px;padding-right:12px}
+    #cart h3{padding-left:17px !important;padding-right:17px !important}
+    #cart .cart-payment-selector,#cart .cart-points-summary,#cart .cart-total,#cart .cart-actions{margin-left:12px !important;margin-right:12px !important}
+    #cart h3::after{left:17px}
+}
+
 </style>
 
 <style id="sheibis-glass-payment">
@@ -3259,6 +3539,15 @@ body.sheibis-modal-open{overflow:hidden;}
                     <span class="progress-badge" id="progressReward">✦ 10 pts → Producto Gratis</span>
                 </div>
             </div>
+        </div>
+        <div class="cart-payment-selector">
+            <label for="cartPaymentMethod"><i class="fas fa-credit-card"></i> Método de pago</label>
+            <select id="cartPaymentMethod" aria-label="Método de pago">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia bancaria">Transferencia bancaria</option>
+                <option value="Fri">Fri</option>
+                <option value="Zigi">Zigi</option>
+            </select>
         </div>
         <div class="cart-total">Total: Q<span id="cartTotal">0.00</span></div>
         <div class="cart-actions">
@@ -4393,6 +4682,19 @@ body{
     padding-bottom:16px;
     border-bottom:1px solid rgba(255,255,255,.07);
 }
+
+.cart-payment-selector{margin:14px 0 12px;padding:12px;border:1px solid rgba(231,196,90,.14);border-radius:14px;background:rgba(255,255,255,.025)}
+.cart-payment-selector label{display:block;margin-bottom:7px;font-size:.72rem;font-weight:700;letter-spacing:.3px;color:#dfe6ef}
+.cart-payment-selector label i{margin-right:6px}
+.cart-payment-selector select{width:100%;border:1px solid rgba(231,196,90,.18);border-radius:10px;padding:10px 12px;background:#151515;color:#f5f5f5;outline:none;font-size:.78rem;cursor:pointer}
+.cart-payment-selector select:focus{border-color:rgba(231,196,90,.55);box-shadow:0 0 0 3px rgba(231,196,90,.08)}
+.cart-item-edit{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+.cart-item-qty{display:flex;align-items:center;gap:7px}
+.cart-qty-btn{width:29px;height:29px;border:1px solid rgba(231,196,90,.18);border-radius:8px;background:rgba(255,255,255,.04);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.cart-qty-btn:hover{border-color:rgba(231,196,90,.5);background:rgba(231,196,90,.08)}
+.cart-qty-value{min-width:25px;text-align:center;font-weight:800;color:#f2f2f2}
+.cart-item-remove{border:0;background:transparent;color:#ef6b6b;cursor:pointer;padding:5px 7px;border-radius:7px}
+.cart-item-remove:hover{background:rgba(239,107,107,.08)}
 .cart-item{
     margin:5px 0;
     padding:14px 12px;
@@ -5397,6 +5699,14 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             }
         };
 
+        window.changeCartQuantity = function(id, delta) {
+            const item = cart.find(p => String(p.id) === String(id));
+            if (!item) return;
+            const next = Math.max(1, Number(item.cantidad || 1) + Number(delta || 0));
+            item.cantidad = next;
+            updateCartUI();
+        };
+
         window.removeFromCart = function(id) {
             cart = cart.filter(p => p.id !== id);
             updateCartUI();
@@ -5487,6 +5797,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
             const { points } = calculatePointsForOrder(cart);
             const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            const paymentSelect = document.getElementById('cartPaymentMethod');
+            const metodoPago = paymentSelect ? String(paymentSelect.value || 'Efectivo') : 'Efectivo';
 
             // Actualizar primero el inventario oficial para evitar usar una copia antigua.
             await syncGlobalInventory_(true);
@@ -5546,7 +5858,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 `📦 *Detalle del Pedido*\n${orderDetails}\n` +
                 `────────────────────\n` +
                 `💰 *TOTAL: Q${total.toFixed(2)}*\n` +
-                `💳 *Método de Pago:* Contraentrega\n` +
+                `💳 *Método de Pago:* ${metodoPago}\n` +
                 `⭐ *Puntos generados:* ${points} pts\n` +
                 `🏆 *Puntos acumulados:* ${totalPointsAfter} pts\n` +
                 `────────────────────`;
@@ -5562,6 +5874,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 items: orderItems,
                 itemsText: orderDetails,
                 status: 'Pedido recibido',
+                metodoPago: metodoPago,
                 estadoPaquete: 0,
                 pointsEarned: points,
                 pointsBefore: totalPointsBefore,
@@ -5638,7 +5951,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
                 // Enviar la solicitud a WhatsApp en la ventana preparada durante el clic.
                 const encodedMsg = encodeURIComponent(message);
-                const whatsappUrl = `https://wa.me/${CONFIG.phoneNumber}?text=${encodedMsg}`;
+                const whatsappUrl = `https://wa.me/502${String(CONFIG.phoneNumber).replace(/[^0-9]/g, '')}?text=${encodedMsg}`;
 
                 if (whatsappWindow && !whatsappWindow.closed) {
                     whatsappWindow.location.href = whatsappUrl;
@@ -5663,6 +5976,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 );
 
                 cart = [];
+                if (paymentSelect) paymentSelect.value = 'Efectivo';
                 updateCartUI();
                 cartEl.classList.remove('active');
 
@@ -5714,10 +6028,15 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     count += item.cantidad;
                     return `
                             <div class="cart-item">
-                                <div class="item-name">${item.nombre} x${item.cantidad}</div>
-                                <div>
-                                    <span class="item-price">Q${(item.precio * item.cantidad).toFixed(2)}</span>
-                                    <button class="item-remove" onclick="removeFromCart(${item.id})"><i class="fas fa-times"></i></button>
+                                <div class="item-name">${item.nombre}</div>
+                                <div class="item-price">Q${(item.precio * item.cantidad).toFixed(2)}</div>
+                                <div class="cart-item-edit">
+                                    <div class="cart-item-qty" aria-label="Cantidad de ${item.nombre}">
+                                        <button type="button" class="cart-qty-btn" onclick="changeCartQuantity(${item.id}, -1)" title="Disminuir cantidad"><i class="fas fa-minus"></i></button>
+                                        <span class="cart-qty-value">${item.cantidad}</span>
+                                        <button type="button" class="cart-qty-btn" onclick="changeCartQuantity(${item.id}, 1)" title="Aumentar cantidad"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                    <button type="button" class="cart-item-remove" onclick="removeFromCart(${item.id})" title="Eliminar producto"><i class="fas fa-trash-alt"></i></button>
                                 </div>
                             </div>
                         `;
