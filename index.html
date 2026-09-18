@@ -3389,7 +3389,7 @@ body.sheibis-modal-open{overflow:hidden;}
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzm5jN6R3n7O81vv7zRDSb4RYMJMZUF4wsyKd9NZG_zhDTltJIdMVzZOs03HuVJThT6/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzjKSP39kooERHX_cPGpr_BFeX7RsWC5kK1wb5sQkFldf8gPkMz3F12sLbn0__jtXF2/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -3547,7 +3547,12 @@ var PRODUCTOS = window.PRODUCTOS = [
             let data;
             try { data = JSON.parse(text); }
             catch { throw new Error('Respuesta inválida del servidor: ' + text.slice(0, 180)); }
-            if (!response.ok || data.ok === false) throw new Error(data.message || 'Error del servidor.');
+            if (!response.ok || data.ok === false) {
+                const error = new Error(data.message || data.error || 'Error del servidor.');
+                error.code = data.code || '';
+                error.data = data;
+                throw error;
+            }
             return data;
         }
 
@@ -5483,6 +5488,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             const { points } = calculatePointsForOrder(cart);
             const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
+            // Actualizar primero el inventario oficial para evitar usar una copia antigua.
+            await syncGlobalInventory_(true);
+
             // Verificar inventario antes de registrar la compra.
             const inventoryRaw = JSON.parse(localStorage.getItem('sheibis_inventory_master_v1') || '{}');
             for (const item of cart) {
@@ -5550,26 +5558,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             const previousOrders = Array.isArray(userOrders) ? userOrders : [];
             const updatedOrders = [...previousOrders, orderData];
 
-            // Descontar inventario localmente.
-            for (const item of cart) {
-                const key = String(item.id);
-                const invItem = inventoryRaw[key] || {
-                    sku: 'SHE-' + key.padStart(4, '0'),
-                    stock: 0
-                };
-                const beforeStock = Math.max(0, Number(invItem.stock) || 0);
-                const saleQty = Math.max(0, Number(item.cantidad || 0));
-                invItem.stockBefore = beforeStock;
-                invItem.stock = Math.max(0, beforeStock - saleQty);
-                invItem.lastSale = saleQty;
-                invItem.initialStock = Number(invItem.initialStock ?? beforeStock) || 0;
-                invItem.entries = Math.max(0, Number(invItem.entries) || 0);
-                invItem.exits = Math.max(0, Number(invItem.exits) || 0) + saleQty;
-                invItem.adjustments = Number(invItem.adjustments) || 0;
-                invItem.lastUpdated = now.toISOString();
-                inventoryRaw[key] = invItem;
-            }
-
             const btn = document.querySelector('.btn-whatsapp');
             if (btn) {
                 btn.disabled = true;
@@ -5579,9 +5567,39 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
             try {
                 // 1. Guardar la compra como una FILA independiente en Google Sheets.
-                await apiRequest('createOrder', {
+                const orderResult = await apiRequest('createOrder', {
                     order: orderData
                 });
+
+                // El servidor descuenta el inventario de forma atómica.
+                // Después de confirmar la compra, actualizamos la copia local con el resultado global.
+                const serverInventoryAfterSale = orderResult && (orderResult.inventory || orderResult.inventario);
+                if(serverInventoryAfterSale){
+                    const normalizedAfterSale={};
+                    if(Array.isArray(serverInventoryAfterSale)) serverInventoryAfterSale.forEach(x=>{if(x&&x.id!==undefined)normalizedAfterSale[String(x.id)]=x;});
+                    else Object.keys(serverInventoryAfterSale).forEach(id=>normalizedAfterSale[String(id)]=serverInventoryAfterSale[id]);
+                    if(Object.keys(normalizedAfterSale).length){
+                        Object.keys(normalizedAfterSale).forEach(id=>inventoryRaw[id]=normalizedAfterSale[id]);
+                    }
+                }else{
+                    for (const item of cart) {
+                        const key = String(item.id);
+                        const invItem = inventoryRaw[key] || { sku: 'SHE-' + key.padStart(4, '0'), stock: 0 };
+                        const beforeStock = Math.max(0, Number(invItem.stock) || 0);
+                        const saleQty = Math.max(0, Number(item.cantidad || 0));
+                        invItem.stockBefore = beforeStock;
+                        invItem.stock = Math.max(0, beforeStock - saleQty);
+                        invItem.lastSale = saleQty;
+                        invItem.initialStock = Number(invItem.initialStock ?? beforeStock) || 0;
+                        invItem.entries = Math.max(0, Number(invItem.entries) || 0);
+                        invItem.exits = Math.max(0, Number(invItem.exits) || 0) + saleQty;
+                        invItem.adjustments = Number(invItem.adjustments) || 0;
+                        invItem.lastUpdated = new Date().toISOString();
+                        inventoryRaw[key] = invItem;
+                    }
+                }
+                saveInventory(inventoryRaw);
+                await syncGlobalInventory_(true);
 
                 // 2. Guardar pedidos + puntos inmediatamente en la fila del usuario.
                 await apiRequest('updateUser', {
@@ -5602,20 +5620,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 currentUser.estadoPaquete = '0';
                 userPoints = totalPointsAfter;
 
-                localStorage.setItem(
-                    'sheibis_inventory_master_v1',
-                    JSON.stringify(inventoryRaw)
-                );
-                // Registrar cada salida para que el cuadre pueda comprobar:
-                // inicial + entradas - salidas + ajustes = stock actual.
-                for (const item of cart) {
-                    const key = String(item.id);
-                    const x = inventoryRaw[key];
-                    const qty = Math.max(0, Number(item.cantidad || 0));
-                    const after = Math.max(0, Number(x.stock) || 0);
-                    const before = after + qty;
-                    addInventoryMovement(key, 'sale', qty, 'Venta / pedido registrado', orderId, before, after);
-                }
+                saveInventory(inventoryRaw);
                 saveSession();
 
                 // WhatsApp se abre después de registrar correctamente la compra.
@@ -5638,14 +5643,22 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
             } catch (error) {
                 console.error('SHEIBIS · Error registrando compra:', error);
-                showToast(
-                    '❌ No se pudo guardar la compra en Google Sheets. No se agregaron los puntos.',
-                    { title: 'Error de registro', icon: 'fa-triangle-exclamation', duration: 7000 }
-                );
-                alert(
-                    'No se pudo registrar la compra en Google Sheets.\n\n' +
-                    'Revisa que el Google Apps Script tenga implementada la acción "createOrder".'
-                );
+                if(error && error.code === 'OUT_OF_STOCK'){
+                    await syncGlobalInventory_(true);
+                    showToast(
+                        `El producto \"${error.data?.productName || 'seleccionado'}\" ya no está disponible. El inventario se agotó antes de confirmar tu pedido.`,
+                        { title: 'Producto agotado', icon: 'fa-box-open', duration: 7000 }
+                    );
+                }else{
+                    showToast(
+                        'No se pudo registrar la compra en Google Sheets. No se agregaron los puntos.',
+                        { title: 'Error de registro', icon: 'fa-triangle-exclamation', duration: 7000 }
+                    );
+                    alert(
+                        'No se pudo registrar la compra en Google Sheets.\n\n' +
+                        'Revisa que el Google Apps Script tenga implementada la acción "createOrder".'
+                    );
+                }
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -6857,6 +6870,54 @@ function categoryName(id){const c=getCategories().find(x=>String(x.id)===String(
 function inventoryStatus(stock){stock=Number(stock)||0;if(stock<=0)return 'out';if(stock<=2)return 'low';return 'ok';}
 function setInventoryStock(id,newStock,soldQty=0){const inv=ensureInventory();if(!inv[id])return false;const before=Math.max(0,Number(inv[id].stock)||0);const after=Math.max(0,Number(newStock)||0);inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=Math.max(0,Number(soldQty)||0);inv[id].lastUpdated=new Date().toISOString();return saveInventory(inv);}
 
+// INVENTARIO GLOBAL: Google Sheets es la fuente oficial para todos los usuarios y dispositivos.
+let globalInventorySyncBusy=false;
+let globalInventoryLastSync='';
+
+async function syncGlobalInventory_(force=false){
+  if(globalInventorySyncBusy)return;
+  globalInventorySyncBusy=true;
+  try{
+    const data=await apiRequest('getInventory',{});
+    if(!data || data.ok===false)return;
+    const serverInventory=data.inventory||data.data||{};
+    const normalized={};
+    if(Array.isArray(serverInventory)){
+      serverInventory.forEach(function(x){if(x&&x.id!==undefined)normalized[String(x.id)]=x;});
+    }else if(serverInventory && typeof serverInventory==='object'){
+      Object.keys(serverInventory).forEach(function(id){normalized[String(id)]=serverInventory[id];});
+    }
+    if(Object.keys(normalized).length){
+      saveInventory(normalized);
+      globalInventoryLastSync=new Date().toISOString();
+      if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
+        try{SB_ADMIN.renderInventory();SB_ADMIN.renderDashboard();}catch(_){ }
+      }
+      if(typeof refreshStore==='function')refreshStore();
+    }
+  }catch(e){
+    console.warn('SHEIBIS · no se pudo sincronizar inventario global:',e.message);
+  }finally{globalInventorySyncBusy=false;}
+}
+
+async function saveGlobalInventoryChange_(id,stock,reason='Ajuste manual'){
+  try{
+    const data=await apiRequest('setInventory',{
+      id:String(id),
+      stock:Math.max(0,Number(stock)||0),
+      reason:String(reason||'Ajuste manual')
+    });
+    if(data && data.inventory)saveInventory(Array.isArray(data.inventory)?Object.fromEntries(data.inventory.map(x=>[String(x.id),x])):data.inventory);
+    await syncGlobalInventory_(true);
+    return true;
+  }catch(e){
+    console.error('SHEIBIS · error guardando inventario global:',e);
+    showToast(e.message||'No se pudo guardar el inventario global.',{title:'Inventario',icon:'fa-triangle-exclamation',duration:5500});
+    await syncGlobalInventory_(true);
+    return false;
+  }
+}
+
 
 function getProducts(){return Array.isArray(window.PRODUCTOS)?window.PRODUCTOS:[];}
 function getCategories(){return Array.isArray(window.CATALOGOS)?window.CATALOGOS:[];}
@@ -7301,6 +7362,7 @@ window.SB_ADMIN={
       addInventoryMovement(id,'adjustment',Math.abs(delta),'Ajuste manual','MANUAL',before,after);
     }else inv[id][key]=String(value).trim();
     saveInventory(inv);this.log('inventory',`Ajuste de inventario ID ${id}: ${before} → ${after}`);this.renderInventory();
+    saveGlobalInventoryChange_(id,after,'Ajuste manual');
   },
   adjustStock(id,delta){
     const inv=ensureInventory();if(!inv[id])return;
@@ -7311,6 +7373,7 @@ window.SB_ADMIN={
     inv[id].lastUpdated=now;saveInventory(inv);
     addInventoryMovement(id,realDelta>0?'entry':'exit',Math.abs(realDelta),realDelta>0?'Entrada manual':'Salida manual','MANUAL',before,after);
     this.log('inventory',`Stock ${realDelta<0?'reducido':'aumentado'} para ID ${id}: ${before} → ${after}`);this.renderInventory();
+    saveGlobalInventoryChange_(id,after,realDelta>0?'Entrada manual':'Salida manual');
   },
   exportInventoryRows(){
     const inv=ensureInventory(),rows=[['IMAGEN','SKU','PRODUCTO','CATEGORÍA','INICIAL','STOCK ANTES','ENTRADAS','SALIDAS','AJUSTES','STOCK ESPERADO','STOCK DESPUÉS','DIFERENCIA','CUADRE','ESTADO']];
@@ -7377,9 +7440,9 @@ document.addEventListener('DOMContentLoaded',function(){
   loadCategories();loadProducts();ensureInventory();refreshCategorySelect();refreshStore();SB_ADMIN.renderCategories();
   // Catálogo compartido: primero entra el usuario; la red se sincroniza después.
   // Esto evita que una respuesta lenta de Apps Script retrase el inicio.
-  setTimeout(function(){ syncGlobalCatalog_(true); },2000);
-  setInterval(function(){ syncGlobalCatalog_(); },60000);
-  window.addEventListener('focus',function(){ setTimeout(function(){ syncGlobalCatalog_(true); },300); });
+  setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },2000);
+  setInterval(function(){ syncGlobalCatalog_(); syncGlobalInventory_(); },15000);
+  window.addEventListener('focus',function(){ setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },300); });
   const logo=document.querySelector('.brand-top');
   if(logo){let n=0,t;logo.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();n++;clearTimeout(t);t=setTimeout(()=>n=0,2000);if(n>=5){n=0;clearTimeout(t);SB_ADMIN.openLogin();}},true);}
 }); 
