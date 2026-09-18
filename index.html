@@ -3223,7 +3223,13 @@ body > div[style*="z-index: 99999"] > div{
 .sheibis-image-modal__thumb.active{border-color:#c9a227;opacity:1;}
 @media(max-width:700px){.sheibis-image-modal{padding:10px}.sheibis-image-modal__panel{width:100%;height:100%;}.sheibis-image-modal__main{max-height:calc(100% - 105px);border-radius:12px}.sheibis-image-modal__nav{width:42px;height:42px}.sheibis-image-modal__close{top:0;right:0}.sheibis-image-modal__thumb{width:50px;height:50px}}
 body.sheibis-modal-open{overflow:hidden;}
-</style></head>
+</style><style id="sheibis-performance">
+/* Rendimiento: mantiene fluida la navegación cuando el catálogo crece. */
+.catalog-card,.product-detail-item,.sb-item,.catalog-product-preview{content-visibility:auto;contain-intrinsic-size:1px 260px;}
+.product-detail-item img,.catalog-image,.sb-item img{content-visibility:auto;}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
+</style>
+</head>
 <body>
 
     <!-- ================================================================
@@ -3678,7 +3684,7 @@ body.sheibis-modal-open{overflow:hidden;}
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzjKSP39kooERHX_cPGpr_BFeX7RsWC5kK1wb5sQkFldf8gPkMz3F12sLbn0__jtXF2/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbwaF5Z8GRcb7tW9_ApeqV-RHe6167FDYdtadeujGC-fZ7Q6pG582ZThvPP4bqvGAxJ4/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5597,7 +5603,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                          aria-label="${coming ? `Catálogo ${cat.nombre} próximamente` : `Abrir catálogo ${cat.nombre}`}"
                          ${coming ? 'title="Próximamente"' : ''}>
                         ${hasImage
-                            ? `<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy"></div>`
+                            ? `<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy" decoding="async"></div>`
                             : `<span class="catalog-icon"><i class="fas ${cat.icono || 'fa-folder-open'}"></i></span>`}
                         <div class="catalog-name">${cat.nombre}</div>
                         ${coming
@@ -5633,7 +5639,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                         <div class="product-detail-item ${p.agotado ? 'sheibis-out' : ''}" data-id="${p.id}" data-aos="fade-up">
                             <div class="product-detail-image sheibis-product-clickable" data-product-id="${p.id}" role="button" tabindex="0" aria-label="Ampliar imagen de ${p.nombre}" onclick="sheibisOpenProductImage(${p.id},0)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();sheibisOpenProductImage(${p.id},0)}">
                                 ${(() => { const before=Number(p.precioAntes)||0, current=Number(p.precio)||0, d=before>current?((before-current)/before)*100:0; return d>0 ? `<span class="product-discount-badge">-${d.toFixed(0)}%</span>` : ''; })()}
-                                ${hasImage ? `<img src="${(Array.isArray(p.imagenes) && p.imagenes.length ? p.imagenes[0] : p.imagen)}" alt="${p.nombre}" loading="lazy">` : `<span class="icon-placeholder"><i class="fas ${p.icono}"></i></span>`}
+                                ${hasImage ? `<img src="${(Array.isArray(p.imagenes) && p.imagenes.length ? p.imagenes[0] : p.imagen)}" alt="${p.nombre}" loading="lazy" decoding="async">` : `<span class="icon-placeholder"><i class="fas ${p.icono}"></i></span>`}
                             </div>
                             <div class="product-detail-info">
                                 <div class="product-detail-name">${p.nombre}</div>
@@ -5731,10 +5737,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         function calculatePointsForOrder(orderItems) {
             let points = 0;
             let totalItems = 0;
-            (Array.isArray(orderItems) ? orderItems : []).forEach(item => {
-                const qty = Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1);
-                points += qty;
-                totalItems += qty;
+            orderItems.forEach(item => {
+                if (item.precio >= CONFIG.minPriceForPoints) {
+                    points += item.cantidad;
+                    totalItems += item.cantidad;
+                }
             });
             return { points, totalItems };
         }
@@ -5778,225 +5785,250 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         // ================================================================
         // 15. SOLICITAR APROBACIÓN — WHATSAPP
         // ================================================================
-        window.requestApproval = function() {
-            /*
-             * WHATSAPP DIRECTO — MISMO COMPORTAMIENTO QUE "ABRIR WHATSAPP"
-             * El enlace se abre inmediatamente dentro del clic del usuario.
-             * Así no depende de popups después de un await ni de que termine
-             * Google Apps Script para abrir WhatsApp.
-             */
-            try {
-                if (!currentUser || currentUser.isGuest === true) {
-                    showToast('⚠️ Debes iniciar sesión para solicitar un pedido.', {
-                        title: 'Cuenta requerida',
-                        icon: 'fa-user-lock',
-                        duration: 5000
-                    });
-                    return;
-                }
+        window.requestApproval = async function() {
+            if (!currentUser || currentUser.isGuest === true) {
+                showToast('⚠️ Como INVITADO puedes explorar y usar el carrito. Para realizar un pedido debes crear una cuenta.', {
+                    title: 'Cuenta requerida',
+                    icon: 'fa-user-lock',
+                    duration: 5500
+                });
+                showAuth('login');
+                return;
+            }
 
-                if (!Array.isArray(cart) || cart.length === 0) {
-                    showToast('🛒 Tu carrito está vacío. Agrega productos antes de solicitar la aprobación.', {
-                        title: 'Carrito vacío',
-                        icon: 'fa-shopping-cart',
-                        duration: 4500
-                    });
-                    return;
-                }
+            if (cart.length === 0) {
+                alert('🛒 Tu carrito está vacío');
+                return;
+            }
 
-                /* Validación local únicamente cuando existe inventario conocido. */
-                try {
-                    const inv = typeof getInventory === 'function' ? getInventory() : {};
-                    for (const item of cart) {
-                        const productId = String(item.id ?? item.productId ?? '');
-                        const record = inv && inv[productId];
-                        if (record && record.stock !== undefined) {
-                            const available = Math.max(0, Number(record.stock) || 0);
-                            const requested = Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1);
-                            if (available < requested) {
-                                const productName = item.nombre || item.name || item.productName || 'Producto';
-                                showToast(
-                                    available <= 0
-                                        ? `❌ ${productName} ya no está disponible.`
-                                        : `⚠️ ${productName}: solo quedan ${available} unidad(es).`,
-                                    {
-                                        title: available <= 0 ? 'Producto agotado' : 'Stock insuficiente',
-                                        icon: available <= 0 ? 'fa-box-open' : 'fa-triangle-exclamation',
-                                        duration: 5500
-                                    }
-                                );
-                                return;
-                            }
+            const { points } = calculatePointsForOrder(cart);
+            const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            const paymentSelect = document.getElementById('cartPaymentMethod');
+            const metodoPago = paymentSelect ? String(paymentSelect.value || 'Efectivo') : 'Efectivo';
+
+            // Actualizar primero el inventario oficial para evitar usar una copia antigua.
+            await syncGlobalInventory_(true);
+
+            // Verificar inventario antes de registrar la compra.
+            const inventoryRaw = JSON.parse(localStorage.getItem('sheibis_inventory_master_v1') || '{}');
+            for (const item of cart) {
+                const invItem = inventoryRaw[String(item.id)] || {};
+                const available = Math.max(0, Number(invItem.stock) || 0);
+                if (available < Number(item.cantidad || 0)) {
+                    showToast(
+                        available <= 0
+                            ? `El producto "${item.nombre}" se encuentra agotado.`
+                            : `Solo quedan ${available} unidad${available === 1 ? '' : 'es'} de "${item.nombre}". Reduce la cantidad para continuar.`,
+                        {
+                            title: available <= 0 ? 'Producto agotado' : 'Stock insuficiente',
+                            kicker: 'SHEIBIS · INVENTARIO',
+                            icon: available <= 0 ? 'fa-box-open' : 'fa-triangle-exclamation',
+                            duration: 7000
                         }
-                    }
-                } catch (inventoryError) {
-                    console.warn('SHEIBIS · validación local de inventario omitida:', inventoryError);
+                    );
+                    return;
                 }
+            }
 
-                const paymentSelect = document.getElementById('paymentMethod');
-                const paymentMethod = paymentSelect
-                    ? String(paymentSelect.value || 'Efectivo')
-                    : 'Efectivo';
+            const orderId = 'SHE-' + Date.now().toString(36).toUpperCase() +
+                '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
 
-                const total = cart.reduce((sum, item) => {
-                    const price = Number(item.precio ?? item.price ?? 0) || 0;
-                    const qty = Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1);
-                    return sum + price * qty;
-                }, 0);
+            // Abrir WhatsApp inmediatamente con el clic para evitar que el navegador bloquee el popup.
+            let whatsappWindow = null;
+            try {
+                whatsappWindow = window.open('about:blank', '_blank');
+                if (whatsappWindow) {
+                    whatsappWindow.document.title = 'SHEIBIS · Preparando WhatsApp';
+                    whatsappWindow.document.body.innerHTML =
+                        '<div style="font-family:Arial,sans-serif;text-align:center;margin-top:20vh;color:#555;">Preparando tu solicitud de pedido…</div>';
+                }
+            } catch (e) {
+                console.warn('SHEIBIS · No se pudo preparar WhatsApp:', e);
+            }
 
-                // Cada unidad de producto comprado genera exactamente 1 punto.
-                const pointsEarned = cart.reduce((sum, item) => {
-                    return sum + Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1);
-                }, 0);
-                const now = new Date();
-                const orderId = 'ORD-' + now.getTime() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-                const orderNumber = String(orderId);
+            const now = new Date();
+            const orderNumber = orderId;
+            const totalPointsBefore = Number(userPoints) || 0;
+            const totalPointsAfter = totalPointsBefore + points;
 
-                const details = cart.map((item, index) => {
-                    const name = String(item.nombre || item.name || item.productName || 'Producto');
-                    const price = Number(item.precio ?? item.price ?? 0) || 0;
-                    const qty = Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1);
-                    const subtotal = price * qty;
-                    return `${index + 1}. ${name}\n   Cantidad: ${qty} × Q${price.toFixed(2)} = Q${subtotal.toFixed(2)}`;
-                }).join('\n\n');
+            const orderItems = cart.map(i => ({
+                id: i.id,
+                nombre: i.nombre,
+                cantidad: Number(i.cantidad || 0),
+                precio: Number(i.precio || 0)
+            }));
 
-                const customerName = String(currentUser.nombre || currentUser.name || 'Cliente');
-                const dateText = now.toLocaleString('es-GT', {
-                    dateStyle: 'medium',
-                    timeStyle: 'short'
+            let orderDetails = orderItems.map((item, index) => {
+                const subtotal = item.precio * item.cantidad;
+                return `  ${index + 1}. ${item.nombre} x${item.cantidad} → Q${subtotal.toFixed(2)}`;
+            }).join('\n');
+
+            const message =
+                `🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n` +
+                `────────────────────\n` +
+                `📋 *Cliente:* ${currentUser.nombre}\n` +
+                `📧 *Email:* ${currentUser.email}\n` +
+                `🆔 *Pedido:* ${orderId}\n` +
+                `📅 *Fecha:* ${now.toLocaleString()}\n` +
+                `────────────────────\n` +
+                `📦 *Detalle del Pedido*\n${orderDetails}\n` +
+                `────────────────────\n` +
+                `💰 *TOTAL: Q${total.toFixed(2)}*\n` +
+                `💳 *Método de Pago:* ${metodoPago}\n` +
+                `⭐ *Puntos generados:* ${points} pts\n` +
+                `🏆 *Puntos acumulados:* ${totalPointsAfter} pts\n` +
+                `────────────────────`;
+
+            const orderData = {
+                orderId,
+                orderNumber,
+                userId: currentUser.id,
+                nombre: currentUser.nombre || '',
+                email: currentUser.email || '',
+                date: now.toISOString(),
+                total: total.toFixed(2),
+                items: orderItems,
+                itemsText: orderDetails,
+                status: 'Pedido recibido',
+                metodoPago: metodoPago,
+                estadoPaquete: 0,
+                pointsEarned: points,
+                pointsBefore: totalPointsBefore,
+                pointsAfter: totalPointsAfter
+            };
+
+            const previousOrders = Array.isArray(userOrders) ? userOrders : [];
+            const updatedOrders = [...previousOrders, orderData];
+
+            const btn = document.querySelector('.btn-whatsapp');
+            if (btn) {
+                btn.disabled = true;
+                btn.dataset.originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando pedido...';
+            }
+
+            try {
+                // 1. Guardar la compra como una FILA independiente en Google Sheets.
+                const orderResult = await apiRequest('createOrder', {
+                    order: orderData
                 });
 
-                const message = [
-                    '🛍️ *SOLICITUD DE APROBACIÓN — SHEIBIS*',
-                    '',
-                    `👤 *Cliente:* ${customerName}`,
-                    `📅 *Fecha:* ${dateText}`,
-                    '',
-                    '📦 *DETALLES DEL PEDIDO*',
-                    details,
-                    '',
-                    `💰 *TOTAL: Q${total.toFixed(2)}*`,
-                    `💳 *Método de pago:* ${paymentMethod}`,
-                    `⭐ *Puntos generados:* ${pointsEarned}`,
-                    '',
-                    'Hola SHEIBIS, deseo solicitar la aprobación de este pedido. Gracias.'
-                ].filter(Boolean).join('\n');
+                // El servidor descuenta el inventario de forma atómica.
+                // Después de confirmar la compra, actualizamos la copia local con el resultado global.
+                const serverInventoryAfterSale = orderResult && (orderResult.inventory || orderResult.inventario);
+                if(serverInventoryAfterSale){
+                    const normalizedAfterSale={};
+                    if(Array.isArray(serverInventoryAfterSale)) serverInventoryAfterSale.forEach(x=>{if(x&&x.id!==undefined)normalizedAfterSale[String(x.id)]=x;});
+                    else Object.keys(serverInventoryAfterSale).forEach(id=>normalizedAfterSale[String(id)]=serverInventoryAfterSale[id]);
+                    if(Object.keys(normalizedAfterSale).length){
+                        Object.keys(normalizedAfterSale).forEach(id=>inventoryRaw[id]=normalizedAfterSale[id]);
+                    }
+                }else{
+                    for (const item of cart) {
+                        const key = String(item.id);
+                        const invItem = inventoryRaw[key] || { sku: 'SHE-' + key.padStart(4, '0'), stock: 0 };
+                        const beforeStock = Math.max(0, Number(invItem.stock) || 0);
+                        const saleQty = Math.max(0, Number(item.cantidad || 0));
+                        invItem.stockBefore = beforeStock;
+                        invItem.stock = Math.max(0, beforeStock - saleQty);
+                        invItem.lastSale = saleQty;
+                        invItem.initialStock = Number(invItem.initialStock ?? beforeStock) || 0;
+                        invItem.entries = Math.max(0, Number(invItem.entries) || 0);
+                        invItem.exits = Math.max(0, Number(invItem.exits) || 0) + saleQty;
+                        invItem.adjustments = Number(invItem.adjustments) || 0;
+                        invItem.lastUpdated = new Date().toISOString();
+                        inventoryRaw[key] = invItem;
+                    }
+                }
+                saveInventory(inventoryRaw);
+                await syncGlobalInventory_(true);
 
-                /*
-                 * ESTA ES LA PARTE CLAVE:
-                 * exactamente como el botón "Abrir WhatsApp" de Contacto:
-                 * window.open(...) se ejecuta directamente dentro del clic.
-                 */
-                const phone = String(CONFIG.phoneNumber || '40512960').replace(/\D/g, '');
-                const whatsappNumber = phone.length === 8 ? phone : (phone.length === 10 && phone.startsWith('502') ? phone : '50240512960');
-                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-                const whatsappWindow = window.open(whatsappUrl, '_blank');
+                // 2. Guardar pedidos + puntos inmediatamente en la fila del usuario.
+                await apiRequest('updateUser', {
+                    id: currentUser.id,
+                    fields: {
+                        orders: JSON.stringify(updatedOrders),
+                        totalOrders: Number(currentUser.totalOrders || 0) + 1,
+                        puntos: totalPointsAfter,
+                        estadoPaquete: 0
+                    }
+                });
 
-                /* Si el navegador devuelve null, intentamos navegación directa. */
-                if (!whatsappWindow) {
-                    window.location.href = whatsappUrl;
-                    return;
+                // Actualizar estado local solo después de que Google Sheets confirme.
+                userOrders = updatedOrders;
+                currentUser.orders = JSON.stringify(updatedOrders);
+                currentUser.totalOrders = Number(currentUser.totalOrders || 0) + 1;
+                currentUser.puntos = totalPointsAfter;
+                currentUser.estadoPaquete = '0';
+                userPoints = totalPointsAfter;
+
+                saveInventory(inventoryRaw);
+                saveSession();
+
+                // Enviar la solicitud a WhatsApp en la ventana preparada durante el clic.
+                const encodedMsg = encodeURIComponent(message);
+                const whatsappUrl = `https://wa.me/502${String(CONFIG.phoneNumber).replace(/[^0-9]/g, '')}?text=${encodedMsg}`;
+
+                if (whatsappWindow && !whatsappWindow.closed) {
+                    whatsappWindow.location.href = whatsappUrl;
+                } else {
+                    const fallbackWindow = window.open(whatsappUrl, '_blank');
+                    if (!fallbackWindow) {
+                        showToast(
+                            'WhatsApp fue bloqueado por el navegador. Permite ventanas emergentes para SHEIBIS y vuelve a solicitar el pedido.',
+                            { title: 'WhatsApp bloqueado', icon: 'fa-brands fa-whatsapp', duration: 8000 }
+                        );
+                    }
                 }
 
-                /*
-                 * WhatsApp ya se abrió. Ahora registramos el pedido sin bloquear
-                 * la apertura del chat. Si el servidor falla, el usuario conserva
-                 * su mensaje de WhatsApp y recibe una notificación del problema.
-                 */
-                (async function registerOrderAfterWhatsApp() {
-                    try {
-                        const orderData = {
-                            orderId,
-                            orderNumber,
-                            userId: currentUser.id,
-                            nombre: customerName,
-                            email: customerEmail,
-                            fecha: now.toISOString(),
-                            estado: 'Pendiente de aprobación',
-                            metodoPago: paymentMethod,
-                            tipoPedido: 'WhatsApp',
-                            detalles: cart.map(item => ({
-                                id: item.id,
-                                nombre: item.nombre || item.name || item.productName || 'Producto',
-                                precio: Number(item.precio ?? item.price ?? 0) || 0,
-                                cantidad: Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1),
-                                subtotal: (Number(item.precio ?? item.price ?? 0) || 0) * Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1)
-                            })),
-                            total,
-                            puntosGanados: pointsEarned,
-                            puntosAcumulados: (Number(currentUser.puntos ?? userPoints ?? 0) || 0) + pointsEarned
-                        };
+                menuBadgeOrders.textContent = userOrders.length;
+                menuUserPoints.textContent = `✦ ${userPoints} puntos`;
+                pointsDisplay.textContent = userPoints;
+                updateCartUI();
 
-                        try {
-                            const result = await apiRequest('createOrder', { order: orderData });
-                            if (result && result.inventory) {
-                                try {
-                                    const localInv = getInventory();
-                                    Object.keys(result.inventory).forEach(id => {
-                                        localInv[String(id)] = { ...localInv[String(id)], ...result.inventory[id] };
-                                    });
-                                    saveInventory(localInv);
-                                } catch (_) {}
-                            }
-                        } catch (orderError) {
-                            console.error('SHEIBIS · pedido no registrado en servidor:', orderError);
-                            showToast('⚠️ WhatsApp se abrió correctamente, pero el pedido no pudo registrarse automáticamente en el servidor.', {
-                                title: 'Aviso de pedido',
-                                icon: 'fa-triangle-exclamation',
-                                duration: 6500
-                            });
-                        }
+                showToast(
+                    `✅ Compra registrada. +${points} puntos agregados inmediatamente.`,
+                    { title: 'Compra registrada', icon: 'fa-star', duration: 6500 }
+                );
 
-                        try {
-                            const updatedOrders = Array.isArray(userOrders) ? userOrders.slice() : [];
-                            updatedOrders.push({
-                                ...orderData,
-                                status: 'Pendiente de aprobación'
-                            });
-                            await apiRequest('updateUser', {
-                                id: currentUser.id,
-                                fields: {
-                                    puntos: pointsAfter,
-                                    orders: JSON.stringify(updatedOrders),
-                                    totalOrders: updatedOrders.length
-                                }
-                            });
-                            userOrders = updatedOrders;
-                            currentUser.puntos = pointsAfter;
-                            currentUser.orders = JSON.stringify(updatedOrders);
-                            currentUser.totalOrders = updatedOrders.length;
-                            userPoints = pointsAfter;
-                            saveSession();
-                        } catch (userError) {
-                            console.warn('SHEIBIS · actualización de usuario omitida:', userError);
-                        }
-
-                        try {
-                            if (typeof clearCart === 'function') clearCart();
-                            else {
-                                cart.length = 0;
-                                updateCartUI();
-                            }
-                        } catch (_) {}
-
-                        try {
-                            if (menuBadgeOrders) menuBadgeOrders.textContent = userOrders.length;
-                            if (menuUserPoints) menuUserPoints.textContent = `✦ ${userPoints} puntos`;
-                            if (pointsDisplay) pointsDisplay.textContent = userPoints;
-                        } catch (_) {}
-
-                    } catch (error) {
-                        console.error('SHEIBIS · error posterior al abrir WhatsApp:', error);
-                    }
-                })();
+                cart = [];
+                if (paymentSelect) paymentSelect.value = 'Efectivo';
+                updateCartUI();
+                cartEl.classList.remove('active');
 
             } catch (error) {
-                console.error('SHEIBIS · WhatsApp:', error);
-                showToast('❌ No se pudo abrir WhatsApp. Verifica que el navegador permita ventanas emergentes.', {
-                    title: 'WhatsApp',
-                    icon: 'fa-whatsapp',
-                    duration: 6000
-                });
+                console.error('SHEIBIS · Error registrando compra:', error);
+                if (whatsappWindow && !whatsappWindow.closed) {
+                    try { whatsappWindow.close(); } catch (_) {}
+                }
+
+                if(error && (error.code === 'OUT_OF_STOCK' || error.code === 'INSUFFICIENT_STOCK')){
+                    await syncGlobalInventory_(true);
+                    const d = error.data || {};
+                    const available = Math.max(0, Number(d.available) || 0);
+                    const productName = d.productName || 'seleccionado';
+                    showToast(
+                        error.code === 'OUT_OF_STOCK'
+                            ? `"${productName}" se agotó antes de confirmar tu pedido. No se registró la compra.`
+                            : `"${productName}" no tiene suficiente stock. Disponible: ${available}. No se registró la compra.`,
+                        {
+                            title: error.code === 'OUT_OF_STOCK' ? 'Producto agotado' : 'Stock insuficiente',
+                            kicker: 'SHEIBIS · INVENTARIO',
+                            icon: error.code === 'OUT_OF_STOCK' ? 'fa-box-open' : 'fa-triangle-exclamation',
+                            duration: 8000
+                        }
+                    );
+                }else{
+                    showToast(
+                        'No se pudo registrar la compra en Google Sheets. No se modificó el inventario ni se agregaron los puntos.',
+                        { title: 'Error de registro', kicker: 'SHEIBIS · SERVIDOR', icon: 'fa-triangle-exclamation', duration: 7000 }
+                    );
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = btn.dataset.originalText || '<i class="fab fa-whatsapp"></i> Solicitar Aprobación';
+                }
             }
         };
         // ================================================================
@@ -7211,6 +7243,16 @@ function setInventoryStock(id,newStock,soldQty=0){const inv=ensureInventory();if
 // INVENTARIO GLOBAL: Google Sheets es la fuente oficial para todos los usuarios y dispositivos.
 let globalInventorySyncBusy=false;
 let globalInventoryLastSync='';
+let globalInventorySignature='';
+
+function inventorySignature_(inv){
+  try{
+    return Object.keys(inv||{}).sort().map(function(id){
+      const x=inv[id]||{};
+      return id+':'+Number(x.stock||0)+':'+Number(x.entries||0)+':'+Number(x.exits||0)+':'+Number(x.adjustments||0)+':'+String(x.lastUpdated||'');
+    }).join('|');
+  }catch(_){return ''; }
+}
 
 async function syncGlobalInventory_(force=false){
   if(globalInventorySyncBusy)return;
@@ -7226,12 +7268,19 @@ async function syncGlobalInventory_(force=false){
       Object.keys(serverInventory).forEach(function(id){normalized[String(id)]=serverInventory[id];});
     }
     if(Object.keys(normalized).length){
+      const nextSignature=inventorySignature_(normalized);
+      const changed=nextSignature!==globalInventorySignature;
       saveInventory(normalized);
+      globalInventorySignature=nextSignature;
       globalInventoryLastSync=new Date().toISOString();
-      if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
-        try{SB_ADMIN.renderInventory();SB_ADMIN.renderDashboard();}catch(_){ }
+      if(changed || force){
+        if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
+          try{SB_ADMIN.renderInventory();SB_ADMIN.renderDashboard();}catch(_){ }
+        }
+        if(changed && typeof refreshStore==='function')refreshStore();
       }
-      if(typeof refreshStore==='function')refreshStore();
+    }else{
+      globalInventoryLastSync=new Date().toISOString();
     }
   }catch(e){
     console.warn('SHEIBIS · no se pudo sincronizar inventario global:',e.message);
@@ -7262,6 +7311,8 @@ function getCategories(){return Array.isArray(window.CATALOGOS)?window.CATALOGOS
 let globalCatalogSaveTimer=null;
 let globalCatalogSyncBusy=false;
 let globalCatalogLastServerUpdate='';
+let globalCatalogLastSync='';
+let globalCatalogSignature='';
 
 function queueGlobalCatalogSave_(){
   clearTimeout(globalCatalogSaveTimer);
@@ -7319,26 +7370,32 @@ async function syncGlobalCatalog_(force=false){
       if(lp && !Array.isArray(sp.imagenes) && Array.isArray(lp.imagenes)) sp.imagenes=lp.imagenes.slice();
     });
 
-    // Google Sheets es la FUENTE OFICIAL. Reemplazamos la copia local.
-    if(Array.isArray(window.PRODUCTOS)){
-      window.PRODUCTOS.length=0;
-      serverProducts.forEach(p=>window.PRODUCTOS.push(p));
-    }
-    if(Array.isArray(window.CATALOGOS)){
-      window.CATALOGOS.length=0;
-      serverCategories.forEach(c=>window.CATALOGOS.push(c));
-    }
+    // Google Sheets es la FUENTE OFICIAL. Solo redibujamos si realmente cambió el catálogo.
+    const nextCatalogSignature=JSON.stringify({p:serverProducts,c:serverCategories});
+    const catalogChanged=nextCatalogSignature!==globalCatalogSignature;
+    if(catalogChanged){
+      if(Array.isArray(window.PRODUCTOS)){
+        window.PRODUCTOS.length=0;
+        serverProducts.forEach(p=>window.PRODUCTOS.push(p));
+      }
+      if(Array.isArray(window.CATALOGOS)){
+        window.CATALOGOS.length=0;
+        serverCategories.forEach(c=>window.CATALOGOS.push(c));
+      }
 
-    try{
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
-      localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
-    }catch(_){}
+      try{
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+        localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
+      }catch(_){}
 
-    refreshStore();
-    if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
-      SB_ADMIN.render();
-      SB_ADMIN.renderCategories();
+      refreshStore();
+      if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
+        SB_ADMIN.render();
+        SB_ADMIN.renderCategories();
+      }
+      globalCatalogSignature=nextCatalogSignature;
     }
+    globalCatalogLastSync=new Date().toISOString();
   }catch(e){
     // Si no hay conexión temporal, se mantiene la copia local.
     console.warn('SHEIBIS · no se pudo sincronizar catálogo global:',e.message);
@@ -7395,7 +7452,7 @@ function renderCategoryList(){
   const count=document.getElementById('sbCategoryCount');if(count)count.textContent=cats.length;
   el.innerHTML=cats.map(c=>`
     <div class="sb-item" data-category-id="${esc(c.id)}">
-      ${c.imagen?`<img src="${esc(c.imagen)}" alt="" onerror="this.style.display='none'">`:`<div style="width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.07);color:#d4af37"><i class="fas ${esc(c.icono||'fa-folder-open')}"></i></div>`}
+      ${c.imagen?`<img src="${esc(c.imagen)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">`:`<div style="width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.07);color:#d4af37"><i class="fas ${esc(c.icono||'fa-folder-open')}"></i></div>`}
       <div class="sb-info"><strong>${esc(c.nombre)}</strong><small>${c.proximamente!==false?'Próximamente':'Activo'} · ${getProducts().filter(p=>String(p.categoria)===String(c.id)).length} productos</small></div>
       <div class="sb-actions">
         <button type="button" class="sb-btn sb-cat-move" data-cat-action="up" data-id="${esc(c.id)}" title="Mover arriba" aria-label="Mover ${esc(c.nombre)} arriba">↑</button>
@@ -7675,7 +7732,7 @@ window.SB_ADMIN={
     body.innerHTML=list.map(p=>{
       const id=String(p.id),x=inv[id]||{},stock=Math.max(0,Number(x.stock)||0),before=Math.max(0,Number(x.stockBefore??stock)||0),initial=Math.max(0,Number(x.initialStock)||0),entries=Math.max(0,Number(x.entries)||0),exits=Math.max(0,Number(x.exits)||0),adjustments=Number(x.adjustments)||0,expected=inventoryExpected(x),diff=stock-expected,st=inventoryStatus(stock),label=st==='out'?'AGOTADO':st==='low'?'STOCK BAJO':'DISPONIBLE',cls=st==='out'?'sb-status-out':st==='low'?'sb-status-low':'sb-status-good',reconciled=Math.abs(diff)<0.000001;
       return `<tr>
-        <td>${p.imagen?`<img class="sb-inv-img" src="${esc(p.imagen)}" onerror="this.style.display='none'">`:'—'}</td>
+        <td>${p.imagen?`<img loading="lazy" decoding="async" class="sb-inv-img" src="${esc(p.imagen)}" onerror="this.style.display='none'">`:'—'}</td>
         <td><span class="sb-inv-code">${esc(x.sku||'SHE-'+id.padStart(4,'0'))}</span></td>
         <td><span class="sb-inv-product">${esc(p.nombre)}</span><span class="sb-inv-sub">ID #${esc(id)}</span></td>
         <td>${esc(categoryName(p.categoria))}</td>
@@ -7722,7 +7779,7 @@ window.SB_ADMIN={
   },
   exportInventoryExcel(){const rows=this.exportInventoryRows(),html=`<html><head><meta charset="UTF-8"><style>table{border-collapse:collapse;font-family:Arial;font-size:12px}th,td{border:1px solid #999;padding:8px}th{background:#d4af37;color:#111;font-weight:bold}td{mso-number-format:"\\@"}</style></head><body><h2>SHEIBIS — INVENTARIO DE PRODUCTOS</h2><table>${rows.map((r,i)=>'<tr>'+r.map(v=>`<${i?'td':'th'}>${esc(v)}</${i?'td':'th'}>`).join('')+'</tr>').join('')}</table></body></html>`,blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8;'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SHEIBIS_INVENTARIO_'+new Date().toISOString().slice(0,10)+'.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);this.log('backup','Inventario exportado a Excel');},
   exportInventoryPDF(){const view=document.getElementById('sbInventoryView');if(!view)return;const was=view.style.display;view.style.display='block';setTimeout(()=>{window.print();view.style.display=was;},100);},
-  render(){const el=document.getElementById('sbProductList');if(!el)return;const q=(document.getElementById('sbSearch')?.value||'').trim().toLowerCase();const list=getProducts().filter(p=>!q||[p.nombre,p.id,p.categoria,categoryName(p.categoria)].join(' ').toLowerCase().includes(q));if(!list.length){el.innerHTML='<div style="padding:18px;color:rgba(255,255,255,.55);text-align:center">No hay productos.</div>';return;}el.innerHTML=list.map(p=>{const price=Number(p.precio)||0,before=Number(p.precioAntes)||0,d=before>price?((before-price)/before)*100:(Number(p.descuento)||0);return `<div class="sb-item" data-product-id="${esc(p.id)}">${p.imagen?`<img src="${esc(p.imagen)}" alt="" onerror="this.style.display='none'">`:''}<div class="sb-info"><strong>${esc(p.nombre)}</strong><small>${esc(categoryName(p.categoria))} · Q${price.toFixed(2)}${before>price?` · antes Q${before.toFixed(2)} · -${d.toFixed(0)}%`:''}</small></div><div class="sb-actions"><button type="button" class="sb-btn sb-edit" data-action="edit" data-id="${esc(p.id)}">✏️</button><button type="button" class="sb-btn sb-del" data-action="delete" data-id="${esc(p.id)}">🗑️</button></div></div>`;}).join('');},
+  render(){const el=document.getElementById('sbProductList');if(!el)return;const q=(document.getElementById('sbSearch')?.value||'').trim().toLowerCase();const list=getProducts().filter(p=>!q||[p.nombre,p.id,p.categoria,categoryName(p.categoria)].join(' ').toLowerCase().includes(q));if(!list.length){el.innerHTML='<div style="padding:18px;color:rgba(255,255,255,.55);text-align:center">No hay productos.</div>';return;}el.innerHTML=list.map(p=>{const price=Number(p.precio)||0,before=Number(p.precioAntes)||0,d=before>price?((before-price)/before)*100:(Number(p.descuento)||0);return `<div class="sb-item" data-product-id="${esc(p.id)}">${p.imagen?`<img loading="lazy" decoding="async" src="${esc(p.imagen)}" alt="" onerror="this.style.display='none'">`:''}<div class="sb-info"><strong>${esc(p.nombre)}</strong><small>${esc(categoryName(p.categoria))} · Q${price.toFixed(2)}${before>price?` · antes Q${before.toFixed(2)} · -${d.toFixed(0)}%`:''}</small></div><div class="sb-actions"><button type="button" class="sb-btn sb-edit" data-action="edit" data-id="${esc(p.id)}">✏️</button><button type="button" class="sb-btn sb-del" data-action="delete" data-id="${esc(p.id)}">🗑️</button></div></div>`;}).join('');},
   renderCategories(){renderCategoryList();},
 
   add(){this.cancelForm();const f=document.getElementById('sbProductForm');if(!f)return;refreshCategorySelect();f.reset();document.getElementById('sbId').value='';document.getElementById('sbPrice').value='';document.getElementById('sbPriceBefore').value='';document.getElementById('sbAgotado').checked=false;f.classList.add('show');this.updateDiscountPreview();document.getElementById('sbStatus').textContent='Nuevo producto: precio actual + precio antes calculan el descuento automáticamente.';document.getElementById('sbName')?.focus();},
@@ -7778,9 +7835,20 @@ document.addEventListener('DOMContentLoaded',function(){
   loadCategories();loadProducts();ensureInventory();refreshCategorySelect();refreshStore();SB_ADMIN.renderCategories();
   // Catálogo compartido: primero entra el usuario; la red se sincroniza después.
   // Esto evita que una respuesta lenta de Apps Script retrase el inicio.
-  setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },2000);
-  setInterval(function(){ syncGlobalCatalog_(); syncGlobalInventory_(); },15000);
-  window.addEventListener('focus',function(){ setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },300); });
+  setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },1200);
+  // Menos llamadas de red y menos repintados: el pedido actualiza el stock al instante;
+  // el resto de usuarios se sincroniza en segundo plano sin castigar el rendimiento.
+  setInterval(function(){ syncGlobalInventory_(); },20000);
+  setInterval(function(){ syncGlobalCatalog_(); },60000);
+  window.addEventListener('focus',function(){
+    setTimeout(function(){
+      const now=Date.now();
+      const invAge=globalInventoryLastSync ? now-Date.parse(globalInventoryLastSync) : Infinity;
+      const catAge=globalCatalogLastSync ? now-Date.parse(globalCatalogLastSync) : Infinity;
+      if(invAge>5000)syncGlobalInventory_(true);
+      if(catAge>15000)syncGlobalCatalog_(true);
+    },250);
+  });
   const logo=document.querySelector('.brand-top');
   if(logo){let n=0,t;logo.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();n++;clearTimeout(t);t=setTimeout(()=>n=0,2000);if(n>=5){n=0;clearTimeout(t);SB_ADMIN.openLogin();}},true);}
 }); 
