@@ -5505,6 +5505,19 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             const orderId = 'SHE-' + Date.now().toString(36).toUpperCase() +
                 '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
 
+            // Abrir WhatsApp inmediatamente con el clic para evitar que el navegador bloquee el popup.
+            let whatsappWindow = null;
+            try {
+                whatsappWindow = window.open('about:blank', '_blank');
+                if (whatsappWindow) {
+                    whatsappWindow.document.title = 'SHEIBIS · Preparando WhatsApp';
+                    whatsappWindow.document.body.innerHTML =
+                        '<div style="font-family:Arial,sans-serif;text-align:center;margin-top:20vh;color:#555;">Preparando tu solicitud de pedido…</div>';
+                }
+            } catch (e) {
+                console.warn('SHEIBIS · No se pudo preparar WhatsApp:', e);
+            }
+
             const now = new Date();
             const orderNumber = orderId;
             const totalPointsBefore = Number(userPoints) || 0;
@@ -5623,9 +5636,21 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 saveInventory(inventoryRaw);
                 saveSession();
 
-                // WhatsApp se abre después de registrar correctamente la compra.
+                // Enviar la solicitud a WhatsApp en la ventana preparada durante el clic.
                 const encodedMsg = encodeURIComponent(message);
-                window.open(`https://wa.me/${CONFIG.phoneNumber}?text=${encodedMsg}`, '_blank');
+                const whatsappUrl = `https://wa.me/${CONFIG.phoneNumber}?text=${encodedMsg}`;
+
+                if (whatsappWindow && !whatsappWindow.closed) {
+                    whatsappWindow.location.href = whatsappUrl;
+                } else {
+                    const fallbackWindow = window.open(whatsappUrl, '_blank');
+                    if (!fallbackWindow) {
+                        showToast(
+                            'WhatsApp fue bloqueado por el navegador. Permite ventanas emergentes para SHEIBIS y vuelve a solicitar el pedido.',
+                            { title: 'WhatsApp bloqueado', icon: 'fa-brands fa-whatsapp', duration: 8000 }
+                        );
+                    }
+                }
 
                 menuBadgeOrders.textContent = userOrders.length;
                 menuUserPoints.textContent = `✦ ${userPoints} puntos`;
