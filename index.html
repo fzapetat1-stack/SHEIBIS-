@@ -3166,10 +3166,6 @@ body.sheibis-modal-open{overflow:hidden;}
                 <span>Historial de Pedidos</span>
                 <span class="menu-badge" id="menuBadgeOrders">0</span>
             </div>
-            <div class="menu-item" onclick="menuAction('account')">
-                <i class="fas fa-user-circle"></i>
-                <span>Mi cuenta</span>
-            </div>
             <div class="menu-item" onclick="menuAction('photo')">
                 <i class="fas fa-camera"></i>
                 <span>Agregar / cambiar foto</span>
@@ -3336,6 +3332,7 @@ body.sheibis-modal-open{overflow:hidden;}
         <button class="toast-close" onclick="closeToast()" aria-label="Cerrar">
             <i class="fas fa-times"></i>
         </button>
+        <button id="toastContinue" class="toast-continue" onclick="closeToast()">Continuar</button>
         <div id="toastProgress" class="toast-progress"></div>
     </div>
 
@@ -3440,7 +3437,7 @@ body.sheibis-modal-open{overflow:hidden;}
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxpaZnzCABVsjB7SCfNZs3_bNZX-bZQkFUDRg15Ndr9iTCmCrbjsbJUKfvmFH8S93bd/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyIoCWJAj-cUZjwCtTOhgbKV6uS_pRDoEZop7pP8xHmQoqHk_aUs0ysLMz8cstjIEe_/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -4710,7 +4707,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbxpaZnzCABVsjB7SCfNZs3_bNZX-bZQkFUDRg15Ndr9iTCmCrbjsbJUKfvmFH8S93bd/exec
+     https://script.google.com/macros/s/AKfycbyIoCWJAj-cUZjwCtTOhgbKV6uS_pRDoEZop7pP8xHmQoqHk_aUs0ysLMz8cstjIEe_/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -5821,6 +5818,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             const kicker = options.kicker || 'SHEIBIS';
             const icon = options.icon || 'fa-check-circle';
             const duration = Number(options.duration) > 0 ? Number(options.duration) : 5000;
+            const showContinue = options.continueButton !== false;
 
             const titleEl = document.getElementById('toastTitle');
             const kickerEl = document.getElementById('toastKicker');
@@ -5832,6 +5830,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             if (kickerEl) kickerEl.textContent = kicker;
             if (messageEl) messageEl.textContent = message;
             if (iconEl) iconEl.className = `fas ${icon}`;
+            const continueEl = document.getElementById('toastContinue');
+            if (continueEl) continueEl.style.display = showContinue ? 'block' : 'none';
 
             if (toastTimer) clearTimeout(toastTimer);
             if (progressEl) {
@@ -5892,6 +5892,12 @@ function updateStats() {
         }
 
 setInterval(updateOnlineUsers, ONLINE_HEARTBEAT_MS);
+
+        // Sincronización rápida: los cambios de puntos realizados por administración
+        // aparecen automáticamente en la cuenta del cliente sin cerrar sesión.
+        setInterval(function(){
+            if (currentUser && currentUser.isGuest !== true && currentUser.id) refreshPointsSilently();
+        }, 5000);
 
         // ================================================================
         // 17. ENTRAR COMO INVITADO
@@ -6584,6 +6590,35 @@ window.premiumMenuAction=async function(action){
 </style>
 
 
+<style id="sheibis-toast-premium-v2">
+/* SHEIBIS · NOTIFICACIÓN PREMIUM CENTRADA TIPO MÓVIL */
+.toast-notification{
+  top:24px!important;left:50%!important;right:auto!important;bottom:auto!important;
+  width:min(430px,calc(100vw - 28px))!important;min-height:118px!important;
+  padding:18px 18px 45px!important;display:grid!important;
+  grid-template-columns:52px 1fr 30px!important;gap:13px!important;
+  border-radius:24px!important;background:linear-gradient(145deg,rgba(18,27,46,.97),rgba(7,12,23,.96))!important;
+  border:1px solid rgba(240,214,138,.28)!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.58),0 10px 45px rgba(212,175,55,.10),inset 0 1px 0 rgba(255,255,255,.06)!important;
+  transform:translate3d(-50%,-26px,0) scale(.96)!important;opacity:0!important;pointer-events:none!important;
+  transition:opacity .32s cubic-bezier(.16,1,.3,1),transform .38s cubic-bezier(.16,1,.3,1)!important;
+  overflow:hidden!important;
+}
+.toast-notification.show{opacity:1!important;transform:translate3d(-50%,0,0) scale(1)!important;pointer-events:auto!important}
+.toast-notification:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 0%,rgba(240,214,138,.13),transparent 42%),radial-gradient(circle at 100% 100%,rgba(77,163,255,.08),transparent 45%);pointer-events:none}
+.toast-content,.toast-icon-wrap,.toast-close,.toast-continue{position:relative;z-index:2}
+.toast-icon-wrap{width:52px!important;height:52px!important;border-radius:17px!important;box-shadow:0 8px 28px rgba(212,175,55,.10)!important}
+.toast-continue{position:absolute;z-index:3;left:18px;right:18px;bottom:10px;height:30px;border:0;border-radius:11px;background:linear-gradient(135deg,#d4af37,#f0d68a);color:#07101d;font:800 .64rem 'Space Grotesk',sans-serif;letter-spacing:1.2px;cursor:pointer;box-shadow:0 6px 18px rgba(212,175,55,.16);transition:transform .2s ease,filter .2s ease}
+.toast-continue:hover{transform:translateY(-1px);filter:brightness(1.04)}
+.toast-progress{height:3px!important;background:linear-gradient(90deg,#d4af37,#f0d68a,#7cc7ff)!important}
+@media(max-width:600px){.toast-notification{top:12px!important;width:calc(100vw - 20px)!important;min-height:116px!important}}
+</style>
+
+<style id="sheibis-users-premium">
+.sb-users-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:15px}.sb-users-head h3{margin:0;color:#fff;font:700 1.25rem 'Space Grotesk',sans-serif}.sb-users-head p{margin:4px 0 0;color:#7f8da0;font-size:.7rem}.sb-users-live{display:flex;align-items:center;gap:8px;padding:10px 15px;border-radius:16px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15)}.sb-users-live span{width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 6px rgba(34,197,94,.08)}.sb-users-live strong{color:#fff;font:800 1.15rem Orbitron,sans-serif}.sb-users-live small{color:#83a88d}.sb-users-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:13px}.sb-users-kpis>div{padding:15px;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07)}.sb-users-kpis b{display:block;color:#fff;font:800 1.3rem Orbitron,sans-serif}.sb-users-kpis span{color:#77869a;font-size:.62rem}.sb-users-online{padding:15px;border-radius:18px;background:linear-gradient(135deg,rgba(34,197,94,.055),rgba(255,255,255,.02));border:1px solid rgba(34,197,94,.12);margin-bottom:14px}.sb-users-online-title{color:#dfe9f6;font-size:.7rem;font-weight:800;margin-bottom:10px}.sb-users-online-list{display:flex;gap:8px;flex-wrap:wrap}.sb-online-chip{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);color:#fff;font-size:.68rem}.sb-online-chip .dot{width:7px;height:7px;border-radius:50%;background:#22c55e}.sb-online-chip small{color:#718096;font-size:.52rem;letter-spacing:.6px}.sb-users-table-wrap{overflow:auto;border:1px solid rgba(255,255,255,.07);border-radius:18px}.sb-users-table{width:100%;border-collapse:collapse;min-width:820px}.sb-users-table th{padding:12px;text-align:left;color:#74839a;font-size:.57rem;text-transform:uppercase;letter-spacing:1px;background:rgba(255,255,255,.025)}.sb-users-table td{padding:12px;border-top:1px solid rgba(255,255,255,.05);color:#cdd7e5;font-size:.68rem;vertical-align:middle}.sb-users-table td strong{display:block;color:#fff}.sb-users-table td small{display:block;color:#64748b;font-size:.52rem;margin-top:2px}.sb-user-status{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:.5rem;font-weight:800;letter-spacing:.6px}.sb-user-status.online{color:#86efac;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.16)}.sb-user-status.offline{color:#8290a3;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}.sb-points-editor{display:flex;align-items:center;gap:5px}.sb-points-editor input{width:100px;padding:8px 9px;border-radius:10px;border:1px solid rgba(212,175,55,.18);background:rgba(0,0,0,.22);color:#fff;outline:none}.sb-points-editor input:focus{border-color:rgba(212,175,55,.55);box-shadow:0 0 0 3px rgba(212,175,55,.06)}.sb-points-editor span{font-size:.5rem;color:#d4af37;font-weight:800}.sb-points-save{padding:8px 10px!important;font-size:.58rem!important}.sb-users-empty{padding:18px!important;text-align:center;color:#718096!important}.sb-users-loading,.sb-users-error{padding:35px;text-align:center;border:1px solid rgba(255,255,255,.07);border-radius:18px;color:#9aa8bb}.sb-users-error{display:flex;flex-direction:column;gap:9px;align-items:center}.sb-users-error strong{color:#fff}.sb-users-error .sb-btn{width:max-content}
+@media(max-width:700px){.sb-users-kpis{grid-template-columns:1fr}.sb-users-table-wrap{margin-left:-4px;margin-right:-4px}}
+</style>
+
 <style id="sheibis-admin-v11">
 /* ===== SHEIBIS ADMIN V11 · CENTRO DE CONTROL ===== */
 #sbAdminPanel .sb-box{max-width:1450px!important;width:min(96vw,1450px)!important;max-height:94vh!important}
@@ -7237,6 +7272,60 @@ window.SB_ADMIN={
     if(tab==='tools')this.renderTools();
     if(tab==='inventory')this.renderInventory();
     if(tab==='products'){this.render();this.renderCategories();}
+  },
+
+  async renderUsers(){
+    const el=document.getElementById('sbV11Users');
+    if(!el)return;
+    el.innerHTML=`<div class="sb-users-loading">Cargando clientes y usuarios en línea…</div>`;
+    try{
+      const [usersData,onlineData]=await Promise.all([
+        apiRequest('getUsers',{}, {timeout:20000}),
+        apiRequest('getOnlineUsers',{}, {timeout:20000})
+      ]);
+      const users=Array.isArray(usersData?.users)?usersData.users:[];
+      const online=Array.isArray(onlineData?.users)?onlineData.users:[];
+      const onlineIds=new Set(online.map(x=>String(x.userId||'')));
+      el.innerHTML=`
+        <div class="sb-users-head">
+          <div><h3>Clientes y usuarios</h3><p>Datos sincronizados con Google Sheets · Usuarios</p></div>
+          <div class="sb-users-live"><span></span><strong>${Number(onlineData?.count)||0}</strong><small>en línea</small></div>
+        </div>
+        <div class="sb-users-kpis">
+          <div><b>${users.length}</b><span>Clientes registrados</span></div>
+          <div><b>${Number(onlineData?.count)||0}</b><span>Usuarios en línea</span></div>
+          <div><b>${users.reduce((n,u)=>n+(Number(u.puntos)||0),0)}</b><span>Puntos acumulados</span></div>
+        </div>
+        <div class="sb-users-online">
+          <div class="sb-users-online-title"><i class="fas fa-signal"></i> Ahora mismo en línea</div>
+          <div class="sb-users-online-list">${online.length?online.map(u=>`<div class="sb-online-chip"><span class="dot"></span><span>${String(u.nombre||'INVITADO').replace(/[<>&"]/g,'')}</span><small>${u.tipoUsuario==='CLIENTE'?'CLIENTE':'INVITADO'}</small></div>`).join(''):'<span class="sb-users-empty">No hay usuarios conectados en este momento.</span>'}</div>
+        </div>
+        <div class="sb-users-table-wrap">
+          <table class="sb-users-table"><thead><tr><th>Estado</th><th>Cliente</th><th>Correo</th><th>Puntos actuales</th><th>Compras</th><th>Acción</th></tr></thead>
+          <tbody>${users.map(u=>{
+            const id=String(u.id||''); const pts=Math.max(0,Math.floor(Number(u.puntos)||0)); const orders=Number(u.totalOrders)||0;
+            const safeName=String(u.nombre||'Sin nombre').replace(/[<>&"]/g,''); const safeEmail=String(u.email||'').replace(/[<>&"]/g,'');
+            return `<tr data-user-id="${id.replace(/\"/g,'&quot;')}"><td><span class="sb-user-status ${onlineIds.has(id)?'online':'offline'}">${onlineIds.has(id)?'EN LÍNEA':'OFFLINE'}</span></td><td><strong>${safeName}</strong><small>${id.replace(/[<>&"]/g,'')}</small></td><td>${safeEmail}</td><td><div class="sb-points-editor"><input type="number" min="0" step="1" value="${pts}" id="sbPts_${CSS.escape(id)}"><span>PTS</span></div></td><td>${orders}</td><td><button class="sb-btn sb-main sb-points-save" onclick="SB_ADMIN.saveUserPoints('${id.replace(/'/g,"\\'")}')"><i class="fas fa-floppy-disk"></i> Guardar</button></td></tr>`;
+          }).join('')||'<tr><td colspan="6" class="sb-users-empty">Aún no hay clientes registrados.</td></tr>'}</tbody></table>
+        </div>`;
+    }catch(error){
+      el.innerHTML=`<div class="sb-users-error"><strong>No se pudieron cargar los clientes.</strong><span>${String(error.message||'Error de conexión').replace(/[<>&"]/g,'')}</span><button class="sb-btn sb-main" onclick="SB_ADMIN.renderUsers()">Reintentar</button></div>`;
+    }
+  },
+
+  async saveUserPoints(userId){
+    const input=document.getElementById('sbPts_'+String(userId));
+    const value=Math.max(0,Math.floor(Number(input?.value)||0));
+    try{
+      if(input)input.disabled=true;
+      const result=await apiRequest('setUserPoints',{userId:String(userId),points:value},{timeout:20000});
+      const after=Number(result?.pointsAfter)||0;
+      showToast(`Los puntos fueron actualizados a ${after}. El cliente verá el nuevo saldo al sincronizar su cuenta.`,{title:'Puntos actualizados',kicker:'SHEIBIS · ADMIN',icon:'fa-star',duration:5000,continueButton:true});
+      await this.renderUsers();
+    }catch(error){
+      showToast(error.message||'No fue posible guardar los puntos.',{title:'No se pudo actualizar',kicker:'SHEIBIS · ADMIN',icon:'fa-circle-exclamation',duration:5000,continueButton:true});
+      if(input)input.disabled=false;
+    }
   },
 
   renderDashboard(){
