@@ -3390,7 +3390,7 @@ body.sheibis-modal-open{overflow:hidden;}
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyJ_4MEIaj4VSNnFQp1GuMNf-s3Q0PNSaSdUk3MrLZ21GlLKwzAKGRQH7SvR9ULdklw/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbz_OdYhvSr-yNtE0zbKTzoDxxgcsVuW9XQ0XChSlLmjaYYpxatpTeoJ7J1e9yDwrKPc/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -4619,7 +4619,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzFlA3lPFpRsUKqk0JjKgj-KR-Ymk5H0ERJxRQiMs2GWRJwjiUB95V8RUOgWAa70obG/exec
+     https://script.google.com/macros/s/AKfycbz_OdYhvSr-yNtE0zbKTzoDxxgcsVuW9XQ0XChSlLmjaYYpxatpTeoJ7J1e9yDwrKPc/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -5444,15 +5444,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         // 14. SISTEMA DE PUNTOS
         // ================================================================
         function calculatePointsForOrder(orderItems) {
-            let points = 0;
-            let totalItems = 0;
-            orderItems.forEach(item => {
-                if (item.precio >= CONFIG.minPriceForPoints) {
-                    points += item.cantidad;
-                    totalItems += item.cantidad;
-                }
-            });
-            return { points, totalItems };
+            /* 1 unidad comprada = 1 punto. La cantidad de productos
+               es la única base de los puntos; el precio no modifica los puntos. */
+            const totalItems = (Array.isArray(orderItems) ? orderItems : []).reduce(function(total, item) {
+                return total + Math.max(0, Math.floor(Number(item.cantidad) || 0));
+            }, 0);
+            return { points: totalItems, totalItems: totalItems };
         }
 
         function calculateFreeProducts(points) {
@@ -5563,7 +5560,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     detalles: orderDetails,
                     metodoPago: paymentMethod,
                     status: 'Pedido recibido',
-                    estadoPaquete: 0,
+                    estadoPaquete: 1,
                     pointsEarned: points,
                     pointsBefore: totalPointsBefore,
                     pointsAfter: totalPointsAfter
@@ -5574,6 +5571,14 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                    hace la validación atómica con LockService. */
                 const result = await apiRequest('createOrder', { order: orderData }, {timeout: 30000});
 
+                /* Google Sheets es la fuente oficial de puntos. */
+                const confirmedPoints = Number(result && result.pointsAfter);
+                const confirmedEarned = Number(result && result.pointsEarned);
+                const finalPoints = Number.isFinite(confirmedPoints) ? confirmedPoints : totalPointsAfter;
+                const finalEarned = Number.isFinite(confirmedEarned) ? confirmedEarned : points;
+                orderData.pointsEarned = finalEarned;
+                orderData.pointsAfter = finalPoints;
+
                 if (result && result.inventory) {
                     try { localStorage.setItem('sheibis_inventory_master_v1', JSON.stringify(result.inventory)); } catch (_) {}
                 }
@@ -5581,9 +5586,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 userOrders = [...(Array.isArray(userOrders) ? userOrders : []), orderData];
                 currentUser.orders = JSON.stringify(userOrders);
                 currentUser.totalOrders = Number(currentUser.totalOrders || 0) + 1;
-                currentUser.puntos = totalPointsAfter;
-                currentUser.estadoPaquete = '0';
-                userPoints = totalPointsAfter;
+                currentUser.puntos = finalPoints;
+                currentUser.estadoPaquete = '1';
+                userPoints = finalPoints;
 
                 /* La actualización del perfil es secundaria: el pedido ya quedó
                    registrado de forma segura. Si falla, no duplicamos la venta. */
@@ -5593,8 +5598,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                         fields: {
                             orders: JSON.stringify(userOrders),
                             totalOrders: Number(currentUser.totalOrders || 0),
-                            puntos: totalPointsAfter,
-                            estadoPaquete: 0
+                            puntos: finalPoints,
+                            estadoPaquete: 1
                         }
                     }, {timeout: 15000});
                 } catch (profileError) {
@@ -5615,7 +5620,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     `────────────────────\n` +
                     `💰 *TOTAL: Q${total.toFixed(2)}*\n` +
                     `💳 *Método de Pago:* ${paymentMethod}\n` +
-                    `⭐ *Puntos generados:* ${points} pts\n` +
+                    `⭐ *Puntos generados:* ${finalEarned} pts\n` +
                     `────────────────────`;
 
                 const phone = String(CONFIG.phoneNumber || '40512960').replace(/\D/g, '');
@@ -6046,11 +6051,11 @@ setInterval(updateOnlineUsers, ONLINE_HEARTBEAT_MS);
    SEGUIMIENTO DE PEDIDOS · GOOGLE SHEETS
    Columna esperada en Google Sheets: estadoPaquete
    Valores:
-   0 = Pedido recibido
-   1 = Pedido preparado
-   2 = Pedido enviado
-   3 = En camino
-   4 = Pedido entregado
+   1 = Pedido recibido
+   2 = Pedido preparado
+   3 = Pedido enviado
+   4 = En camino
+   5 = Pedido entregado
    ================================================================ */
 const PACKAGE_PHASES = [
     {title:'Pedido recibido', desc:'Tu pedido fue registrado', icon:'fa-clipboard-check'},
@@ -6062,9 +6067,11 @@ const PACKAGE_PHASES = [
 
 function normalizePackagePhase(value){
     const n=parseInt(value,10);
-    if(Number.isNaN(n)) return 0;
-    return Math.max(0,Math.min(4,n));
+    if(Number.isNaN(n)) return 1;
+    return Math.max(1,Math.min(5,n));
 }
+
+function phaseIndexForUI(phase){ return Math.max(0, Math.min(4, normalizePackagePhase(phase)-1)); }
 
 async function getPackagePhaseFromSheet(){
     if(!currentUser || !currentUser.email) return 0;
@@ -6082,7 +6089,7 @@ async function getPackagePhaseFromSheet(){
              * Cuando el administrador coloca 4 en Google Sheets,
              * el último pedido queda guardado permanentemente como ENTREGADO.
              */
-            if(phase===4){
+            if(phase===5){
                 await saveDeliveredOrder(phase);
             }
 
@@ -6097,7 +6104,7 @@ async function getPackagePhaseFromSheet(){
         console.warn('Seguimiento: no se pudo actualizar desde Google Sheets.',error);
     }
 
-    return normalizePackagePhase(currentUser.estadoPaquete ?? 0);
+    return normalizePackagePhase(currentUser.estadoPaquete ?? 1);
 }
 
 async function saveDeliveredOrder(phase){
@@ -6118,19 +6125,19 @@ async function saveDeliveredOrder(phase){
 
     userOrders[lastIndex]={
         ...lastOrder,
-        estadoPaquete:4,
+        estadoPaquete:5,
         status:'Entregado',
         entregado:true,
         entregadoAt:lastOrder.entregadoAt || new Date().toISOString()
     };
 
     currentUser.orders=JSON.stringify(userOrders);
-    currentUser.estadoPaquete='4';
+    currentUser.estadoPaquete='5';
 
     try{
         await apiRequest('updateUser', {
             id: currentUser.id,
-            fields: { orders: JSON.stringify(userOrders), estadoPaquete: 4 }
+            fields: { orders: JSON.stringify(userOrders), estadoPaquete: 5 }
         });
     }catch(error){
         console.warn('No se pudo guardar el pedido entregado.',error);
@@ -6144,17 +6151,18 @@ async function saveDeliveredOrder(phase){
 
 function renderPackageTracking(phase, order){
     phase=normalizePackagePhase(phase);
-    const current=PACKAGE_PHASES[phase];
+    const uiPhase=phaseIndexForUI(phase);
+    const current=PACKAGE_PHASES[uiPhase];
 
     /*
      * 5 fases = 4 segmentos de progreso.
      */
-    const progressWidth=phase===0
+    const progressWidth=phase<=1
         ? '0%'
-        : `${Math.min(100,(phase/4)*100)}%`;
+        : `${Math.min(100,((phase-1)/4)*100)}%`;
 
     const steps=PACKAGE_PHASES.map((item,index)=>`
-        <div class="package-step ${index<=phase?'active':''} ${index===phase?'current':''}">
+        <div class="package-step ${index<uiPhase?'active':''} ${index===uiPhase?'active current':''}">
             <div class="package-dot">
                 <i class="fas ${item.icon}"></i>
             </div>
@@ -6199,7 +6207,7 @@ function renderPackageTracking(phase, order){
             </div>
 
             ${
-                phase===4
+                phase===5
                 ? `
                 <div style="
                     margin-top:15px;
