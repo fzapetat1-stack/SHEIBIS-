@@ -2788,286 +2788,6 @@ body > div[style*="z-index: 99999"] > div{
 }
 .password-eye-btn:hover{background:rgba(255,255,255,.08);opacity:1;transform:translateY(-50%) scale(1.05);}
 .password-eye-btn i{color:#fff !important;font-size:15px;}
-
-/* ================================================================
-   SHEIBIS · CARRITO ULTRA ESTÉTICO — SOLO DISEÑO
-   No modifica funciones ni lógica.
-   ================================================================ */
-#cart{
-    width:min(480px,calc(100vw - 22px)) !important;
-    right:11px !important;
-    top:76px !important;
-    max-height:calc(100vh - 88px) !important;
-    padding:0 !important;
-    overflow:hidden !important;
-    border:1px solid rgba(255,255,255,.13) !important;
-    border-radius:28px !important;
-    background:
-      radial-gradient(circle at 88% 0%,rgba(231,196,90,.18),transparent 30%),
-      radial-gradient(circle at 0% 100%,rgba(255,255,255,.055),transparent 32%),
-      linear-gradient(145deg,rgba(18,25,39,.985),rgba(5,10,18,.995)) !important;
-    box-shadow:0 30px 100px rgba(0,0,0,.72),0 0 0 1px rgba(231,196,90,.045),0 0 65px rgba(231,196,90,.075) !important;
-    backdrop-filter:blur(28px) saturate(150%) !important;
-    -webkit-backdrop-filter:blur(28px) saturate(150%) !important;
-    isolation:isolate;
-}
-#cart::before{
-    content:"";
-    position:absolute;inset:0;pointer-events:none;z-index:-1;
-    background:linear-gradient(125deg,rgba(255,255,255,.09),transparent 24%,transparent 68%,rgba(231,196,90,.045));
-}
-#cart h3{
-    position:relative;
-    display:flex !important;
-    align-items:center;
-    gap:11px;
-    margin:0 !important;
-    padding:21px 23px 18px !important;
-    font-size:1.05rem !important;
-    font-weight:800 !important;
-    letter-spacing:.2px;
-    color:#fff !important;
-    border-bottom:1px solid rgba(255,255,255,.07) !important;
-    background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.008));
-}
-#cart h3::after{
-    content:"";
-    position:absolute;left:23px;bottom:-1px;width:62px;height:2px;
-    border-radius:99px;background:linear-gradient(90deg,#e7c45a,transparent);
-    box-shadow:0 0 18px rgba(231,196,90,.35);
-}
-#cart h3 i{
-    width:36px;height:36px;display:grid;place-items:center;
-    border-radius:12px;
-    color:#e7c45a;
-    background:rgba(231,196,90,.09);
-    border:1px solid rgba(231,196,90,.16);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 25px rgba(231,196,90,.07);
-}
-#cartItems{
-    max-height:42vh;
-    overflow:auto;
-    padding:8px 18px 2px;
-    scrollbar-width:thin;
-    scrollbar-color:rgba(231,196,90,.28) transparent;
-}
-#cartItems::-webkit-scrollbar{width:5px}
-#cartItems::-webkit-scrollbar-track{background:transparent}
-#cartItems::-webkit-scrollbar-thumb{background:rgba(231,196,90,.28);border-radius:99px}
-#cart .cart-item{
-    position:relative;
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) auto;
-    gap:12px;
-    align-items:center;
-    margin:7px 0;
-    padding:14px 13px !important;
-    border:1px solid rgba(255,255,255,.075) !important;
-    border-radius:17px;
-    background:linear-gradient(135deg,rgba(255,255,255,.052),rgba(255,255,255,.018));
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 8px 24px rgba(0,0,0,.12);
-    transition:transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease;
-}
-#cart .cart-item:hover{
-    transform:translateY(-1px);
-    border-color:rgba(231,196,90,.22) !important;
-    background:linear-gradient(135deg,rgba(231,196,90,.075),rgba(255,255,255,.022));
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 12px 28px rgba(0,0,0,.2);
-}
-#cart .cart-item .item-name{
-    min-width:0;
-    color:#f4f6f8 !important;
-    font-size:.78rem !important;
-    line-height:1.35;
-    font-weight:700 !important;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-#cart .cart-item .item-price{
-    display:block;
-    margin:0 0 6px !important;
-    color:#e7c45a !important;
-    font-size:.82rem !important;
-    text-align:right;
-    font-weight:850 !important;
-}
-#cart .cart-item-edit{
-    grid-column:1 / -1;
-    margin-top:2px !important;
-    padding-top:9px;
-    border-top:1px solid rgba(255,255,255,.055);
-}
-#cart .cart-item-qty{
-    gap:5px !important;
-    padding:3px;
-    border-radius:11px;
-    background:rgba(0,0,0,.16);
-    border:1px solid rgba(255,255,255,.06);
-}
-#cart .cart-qty-btn{
-    width:30px !important;height:30px !important;
-    border-radius:9px !important;
-    border:1px solid rgba(255,255,255,.08) !important;
-    background:rgba(255,255,255,.045) !important;
-    color:#fff !important;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-}
-#cart .cart-qty-btn:hover{
-    color:#111 !important;
-    border-color:#e7c45a !important;
-    background:#e7c45a !important;
-    transform:translateY(-1px);
-}
-#cart .cart-qty-value{
-    min-width:30px !important;
-    font-size:.78rem;
-    color:#fff !important;
-}
-#cart .cart-item-remove{
-    width:31px;height:31px;
-    border-radius:9px !important;
-    color:rgba(255,120,120,.7) !important;
-    background:rgba(255,80,80,.045) !important;
-    border:1px solid rgba(255,100,100,.07) !important;
-}
-#cart .cart-item-remove:hover{
-    color:#fff !important;
-    background:rgba(220,65,65,.18) !important;
-    border-color:rgba(255,100,100,.25) !important;
-}
-#cart .cart-empty{
-    padding:38px 15px 34px !important;
-    opacity:1 !important;
-    border:1px dashed rgba(255,255,255,.08);
-    border-radius:18px;
-    margin:10px 0;
-    background:rgba(255,255,255,.018);
-}
-#cart .cart-empty i{
-    width:66px;height:66px;display:grid;place-items:center;margin:0 auto 13px !important;
-    border-radius:21px;
-    font-size:1.55rem !important;
-    color:#e7c45a;
-    opacity:1 !important;
-    background:rgba(231,196,90,.08);
-    border:1px solid rgba(231,196,90,.14);
-}
-#cart .cart-empty p:first-of-type{
-    color:#eef1f5;
-    opacity:.9 !important;
-    font-size:.86rem;
-    font-weight:750;
-}
-#cart .cart-empty p:last-of-type{opacity:.42 !important}
-#cart .cart-payment-selector{
-    margin:13px 18px 10px !important;
-    padding:14px !important;
-    border-radius:18px !important;
-    border:1px solid rgba(231,196,90,.13) !important;
-    background:linear-gradient(135deg,rgba(231,196,90,.07),rgba(255,255,255,.025)) !important;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-}
-#cart .cart-payment-selector label{
-    display:flex !important;align-items:center;gap:6px;
-    margin:0 0 9px !important;
-    color:#f1f3f6 !important;
-    font-size:.68rem !important;
-    font-weight:800 !important;
-    letter-spacing:.8px !important;
-    text-transform:uppercase;
-}
-#cart .cart-payment-selector label i{color:#e7c45a;margin:0 !important}
-#cart .cart-payment-selector select{
-    appearance:none;
-    -webkit-appearance:none;
-    padding:12px 40px 12px 13px !important;
-    border-radius:12px !important;
-    border:1px solid rgba(255,255,255,.09) !important;
-    color:#fff !important;
-    font-weight:700 !important;
-    background:#111a28 !important;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
-    background-image:linear-gradient(45deg,transparent 50%,#e7c45a 50%),linear-gradient(135deg,#e7c45a 50%,transparent 50%);
-    background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
-    background-size:5px 5px,5px 5px;
-    background-repeat:no-repeat;
-}
-#cart .cart-payment-selector select:hover{border-color:rgba(231,196,90,.3) !important}
-#cart .cart-points-summary{
-    margin:11px 18px 10px !important;
-    padding:13px 15px !important;
-    border-radius:18px !important;
-    border:1px solid rgba(231,196,90,.12) !important;
-    background:linear-gradient(135deg,rgba(231,196,90,.055),rgba(255,255,255,.018)) !important;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
-}
-#cart .points-row{gap:10px}
-#cart .points-earn,#cart .points-total{font-size:.67rem !important}
-#cart .progress-container{margin-top:10px !important}
-#cart .progress-bar-track{height:6px !important;border-radius:99px !important;background:rgba(255,255,255,.055) !important;overflow:hidden}
-#cart .progress-bar-fill{border-radius:99px !important;box-shadow:0 0 14px rgba(231,196,90,.28)}
-#cart .progress-badge{font-size:.57rem !important}
-#cart .cart-total{
-    display:flex !important;
-    justify-content:space-between;
-    align-items:center;
-    margin:13px 18px 0 !important;
-    padding:15px 16px;
-    border-radius:17px;
-    border:1px solid rgba(255,255,255,.075);
-    background:rgba(255,255,255,.025);
-    font-size:.72rem !important;
-    color:rgba(255,255,255,.56) !important;
-    text-align:left !important;
-    text-shadow:none !important;
-}
-#cart .cart-total span{
-    color:#f1cb5b !important;
-    font-size:1.35rem;
-    font-weight:900;
-    letter-spacing:.2px;
-    text-shadow:0 0 24px rgba(231,196,90,.14);
-}
-#cart .cart-actions{
-    display:grid !important;
-    grid-template-columns:1fr 1.65fr;
-    gap:9px !important;
-    margin:11px 18px 0 !important;
-}
-#cart .cart-actions .btn{
-    min-height:47px;
-    padding:11px 13px !important;
-    border-radius:14px !important;
-    font-size:.67rem !important;
-    letter-spacing:.8px !important;
-    font-weight:800 !important;
-}
-#cart .btn-danger{
-    color:#ff9a9a !important;
-    border:1px solid rgba(255,110,110,.13) !important;
-    background:rgba(255,90,90,.045) !important;
-}
-#cart .btn-danger:hover{background:rgba(255,90,90,.11) !important;transform:translateY(-2px) !important}
-#cart .btn-whatsapp{
-    background:linear-gradient(135deg,#27d86b,#119b79) !important;
-    box-shadow:0 10px 28px rgba(37,211,102,.12),inset 0 1px 0 rgba(255,255,255,.2) !important;
-}
-#cart .btn-whatsapp:hover{transform:translateY(-2px) !important;box-shadow:0 14px 35px rgba(37,211,102,.2),inset 0 1px 0 rgba(255,255,255,.22) !important}
-#cart > div:last-child{
-    margin:10px 18px 17px !important;
-    padding:0 6px;
-    opacity:.42 !important;
-    line-height:1.4;
-}
-@media (max-width:560px){
-    #cart{right:8px !important;top:68px !important;width:calc(100vw - 16px) !important;border-radius:24px !important}
-    #cartItems{max-height:37vh;padding-left:12px;padding-right:12px}
-    #cart h3{padding-left:17px !important;padding-right:17px !important}
-    #cart .cart-payment-selector,#cart .cart-points-summary,#cart .cart-total,#cart .cart-actions{margin-left:12px !important;margin-right:12px !important}
-    #cart h3::after{left:17px}
-}
-
 </style>
 
 <style id="sheibis-glass-payment">
@@ -3223,13 +2943,7 @@ body > div[style*="z-index: 99999"] > div{
 .sheibis-image-modal__thumb.active{border-color:#c9a227;opacity:1;}
 @media(max-width:700px){.sheibis-image-modal{padding:10px}.sheibis-image-modal__panel{width:100%;height:100%;}.sheibis-image-modal__main{max-height:calc(100% - 105px);border-radius:12px}.sheibis-image-modal__nav{width:42px;height:42px}.sheibis-image-modal__close{top:0;right:0}.sheibis-image-modal__thumb{width:50px;height:50px}}
 body.sheibis-modal-open{overflow:hidden;}
-</style><style id="sheibis-performance">
-/* Rendimiento: mantiene fluida la navegación cuando el catálogo crece. */
-.catalog-card,.product-detail-item,.sb-item,.catalog-product-preview{content-visibility:auto;contain-intrinsic-size:1px 260px;}
-.product-detail-item img,.catalog-image,.sb-item img{content-visibility:auto;}
-@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
-</style>
-</head>
+</style></head>
 <body>
 
     <!-- ================================================================
@@ -3546,15 +3260,6 @@ body.sheibis-modal-open{overflow:hidden;}
                 </div>
             </div>
         </div>
-        <div class="cart-payment-selector">
-            <label for="cartPaymentMethod"><i class="fas fa-credit-card"></i> Método de pago</label>
-            <select id="cartPaymentMethod" aria-label="Método de pago">
-                <option value="Efectivo">Efectivo</option>
-                <option value="Transferencia bancaria">Transferencia bancaria</option>
-                <option value="Fri">Fri</option>
-                <option value="Zigi">Zigi</option>
-            </select>
-        </div>
         <div class="cart-total">Total: Q<span id="cartTotal">0.00</span></div>
         <div class="cart-actions">
             <button class="btn btn-danger" onclick="clearCart()"><i class="fas fa-trash-alt"></i> Vaciar</button>
@@ -3604,73 +3309,74 @@ body.sheibis-modal-open{overflow:hidden;}
         // ================================================================
         (function initParticles() {
             const canvas = document.getElementById('particles-canvas');
-            const ctx = canvas.getContext('2d');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d', {alpha:true});
             let particles = [];
-            const PARTICLE_COUNT = 180;
+            let raf = 0;
+            let running = true;
+            const mobile = Math.min(window.innerWidth, window.innerHeight) < 700;
+            const PARTICLE_COUNT = mobile ? 55 : 85;
+            const LINK_DISTANCE = mobile ? 125 : 150;
 
             function resize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+                const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+                canvas.width = Math.floor(window.innerWidth * dpr);
+                canvas.height = Math.floor(window.innerHeight * dpr);
+                canvas.style.width = window.innerWidth + 'px';
+                canvas.style.height = window.innerHeight + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                particles.forEach(p => {
+                    p.x = Math.min(p.x, window.innerWidth);
+                    p.y = Math.min(p.y, window.innerHeight);
+                });
             }
-            window.addEventListener('resize', resize);
+            window.addEventListener('resize', resize, {passive:true});
+            document.addEventListener('visibilitychange', () => {
+                running = document.visibilityState === 'visible';
+                if (running && !raf) animate();
+            });
             resize();
 
             class Particle {
                 constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2.5 + 0.5;
-                    this.speedX = (Math.random() - 0.5) * 0.4;
-                    this.speedY = (Math.random() - 0.5) * 0.4;
-                    this.opacity = Math.random() * 0.3 + 0.05;
+                    this.x = Math.random() * window.innerWidth;
+                    this.y = Math.random() * window.innerHeight;
+                    this.size = Math.random() * 1.8 + 0.4;
+                    this.speedX = (Math.random() - 0.5) * 0.28;
+                    this.speedY = (Math.random() - 0.5) * 0.28;
+                    this.opacity = Math.random() * 0.22 + 0.04;
                 }
                 update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    this.x += this.speedX; this.y += this.speedY;
+                    if (this.x < 0 || this.x > window.innerWidth) this.speedX *= -1;
+                    if (this.y < 0 || this.y > window.innerHeight) this.speedY *= -1;
                 }
                 draw() {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
-                    ctx.fill();
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(212,175,55,${this.opacity})`; ctx.fill();
                 }
             }
-
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                particles.push(new Particle());
-            }
+            for (let i=0;i<PARTICLE_COUNT;i++) particles.push(new Particle());
 
             function connectParticles() {
-                for (let i = 0; i < particles.length; i++) {
-                    for (let j = i + 1; j < particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 180) {
-                            const opacity = (1 - dist / 180) * 0.08;
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.strokeStyle = `rgba(212, 175, 55, ${opacity})`;
-                            ctx.lineWidth = 0.5;
-                            ctx.stroke();
-                        }
+                for (let i=0;i<particles.length;i++) for (let j=i+1;j<particles.length;j++) {
+                    const a=particles[i], b=particles[j], dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
+                    if (d2 < LINK_DISTANCE*LINK_DISTANCE) {
+                        const opacity=(1-Math.sqrt(d2)/LINK_DISTANCE)*0.055;
+                        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+                        ctx.strokeStyle=`rgba(212,175,55,${opacity})`; ctx.lineWidth=0.4; ctx.stroke();
                     }
                 }
             }
-
             function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
+                raf = 0;
+                if (!running) return;
+                ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+                particles.forEach(p=>{p.update();p.draw();});
                 connectParticles();
-                requestAnimationFrame(animate);
+                raf=requestAnimationFrame(animate);
             }
-            animate();
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) animate();
         })();
 
         // ================================================================
@@ -3684,7 +3390,7 @@ body.sheibis-modal-open{overflow:hidden;}
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbwaF5Z8GRcb7tW9_ApeqV-RHe6167FDYdtadeujGC-fZ7Q6pG582ZThvPP4bqvGAxJ4/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyJ_4MEIaj4VSNnFQp1GuMNf-s3Q0PNSaSdUk3MrLZ21GlLKwzAKGRQH7SvR9ULdklw/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -3827,28 +3533,52 @@ var PRODUCTOS = window.PRODUCTOS = [
             registerSuccess.classList.remove('show');
         };
 
-        async function apiRequest(action, payload = {}) {
+        async function apiRequest(action, payload = {}, options = {}) {
             const endpoint = String(CONFIG.googleAppsScriptUrl || '').trim();
             if (!endpoint || endpoint.includes('PEGA_AQUI_LA_URL')) {
-                throw new Error('Falta configurar la URL de Google Apps Script.');
+                const e = new Error('Falta configurar la URL de Google Apps Script.');
+                e.code = 'CONFIG_ERROR';
+                throw e;
             }
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action, ...payload }),
-                cache: 'no-store'
-            });
-            const text = await response.text();
-            let data;
-            try { data = JSON.parse(text); }
-            catch { throw new Error('Respuesta inválida del servidor: ' + text.slice(0, 180)); }
-            if (!response.ok || data.ok === false) {
-                const error = new Error(data.message || data.error || 'Error del servidor.');
-                error.code = data.code || '';
-                error.data = data;
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), Number(options.timeout || 25000));
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action, ...payload }),
+                    cache: 'no-store',
+                    signal: controller.signal
+                });
+                const text = await response.text();
+                let data;
+                try { data = JSON.parse(text); }
+                catch {
+                    const e = new Error('Respuesta inválida del servidor.');
+                    e.code = 'INVALID_SERVER_RESPONSE';
+                    throw e;
+                }
+                if (!response.ok || data.ok === false) {
+                    const e = new Error(data.message || data.error || 'Error del servidor.');
+                    e.code = data.code || 'SERVER_ERROR';
+                    e.productId = data.productId || '';
+                    e.productName = data.productName || '';
+                    e.available = Number(data.available || 0);
+                    e.requested = Number(data.requested || 0);
+                    e.notification = data.notification || '';
+                    throw e;
+                }
+                return data;
+            } catch (error) {
+                if (error && error.name === 'AbortError') {
+                    const e = new Error('El servidor tardó demasiado en responder.');
+                    e.code = 'TIMEOUT';
+                    throw e;
+                }
                 throw error;
+            } finally {
+                clearTimeout(timeout);
             }
-            return data;
         }
 
         // SESIÓN PERSISTENTE: permanece aunque se cierre/reabra Chrome.
@@ -4688,19 +4418,6 @@ body{
     padding-bottom:16px;
     border-bottom:1px solid rgba(255,255,255,.07);
 }
-
-.cart-payment-selector{margin:14px 0 12px;padding:12px;border:1px solid rgba(231,196,90,.14);border-radius:14px;background:rgba(255,255,255,.025)}
-.cart-payment-selector label{display:block;margin-bottom:7px;font-size:.72rem;font-weight:700;letter-spacing:.3px;color:#dfe6ef}
-.cart-payment-selector label i{margin-right:6px}
-.cart-payment-selector select{width:100%;border:1px solid rgba(231,196,90,.18);border-radius:10px;padding:10px 12px;background:#151515;color:#f5f5f5;outline:none;font-size:.78rem;cursor:pointer}
-.cart-payment-selector select:focus{border-color:rgba(231,196,90,.55);box-shadow:0 0 0 3px rgba(231,196,90,.08)}
-.cart-item-edit{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
-.cart-item-qty{display:flex;align-items:center;gap:7px}
-.cart-qty-btn{width:29px;height:29px;border:1px solid rgba(231,196,90,.18);border-radius:8px;background:rgba(255,255,255,.04);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
-.cart-qty-btn:hover{border-color:rgba(231,196,90,.5);background:rgba(231,196,90,.08)}
-.cart-qty-value{min-width:25px;text-align:center;font-weight:800;color:#f2f2f2}
-.cart-item-remove{border:0;background:transparent;color:#ef6b6b;cursor:pointer;padding:5px 7px;border-radius:7px}
-.cart-item-remove:hover{background:rgba(239,107,107,.08)}
 .cart-item{
     margin:5px 0;
     padding:14px 12px;
@@ -5603,7 +5320,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                          aria-label="${coming ? `Catálogo ${cat.nombre} próximamente` : `Abrir catálogo ${cat.nombre}`}"
                          ${coming ? 'title="Próximamente"' : ''}>
                         ${hasImage
-                            ? `<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy" decoding="async"></div>`
+                            ? `<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy"></div>`
                             : `<span class="catalog-icon"><i class="fas ${cat.icono || 'fa-folder-open'}"></i></span>`}
                         <div class="catalog-name">${cat.nombre}</div>
                         ${coming
@@ -5639,7 +5356,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                         <div class="product-detail-item ${p.agotado ? 'sheibis-out' : ''}" data-id="${p.id}" data-aos="fade-up">
                             <div class="product-detail-image sheibis-product-clickable" data-product-id="${p.id}" role="button" tabindex="0" aria-label="Ampliar imagen de ${p.nombre}" onclick="sheibisOpenProductImage(${p.id},0)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();sheibisOpenProductImage(${p.id},0)}">
                                 ${(() => { const before=Number(p.precioAntes)||0, current=Number(p.precio)||0, d=before>current?((before-current)/before)*100:0; return d>0 ? `<span class="product-discount-badge">-${d.toFixed(0)}%</span>` : ''; })()}
-                                ${hasImage ? `<img src="${(Array.isArray(p.imagenes) && p.imagenes.length ? p.imagenes[0] : p.imagen)}" alt="${p.nombre}" loading="lazy" decoding="async">` : `<span class="icon-placeholder"><i class="fas ${p.icono}"></i></span>`}
+                                ${hasImage ? `<img src="${(Array.isArray(p.imagenes) && p.imagenes.length ? p.imagenes[0] : p.imagen)}" alt="${p.nombre}" loading="lazy">` : `<span class="icon-placeholder"><i class="fas ${p.icono}"></i></span>`}
                             </div>
                             <div class="product-detail-info">
                                 <div class="product-detail-name">${p.nombre}</div>
@@ -5703,14 +5420,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     btn.classList.remove('added');
                 }, 1500);
             }
-        };
-
-        window.changeCartQuantity = function(id, delta) {
-            const item = cart.find(p => String(p.id) === String(id));
-            if (!item) return;
-            const next = Math.max(1, Number(item.cantidad || 1) + Number(delta || 0));
-            item.cantidad = next;
-            updateCartUI();
         };
 
         window.removeFromCart = function(id) {
@@ -5787,242 +5496,178 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         // ================================================================
         window.requestApproval = async function() {
             if (!currentUser || currentUser.isGuest === true) {
-                showToast('⚠️ Como INVITADO puedes explorar y usar el carrito. Para realizar un pedido debes crear una cuenta.', {
-                    title: 'Cuenta requerida',
-                    icon: 'fa-user-lock',
-                    duration: 5500
+                showToast('Como INVITADO puedes explorar y usar el carrito. Para realizar un pedido debes crear una cuenta.', {
+                    title: 'Cuenta requerida', icon: 'fa-user-lock', duration: 5500
                 });
                 showAuth('login');
                 return;
             }
 
-            if (cart.length === 0) {
-                alert('🛒 Tu carrito está vacío');
+            if (!Array.isArray(cart) || cart.length === 0) {
+                showToast('Tu carrito está vacío.', { title: 'Carrito vacío', icon: 'fa-cart-shopping', duration: 3500 });
                 return;
             }
 
-            const { points } = calculatePointsForOrder(cart);
-            const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-            const paymentSelect = document.getElementById('cartPaymentMethod');
-            const metodoPago = paymentSelect ? String(paymentSelect.value || 'Efectivo') : 'Efectivo';
-
-            // Actualizar primero el inventario oficial para evitar usar una copia antigua.
-            await syncGlobalInventory_(true);
-
-            // Verificar inventario antes de registrar la compra.
-            const inventoryRaw = JSON.parse(localStorage.getItem('sheibis_inventory_master_v1') || '{}');
-            for (const item of cart) {
-                const invItem = inventoryRaw[String(item.id)] || {};
-                const available = Math.max(0, Number(invItem.stock) || 0);
-                if (available < Number(item.cantidad || 0)) {
-                    showToast(
-                        available <= 0
-                            ? `El producto "${item.nombre}" se encuentra agotado.`
-                            : `Solo quedan ${available} unidad${available === 1 ? '' : 'es'} de "${item.nombre}". Reduce la cantidad para continuar.`,
-                        {
-                            title: available <= 0 ? 'Producto agotado' : 'Stock insuficiente',
-                            kicker: 'SHEIBIS · INVENTARIO',
-                            icon: available <= 0 ? 'fa-box-open' : 'fa-triangle-exclamation',
-                            duration: 7000
-                        }
-                    );
-                    return;
-                }
-            }
-
-            const orderId = 'SHE-' + Date.now().toString(36).toUpperCase() +
-                '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
-
-            // Abrir WhatsApp inmediatamente con el clic para evitar que el navegador bloquee el popup.
-            let whatsappWindow = null;
-            try {
-                whatsappWindow = window.open('about:blank', '_blank');
-                if (whatsappWindow) {
-                    whatsappWindow.document.title = 'SHEIBIS · Preparando WhatsApp';
-                    whatsappWindow.document.body.innerHTML =
-                        '<div style="font-family:Arial,sans-serif;text-align:center;margin-top:20vh;color:#555;">Preparando tu solicitud de pedido…</div>';
-                }
-            } catch (e) {
-                console.warn('SHEIBIS · No se pudo preparar WhatsApp:', e);
-            }
-
-            const now = new Date();
-            const orderNumber = orderId;
-            const totalPointsBefore = Number(userPoints) || 0;
-            const totalPointsAfter = totalPointsBefore + points;
-
-            const orderItems = cart.map(i => ({
-                id: i.id,
-                nombre: i.nombre,
-                cantidad: Number(i.cantidad || 0),
-                precio: Number(i.precio || 0)
-            }));
-
-            let orderDetails = orderItems.map((item, index) => {
-                const subtotal = item.precio * item.cantidad;
-                return `  ${index + 1}. ${item.nombre} x${item.cantidad} → Q${subtotal.toFixed(2)}`;
-            }).join('\n');
-
-            const message =
-                `🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n` +
-                `────────────────────\n` +
-                `📋 *Cliente:* ${currentUser.nombre}\n` +
-                `📧 *Email:* ${currentUser.email}\n` +
-                `🆔 *Pedido:* ${orderId}\n` +
-                `📅 *Fecha:* ${now.toLocaleString()}\n` +
-                `────────────────────\n` +
-                `📦 *Detalle del Pedido*\n${orderDetails}\n` +
-                `────────────────────\n` +
-                `💰 *TOTAL: Q${total.toFixed(2)}*\n` +
-                `💳 *Método de Pago:* ${metodoPago}\n` +
-                `⭐ *Puntos generados:* ${points} pts\n` +
-                `🏆 *Puntos acumulados:* ${totalPointsAfter} pts\n` +
-                `────────────────────`;
-
-            const orderData = {
-                orderId,
-                orderNumber,
-                userId: currentUser.id,
-                nombre: currentUser.nombre || '',
-                email: currentUser.email || '',
-                date: now.toISOString(),
-                total: total.toFixed(2),
-                items: orderItems,
-                itemsText: orderDetails,
-                status: 'Pedido recibido',
-                metodoPago: metodoPago,
-                estadoPaquete: 0,
-                pointsEarned: points,
-                pointsBefore: totalPointsBefore,
-                pointsAfter: totalPointsAfter
-            };
-
-            const previousOrders = Array.isArray(userOrders) ? userOrders : [];
-            const updatedOrders = [...previousOrders, orderData];
-
             const btn = document.querySelector('.btn-whatsapp');
+            if (btn && btn.disabled) return;
+
+            /* Abrimos una pestaña vacía inmediatamente dentro del clic del usuario.
+               Así el navegador no bloquea WhatsApp aunque primero tengamos que
+               confirmar el inventario en Google Sheets. */
+            let whatsappWindow = null;
+            try { whatsappWindow = window.open('about:blank', '_blank'); } catch (_) {}
+
+            const originalText = btn ? btn.innerHTML : '';
             if (btn) {
                 btn.disabled = true;
-                btn.dataset.originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando pedido...';
+                btn.dataset.originalText = originalText;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando disponibilidad...';
             }
 
             try {
-                // 1. Guardar la compra como una FILA independiente en Google Sheets.
-                const orderResult = await apiRequest('createOrder', {
-                    order: orderData
-                });
+                const orderItems = cart.map(function(i) {
+                    const qty = Math.floor(Number(i.cantidad || 0));
+                    return {
+                        id: String(i.id),
+                        nombre: String(i.nombre || ''),
+                        cantidad: qty,
+                        precio: Number(i.precio || 0)
+                    };
+                }).filter(function(i) { return i.id && i.cantidad > 0; });
 
-                // El servidor descuenta el inventario de forma atómica.
-                // Después de confirmar la compra, actualizamos la copia local con el resultado global.
-                const serverInventoryAfterSale = orderResult && (orderResult.inventory || orderResult.inventario);
-                if(serverInventoryAfterSale){
-                    const normalizedAfterSale={};
-                    if(Array.isArray(serverInventoryAfterSale)) serverInventoryAfterSale.forEach(x=>{if(x&&x.id!==undefined)normalizedAfterSale[String(x.id)]=x;});
-                    else Object.keys(serverInventoryAfterSale).forEach(id=>normalizedAfterSale[String(id)]=serverInventoryAfterSale[id]);
-                    if(Object.keys(normalizedAfterSale).length){
-                        Object.keys(normalizedAfterSale).forEach(id=>inventoryRaw[id]=normalizedAfterSale[id]);
-                    }
-                }else{
-                    for (const item of cart) {
-                        const key = String(item.id);
-                        const invItem = inventoryRaw[key] || { sku: 'SHE-' + key.padStart(4, '0'), stock: 0 };
-                        const beforeStock = Math.max(0, Number(invItem.stock) || 0);
-                        const saleQty = Math.max(0, Number(item.cantidad || 0));
-                        invItem.stockBefore = beforeStock;
-                        invItem.stock = Math.max(0, beforeStock - saleQty);
-                        invItem.lastSale = saleQty;
-                        invItem.initialStock = Number(invItem.initialStock ?? beforeStock) || 0;
-                        invItem.entries = Math.max(0, Number(invItem.entries) || 0);
-                        invItem.exits = Math.max(0, Number(invItem.exits) || 0) + saleQty;
-                        invItem.adjustments = Number(invItem.adjustments) || 0;
-                        invItem.lastUpdated = new Date().toISOString();
-                        inventoryRaw[key] = invItem;
-                    }
+                if (!orderItems.length) throw Object.assign(new Error('La cantidad del pedido no es válida.'), {code:'INVALID_CART'});
+
+                const total = orderItems.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+                const points = calculatePointsForOrder(orderItems).points;
+                const now = new Date();
+                const orderId = 'SHE-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+                const totalPointsBefore = Number(userPoints) || 0;
+                const totalPointsAfter = totalPointsBefore + points;
+                const paymentEl = document.getElementById('cartPaymentMethod');
+                const paymentMethod = paymentEl ? String(paymentEl.value || 'Efectivo') : 'Efectivo';
+
+                const orderDetails = orderItems.map(function(item, index) {
+                    return `  ${index + 1}. ${item.nombre} x${item.cantidad} → Q${(item.precio * item.cantidad).toFixed(2)}`;
+                }).join('\n');
+
+                const orderData = {
+                    orderId: orderId,
+                    orderNumber: orderId,
+                    userId: currentUser.id,
+                    nombre: currentUser.nombre || '',
+                    email: currentUser.email || '',
+                    date: now.toISOString(),
+                    total: total.toFixed(2),
+                    items: orderItems,
+                    itemsText: orderDetails,
+                    detalles: orderDetails,
+                    metodoPago: paymentMethod,
+                    status: 'Pedido recibido',
+                    estadoPaquete: 0,
+                    pointsEarned: points,
+                    pointsBefore: totalPointsBefore,
+                    pointsAfter: totalPointsAfter
+                };
+
+                /* IMPORTANTE: ya no descontamos inventario en localStorage antes
+                   de confirmar. Google Sheets es la fuente oficial y Apps Script
+                   hace la validación atómica con LockService. */
+                const result = await apiRequest('createOrder', { order: orderData }, {timeout: 30000});
+
+                if (result && result.inventory) {
+                    try { localStorage.setItem('sheibis_inventory_master_v1', JSON.stringify(result.inventory)); } catch (_) {}
                 }
-                saveInventory(inventoryRaw);
-                await syncGlobalInventory_(true);
 
-                // 2. Guardar pedidos + puntos inmediatamente en la fila del usuario.
-                await apiRequest('updateUser', {
-                    id: currentUser.id,
-                    fields: {
-                        orders: JSON.stringify(updatedOrders),
-                        totalOrders: Number(currentUser.totalOrders || 0) + 1,
-                        puntos: totalPointsAfter,
-                        estadoPaquete: 0
-                    }
-                });
-
-                // Actualizar estado local solo después de que Google Sheets confirme.
-                userOrders = updatedOrders;
-                currentUser.orders = JSON.stringify(updatedOrders);
+                userOrders = [...(Array.isArray(userOrders) ? userOrders : []), orderData];
+                currentUser.orders = JSON.stringify(userOrders);
                 currentUser.totalOrders = Number(currentUser.totalOrders || 0) + 1;
                 currentUser.puntos = totalPointsAfter;
                 currentUser.estadoPaquete = '0';
                 userPoints = totalPointsAfter;
 
-                saveInventory(inventoryRaw);
+                /* La actualización del perfil es secundaria: el pedido ya quedó
+                   registrado de forma segura. Si falla, no duplicamos la venta. */
+                try {
+                    await apiRequest('updateUser', {
+                        id: currentUser.id,
+                        fields: {
+                            orders: JSON.stringify(userOrders),
+                            totalOrders: Number(currentUser.totalOrders || 0),
+                            puntos: totalPointsAfter,
+                            estadoPaquete: 0
+                        }
+                    }, {timeout: 15000});
+                } catch (profileError) {
+                    console.warn('SHEIBIS: pedido confirmado; actualización de perfil pendiente.', profileError);
+                }
+
                 saveSession();
 
-                // Enviar la solicitud a WhatsApp en la ventana preparada durante el clic.
-                const encodedMsg = encodeURIComponent(message);
-                const whatsappUrl = `https://wa.me/502${String(CONFIG.phoneNumber).replace(/[^0-9]/g, '')}?text=${encodedMsg}`;
+                const message =
+                    `🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n` +
+                    `────────────────────\n` +
+                    `📋 *Cliente:* ${currentUser.nombre}\n` +
+                    `📧 *Email:* ${currentUser.email}\n` +
+                    `🆔 *Pedido:* ${orderId}\n` +
+                    `📅 *Fecha:* ${now.toLocaleString('es-GT')}\n` +
+                    `────────────────────\n` +
+                    `📦 *Detalle del Pedido*\n${orderDetails}\n` +
+                    `────────────────────\n` +
+                    `💰 *TOTAL: Q${total.toFixed(2)}*\n` +
+                    `💳 *Método de Pago:* ${paymentMethod}\n` +
+                    `⭐ *Puntos generados:* ${points} pts\n` +
+                    `────────────────────`;
+
+                const phone = String(CONFIG.phoneNumber || '40512960').replace(/\D/g, '');
+                const whatsappNumber = phone.length === 8 ? '502' + phone : phone;
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
                 if (whatsappWindow && !whatsappWindow.closed) {
                     whatsappWindow.location.href = whatsappUrl;
                 } else {
-                    const fallbackWindow = window.open(whatsappUrl, '_blank');
-                    if (!fallbackWindow) {
-                        showToast(
-                            'WhatsApp fue bloqueado por el navegador. Permite ventanas emergentes para SHEIBIS y vuelve a solicitar el pedido.',
-                            { title: 'WhatsApp bloqueado', icon: 'fa-brands fa-whatsapp', duration: 8000 }
-                        );
-                    }
+                    window.location.href = whatsappUrl;
                 }
+
+                try { addInventoryMovement && orderItems.forEach(function(item) {
+                    const x = (result.inventory || {})[String(item.id)] || {};
+                    const after = Number(x.stock || 0);
+                    addInventoryMovement(String(item.id), 'sale', item.cantidad, 'Venta / pedido registrado', orderId, after + item.cantidad, after);
+                }); } catch (_) {}
 
                 menuBadgeOrders.textContent = userOrders.length;
                 menuUserPoints.textContent = `✦ ${userPoints} puntos`;
                 pointsDisplay.textContent = userPoints;
                 updateCartUI();
-
-                showToast(
-                    `✅ Compra registrada. +${points} puntos agregados inmediatamente.`,
-                    { title: 'Compra registrada', icon: 'fa-star', duration: 6500 }
-                );
-
                 cart = [];
-                if (paymentSelect) paymentSelect.value = 'Efectivo';
                 updateCartUI();
                 cartEl.classList.remove('active');
 
+                showToast(`Pedido ${orderId} registrado correctamente.`, {
+                    title: 'Compra confirmada', icon: 'fa-circle-check', duration: 6000
+                });
+
             } catch (error) {
-                console.error('SHEIBIS · Error registrando compra:', error);
+                console.error('SHEIBIS · Error en Solicitar Aprobación:', error);
                 if (whatsappWindow && !whatsappWindow.closed) {
                     try { whatsappWindow.close(); } catch (_) {}
                 }
 
-                if(error && (error.code === 'OUT_OF_STOCK' || error.code === 'INSUFFICIENT_STOCK')){
-                    await syncGlobalInventory_(true);
-                    const d = error.data || {};
-                    const available = Math.max(0, Number(d.available) || 0);
-                    const productName = d.productName || 'seleccionado';
-                    showToast(
-                        error.code === 'OUT_OF_STOCK'
-                            ? `"${productName}" se agotó antes de confirmar tu pedido. No se registró la compra.`
-                            : `"${productName}" no tiene suficiente stock. Disponible: ${available}. No se registró la compra.`,
-                        {
-                            title: error.code === 'OUT_OF_STOCK' ? 'Producto agotado' : 'Stock insuficiente',
-                            kicker: 'SHEIBIS · INVENTARIO',
-                            icon: error.code === 'OUT_OF_STOCK' ? 'fa-box-open' : 'fa-triangle-exclamation',
-                            duration: 8000
-                        }
-                    );
-                }else{
-                    showToast(
-                        'No se pudo registrar la compra en Google Sheets. No se modificó el inventario ni se agregaron los puntos.',
-                        { title: 'Error de registro', kicker: 'SHEIBIS · SERVIDOR', icon: 'fa-triangle-exclamation', duration: 7000 }
-                    );
+                if (error.code === 'OUT_OF_STOCK') {
+                    showToast(`El producto "${error.productName || 'seleccionado'}" está agotado. Ya no quedan unidades disponibles.`, {
+                        title: 'Producto agotado', icon: 'fa-box-open', duration: 7500
+                    });
+                } else if (error.code === 'INSUFFICIENT_STOCK') {
+                    showToast(`"${error.productName || 'El producto'}" no tiene suficiente stock. Disponible: ${error.available || 0} unidad(es).`, {
+                        title: 'Stock insuficiente', icon: 'fa-triangle-exclamation', duration: 7500
+                    });
+                } else if (error.code === 'TIMEOUT') {
+                    showToast('El servidor está tardando en responder. El pedido no se confirmó. Intenta nuevamente.', {
+                        title: 'Conexión lenta', icon: 'fa-clock', duration: 7000
+                    });
+                } else {
+                    showToast(error.message || 'No se pudo registrar el pedido. El carrito se conservó.', {
+                        title: 'No se pudo completar', icon: 'fa-circle-exclamation', duration: 7000
+                    });
                 }
             } finally {
                 if (btn) {
@@ -6054,15 +5699,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     count += item.cantidad;
                     return `
                             <div class="cart-item">
-                                <div class="item-name">${item.nombre}</div>
-                                <div class="item-price">Q${(item.precio * item.cantidad).toFixed(2)}</div>
-                                <div class="cart-item-edit">
-                                    <div class="cart-item-qty" aria-label="Cantidad de ${item.nombre}">
-                                        <button type="button" class="cart-qty-btn" onclick="changeCartQuantity(${item.id}, -1)" title="Disminuir cantidad"><i class="fas fa-minus"></i></button>
-                                        <span class="cart-qty-value">${item.cantidad}</span>
-                                        <button type="button" class="cart-qty-btn" onclick="changeCartQuantity(${item.id}, 1)" title="Aumentar cantidad"><i class="fas fa-plus"></i></button>
-                                    </div>
-                                    <button type="button" class="cart-item-remove" onclick="removeFromCart(${item.id})" title="Eliminar producto"><i class="fas fa-trash-alt"></i></button>
+                                <div class="item-name">${item.nombre} x${item.cantidad}</div>
+                                <div>
+                                    <span class="item-price">Q${(item.precio * item.cantidad).toFixed(2)}</span>
+                                    <button class="item-remove" onclick="removeFromCart(${item.id})"><i class="fas fa-times"></i></button>
                                 </div>
                             </div>
                         `;
@@ -7240,79 +6880,56 @@ function categoryName(id){const c=getCategories().find(x=>String(x.id)===String(
 function inventoryStatus(stock){stock=Number(stock)||0;if(stock<=0)return 'out';if(stock<=2)return 'low';return 'ok';}
 function setInventoryStock(id,newStock,soldQty=0){const inv=ensureInventory();if(!inv[id])return false;const before=Math.max(0,Number(inv[id].stock)||0);const after=Math.max(0,Number(newStock)||0);inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=Math.max(0,Number(soldQty)||0);inv[id].lastUpdated=new Date().toISOString();return saveInventory(inv);}
 
-// INVENTARIO GLOBAL: Google Sheets es la fuente oficial para todos los usuarios y dispositivos.
-let globalInventorySyncBusy=false;
-let globalInventoryLastSync='';
-let globalInventorySignature='';
-
-function inventorySignature_(inv){
-  try{
-    return Object.keys(inv||{}).sort().map(function(id){
-      const x=inv[id]||{};
-      return id+':'+Number(x.stock||0)+':'+Number(x.entries||0)+':'+Number(x.exits||0)+':'+Number(x.adjustments||0)+':'+String(x.lastUpdated||'');
-    }).join('|');
-  }catch(_){return ''; }
-}
-
-async function syncGlobalInventory_(force=false){
-  if(globalInventorySyncBusy)return;
-  globalInventorySyncBusy=true;
-  try{
-    const data=await apiRequest('getInventory',{});
-    if(!data || data.ok===false)return;
-    const serverInventory=data.inventory||data.data||{};
-    const normalized={};
-    if(Array.isArray(serverInventory)){
-      serverInventory.forEach(function(x){if(x&&x.id!==undefined)normalized[String(x.id)]=x;});
-    }else if(serverInventory && typeof serverInventory==='object'){
-      Object.keys(serverInventory).forEach(function(id){normalized[String(id)]=serverInventory[id];});
-    }
-    if(Object.keys(normalized).length){
-      const nextSignature=inventorySignature_(normalized);
-      const changed=nextSignature!==globalInventorySignature;
-      saveInventory(normalized);
-      globalInventorySignature=nextSignature;
-      globalInventoryLastSync=new Date().toISOString();
-      if(changed || force){
-        if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
-          try{SB_ADMIN.renderInventory();SB_ADMIN.renderDashboard();}catch(_){ }
-        }
-        if(changed && typeof refreshStore==='function')refreshStore();
-      }
-    }else{
-      globalInventoryLastSync=new Date().toISOString();
-    }
-  }catch(e){
-    console.warn('SHEIBIS · no se pudo sincronizar inventario global:',e.message);
-  }finally{globalInventorySyncBusy=false;}
-}
-
-async function saveGlobalInventoryChange_(id,stock,reason='Ajuste manual'){
-  try{
-    const data=await apiRequest('setInventory',{
-      id:String(id),
-      stock:Math.max(0,Number(stock)||0),
-      reason:String(reason||'Ajuste manual')
-    });
-    if(data && data.inventory)saveInventory(Array.isArray(data.inventory)?Object.fromEntries(data.inventory.map(x=>[String(x.id),x])):data.inventory);
-    await syncGlobalInventory_(true);
-    return true;
-  }catch(e){
-    console.error('SHEIBIS · error guardando inventario global:',e);
-    showToast(e.message||'No se pudo guardar el inventario global.',{title:'Inventario',icon:'fa-triangle-exclamation',duration:5500});
-    await syncGlobalInventory_(true);
-    return false;
-  }
-}
-
 
 function getProducts(){return Array.isArray(window.PRODUCTOS)?window.PRODUCTOS:[];}
 function getCategories(){return Array.isArray(window.CATALOGOS)?window.CATALOGOS:[];}
 let globalCatalogSaveTimer=null;
 let globalCatalogSyncBusy=false;
 let globalCatalogLastServerUpdate='';
-let globalCatalogLastSync='';
-let globalCatalogSignature='';
+let globalInventorySyncBusy=false;
+let globalInventoryLastSync=0;
+let globalInventorySyncTimer=null;
+
+async function syncGlobalInventory_(force=false){
+  if(globalInventorySyncBusy)return;
+  const now=Date.now();
+  if(!force && now-globalInventoryLastSync<15000)return;
+  globalInventorySyncBusy=true;
+  try{
+    const data=await apiRequest('getInventory',{}, {timeout:12000});
+    if(data && data.ok!==false && data.inventory){
+      saveInventory(data.inventory);
+      globalInventoryLastSync=Date.now();
+      if(typeof SB_ADMIN==='object' && SB_ADMIN.adminActive){
+        try{SB_ADMIN.renderInventory();}catch(_){}
+      }
+    }
+    return data;
+  }catch(e){
+    console.warn('SHEIBIS inventario global',e);
+    return null;
+  }finally{
+    globalInventorySyncBusy=false;
+  }
+}
+
+async function saveInventoryGlobal_(id, stock, name){
+  const inv=ensureInventory(), key=String(id), previous=inv[key]?{...inv[key]}:null;
+  const safeStock=Math.max(0,Math.floor(Number(stock)||0));
+  try{
+    const data=await apiRequest('setInventory',{item:{productId:key,id:key,nombre:name||'',stock:safeStock}},{timeout:15000});
+    if(data && data.inventory){
+      saveInventory(data.inventory);
+      globalInventoryLastSync=Date.now();
+      return data.inventory;
+    }
+    throw new Error('El servidor no devolvió el inventario actualizado.');
+  }catch(e){
+    if(previous)inv[key]=previous;else delete inv[key];
+    saveInventory(inv);
+    throw e;
+  }
+}
 
 function queueGlobalCatalogSave_(){
   clearTimeout(globalCatalogSaveTimer);
@@ -7370,32 +6987,26 @@ async function syncGlobalCatalog_(force=false){
       if(lp && !Array.isArray(sp.imagenes) && Array.isArray(lp.imagenes)) sp.imagenes=lp.imagenes.slice();
     });
 
-    // Google Sheets es la FUENTE OFICIAL. Solo redibujamos si realmente cambió el catálogo.
-    const nextCatalogSignature=JSON.stringify({p:serverProducts,c:serverCategories});
-    const catalogChanged=nextCatalogSignature!==globalCatalogSignature;
-    if(catalogChanged){
-      if(Array.isArray(window.PRODUCTOS)){
-        window.PRODUCTOS.length=0;
-        serverProducts.forEach(p=>window.PRODUCTOS.push(p));
-      }
-      if(Array.isArray(window.CATALOGOS)){
-        window.CATALOGOS.length=0;
-        serverCategories.forEach(c=>window.CATALOGOS.push(c));
-      }
-
-      try{
-        localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
-        localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
-      }catch(_){}
-
-      refreshStore();
-      if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
-        SB_ADMIN.render();
-        SB_ADMIN.renderCategories();
-      }
-      globalCatalogSignature=nextCatalogSignature;
+    // Google Sheets es la FUENTE OFICIAL. Reemplazamos la copia local.
+    if(Array.isArray(window.PRODUCTOS)){
+      window.PRODUCTOS.length=0;
+      serverProducts.forEach(p=>window.PRODUCTOS.push(p));
     }
-    globalCatalogLastSync=new Date().toISOString();
+    if(Array.isArray(window.CATALOGOS)){
+      window.CATALOGOS.length=0;
+      serverCategories.forEach(c=>window.CATALOGOS.push(c));
+    }
+
+    try{
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+      localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
+    }catch(_){}
+
+    refreshStore();
+    if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
+      SB_ADMIN.render();
+      SB_ADMIN.renderCategories();
+    }
   }catch(e){
     // Si no hay conexión temporal, se mantiene la copia local.
     console.warn('SHEIBIS · no se pudo sincronizar catálogo global:',e.message);
@@ -7452,7 +7063,7 @@ function renderCategoryList(){
   const count=document.getElementById('sbCategoryCount');if(count)count.textContent=cats.length;
   el.innerHTML=cats.map(c=>`
     <div class="sb-item" data-category-id="${esc(c.id)}">
-      ${c.imagen?`<img src="${esc(c.imagen)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">`:`<div style="width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.07);color:#d4af37"><i class="fas ${esc(c.icono||'fa-folder-open')}"></i></div>`}
+      ${c.imagen?`<img src="${esc(c.imagen)}" alt="" onerror="this.style.display='none'">`:`<div style="width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.07);color:#d4af37"><i class="fas ${esc(c.icono||'fa-folder-open')}"></i></div>`}
       <div class="sb-info"><strong>${esc(c.nombre)}</strong><small>${c.proximamente!==false?'Próximamente':'Activo'} · ${getProducts().filter(p=>String(p.categoria)===String(c.id)).length} productos</small></div>
       <div class="sb-actions">
         <button type="button" class="sb-btn sb-cat-move" data-cat-action="up" data-id="${esc(c.id)}" title="Mover arriba" aria-label="Mover ${esc(c.nombre)} arriba">↑</button>
@@ -7732,7 +7343,7 @@ window.SB_ADMIN={
     body.innerHTML=list.map(p=>{
       const id=String(p.id),x=inv[id]||{},stock=Math.max(0,Number(x.stock)||0),before=Math.max(0,Number(x.stockBefore??stock)||0),initial=Math.max(0,Number(x.initialStock)||0),entries=Math.max(0,Number(x.entries)||0),exits=Math.max(0,Number(x.exits)||0),adjustments=Number(x.adjustments)||0,expected=inventoryExpected(x),diff=stock-expected,st=inventoryStatus(stock),label=st==='out'?'AGOTADO':st==='low'?'STOCK BAJO':'DISPONIBLE',cls=st==='out'?'sb-status-out':st==='low'?'sb-status-low':'sb-status-good',reconciled=Math.abs(diff)<0.000001;
       return `<tr>
-        <td>${p.imagen?`<img loading="lazy" decoding="async" class="sb-inv-img" src="${esc(p.imagen)}" onerror="this.style.display='none'">`:'—'}</td>
+        <td>${p.imagen?`<img class="sb-inv-img" src="${esc(p.imagen)}" onerror="this.style.display='none'">`:'—'}</td>
         <td><span class="sb-inv-code">${esc(x.sku||'SHE-'+id.padStart(4,'0'))}</span></td>
         <td><span class="sb-inv-product">${esc(p.nombre)}</span><span class="sb-inv-sub">ID #${esc(id)}</span></td>
         <td>${esc(categoryName(p.categoria))}</td>
@@ -7749,26 +7360,44 @@ window.SB_ADMIN={
       </tr>`;
     }).join('');
   },
-  inventoryCell(id,key,value){
+  async inventoryCell(id,key,value){
     const inv=ensureInventory();if(!inv[id])return;
-    const before=Math.max(0,Number(inv[id].stock)||0),after=Math.max(0,Number(value)||0),delta=after-before,now=new Date().toISOString();
-    if(key==='stock'){
-      inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=delta<0?Math.abs(delta):0;inv[id].adjustments=Number(inv[id].adjustments||0)+delta;inv[id].lastUpdated=now;
-      addInventoryMovement(id,'adjustment',Math.abs(delta),'Ajuste manual','MANUAL',before,after);
-    }else inv[id][key]=String(value).trim();
-    saveInventory(inv);this.log('inventory',`Ajuste de inventario ID ${id}: ${before} → ${after}`);this.renderInventory();
-    saveGlobalInventoryChange_(id,after,'Ajuste manual');
+    const before=Math.max(0,Number(inv[id].stock)||0),after=Math.max(0,Math.floor(Number(value)||0));
+    if(key!=='stock'){inv[id][key]=String(value).trim();saveInventory(inv);this.renderInventory();return;}
+    if(after===before)return;
+    const previous={...inv[id]};
+    inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=after<before?before-after:0;inv[id].adjustments=Number(inv[id].adjustments||0)+(after-before);inv[id].lastUpdated=new Date().toISOString();
+    saveInventory(inv);this.renderInventory();
+    try{
+      const serverInv=await saveInventoryGlobal_(id,after, getProducts().find(p=>String(p.id)===String(id))?.nombre||'');
+      if(serverInv && serverInv[String(id)]){
+        const x=serverInv[String(id)];
+        addInventoryMovement(id,'adjustment',Math.abs(after-before),'Ajuste manual','MANUAL',before,Number(x.stock)||0);
+      }
+      this.log('inventory',`Ajuste global de inventario ID ${id}: ${before} → ${after}`);
+      this.renderInventory();
+    }catch(e){
+      inv[id]=previous;saveInventory(inv);this.renderInventory();
+      showToast('No se pudo sincronizar este cambio con Google Sheets. El inventario local fue restaurado.',{title:'Sincronización fallida',icon:'fa-cloud-arrow-up',duration:6500});
+    }
   },
-  adjustStock(id,delta){
+  async adjustStock(id,delta){
     const inv=ensureInventory();if(!inv[id])return;
-    const before=Math.max(0,Number(inv[id].stock)||0),change=Number(delta)||0,after=Math.max(0,before+change),realDelta=after-before,now=new Date().toISOString();
-    if(realDelta===0){this.renderInventory();return;}
-    inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=realDelta<0?Math.abs(realDelta):0;
-    if(realDelta>0)inv[id].entries=Number(inv[id].entries||0)+realDelta;else inv[id].exits=Number(inv[id].exits||0)+Math.abs(realDelta);
-    inv[id].lastUpdated=now;saveInventory(inv);
-    addInventoryMovement(id,realDelta>0?'entry':'exit',Math.abs(realDelta),realDelta>0?'Entrada manual':'Salida manual','MANUAL',before,after);
-    this.log('inventory',`Stock ${realDelta<0?'reducido':'aumentado'} para ID ${id}: ${before} → ${after}`);this.renderInventory();
-    saveGlobalInventoryChange_(id,after,realDelta>0?'Entrada manual':'Salida manual');
+    const before=Math.max(0,Number(inv[id].stock)||0),after=Math.max(0,before+Math.floor(Number(delta)||0));
+    if(after===before)return;
+    const previous={...inv[id]};
+    inv[id].stockBefore=before;inv[id].stock=after;inv[id].lastSale=after<before?before-after:0;
+    if(after>before)inv[id].entries=Number(inv[id].entries||0)+(after-before);else inv[id].exits=Number(inv[id].exits||0)+(before-after);
+    inv[id].lastUpdated=new Date().toISOString();saveInventory(inv);this.renderInventory();
+    try{
+      await saveInventoryGlobal_(id,after,getProducts().find(p=>String(p.id)===String(id))?.nombre||'');
+      addInventoryMovement(id,after>before?'entry':'exit',Math.abs(after-before),after>before?'Entrada manual':'Salida manual','MANUAL',before,after);
+      this.log('inventory',`Stock global ${after<before?'reducido':'aumentado'} para ID ${id}: ${before} → ${after}`);
+      this.renderInventory();
+    }catch(e){
+      inv[id]=previous;saveInventory(inv);this.renderInventory();
+      showToast('No se pudo sincronizar este cambio con Google Sheets. El inventario local fue restaurado.',{title:'Sincronización fallida',icon:'fa-cloud-arrow-up',duration:6500});
+    }
   },
   exportInventoryRows(){
     const inv=ensureInventory(),rows=[['IMAGEN','SKU','PRODUCTO','CATEGORÍA','INICIAL','STOCK ANTES','ENTRADAS','SALIDAS','AJUSTES','STOCK ESPERADO','STOCK DESPUÉS','DIFERENCIA','CUADRE','ESTADO']];
@@ -7779,7 +7408,7 @@ window.SB_ADMIN={
   },
   exportInventoryExcel(){const rows=this.exportInventoryRows(),html=`<html><head><meta charset="UTF-8"><style>table{border-collapse:collapse;font-family:Arial;font-size:12px}th,td{border:1px solid #999;padding:8px}th{background:#d4af37;color:#111;font-weight:bold}td{mso-number-format:"\\@"}</style></head><body><h2>SHEIBIS — INVENTARIO DE PRODUCTOS</h2><table>${rows.map((r,i)=>'<tr>'+r.map(v=>`<${i?'td':'th'}>${esc(v)}</${i?'td':'th'}>`).join('')+'</tr>').join('')}</table></body></html>`,blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8;'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SHEIBIS_INVENTARIO_'+new Date().toISOString().slice(0,10)+'.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);this.log('backup','Inventario exportado a Excel');},
   exportInventoryPDF(){const view=document.getElementById('sbInventoryView');if(!view)return;const was=view.style.display;view.style.display='block';setTimeout(()=>{window.print();view.style.display=was;},100);},
-  render(){const el=document.getElementById('sbProductList');if(!el)return;const q=(document.getElementById('sbSearch')?.value||'').trim().toLowerCase();const list=getProducts().filter(p=>!q||[p.nombre,p.id,p.categoria,categoryName(p.categoria)].join(' ').toLowerCase().includes(q));if(!list.length){el.innerHTML='<div style="padding:18px;color:rgba(255,255,255,.55);text-align:center">No hay productos.</div>';return;}el.innerHTML=list.map(p=>{const price=Number(p.precio)||0,before=Number(p.precioAntes)||0,d=before>price?((before-price)/before)*100:(Number(p.descuento)||0);return `<div class="sb-item" data-product-id="${esc(p.id)}">${p.imagen?`<img loading="lazy" decoding="async" src="${esc(p.imagen)}" alt="" onerror="this.style.display='none'">`:''}<div class="sb-info"><strong>${esc(p.nombre)}</strong><small>${esc(categoryName(p.categoria))} · Q${price.toFixed(2)}${before>price?` · antes Q${before.toFixed(2)} · -${d.toFixed(0)}%`:''}</small></div><div class="sb-actions"><button type="button" class="sb-btn sb-edit" data-action="edit" data-id="${esc(p.id)}">✏️</button><button type="button" class="sb-btn sb-del" data-action="delete" data-id="${esc(p.id)}">🗑️</button></div></div>`;}).join('');},
+  render(){const el=document.getElementById('sbProductList');if(!el)return;const q=(document.getElementById('sbSearch')?.value||'').trim().toLowerCase();const list=getProducts().filter(p=>!q||[p.nombre,p.id,p.categoria,categoryName(p.categoria)].join(' ').toLowerCase().includes(q));if(!list.length){el.innerHTML='<div style="padding:18px;color:rgba(255,255,255,.55);text-align:center">No hay productos.</div>';return;}el.innerHTML=list.map(p=>{const price=Number(p.precio)||0,before=Number(p.precioAntes)||0,d=before>price?((before-price)/before)*100:(Number(p.descuento)||0);return `<div class="sb-item" data-product-id="${esc(p.id)}">${p.imagen?`<img src="${esc(p.imagen)}" alt="" onerror="this.style.display='none'">`:''}<div class="sb-info"><strong>${esc(p.nombre)}</strong><small>${esc(categoryName(p.categoria))} · Q${price.toFixed(2)}${before>price?` · antes Q${before.toFixed(2)} · -${d.toFixed(0)}%`:''}</small></div><div class="sb-actions"><button type="button" class="sb-btn sb-edit" data-action="edit" data-id="${esc(p.id)}">✏️</button><button type="button" class="sb-btn sb-del" data-action="delete" data-id="${esc(p.id)}">🗑️</button></div></div>`;}).join('');},
   renderCategories(){renderCategoryList();},
 
   add(){this.cancelForm();const f=document.getElementById('sbProductForm');if(!f)return;refreshCategorySelect();f.reset();document.getElementById('sbId').value='';document.getElementById('sbPrice').value='';document.getElementById('sbPriceBefore').value='';document.getElementById('sbAgotado').checked=false;f.classList.add('show');this.updateDiscountPreview();document.getElementById('sbStatus').textContent='Nuevo producto: precio actual + precio antes calculan el descuento automáticamente.';document.getElementById('sbName')?.focus();},
@@ -7836,19 +7465,12 @@ document.addEventListener('DOMContentLoaded',function(){
   // Catálogo compartido: primero entra el usuario; la red se sincroniza después.
   // Esto evita que una respuesta lenta de Apps Script retrase el inicio.
   setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },1200);
-  // Menos llamadas de red y menos repintados: el pedido actualiza el stock al instante;
-  // el resto de usuarios se sincroniza en segundo plano sin castigar el rendimiento.
-  setInterval(function(){ syncGlobalInventory_(); },20000);
   setInterval(function(){ syncGlobalCatalog_(); },60000);
+  clearInterval(globalInventorySyncTimer);
+  globalInventorySyncTimer=setInterval(function(){ syncGlobalInventory_(); },30000);
   window.addEventListener('focus',function(){
-    setTimeout(function(){
-      const now=Date.now();
-      const invAge=globalInventoryLastSync ? now-Date.parse(globalInventoryLastSync) : Infinity;
-      const catAge=globalCatalogLastSync ? now-Date.parse(globalCatalogLastSync) : Infinity;
-      if(invAge>5000)syncGlobalInventory_(true);
-      if(catAge>15000)syncGlobalCatalog_(true);
-    },250);
-  });
+    setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },300);
+  },{passive:true});
   const logo=document.querySelector('.brand-top');
   if(logo){let n=0,t;logo.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();n++;clearTimeout(t);t=setTimeout(()=>n=0,2000);if(n>=5){n=0;clearTimeout(t);SB_ADMIN.openLogin();}},true);}
 }); 
@@ -7982,7 +7604,12 @@ document.addEventListener('keydown',function(e){
         td span{color:#666;font-size:10px}.state{font-weight:700}
         .footer{margin-top:25px;border-top:1px solid #ddd;padding-top:10px;font-size:10px;color:#777}
         @media print{@page{size:A4;margin:12mm}}
-      </style></head><body>
+          /* SHEIBIS PERFORMANCE: reduce visual work on lower-power devices */
+        .bg-orb{will-change:transform;transform:translateZ(0)}
+        #particles-canvas{transform:translateZ(0);contain:strict}
+        .cart-item,.product-card,.catalog-card{content-visibility:auto;contain-intrinsic-size:220px}
+        @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.bg-orb,.particle-grid,#particles-canvas{display:none!important}}
+    </style></head><body>
       <div class="header"><div class="brand">✦ SHEIBIS</div><div class="sub">${escPrint(title)}</div><div class="date">Generado: ${escPrint(now)}</div></div>
       ${content}
       <div class="footer">Documento generado desde el área privada de administración SHEIBIS.</div>
