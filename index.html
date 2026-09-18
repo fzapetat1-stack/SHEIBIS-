@@ -2174,7 +2174,32 @@
         /* ================================================================
            TOAST NOTIFICATION
            ================================================================ */
-        .toast-notification {
+        /* ================================================================
+   SHEIBIS — NOTIFICACIONES Y CUENTA PREMIUM
+   ================================================================ */
+.toast-notification{
+    position:fixed!important;top:24px!important;right:24px!important;left:auto!important;bottom:auto!important;
+    width:min(390px,calc(100vw - 32px))!important;min-height:92px!important;padding:18px 18px 16px!important;
+    display:grid!important;grid-template-columns:48px 1fr 30px!important;gap:13px!important;align-items:center!important;
+    border-radius:22px!important;background:rgba(12,18,31,.92)!important;
+    border:1px solid rgba(231,196,90,.22)!important;box-shadow:0 22px 70px rgba(0,0,0,.42),0 0 35px rgba(231,196,90,.08)!important;
+    backdrop-filter:blur(22px) saturate(150%)!important;-webkit-backdrop-filter:blur(22px) saturate(150%)!important;
+    transform:translate3d(0,-22px,0) scale(.97)!important;opacity:0!important;pointer-events:none!important;
+    transition:opacity .28s ease,transform .28s ease!important;z-index:99999!important;overflow:hidden!important;
+}
+.toast-notification.show{opacity:1!important;transform:translate3d(0,0,0) scale(1)!important;pointer-events:auto!important}
+.toast-icon-wrap{width:48px!important;height:48px!important;border-radius:16px!important;display:grid!important;place-items:center!important;background:linear-gradient(135deg,rgba(231,196,90,.18),rgba(77,163,255,.09))!important;border:1px solid rgba(231,196,90,.2)!important;color:#f5dc86!important;font-size:1.1rem!important}
+.toast-content{min-width:0!important;text-align:left!important}
+.toast-kicker{font-size:.58rem!important;letter-spacing:2px!important;color:#d4af37!important;margin-bottom:4px!important}
+.toast-title{font-size:.92rem!important;font-weight:700!important;color:#fff!important;margin-bottom:3px!important}
+.toast-message{font-size:.76rem!important;line-height:1.45!important;color:#aebbd0!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.toast-close{width:30px!important;height:30px!important;border-radius:10px!important;background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.07)!important;color:#91a0b5!important}
+.toast-progress{position:absolute!important;left:0!important;bottom:0!important;height:2px!important;background:linear-gradient(90deg,#d4af37,#7cc7ff)!important;width:100%!important;transform-origin:left center!important}
+.sb-account-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,5,12,.68);backdrop-filter:blur(12px);z-index:100000;padding:18px}
+.sb-account-modal.show{display:flex}.sb-account-card{width:min(520px,100%);border-radius:28px;padding:24px;background:linear-gradient(145deg,rgba(18,27,46,.98),rgba(7,12,23,.98));border:1px solid rgba(231,196,90,.2);box-shadow:0 35px 100px rgba(0,0,0,.55)}
+.sb-account-head{display:flex;align-items:center;gap:15px}.sb-account-photo{width:76px;height:76px;border-radius:24px;object-fit:cover;border:1px solid rgba(231,196,90,.35);background:#111827}.sb-account-title{margin:0;color:#fff;font-size:1.25rem}.sb-account-sub{margin:4px 0 0;color:#8fa0b7;font-size:.76rem}.sb-account-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}.sb-account-stat{padding:14px;border-radius:17px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.sb-account-stat span{display:block;color:#8291a7;font-size:.62rem;text-transform:uppercase;letter-spacing:1.4px}.sb-account-stat strong{display:block;color:#fff;font-size:1.15rem;margin-top:5px}.sb-account-actions{display:flex;gap:9px;margin-top:18px;flex-wrap:wrap}.sb-account-actions button{flex:1;min-width:130px;padding:11px 14px;border-radius:13px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.045);color:#dbe4f2;cursor:pointer}.sb-account-actions .primary{background:linear-gradient(135deg,#d4af37,#f2d77e);color:#07101d;border-color:transparent;font-weight:700}
+@media(max-width:600px){.toast-notification{top:12px!important;right:12px!important;width:calc(100vw - 24px)!important}.sb-account-grid{grid-template-columns:1fr 1fr}}
+.toast-notification {
             position: fixed;
             bottom: 40px;
             left: 50%;
@@ -3141,6 +3166,14 @@ body.sheibis-modal-open{overflow:hidden;}
                 <span>Historial de Pedidos</span>
                 <span class="menu-badge" id="menuBadgeOrders">0</span>
             </div>
+            <div class="menu-item" onclick="menuAction('account')">
+                <i class="fas fa-user-circle"></i>
+                <span>Mi cuenta</span>
+            </div>
+            <div class="menu-item" onclick="menuAction('photo')">
+                <i class="fas fa-camera"></i>
+                <span>Agregar / cambiar foto</span>
+            </div>
         </div>
 
         <div class="menu-divider"></div>
@@ -3273,6 +3306,23 @@ body.sheibis-modal-open{overflow:hidden;}
     <!-- ================================================================
     TOAST NOTIFICATION
     ================================================================ -->
+    <div class="sb-account-modal" id="sbAccountModal" onclick="if(event.target===this)closeAccountModal()">
+        <div class="sb-account-card">
+            <div class="sb-account-head">
+                <img class="sb-account-photo" id="sbAccountPhoto" src="https://www.gravatar.com/avatar/default?d=identicon&s=200" alt="Foto de perfil">
+                <div><h3 class="sb-account-title" id="sbAccountName">Mi cuenta</h3><p class="sb-account-sub" id="sbAccountEmail"></p></div>
+            </div>
+            <div class="sb-account-grid">
+                <div class="sb-account-stat"><span>Puntos</span><strong id="sbAccountPoints">0</strong></div>
+                <div class="sb-account-stat"><span>Compras</span><strong id="sbAccountOrders">0</strong></div>
+            </div>
+            <div class="sb-account-actions">
+                <button class="primary" onclick="chooseProfilePhoto()"><i class="fas fa-camera"></i> Cambiar foto</button>
+                <button onclick="closeAccountModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast-notification" id="toastNotification" role="status" aria-live="polite">
         <div class="toast-glass-glow"></div>
         <div class="toast-icon-wrap">
@@ -3390,7 +3440,7 @@ body.sheibis-modal-open{overflow:hidden;}
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbz_OdYhvSr-yNtE0zbKTzoDxxgcsVuW9XQ0XChSlLmjaYYpxatpTeoJ7J1e9yDwrKPc/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxpaZnzCABVsjB7SCfNZs3_bNZX-bZQkFUDRg15Ndr9iTCmCrbjsbJUKfvmFH8S93bd/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -3948,14 +3998,52 @@ function saveSession() {
 }
 
         window.showUserProfile = function() {
-            if (!currentUser) {
-                showToast('⚠️ Inicia sesión para ver tu perfil');
+            if (!currentUser || currentUser.isGuest === true) {
+                showToast('Inicia sesión para administrar tu cuenta.', {title:'Cuenta SHEIBIS',kicker:'SHEIBIS · CUENTA',icon:'fa-user-lock'});
                 showAuth('login');
                 return;
             }
-            showToast(
-                `👤 ${currentUser.nombre}\n📧 ${currentUser.email}\n✦ ${userPoints} puntos\n📦 ${userOrders.length} pedidos`
-            );
+            openAccountModal();
+        };
+
+        window.openAccountModal = function(){
+            if(!currentUser || currentUser.isGuest===true){showAuth('login');return;}
+            const m=document.getElementById('sbAccountModal');
+            const photo=currentUser.avatar || `https://www.gravatar.com/avatar/${md5((currentUser.email||'').toLowerCase().trim())}?d=identicon&s=200`;
+            document.getElementById('sbAccountPhoto').src=photo;
+            document.getElementById('sbAccountName').textContent=currentUser.nombre||'Cliente';
+            document.getElementById('sbAccountEmail').textContent=currentUser.email||'';
+            document.getElementById('sbAccountPoints').textContent=String(userPoints||0);
+            document.getElementById('sbAccountOrders').textContent=String(userOrders.length||currentUser.totalOrders||0);
+            m.classList.add('show');
+        };
+        window.closeAccountModal=function(){document.getElementById('sbAccountModal')?.classList.remove('show');};
+        window.chooseProfilePhoto=function(){
+            if(!currentUser || currentUser.isGuest===true)return;
+            const input=document.createElement('input');input.type='file';input.accept='image/*';
+            input.onchange=()=>{const file=input.files?.[0];if(!file)return;if(file.size>2*1024*1024){showToast('La imagen debe pesar menos de 2 MB.',{title:'Imagen no válida',kicker:'SHEIBIS · CUENTA',icon:'fa-image'});return;}
+                const reader=new FileReader();reader.onload=async()=>{
+                    try{
+                        const img=new Image();
+                        img.onload=async()=>{
+                            const max=420,scale=Math.min(1,max/Math.max(img.width,img.height));
+                            const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+                            const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,canvas.width,canvas.height);
+                            let avatar=canvas.toDataURL('image/jpeg',.72);
+                            if(avatar.length>48000)avatar=canvas.toDataURL('image/jpeg',.55);
+                            if(avatar.length>50000)throw new Error('La foto es demasiado grande después de comprimirla.');
+                            currentUser.avatar=avatar;
+                            try{const data=await apiRequest('updateUser',{id:currentUser.id,fields:{avatar:avatar}},{timeout:30000});
+                        if(data.user)currentUser={...currentUser,...data.user};
+                        userAvatar.src=currentUser.avatar;menuAvatar.src=currentUser.avatar;saveSession();openAccountModal();
+                        showToast('Tu foto de perfil fue actualizada correctamente.',{title:'Foto actualizada',kicker:'SHEIBIS · CUENTA',icon:'fa-camera'});
+                            }catch(e){showToast('No fue posible guardar la foto. Inténtalo nuevamente.',{title:'No se pudo guardar',kicker:'SHEIBIS · CUENTA',icon:'fa-circle-exclamation'});}
+                        };
+                        img.onerror=()=>showToast('No se pudo leer la imagen seleccionada.',{title:'Imagen no válida',kicker:'SHEIBIS · CUENTA',icon:'fa-circle-exclamation'});
+                        img.src=String(reader.result||'');
+                    }catch(e){showToast(e.message||'No se pudo preparar la imagen.',{title:'Imagen no válida',kicker:'SHEIBIS · CUENTA',icon:'fa-circle-exclamation'});}
+                };reader.readAsDataURL(file);};
+            input.click();
         };
 
         // ================================================================
@@ -3973,11 +4061,14 @@ function saveSession() {
 
             if ((!currentUser || currentUser.isGuest === true) &&
                 action !== 'shipping' && action !== 'payment' && action !== 'terms' &&
-                action !== 'contact') {
+                action !== 'contact' && action !== 'account' && action !== 'photo') {
                 showToast('⚠️ Inicia sesión para acceder a esta opción');
                 setTimeout(() => showAuth('login'), 500);
                 return;
             }
+
+            if(action==='account'){openAccountModal();return;}
+            if(action==='photo'){chooseProfilePhoto();return;}
 
             const openInNewTab = (content, title) => {
                 const win = window.open('', '_blank');
@@ -4619,7 +4710,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbz_OdYhvSr-yNtE0zbKTzoDxxgcsVuW9XQ0XChSlLmjaYYpxatpTeoJ7J1e9yDwrKPc/exec
+     https://script.google.com/macros/s/AKfycbxpaZnzCABVsjB7SCfNZs3_bNZX-bZQkFUDRg15Ndr9iTCmCrbjsbJUKfvmFH8S93bd/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -6546,7 +6637,7 @@ window.premiumMenuAction=async function(action){
 .sb-v11-meter{height:7px;border-radius:99px;background:rgba(255,255,255,.05);overflow:hidden;margin-top:10px}.sb-v11-meter i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#d4af37,#f0d68a);transition:.3s}
 @media(max-width:1050px){.sb-v11-kpis{grid-template-columns:repeat(3,1fr)}.sb-v11-hero,.sb-v11-grid{grid-template-columns:1fr}.sb-v11-tool-grid{grid-template-columns:1fr 1fr}.sb-v11-actions{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.sb-v11-kpis{grid-template-columns:1fr 1fr}.sb-v11-tool-grid{grid-template-columns:1fr}.sb-v11-actions{grid-template-columns:1fr}.sb-v11-tab{flex:1;min-width:120px}.sb-v11-welcome h3{font-size:1.15rem}}
-@media print{#sbAdminPanel .sb-v11-tabs,#sbAdminPanel .sb-v11-section:not(#sbV11Dashboard),#sbAdminPanel .sb-head,#sbAdminPanel .sb-admin-tabs{display:none!important}.sb-v11-section.active{display:block!important}}
+@media print{#sbAdminPanel .sb-v11-tabs,#sbAdminPanel .sb-v11-section:not(#sbV11Dashboard):not(#sbV11Users),#sbAdminPanel .sb-head,#sbAdminPanel .sb-admin-tabs{display:none!important}.sb-v11-section.active{display:block!important}}
 </style>
 
 <!-- SHEIBIS ADMIN PRIVADO: ACCESO OCULTO EN EL LOGO -->
@@ -6625,12 +6716,14 @@ window.premiumMenuAction=async function(action){
       <button class="sb-v11-tab" data-v11-tab="inventory" onclick="SB_ADMIN.showTab('inventory')">📦 Inventario</button>
       <button class="sb-v11-tab" data-v11-tab="analytics" onclick="SB_ADMIN.showTab('analytics')">◈ Analítica</button>
       <button class="sb-v11-tab" data-v11-tab="activity" onclick="SB_ADMIN.showTab('activity')">◷ Actividad</button>
+      <button class="sb-v11-tab" data-v11-tab="users" onclick="SB_ADMIN.showTab('users')">♙ Usuarios</button>
       <button class="sb-v11-tab" data-v11-tab="tools" onclick="SB_ADMIN.showTab('tools')">⚡ Herramientas</button>
     </div>
 
     <section id="sbV11Dashboard" class="sb-v11-section active"></section>
     <section id="sbV11Analytics" class="sb-v11-section"></section>
     <section id="sbV11Activity" class="sb-v11-section"></section>
+    <section id="sbV11Users" class="sb-v11-section"></section>
     <section id="sbV11Tools" class="sb-v11-section"></section>
 
     <div id="sbProductAdminContent">
@@ -7140,6 +7233,7 @@ window.SB_ADMIN={
     if(tab==='dashboard')this.renderDashboard();
     if(tab==='analytics')this.renderAnalytics();
     if(tab==='activity')this.renderActivity();
+    if(tab==='users')this.renderUsers();
     if(tab==='tools')this.renderTools();
     if(tab==='inventory')this.renderInventory();
     if(tab==='products'){this.render();this.renderCategories();}
@@ -7234,6 +7328,32 @@ window.SB_ADMIN={
     </div>`;
   },
 
+  async renderUsers(){
+    const el=document.getElementById('sbV11Users');if(!el)return;
+    el.innerHTML=`<div class="sb-v11-card"><h4 style="margin:0 0 12px">GESTIÓN DE USUARIOS Y PUNTOS</h4><p style="color:#8190a7;font-size:.72rem">Los puntos se guardan directamente en Google Sheets. Puedes sumar, restar o establecer el total exacto.</p><div id="sbUsersOnlineBox" style="margin:12px 0"></div><div id="sbUsersTable">Cargando usuarios…</div></div><div class="sb-v11-card" style="margin-top:14px"><h4 style="margin:0 0 12px">ESTADO DE LAS 8 HOJAS</h4><div id="sbSheetsStatus">Comprobando conexión…</div></div>`;
+    try{
+      const [u,st]=await Promise.all([apiRequest('getUsers',{},{timeout:30000}),apiRequest('getSystemStatus',{},{timeout:30000})]);
+      const users=Array.isArray(u.users)?u.users:[];
+      const table=document.getElementById('sbUsersTable');
+      table.innerHTML=`<div style="overflow:auto"><table class="sb-v11-table"><thead><tr><th>Usuario</th><th>Correo</th><th>Puntos</th><th>Compras</th><th>Acción</th></tr></thead><tbody>${users.length?users.map(x=>{const pts=Number(x.puntos)||0;const orders=Number(x.totalOrders)||0;return `<tr><td><strong>${esc(x.nombre||'Sin nombre')}</strong><br><small>${esc(x.id||'')}</small></td><td>${esc(x.email||'')}</td><td><input id="sbPts_${esc(String(x.id||''))}" type="number" min="0" step="1" value="${pts}" class="sb-v11-input" style="max-width:110px"></td><td>${orders}</td><td><button class="sb-v11-btn" onclick="SB_ADMIN.saveUserPoints('${String(x.id||'').replace(/'/g,"\\'")}')">Guardar puntos</button></td></tr>`}).join(''):'<tr><td colspan="5">No hay usuarios registrados.</td></tr>'}</tbody></table></div>`;
+      const online=Number(st.online)||0;document.getElementById('sbUsersOnlineBox').innerHTML=`<div class="sb-v11-kpis"><div class="sb-v11-kpi"><span>Usuarios registrados</span><strong>${users.length}</strong><em>hoja Usuarios</em></div><div class="sb-v11-kpi"><span>Conectados ahora</span><strong>${online}</strong><em>hoja Accesos</em></div></div>`;
+      document.getElementById('sbSheetsStatus').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px">${(st.sheets||[]).map(x=>`<div style="padding:11px;border-radius:14px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025)"><strong style="color:#fff;font-size:.74rem">${esc(x.name)}</strong><div style="color:${x.exists?'#8ff7bd':'#f5a6a6'};font-size:.65rem;margin-top:5px">${x.exists?'● Conectada':'○ Pendiente'}</div><small style="color:#718096">${Number(x.rows)||0} registros</small></div>`).join('')}</div>`;
+    }catch(e){document.getElementById('sbUsersTable').innerHTML=`<div style="padding:18px;color:#f2a7a7">No se pudo consultar Google Sheets: ${esc(e.message||'Error')}</div>`;}
+  },
+
+  async saveUserPoints(id){
+    const input=document.getElementById('sbPts_'+CSS.escape(String(id)));if(!input)return;
+    const value=Math.max(0,Math.floor(Number(input.value)||0));
+    input.disabled=true;
+    try{const data=await apiRequest('setUserPoints',{userId:id,points:value},{timeout:30000});
+      if(currentUser && String(currentUser.id)===String(id)){userPoints=Number(data.pointsAfter)||0;currentUser.puntos=userPoints;pointsDisplay.textContent=String(userPoints);menuUserPoints.textContent=`✦ ${userPoints} puntos`;saveSession();}
+      this.log('users',`Puntos de ${id} actualizados a ${value}`);
+      showToast(`Los puntos quedaron establecidos en ${value}.`,{title:'Puntos actualizados',kicker:'SHEIBIS · USUARIOS',icon:'fa-star'});
+      this.renderUsers();
+    }catch(e){showToast(e.message||'No se pudieron guardar los puntos.',{title:'No se pudo actualizar',kicker:'SHEIBIS · USUARIOS',icon:'fa-circle-exclamation'});}
+    finally{input.disabled=false;}
+  },
+
   renderTools(){
     const el=document.getElementById('sbV11Tools');if(!el)return;
     const threshold=Number(localStorage.getItem('sheibis_low_stock_threshold')||2);
@@ -7259,7 +7379,7 @@ window.SB_ADMIN={
     try{return JSON.parse(localStorage.getItem('sheibis_admin_activity_v11')||'[]')||[];}catch(e){return [];}
   },
   log(type,text){
-    const icons={login:'fa-right-to-bracket',product:'fa-box',delete:'fa-trash',category:'fa-folder',inventory:'fa-boxes-stacked',backup:'fa-database',restore:'fa-rotate-left',price:'fa-tags',refresh:'fa-rotate',maintenance:'fa-wrench',security:'fa-shield-halved'};
+    const icons={login:'fa-right-to-bracket',product:'fa-box',delete:'fa-trash',category:'fa-folder',inventory:'fa-boxes-stacked',backup:'fa-database',restore:'fa-rotate-left',price:'fa-tags',refresh:'fa-rotate',maintenance:'fa-wrench',security:'fa-shield-halved',users:'fa-users'};
     const arr=this.getLogs();arr.unshift({type,text,time:new Date().toLocaleString('es-GT'),icon:icons[type]||'fa-circle-info'});localStorage.setItem('sheibis_admin_activity_v11',JSON.stringify(arr.slice(0,80)));
   },
   clearLogs(){if(!confirm('¿Limpiar todo el registro de actividad?'))return;localStorage.removeItem('sheibis_admin_activity_v11');this.renderActivity();},
@@ -7281,7 +7401,7 @@ window.SB_ADMIN={
       window.CATALOGOS.length=0;data.categories.forEach(x=>window.CATALOGOS.push(x));
       localStorage.setItem(STORAGE_KEY,JSON.stringify(window.PRODUCTOS));localStorage.setItem(CATEGORY_KEY,JSON.stringify(window.CATALOGOS));localStorage.setItem(INVENTORY_KEY,JSON.stringify(data.inventory));localStorage.setItem(INVENTORY_MOVES_KEY,JSON.stringify(Array.isArray(data.inventoryMovements)?data.inventoryMovements:[]));
       if(data.settings?.lowStockThreshold!==undefined)localStorage.setItem('sheibis_low_stock_threshold',String(data.settings.lowStockThreshold));
-      refreshStore();this.render();this.renderCategories();this.log('restore','Respaldo restaurado correctamente');this.showTab('dashboard');alert('✓ Respaldo restaurado correctamente.');
+      refreshStore();this.render();this.renderCategories();this.log('restore','Respaldo restaurado correctamente');this.showTab('dashboard');showToast('Respaldo restaurado correctamente.',{title:'Respaldo restaurado',kicker:'SHEIBIS · ADMIN',icon:'fa-database'});
     }catch(e){alert('No se pudo restaurar: '+e.message);}
     };
     input.click();
@@ -7292,13 +7412,13 @@ window.SB_ADMIN={
     if(!Number.isFinite(raw)||raw===0){alert('Escribe un porcentaje distinto de 0.');return;}
     if(!confirm(`Se ajustarán TODOS los precios actuales en ${raw>0?'+':''}${raw}%. ¿Continuar?`))return;
     getProducts().forEach(p=>{const old=Number(p.precio)||0;p.precio=Math.max(0,Number((old*(1+raw/100)).toFixed(2)));if(Number(p.precioAntes)>0&&p.precio>Number(p.precioAntes))p.precioAntes=p.precio;});
-    saveProducts();refreshStore();this.log('price',`Ajuste global de precios: ${raw}%`);this.renderDashboard();alert('✓ Precios actualizados.');
+    saveProducts();refreshStore();this.log('price',`Ajuste global de precios: ${raw}%`);this.renderDashboard();showToast('Los precios fueron actualizados.',{title:'Precios actualizados',kicker:'SHEIBIS · ADMIN',icon:'fa-tags'});
   },
 
   setThreshold(){
     const n=Math.max(0,Math.floor(Number(document.getElementById('sbV11Threshold')?.value)||0));
     localStorage.setItem('sheibis_low_stock_threshold',String(n));
-    this.log('inventory',`Umbral de stock bajo cambiado a ${n}`);alert('✓ Umbral guardado.');this.renderTools();this.renderInventory();
+    this.log('inventory',`Umbral de stock bajo cambiado a ${n}`);showToast('El umbral de inventario fue guardado.',{title:'Configuración guardada',kicker:'SHEIBIS · ADMIN',icon:'fa-sliders'});this.renderTools();this.renderInventory();
   },
 
   maintenance(){
