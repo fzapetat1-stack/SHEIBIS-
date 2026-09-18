@@ -5731,11 +5731,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         function calculatePointsForOrder(orderItems) {
             let points = 0;
             let totalItems = 0;
-            orderItems.forEach(item => {
-                if (item.precio >= CONFIG.minPriceForPoints) {
-                    points += item.cantidad;
-                    totalItems += item.cantidad;
-                }
+            (Array.isArray(orderItems) ? orderItems : []).forEach(item => {
+                const qty = Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1);
+                points += qty;
+                totalItems += qty;
             });
             return { points, totalItems };
         }
@@ -5839,15 +5838,16 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     ? String(paymentSelect.value || 'Efectivo')
                     : 'Efectivo';
 
-                const userPointsBefore = Number(currentUser.puntos ?? userPoints ?? 0) || 0;
                 const total = cart.reduce((sum, item) => {
                     const price = Number(item.precio ?? item.price ?? 0) || 0;
-                    const qty = Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1);
+                    const qty = Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1);
                     return sum + price * qty;
                 }, 0);
 
-                const pointsEarned = Math.floor(total / 10);
-                const pointsAfter = userPointsBefore + pointsEarned;
+                // Cada unidad de producto comprado genera exactamente 1 punto.
+                const pointsEarned = cart.reduce((sum, item) => {
+                    return sum + Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1);
+                }, 0);
                 const now = new Date();
                 const orderId = 'ORD-' + now.getTime() + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
                 const orderNumber = String(orderId);
@@ -5855,13 +5855,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 const details = cart.map((item, index) => {
                     const name = String(item.nombre || item.name || item.productName || 'Producto');
                     const price = Number(item.precio ?? item.price ?? 0) || 0;
-                    const qty = Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1);
+                    const qty = Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1);
                     const subtotal = price * qty;
                     return `${index + 1}. ${name}\n   Cantidad: ${qty} × Q${price.toFixed(2)} = Q${subtotal.toFixed(2)}`;
                 }).join('\n\n');
 
                 const customerName = String(currentUser.nombre || currentUser.name || 'Cliente');
-                const customerEmail = String(currentUser.email || '');
                 const dateText = now.toLocaleString('es-GT', {
                     dateStyle: 'medium',
                     timeStyle: 'short'
@@ -5871,8 +5870,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     '🛍️ *SOLICITUD DE APROBACIÓN — SHEIBIS*',
                     '',
                     `👤 *Cliente:* ${customerName}`,
-                    customerEmail ? `📧 *Correo:* ${customerEmail}` : '',
-                    `🧾 *Pedido:* ${orderNumber}`,
                     `📅 *Fecha:* ${dateText}`,
                     '',
                     '📦 *DETALLES DEL PEDIDO*',
@@ -5881,7 +5878,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     `💰 *TOTAL: Q${total.toFixed(2)}*`,
                     `💳 *Método de pago:* ${paymentMethod}`,
                     `⭐ *Puntos generados:* ${pointsEarned}`,
-                    `🏆 *Puntos acumulados:* ${pointsAfter}`,
                     '',
                     'Hola SHEIBIS, deseo solicitar la aprobación de este pedido. Gracias.'
                 ].filter(Boolean).join('\n');
@@ -5923,12 +5919,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                                 id: item.id,
                                 nombre: item.nombre || item.name || item.productName || 'Producto',
                                 precio: Number(item.precio ?? item.price ?? 0) || 0,
-                                cantidad: Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1),
-                                subtotal: (Number(item.precio ?? item.price ?? 0) || 0) * Math.max(1, Number(item.qty ?? item.quantity ?? 1) || 1)
+                                cantidad: Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1),
+                                subtotal: (Number(item.precio ?? item.price ?? 0) || 0) * Math.max(1, Number(item.cantidad ?? item.qty ?? item.quantity ?? 1) || 1)
                             })),
                             total,
                             puntosGanados: pointsEarned,
-                            puntosAcumulados: pointsAfter
+                            puntosAcumulados: (Number(currentUser.puntos ?? userPoints ?? 0) || 0) + pointsEarned
                         };
 
                         try {
