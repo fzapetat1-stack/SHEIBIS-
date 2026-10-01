@@ -4095,7 +4095,7 @@ window.escAttr = window.escAttr || function(v){
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbwkZdSmt8swdW7tiEpi3mGn4u84Zv6snUyuP5nAWha2MQCbf4eiuPQLohdAZ_h92RWj/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzLxG038YwB40huFcJCLcbLCw8QknZ4O3CMRlC8ZBl0j4vW-szIDfPvSrpz-eQSW5-h/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5719,7 +5719,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbwkZdSmt8swdW7tiEpi3mGn4u84Zv6snUyuP5nAWha2MQCbf4eiuPQLohdAZ_h92RWj/exec
+     https://script.google.com/macros/s/AKfycbzLxG038YwB40huFcJCLcbLCw8QknZ4O3CMRlC8ZBl0j4vW-szIDfPvSrpz-eQSW5-h/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -8597,11 +8597,26 @@ function queueGlobalCatalogSave_(){
 
 function saveProducts(){
   try{
+    // Primero se actualiza la vista local para que el nuevo producto aparezca
+    // inmediatamente en Inicio.
     localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
     refreshStore();
+
+    // Después se guarda en Google Sheets y se vuelve a leer el catálogo
+    // confirmado. Esto mantiene sincronizados todos los dispositivos.
     queueGlobalCatalogSave_();
+
+    // Refuerzo inmediato de los contadores.
+    const totalP=document.getElementById('totalProducts');
+    const totalC=document.getElementById('totalCategories');
+    if(totalP) totalP.textContent=String(getProducts().length);
+    if(totalC) totalC.textContent=String(getCategories().length);
+
     return true;
-  }catch(e){console.error('SHEIBIS productos',e);return false;}
+  }catch(e){
+    console.error('SHEIBIS productos',e);
+    return false;
+  }
 }
 
 function saveCategories(){
@@ -8652,6 +8667,14 @@ async function syncGlobalCatalog_(force=false){
     }catch(_){}
 
     refreshStore();
+
+    // Refuerzo: los contadores se calculan desde el catálogo confirmado
+    // que acaba de llegar de Google Sheets, no desde una copia anterior.
+    const totalP=document.getElementById('totalProducts');
+    const totalC=document.getElementById('totalCategories');
+    if(totalP) totalP.textContent=String(getProducts().length);
+    if(totalC) totalC.textContent=String(getCategories().length);
+
     if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
       SB_ADMIN.render();
       SB_ADMIN.renderCategories();
@@ -8686,12 +8709,33 @@ function refreshCategorySelect(){
 
 function refreshStore(){
   try{
-    if(typeof window.renderCatalogos==='function')window.renderCatalogos();
+    // Google Sheets es la fuente oficial; toda la interfaz pública se
+    // reconstruye desde PRODUCTOS/CATALOGOS después de cada sincronización.
+    if(typeof window.renderCatalogos==='function') window.renderCatalogos();
     refreshCategorySelect();
-    if(activeCategory&&originalOpenCatalog&&getCategories().some(c=>String(c.id)===String(activeCategory))) originalOpenCatalog(activeCategory);
-    const t=document.getElementById('totalProducts');if(t)t.textContent=getProducts().length;
-    const tc=document.getElementById('totalCategories');if(tc)tc.textContent=getCategories().length;
-  }catch(e){console.error('SHEIBIS refresh',e);}
+
+    if(activeCategory && originalOpenCatalog &&
+       getCategories().some(c=>String(c.id)===String(activeCategory))){
+      originalOpenCatalog(activeCategory);
+    }
+
+    const totalP=getProducts().length;
+    const totalC=getCategories().length;
+
+    const t=document.getElementById('totalProducts');
+    if(t) t.textContent=String(totalP);
+
+    const tc=document.getElementById('totalCategories');
+    if(tc) tc.textContent=String(totalC);
+
+    // Actualizar el Catálogo PRO inmediatamente, si el administrador está abierto.
+    if(window.SB_ADMIN && SB_ADMIN.adminActive){
+      try{ SB_ADMIN.render(); }catch(_){}
+      try{ SB_ADMIN.renderCategories(); }catch(_){}
+    }
+  }catch(e){
+    console.error('SHEIBIS refresh',e);
+  }
 }
 
 function renderCategoryList(){
@@ -9095,14 +9139,39 @@ window.SB_ADMIN={
   edit(id){const p=getProducts().find(x=>String(x.id)===String(id));if(!p)return;refreshCategorySelect();const before=Number(p.precioAntes)>0?Number(p.precioAntes):(Number(p.descuento)>0?Number(p.precio)/(1-Number(p.descuento)/100):Number(p.precio)||0);document.getElementById('sbId').value=p.id;document.getElementById('sbName').value=p.nombre||'';document.getElementById('sbCategory').value=p.categoria||getCategories()[0]?.id||'';document.getElementById('sbPrice').value=p.precio??0;document.getElementById('sbPriceBefore').value=before?before.toFixed(2):'';document.getElementById('sbImage').value=p.imagen||'';document.getElementById('sbDesc').value=p.desc||'';document.getElementById('sbAgotado').checked=!!p.agotado;document.getElementById('sbProductForm').classList.add('show');this.updateDiscountPreview();document.getElementById('sbStatus').textContent='Editando: '+(p.nombre||'producto');document.getElementById('sbName')?.focus();},
   remove(id){const a=getProducts(),i=a.findIndex(x=>String(x.id)===String(id));if(i<0)return;const p=a[i];if(!confirm(`¿Seguro que deseas eliminar "${p.nombre}"?\n\nSe eliminará de la página web.`))return;a.splice(i,1);if(!saveProducts()){alert('No se pudo guardar la eliminación.');return;}this.cancelForm();this.log('delete',`Producto eliminado: ${p.nombre}`);this.render();this.renderCategories();refreshStore();this.renderDashboard();},
   updateDiscountPreview(){const price=Number(document.getElementById('sbPrice')?.value)||0,before=Number(document.getElementById('sbPriceBefore')?.value)||0,box=document.getElementById('sbDiscountPreview');if(!box)return;if(before>price&&price>=0){const d=((before-price)/before)*100;box.className='sb-discount-preview';box.innerHTML=`🏷️ Descuento automático: <strong>${d.toFixed(0)}%</strong> · Ahorro: <strong>Q ${(before-price).toFixed(2)}</strong>`;}else{box.className='sb-discount-preview no-discount';box.textContent=before===price&&before>0?'Sin descuento: ambos precios son iguales.':'Sin descuento. El precio antes debe ser mayor al precio actual.';}},
-  save(){try{const name=document.getElementById('sbName')?.value.trim()||'',price=Number(document.getElementById('sbPrice')?.value),before=Number(document.getElementById('sbPriceBefore')?.value),category=document.getElementById('sbCategory')?.value||'',desc=document.getElementById('sbDesc')?.value.trim()||'',image=document.getElementById('sbImage')?.value.trim()||'',extraImages=document.getElementById('sbImages')?.value||'',imagenes=Array.from(new Set((image+'\n'+extraImages).split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean))),rawId=document.getElementById('sbId')?.value||'';if(!name||!Number.isFinite(price)||price<0||!Number.isFinite(before)||before<=0||!category||!desc){document.getElementById('sbStatus').textContent='⚠️ Completa nombre, categoría, precio actual, precio antes y descripción.';return;}if(before<price){document.getElementById('sbStatus').textContent='⚠️ El precio antes debe ser mayor o igual al precio actual.';return;}const d=before>price?((before-price)/before)*100:0,agotado=!!document.getElementById('sbAgotado')?.checked,a=getProducts(),id=rawId?Number(rawId):nextId(),data={id,nombre:name,precio:price,precioAntes:before,categoria:category,icono:'fa-star',desc,imagen:imagenes[0]||image,imagenes,descuento:Number(d.toFixed(2)),agotado},i=a.findIndex(x=>String(x.id)===String(id));if(i>=0){a[i]={...a[i],...data};this.log('product',`Producto editado: ${name}`);}else{a.push(data);this.log('product',`Producto agregado: ${name}`);}ensureInventory();if(!saveProducts()){document.getElementById('sbStatus').textContent='❌ No se pudo guardar.';return;}this.render();this.renderCategories();refreshStore();this.cancelForm();this.renderDashboard();}catch(e){console.error('SHEIBIS save',e);document.getElementById('sbStatus').textContent='❌ Error: '+e.message;}},
+  save(){try{const name=document.getElementById('sbName')?.value.trim()||'',price=Number(document.getElementById('sbPrice')?.value),before=Number(document.getElementById('sbPriceBefore')?.value),category=document.getElementById('sbCategory')?.value||'',desc=document.getElementById('sbDesc')?.value.trim()||'',image=document.getElementById('sbImage')?.value.trim()||'',extraImages=document.getElementById('sbImages')?.value||'',imagenes=Array.from(new Set((image+'\n'+extraImages).split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean))),rawId=document.getElementById('sbId')?.value||'';if(!name||!Number.isFinite(price)||price<0||!Number.isFinite(before)||before<=0||!category||!desc){document.getElementById('sbStatus').textContent='⚠️ Completa nombre, categoría, precio actual, precio antes y descripción.';return;}if(before<price){document.getElementById('sbStatus').textContent='⚠️ El precio antes debe ser mayor o igual al precio actual.';return;}const d=before>price?((before-price)/before)*100:0,agotado=!!document.getElementById('sbAgotado')?.checked,a=getProducts(),id=rawId?Number(rawId):nextId(),data={id,nombre:name,precio:price,precioAntes:before,categoria:category,icono:'fa-star',desc,imagen:imagenes[0]||image,imagenes,descuento:Number(d.toFixed(2)),agotado},i=a.findIndex(x=>String(x.id)===String(id));if(i>=0){a[i]={...a[i],...data};this.log('product',`Producto editado: ${name}`);}else{
+  data.nuevo=true;
+  data.fechaAlta=new Date().toISOString();
+  a.push(data);
+  this.log('product',`Producto agregado: ${name}`);
+}
+ensureInventory();if(!saveProducts()){document.getElementById('sbStatus').textContent='❌ No se pudo guardar.';return;}this.render();
+this.renderCategories();
+refreshStore();
+this.cancelForm();
+this.renderDashboard();
+
+// Confirmar inmediatamente con Google Sheets; no esperamos al intervalo de 5 s.
+syncGlobalCatalog_(true).catch(function(err){
+  console.warn('SHEIBIS · confirmación de producto en servidor:',err.message);
+});
+}catch(e){console.error('SHEIBIS save',e);document.getElementById('sbStatus').textContent='❌ Error: '+e.message;}},
   cancelForm(){document.getElementById('sbProductForm')?.classList.remove('show');const s=document.getElementById('sbStatus');if(s)s.textContent='';},
 
   addCategory(){
     this.cancelCategoryForm();const f=document.getElementById('sbCategoryForm');if(!f)return;f.reset();document.getElementById('sbCatId').value='';document.getElementById('sbCatIcon').value='fa-folder-open';document.getElementById('sbCatComing').value='proximamente';document.getElementById('sbCatAdvanced').style.display='none';f.classList.add('show');document.getElementById('sbCategoryStatus').textContent='Solo necesitas escribir el nombre. Los demás detalles pueden editarse después.';document.getElementById('sbCatName')?.focus();
   },
   editCategory(id){const c=getCategories().find(x=>String(x.id)===String(id));if(!c)return;document.getElementById('sbCatId').value=c.id;document.getElementById('sbCatName').value=c.nombre||'';document.getElementById('sbCatIcon').value=c.icono||'fa-folder-open';document.getElementById('sbCatImage').value=c.imagen||'';document.getElementById('sbCatDesc').value=c.descripcion||'';document.getElementById('sbCatComing').value=c.proximamente===false?'activo':'proximamente';document.getElementById('sbCatAdvanced').style.display='block';document.getElementById('sbCategoryForm').classList.add('show');document.getElementById('sbCategoryStatus').textContent='Editando catálogo: '+c.nombre;document.getElementById('sbCatName')?.focus();},
-  saveCategory(){try{const name=document.getElementById('sbCatName')?.value.trim()||'',rawId=document.getElementById('sbCatId')?.value||'',icon=document.getElementById('sbCatIcon')?.value.trim()||'fa-folder-open',image=document.getElementById('sbCatImage')?.value.trim()||'',desc=document.getElementById('sbCatDesc')?.value.trim()||'',coming=document.getElementById('sbCatComing')?.value!=='activo';if(!name){document.getElementById('sbCategoryStatus').textContent='⚠️ Escribe el nombre del catálogo.';return;}const cats=getCategories();if(rawId){const c=cats.find(x=>String(x.id)===String(rawId));if(!c)return;c.nombre=name;c.icono=icon;c.imagen=image;c.descripcion=desc;c.proximamente=coming;this.log('category',`Categoría editada: ${name}`);}else{cats.push({id:makeCategoryId(name),nombre:name,icono:icon||'fa-folder-open',imagen:image,descripcion:desc,proximamente:false});this.log('category',`Categoría creada: ${name}`);}if(!saveCategories()){document.getElementById('sbCategoryStatus').textContent='❌ No se pudo guardar la categoría.';return;}this.renderCategories();refreshStore();if(document.getElementById('sbInventoryView')?.style.display!=='none')this.renderInventory();this.cancelCategoryForm();this.renderDashboard();}catch(e){console.error('SHEIBIS category save',e);document.getElementById('sbCategoryStatus').textContent='❌ Error: '+e.message;}},
+  saveCategory(){try{const name=document.getElementById('sbCatName')?.value.trim()||'',rawId=document.getElementById('sbCatId')?.value||'',icon=document.getElementById('sbCatIcon')?.value.trim()||'fa-folder-open',image=document.getElementById('sbCatImage')?.value.trim()||'',desc=document.getElementById('sbCatDesc')?.value.trim()||'',coming=document.getElementById('sbCatComing')?.value!=='activo';if(!name){document.getElementById('sbCategoryStatus').textContent='⚠️ Escribe el nombre del catálogo.';return;}const cats=getCategories();if(rawId){const c=cats.find(x=>String(x.id)===String(rawId));if(!c)return;c.nombre=name;c.icono=icon;c.imagen=image;c.descripcion=desc;c.proximamente=coming;this.log('category',`Categoría editada: ${name}`);}else{cats.push({id:makeCategoryId(name),nombre:name,icono:icon||'fa-folder-open',imagen:image,descripcion:desc,proximamente:false});this.log('category',`Categoría creada: ${name}`);}if(!saveCategories()){document.getElementById('sbCategoryStatus').textContent='❌ No se pudo guardar la categoría.';return;}this.renderCategories();
+refreshStore();
+if(document.getElementById('sbInventoryView')?.style.display!=='none')this.renderInventory();
+this.cancelCategoryForm();
+this.renderDashboard();
+
+syncGlobalCatalog_(true).catch(function(err){
+  console.warn('SHEIBIS · confirmación de categoría en servidor:',err.message);
+});
+}catch(e){console.error('SHEIBIS category save',e);document.getElementById('sbCategoryStatus').textContent='❌ Error: '+e.message;}},
   moveCategory(id,direction){const cats=getCategories(),idx=cats.findIndex(c=>String(c.id)===String(id));if(idx<0)return;const target=direction==='up'?idx-1:idx+1;if(target<0||target>=cats.length)return;[cats[idx],cats[target]]=[cats[target],cats[idx]];if(!saveCategories()){[cats[idx],cats[target]]=[cats[target],cats[idx]];alert('No se pudo guardar el nuevo orden.');return;}this.log('category',`Catálogo reordenado: ${cats[target].nombre}`);this.renderCategories();refreshStore();},
   deleteCategory(id){const cats=getCategories(),idx=cats.findIndex(c=>String(c.id)===String(id));if(idx<0)return;const cat=cats[idx],used=getProducts().filter(p=>String(p.categoria)===String(id));if(used.length){alert(`No se puede eliminar "${cat.nombre}" porque tiene ${used.length} producto(s) asignado(s). Primero cambia esos productos a otra categoría.`);return;}if(!confirm(`¿Eliminar la categoría "${cat.nombre}"?\n\nEsta acción no se puede deshacer.`))return;cats.splice(idx,1);if(!saveCategories()){alert('No se pudo guardar la eliminación.');return;}this.log('delete',`Categoría eliminada: ${cat.nombre}`);if(String(activeCategory)===String(id))activeCategory=null;refreshCategorySelect();this.renderCategories();refreshStore();this.renderDashboard();},
   cancelCategoryForm(){document.getElementById('sbCategoryForm')?.classList.remove('show');const adv=document.getElementById('sbCatAdvanced');if(adv)adv.style.display='none';const s=document.getElementById('sbCategoryStatus');if(s)s.textContent='';},
@@ -9601,6 +9670,8 @@ function priceBounds(products){var prices=products.map(function(p){return Math.m
 function categoryCardData(cat){var ps=getProducts().filter(function(p){return String(p.categoria)===String(cat.id)});var b=priceBounds(ps),discounts=ps.filter(function(p){return productDiscount(p)>0}).length;return {count:ps.length,b:b,discounts:discounts};}
 function renderCatalogosPro(){
  var grid=document.getElementById('catalogGrid');if(!grid)return;
+ // Cada tarjeta calcula su contador directamente desde PRODUCTOS.
+ // Al agregar/eliminar un producto, el número cambia sin recargar la página.
  var cats=getCategories().filter(function(c){return c.proximamente!==true});
  var total=document.getElementById('totalProducts');if(total)total.textContent=getProducts().length;
  var tc=document.getElementById('totalCategories');if(tc)tc.textContent=getCategories().length;
