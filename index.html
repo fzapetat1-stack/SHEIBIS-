@@ -3873,11 +3873,11 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
             
             <div class="catalog-stats">
                 <div class="catalog-stat">
-                    <div class="catalog-stat-number" id="totalProducts">0</div>
+                    <div class="catalog-stat-number" id="totalProducts">15</div>
                     <div class="catalog-stat-label">Productos</div>
                 </div>
                 <div class="catalog-stat">
-                    <div class="catalog-stat-number" id="totalCategories">0</div>
+                    <div class="catalog-stat-number" id="totalCategories">10</div>
                     <div class="catalog-stat-label">Categorías</div>
                 </div>
                 <button type="button" class="catalog-stat sb-online-stat" id="onlineUsersStat" onclick="openOnlineUsersModal()" aria-label="Ver usuarios en línea">
@@ -4084,7 +4084,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyBeDWK1eP_4Ej7kHBiozE1DfJK1lL60cm-3d6_GPtZ0FEQbKGZmJvU9AIF8RtLFi6h/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzs2JAzlM4cZPxvx5UpdOXbE6PUX8tqQRyar9zvIULzmYxlyHU0h6eT2SBKJP-pqReI/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5742,7 +5742,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbyBeDWK1eP_4Ej7kHBiozE1DfJK1lL60cm-3d6_GPtZ0FEQbKGZmJvU9AIF8RtLFi6h/exec
+     https://script.google.com/macros/s/AKfycbzs2JAzlM4cZPxvx5UpdOXbE6PUX8tqQRyar9zvIULzmYxlyHU0h6eT2SBKJP-pqReI/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -6435,29 +6435,31 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         // ================================================================
         // 13. CATÁLOGOS Y PRODUCTOS
         // ================================================================
-        function sheibisNormText_(v){return String(v==null?'':v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();}
-function getPublicCatalogData_(){
-  const rawCats=Array.isArray(CATALOGOS)?CATALOGOS:[], rawProducts=Array.isArray(PRODUCTOS)?PRODUCTOS:[];
-  const cats=[], seenIds={}, seenNames={};
-  rawCats.forEach(function(cat){if(!cat||!String(cat.id||'').trim()||!String(cat.nombre||'').trim())return; const ik=sheibisNormText_(cat.id), nk=sheibisNormText_(cat.nombre); if(seenIds[ik]||seenNames[nk])return; seenIds[ik]=1; seenNames[nk]=1; cats.push(cat);});
-  const aliases={}; cats.forEach(function(cat){aliases[sheibisNormText_(cat.id)]=String(cat.id);aliases[sheibisNormText_(cat.nombre)]=String(cat.id);});
-  const validProducts=[]; rawProducts.forEach(function(p){if(!p||p.id===undefined||!String(p.nombre||'').trim())return; const c=aliases[sheibisNormText_(p.categoria)]; if(c){p.categoria=c;validProducts.push(p);}});
-  const publicCats=cats.filter(function(cat){return cat.proximamente!==true&&validProducts.some(function(p){return String(p.categoria)===String(cat.id);});});
-  return {categories:publicCats,products:validProducts};
-}
-function getPublicProducts_(){return getPublicCatalogData_().products;}
-function getPublicCategories_(){return getPublicCatalogData_().categories;}
-
-function renderCatalogos() {
-            const d=getPublicCatalogData_();
-            catalogGrid.innerHTML=d.categories.map(function(cat){
-                const hasImage=cat.imagen&&cat.imagen!=='';
-                const count=d.products.filter(function(p){return String(p.categoria)===String(cat.id);}).length;
-                return `<div class="catalog-card catalog-card-visible catalog-only-category" onclick="openCatalog('${String(cat.id).replace(/'/g,"\\'")}')" data-aos="fade-up" aria-label="Abrir catálogo ${cat.nombre}">${hasImage?`<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy"></div>`:`<span class="catalog-icon"><i class="fas ${cat.icono||'fa-folder-open'}"></i></span>`}<div class="catalog-name">${cat.nombre}</div><div class="catalog-open-label"><i class="fas fa-arrow-right"></i> Ver catálogo · ${count} producto${count===1?'':'s'}</div><div class="catalog-glow"></div></div>`;
+        function renderCatalogos() {
+            catalogGrid.innerHTML = CATALOGOS.map(cat => {
+                const hasImage = cat.imagen && cat.imagen !== '';
+                const coming = cat.proximamente === true;
+                return `
+                    <div class="catalog-card catalog-card-visible catalog-only-category ${coming ? 'catalog-coming-soon' : ''}"
+                         ${coming ? '' : `onclick="openCatalog('${String(cat.id).replace(/'/g, "\\'")}')"`}
+                         data-aos="fade-up"
+                         aria-label="${coming ? `Catálogo ${cat.nombre} próximamente` : `Abrir catálogo ${cat.nombre}`}"
+                         ${coming ? 'title="Próximamente"' : ''}>
+                        ${hasImage
+                            ? `<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy"></div>`
+                            : `<span class="catalog-icon"><i class="fas ${cat.icono || 'fa-folder-open'}"></i></span>`}
+                        <div class="catalog-name">${cat.nombre}</div>
+                        ${coming
+                            ? `<div class="catalog-open-label"><i class="fas fa-clock"></i> Próximamente</div>`
+                            : `<div class="catalog-open-label"><i class="fas fa-arrow-right"></i> Ver catálogo</div>`}
+                        <div class="catalog-glow"></div>
+                    </div>
+                `;
             }).join('');
-            if(!d.categories.length)catalogGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,.55)">No hay catálogos con productos disponibles.</div>';
-            if(typeof AOS!=='undefined')AOS.refresh();
+
+            if (typeof AOS !== 'undefined') AOS.refresh();
         }
+
         function getMinPrice(categoriaId) {
             const filtered = PRODUCTOS.filter(p => p.categoria === categoriaId);
             if (filtered.length === 0) return '0';
@@ -6465,10 +6467,12 @@ function renderCatalogos() {
         }
 
         window.openCatalog = function(categoriaId) {
-            const d=getPublicCatalogData_();
-            const cat=d.categories.find(function(c){return String(c.id)===String(categoriaId);});
-            if(!cat)return;
-            const filtered=d.products.filter(function(p){return String(p.categoria)===String(categoriaId);});
+            const cat = CATALOGOS.find(c => c.id === categoriaId);
+            if (!cat) return;
+
+            // Obtener TODOS los productos de la categoría seleccionada.
+            // No se usa slice() ni ningún límite de cantidad.
+            const filtered = PRODUCTOS.filter(producto => producto.categoria === categoriaId);
             detailTitle.textContent = cat.nombre;
 
             productList.innerHTML = filtered.map(p => {
@@ -6613,37 +6617,199 @@ function renderCatalogos() {
         // ================================================================
         // 15. SOLICITAR APROBACIÓN — WHATSAPP
         // ================================================================
-        window.requestApproval = async function(){
-  if(!currentUser||currentUser.isGuest===true){showToast('Como INVITADO puedes explorar y usar el carrito. Para realizar un pedido debes crear una cuenta.',{title:'Cuenta requerida',icon:'fa-user-lock',duration:5500});showAuth('login');return;}
-  if(!Array.isArray(cart)||!cart.length){showToast('Tu carrito está vacío.',{title:'Carrito vacío',icon:'fa-cart-shopping',duration:3500});return;}
-  const btn=document.querySelector('.btn-whatsapp');if(btn&&btn.disabled)return;
-  const orderItems=cart.map(function(i){return{id:String(i.id),nombre:String(i.nombre||''),cantidad:Math.floor(Number(i.cantidad||0)),precio:Number(i.precio||0)};}).filter(function(i){return i.id&&i.cantidad>0;});
-  if(!orderItems.length){showToast('La cantidad del pedido no es válida.',{title:'Carrito inválido',icon:'fa-circle-exclamation',duration:5000});return;}
-  const total=orderItems.reduce(function(s,i){return s+i.precio*i.cantidad;},0), points=calculatePointsForOrder(orderItems).points, now=new Date();
-  const orderId='SHE-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
-  const before=Number(userPoints)||0, after=before+points, paymentEl=document.getElementById('cartPaymentMethod'), paymentMethod=paymentEl?String(paymentEl.value||'Efectivo'):'Efectivo';
-  const details=orderItems.map(function(i,n){return `  ${n+1}. ${i.nombre} x${i.cantidad} → Q${(i.precio*i.cantidad).toFixed(2)}`;}).join('\n');
-  const message=`🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n────────────────────\n📋 *Cliente:* ${currentUser.nombre}\n🆔 *Pedido:* ${orderId}\n📅 *Fecha:* ${now.toLocaleString('es-GT')}\n────────────────────\n📦 *Detalle del Pedido*\n${details}\n────────────────────\n💰 *TOTAL: Q${total.toFixed(2)}*\n💳 *Método de Pago:* ${paymentMethod}\n⭐ *Puntos generados:* ${points} pts\n────────────────────`;
-  const phone=String(CONFIG.phoneNumber||'40512960').replace(/\D/g,''), waNumber=phone.length===8?'502'+phone:phone, waUrl=`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
-  // Abrir WhatsApp inmediatamente. La confirmación de inventario continúa en segundo plano en esta página.
-  let wa=null;try{wa=window.open(waUrl,'_blank');}catch(_){} if(!wa){try{window.location.href=waUrl;}catch(_) {}}
-  const original=btn?btn.innerHTML:'';if(btn){btn.disabled=true;btn.dataset.originalText=original;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Registrando pedido...';}
-  const orderData={orderId:orderId,orderNumber:orderId,userId:currentUser.id,nombre:currentUser.nombre||'',email:currentUser.email||'',date:now.toISOString(),total:total.toFixed(2),items:orderItems,itemsText:details,detalles:details,metodoPago:paymentMethod,status:'Pedido recibido',estadoPaquete:1,pointsEarned:points,pointsBefore:before,pointsAfter:after};
-  try{
-    const result=await apiRequest('createOrder',{order:orderData},{timeout:30000});
-    const finalPoints=Number.isFinite(Number(result&&result.pointsAfter))?Number(result.pointsAfter):after, finalEarned=Number.isFinite(Number(result&&result.pointsEarned))?Number(result.pointsEarned):points;
-    orderData.pointsEarned=finalEarned;orderData.pointsAfter=finalPoints;
-    if(result&&result.inventory)try{localStorage.setItem('sheibis_inventory_master_v1',JSON.stringify(result.inventory));}catch(_){}
-    userOrders=[...(Array.isArray(userOrders)?userOrders:[]),orderData];currentUser.orders=JSON.stringify(userOrders);currentUser.totalOrders=Number(currentUser.totalOrders||0)+1;currentUser.puntos=finalPoints;currentUser.estadoPaquete='1';userPoints=finalPoints;
-    try{await apiRequest('updateUser',{id:currentUser.id,fields:{orders:JSON.stringify(userOrders),totalOrders:Number(currentUser.totalOrders||0),puntos:finalPoints,estadoPaquete:1}},{timeout:15000});}catch(e){console.warn('SHEIBIS: perfil pendiente',e);}
-    saveSession();menuBadgeOrders.textContent=userOrders.length;menuUserPoints.textContent=`✦ ${userPoints} puntos`;pointsDisplay.textContent=userPoints;cart=[];updateCartUI();cartEl.classList.remove('active');showToast(`Pedido ${orderId} registrado correctamente.`,{title:'Compra confirmada',icon:'fa-circle-check',duration:6000});
-  }catch(error){
-    console.error('SHEIBIS · Error en Solicitar Aprobación:',error);
-    if(error.code==='OUT_OF_STOCK')showToast(`El producto "${error.productName||'seleccionado'}" está agotado.`,{title:'Producto agotado',icon:'fa-box-open',duration:7500});
-    else if(error.code==='INSUFFICIENT_STOCK')showToast(`"${error.productName||'El producto'}" no tiene suficiente stock. Disponible: ${error.available||0} unidad(es).`,{title:'Stock insuficiente',icon:'fa-triangle-exclamation',duration:7500});
-    else showToast(error.message||'No se pudo registrar el pedido. El carrito se conservó.',{title:'No se pudo completar',icon:'fa-circle-exclamation',duration:7000});
-  }finally{if(btn){btn.disabled=false;btn.innerHTML=btn.dataset.originalText||'<i class="fab fa-whatsapp"></i> Solicitar Aprobación';}}
-};
+        window.requestApproval = async function() {
+            if (!currentUser || currentUser.isGuest === true) {
+                showToast('Como INVITADO puedes explorar y usar el carrito. Para realizar un pedido debes crear una cuenta.', {
+                    title: 'Cuenta requerida', icon: 'fa-user-lock', duration: 5500
+                });
+                showAuth('login');
+                return;
+            }
+
+            if (!Array.isArray(cart) || cart.length === 0) {
+                showToast('Tu carrito está vacío.', { title: 'Carrito vacío', icon: 'fa-cart-shopping', duration: 3500 });
+                return;
+            }
+
+            const btn = document.querySelector('.btn-whatsapp');
+            if (btn && btn.disabled) return;
+
+            /* Abrimos una pestaña vacía inmediatamente dentro del clic del usuario.
+               Así el navegador no bloquea WhatsApp aunque primero tengamos que
+               confirmar el inventario en Google Sheets. */
+            let whatsappWindow = null;
+            try { whatsappWindow = window.open('about:blank', '_blank'); } catch (_) {}
+
+            const originalText = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.dataset.originalText = originalText;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando disponibilidad...';
+            }
+
+            try {
+                const orderItems = cart.map(function(i) {
+                    const qty = Math.floor(Number(i.cantidad || 0));
+                    return {
+                        id: String(i.id),
+                        nombre: String(i.nombre || ''),
+                        cantidad: qty,
+                        precio: Number(i.precio || 0)
+                    };
+                }).filter(function(i) { return i.id && i.cantidad > 0; });
+
+                if (!orderItems.length) throw Object.assign(new Error('La cantidad del pedido no es válida.'), {code:'INVALID_CART'});
+
+                const total = orderItems.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+                const points = calculatePointsForOrder(orderItems).points;
+                const now = new Date();
+                const orderId = 'SHE-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+                const totalPointsBefore = Number(userPoints) || 0;
+                const totalPointsAfter = totalPointsBefore + points;
+                const paymentEl = document.getElementById('cartPaymentMethod');
+                const paymentMethod = paymentEl ? String(paymentEl.value || 'Efectivo') : 'Efectivo';
+
+                const orderDetails = orderItems.map(function(item, index) {
+                    return `  ${index + 1}. ${item.nombre} x${item.cantidad} → Q${(item.precio * item.cantidad).toFixed(2)}`;
+                }).join('\n');
+
+                const orderData = {
+                    orderId: orderId,
+                    orderNumber: orderId,
+                    userId: currentUser.id,
+                    nombre: currentUser.nombre || '',
+                    email: currentUser.email || '',
+                    date: now.toISOString(),
+                    total: total.toFixed(2),
+                    items: orderItems,
+                    itemsText: orderDetails,
+                    detalles: orderDetails,
+                    metodoPago: paymentMethod,
+                    status: 'Pedido recibido',
+                    estadoPaquete: 1,
+                    pointsEarned: points,
+                    pointsBefore: totalPointsBefore,
+                    pointsAfter: totalPointsAfter
+                };
+
+                /* IMPORTANTE: ya no descontamos inventario en localStorage antes
+                   de confirmar. Google Sheets es la fuente oficial y Apps Script
+                   hace la validación atómica con LockService. */
+                const result = await apiRequest('createOrder', { order: orderData }, {timeout: 30000});
+
+                /* Google Sheets es la fuente oficial de puntos. */
+                const confirmedPoints = Number(result && result.pointsAfter);
+                const confirmedEarned = Number(result && result.pointsEarned);
+                const finalPoints = Number.isFinite(confirmedPoints) ? confirmedPoints : totalPointsAfter;
+                const finalEarned = Number.isFinite(confirmedEarned) ? confirmedEarned : points;
+                orderData.pointsEarned = finalEarned;
+                orderData.pointsAfter = finalPoints;
+
+                if (result && result.inventory) {
+                    try { localStorage.setItem('sheibis_inventory_master_v1', JSON.stringify(result.inventory)); } catch (_) {}
+                }
+                if (window.SHEIBIS_CLOUD_V2 && typeof window.SHEIBIS_CLOUD_V2.publish === 'function') {
+                    window.SHEIBIS_CLOUD_V2.publish('Pedido confirmado · inventario actualizado').catch(()=>{});
+                }
+
+                userOrders = [...(Array.isArray(userOrders) ? userOrders : []), orderData];
+                currentUser.orders = JSON.stringify(userOrders);
+                currentUser.totalOrders = Number(currentUser.totalOrders || 0) + 1;
+                currentUser.puntos = finalPoints;
+                currentUser.estadoPaquete = '1';
+                userPoints = finalPoints;
+
+                /* La actualización del perfil es secundaria: el pedido ya quedó
+                   registrado de forma segura. Si falla, no duplicamos la venta. */
+                try {
+                    await apiRequest('updateUser', {
+                        id: currentUser.id,
+                        fields: {
+                            orders: JSON.stringify(userOrders),
+                            totalOrders: Number(currentUser.totalOrders || 0),
+                            puntos: finalPoints,
+                            estadoPaquete: 1
+                        }
+                    }, {timeout: 15000});
+                } catch (profileError) {
+                    console.warn('SHEIBIS: pedido confirmado; actualización de perfil pendiente.', profileError);
+                }
+
+                saveSession();
+
+                const message =
+                    `🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n` +
+                    `────────────────────\n` +
+                    `📋 *Cliente:* ${currentUser.nombre}\n` +
+                    `📧 *Email:* ${currentUser.email}\n` +
+                    `🆔 *Pedido:* ${orderId}\n` +
+                    `📅 *Fecha:* ${now.toLocaleString('es-GT')}\n` +
+                    `────────────────────\n` +
+                    `📦 *Detalle del Pedido*\n${orderDetails}\n` +
+                    `────────────────────\n` +
+                    `💰 *TOTAL: Q${total.toFixed(2)}*\n` +
+                    `💳 *Método de Pago:* ${paymentMethod}\n` +
+                    `⭐ *Puntos generados:* ${finalEarned} pts\n` +
+                    `────────────────────`;
+
+                const phone = String(CONFIG.phoneNumber || '40512960').replace(/\D/g, '');
+                const whatsappNumber = phone.length === 8 ? '502' + phone : phone;
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+                if (whatsappWindow && !whatsappWindow.closed) {
+                    whatsappWindow.location.href = whatsappUrl;
+                } else {
+                    window.location.href = whatsappUrl;
+                }
+
+                try { addInventoryMovement && orderItems.forEach(function(item) {
+                    const x = (result.inventory || {})[String(item.id)] || {};
+                    const after = Number(x.stock || 0);
+                    addInventoryMovement(String(item.id), 'sale', item.cantidad, 'Venta / pedido registrado', orderId, after + item.cantidad, after);
+                }); } catch (_) {}
+
+                menuBadgeOrders.textContent = userOrders.length;
+                menuUserPoints.textContent = `✦ ${userPoints} puntos`;
+                pointsDisplay.textContent = userPoints;
+                updateCartUI();
+                cart = [];
+                updateCartUI();
+                cartEl.classList.remove('active');
+
+                showToast(`Pedido ${orderId} registrado correctamente.`, {
+                    title: 'Compra confirmada', icon: 'fa-circle-check', duration: 6000
+                });
+
+            } catch (error) {
+                console.error('SHEIBIS · Error en Solicitar Aprobación:', error);
+                if (whatsappWindow && !whatsappWindow.closed) {
+                    try { whatsappWindow.close(); } catch (_) {}
+                }
+
+                if (error.code === 'OUT_OF_STOCK') {
+                    showToast(`El producto "${error.productName || 'seleccionado'}" está agotado. Ya no quedan unidades disponibles.`, {
+                        title: 'Producto agotado', icon: 'fa-box-open', duration: 7500
+                    });
+                } else if (error.code === 'INSUFFICIENT_STOCK') {
+                    showToast(`"${error.productName || 'El producto'}" no tiene suficiente stock. Disponible: ${error.available || 0} unidad(es).`, {
+                        title: 'Stock insuficiente', icon: 'fa-triangle-exclamation', duration: 7500
+                    });
+                } else if (error.code === 'TIMEOUT') {
+                    showToast('El servidor está tardando en responder. El pedido no se confirmó. Intenta nuevamente.', {
+                        title: 'Conexión lenta', icon: 'fa-clock', duration: 7000
+                    });
+                } else {
+                    showToast(error.message || 'No se pudo registrar el pedido. El carrito se conservó.', {
+                        title: 'No se pudo completar', icon: 'fa-circle-exclamation', duration: 7000
+                    });
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = btn.dataset.originalText || '<i class="fab fa-whatsapp"></i> Solicitar Aprobación';
+                }
+            }
+        };
         // ================================================================
         // 16. ACTUALIZAR UI
         // ================================================================
@@ -6765,7 +6931,11 @@ async function updateOnlineUsers() {
             }
         }
 
-function updateStats(){const d=getPublicCatalogData_();totalProducts.textContent=d.products.length;totalCategories.textContent=d.categories.length;updateOnlineUsers();}
+function updateStats() {
+            totalProducts.textContent = PRODUCTOS.length;
+            totalCategories.textContent = CATALOGOS.length;
+            updateOnlineUsers();
+        }
 
 setInterval(updateOnlineUsers, ONLINE_HEARTBEAT_MS);
 
@@ -8549,7 +8719,7 @@ function refreshStore(){
     if(typeof window.renderCatalogos==='function')window.renderCatalogos();
     refreshCategorySelect();
     if(activeCategory&&originalOpenCatalog&&getCategories().some(c=>String(c.id)===String(activeCategory))) originalOpenCatalog(activeCategory);
-    const t=document.getElementById('totalProducts');if(t){const d=getPublicCatalogData_();t.textContent=d.products.length;} const tc=document.getElementById('totalCategories');if(tc){const d=getPublicCatalogData_();tc.textContent=d.categories.length;}
+    const t=document.getElementById('totalProducts');if(t)t.textContent=getProducts().length;
   }catch(e){console.error('SHEIBIS refresh',e);}
 }
 
