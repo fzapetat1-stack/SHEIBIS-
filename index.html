@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -3622,6 +3621,17 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
 
 </head>
 <body>
+<script>
+/* SHEIBIS — utilidades globales compartidas por todos los bloques JS */
+window.esc = window.esc || function(v){
+  return String(v ?? '').replace(/[&<>"']/g,function(m){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+  });
+};
+window.escAttr = window.escAttr || function(v){
+  return String(v ?? '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+};
+</script>
 
     <!-- ================================================================
     SPLASH CINEMATOGRÁFICO
