@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>SHEIBIS · Premium Enterprise Suite</title>
+    <title>SHEIBIS · Sistema Administrativo</title>
     <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <!-- Google Fonts Premium -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <!-- AOS Animation Library -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <style>
         /* ================================================================
                RESET & VARIABLES — PALETA CORPORATIVA PREMIUM
@@ -2813,6 +2812,86 @@ body > div[style*="z-index: 99999"] > div{
 }
 .password-eye-btn:hover{background:rgba(255,255,255,.08);opacity:1;transform:translateY(-50%) scale(1.05);}
 .password-eye-btn i{color:#fff !important;font-size:15px;}
+
+        /* ================================================================
+           SHEIBIS PERFORMANCE MODE
+           Mantiene el diseño, pero elimina procesos visuales continuos
+           que provocan consumo innecesario de CPU/GPU.
+           ================================================================ */
+
+        #particles-canvas,
+        .bg-orb,
+        .particle-grid {
+            display: none !important;
+            animation: none !important;
+        }
+
+        /* No animaciones infinitas ni movimientos decorativos. */
+        *,
+        *::before,
+        *::after {
+            animation: none !important;
+        }
+
+        /* Transiciones cortas para que botones/menús sigan respondiendo,
+           sin esperar animaciones largas. */
+        *,
+        *::before,
+        *::after {
+            transition-duration: 0.10s !important;
+            transition-timing-function: ease-out !important;
+        }
+
+        /* Los desenfoques grandes son costosos en tarjetas y elementos fijos. */
+        .top-bar,
+        .auth-container,
+        .menu-overlay,
+        .menu-panel,
+        .banner-box,
+        .catalog-card,
+        .product-detail-item,
+        .modal-overlay,
+        .modal-content {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        /* Evita efectos de movimiento al pasar el mouse. */
+        .catalog-card:hover,
+        .product-detail-item:hover,
+        .menu-item:hover,
+        .profile-badge:hover,
+        .points-display:hover,
+        .cart-top-btn:hover,
+        .logout-btn:hover,
+        .banner-btn-primary:hover,
+        .banner-btn-secondary:hover {
+            transform: none !important;
+        }
+
+        /* El scroll deja de hacer desplazamientos animados. */
+        html,
+        .tab-content {
+            scroll-behavior: auto !important;
+        }
+
+        /* Menos trabajo de pintura por sombras decorativas. */
+        .bg-orb,
+        .particle-grid,
+        #particles-canvas {
+            box-shadow: none !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
 </style>
 
 <style id="sheibis-glass-payment">
@@ -3405,6 +3484,141 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
     }
 }
 </style>
+
+<style id="sheibis-full-image-fix">
+/* IMÁGENES A PANTALLA COMPLETA DEL CONTENEDOR */
+.catalog-card .catalog-image-frame{
+    padding:0 !important;
+    overflow:hidden !important;
+}
+.catalog-card .catalog-image-frame .catalog-image{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    max-width:none !important;
+    max-height:none !important;
+    object-fit:cover !important;
+    object-position:center !important;
+    margin:0 !important;
+    border-radius:0 !important;
+    aspect-ratio:auto !important;
+}
+/* El marco ya no deja una "forma" vacía alrededor de la imagen */
+.catalog-card .catalog-image-frame{
+    background:none !important;
+}
+/* Productos en tarjetas/listados */
+.product-card img,
+.product-card .product-image,
+.product-card .product-image img,
+.product-item img,
+.product-item .product-image,
+.product-item .product-image img{
+    width:100% !important;
+    max-width:none !important;
+    object-fit:cover !important;
+    object-position:center center !important;
+}
+/* Contenedores de imagen de producto */
+.product-card .product-image,
+.product-item .product-image{
+    overflow:hidden !important;
+    padding:0 !important;
+}
+.product-card .product-image img,
+.product-item .product-image img{
+    height:100% !important;
+    max-height:none !important;
+    display:block !important;
+    margin:0 !important;
+}
+/* Detalle del producto: la imagen ocupa toda su columna */
+.product-detail-image{
+    padding:0 !important;
+    overflow:hidden !important;
+}
+.product-detail-image img{
+    width:100% !important;
+    height:100% !important;
+    max-height:none !important;
+    object-fit:cover !important;
+    margin:0 !important;
+}
+/* Mantener el cambio también en móvil */
+@media (max-width:820px){
+    .catalog-card .catalog-image-frame{
+        width:calc(100% + 3rem) !important;
+        height:190px !important;
+        margin:-1.2rem -1.5rem 1rem !important;
+    }
+    .catalog-card .catalog-image{
+        width:100% !important;
+        height:100% !important;
+    }
+}
+@media (max-width:480px){
+    .catalog-card .catalog-image-frame{
+        width:calc(100% + 1.6rem) !important;
+        height:175px !important;
+        margin:-1.2rem -.8rem 1rem !important;
+    }
+    .catalog-card .catalog-image{
+        width:100% !important;
+        height:100% !important;
+    }
+}
+</style>
+
+
+<style id="sheibis-catalog-pro-css">
+/* ============================================================
+   SHEIBIS · CATÁLOGO PRO / FILTROS / RECOMENDACIONES
+   ============================================================ */
+.sbp-category-meta{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:10px auto 18px;max-width:900px}
+.sbp-meta-chip,.sbp-product-badge{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(212,175,55,.22);background:rgba(255,255,255,.045);color:#d9e2ef;border-radius:999px;padding:7px 11px;font-size:.68rem;font-weight:800;letter-spacing:.2px}
+.sbp-meta-chip i{color:#d4af37}
+.catalog-card .sbp-card-info{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:8px}
+.catalog-card .sbp-card-info span{font-size:.58rem;color:rgba(255,255,255,.62);background:rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:5px 8px}
+.sbp-toolbar{max-width:1100px;margin:0 auto 18px;padding:14px;border:1px solid rgba(212,175,55,.16);border-radius:18px;background:rgba(255,255,255,.035);box-shadow:0 14px 40px rgba(0,0,0,.12)}
+.sbp-toolbar-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.sbp-toolbar-title{font-size:.72rem;font-weight:900;color:#f2d98c;letter-spacing:.8px;text-transform:uppercase}
+.sbp-toolbar-count{font-size:.65rem;color:rgba(255,255,255,.55)}
+.sbp-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}
+.sbp-chip{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.035);color:#cbd5e1;border-radius:999px;padding:8px 11px;font-size:.65rem;font-weight:800;cursor:pointer;transition:.15s ease}
+.sbp-chip:hover,.sbp-chip.active{border-color:rgba(212,175,55,.42);background:rgba(212,175,55,.12);color:#f5df9d}
+.sbp-price-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sbp-price-box{padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.07)}
+.sbp-price-line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.62rem;color:rgba(255,255,255,.6);margin-bottom:7px}
+.sbp-price-line strong{font-size:.72rem;color:#fff}
+.sbp-range{width:100%;accent-color:#d4af37;cursor:pointer}
+.sbp-sort-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sbp-sort-row label{font-size:.62rem;color:rgba(255,255,255,.5)}
+.sbp-sort{min-width:210px;background:rgba(10,16,25,.88);color:#fff;border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:9px 11px;font-size:.68rem;outline:none}
+.sbp-category-head{max-width:1100px;margin:0 auto 12px;text-align:center}
+.sbp-category-head p{max-width:760px;margin:6px auto 0;color:rgba(255,255,255,.58);font-size:.7rem;line-height:1.55}
+.sbp-product-topline{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.sbp-badges{display:flex;gap:5px;flex-wrap:wrap}
+.sbp-product-badge{padding:5px 8px;font-size:.55rem}
+.sbp-product-badge.recommended{border-color:rgba(212,175,55,.45);color:#f1d47d;background:rgba(212,175,55,.11)}
+.sbp-product-badge.hot{border-color:rgba(255,117,117,.35);color:#ffb1b1;background:rgba(255,80,80,.08)}
+.sbp-product-badge.new{border-color:rgba(93,196,255,.3);color:#9edcff;background:rgba(56,160,220,.08)}
+.sbp-product-badge.offer{border-color:rgba(104,225,152,.3);color:#a8f1c4;background:rgba(54,180,105,.08)}
+.sbp-rating{color:#f1ce67;font-size:.61rem;white-space:nowrap}
+.sbp-empty{padding:28px 18px;text-align:center;border:1px dashed rgba(212,175,55,.2);border-radius:18px;color:rgba(255,255,255,.58);background:rgba(255,255,255,.025)}
+.sbp-admin-card{margin:0 0 18px;padding:16px;border:1px solid rgba(212,175,55,.14);border-radius:18px;background:rgba(255,255,255,.025)}
+.sbp-admin-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.sbp-admin-head h3{margin:0;color:#fff;font-size:15px}.sbp-admin-head small{color:rgba(255,255,255,.5)}
+.sbp-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sbp-admin-product{display:grid;grid-template-columns:52px 1fr;gap:10px;padding:10px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(0,0,0,.12)}
+.sbp-admin-product img{width:52px;height:52px;object-fit:cover;border-radius:10px}.sbp-admin-product strong{display:block;color:#fff;font-size:.7rem}.sbp-admin-product small{display:block;color:rgba(255,255,255,.45);font-size:.58rem;margin-top:3px}
+.sbp-admin-controls{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:2px}
+.sbp-admin-controls label{display:flex;align-items:center;gap:7px;padding:7px 8px;border:1px solid rgba(255,255,255,.06);border-radius:9px;color:#cbd5e1;font-size:.6rem}.sbp-admin-controls input[type=number]{width:100%;min-width:0;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);border-radius:7px;color:#fff;padding:6px}
+.sbp-admin-controls input[type=text]{grid-column:1/-1;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);border-radius:7px;color:#fff;padding:7px;font-size:.62rem}
+.sbp-admin-save{margin-top:10px;width:100%;border:1px solid rgba(212,175,55,.28);background:rgba(212,175,55,.1);color:#f1d47d;border-radius:10px;padding:9px;font-weight:800;cursor:pointer}
+.sbp-admin-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}.sbp-admin-kpi{padding:10px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);text-align:center}.sbp-admin-kpi b{display:block;color:#fff;font-size:1rem}.sbp-admin-kpi span{font-size:.55rem;color:rgba(255,255,255,.45)}
+@media(max-width:700px){.sbp-price-grid,.sbp-admin-grid{grid-template-columns:1fr}.sbp-admin-summary{grid-template-columns:1fr 1fr}.sbp-sort{width:100%}.sbp-sort-row{display:block}.sbp-sort-row label{display:block;margin-bottom:5px}}
+</style>
+
 </head>
 <body>
 
@@ -3643,7 +3857,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         </div>
 
         <div class="menu-footer-text">
-            SHEIBIS v5.0 · Enterprise Suite
+            SHEIBIS v5.0 · Sistema Administrativo
         </div>
     </div>
 
@@ -3843,91 +4057,16 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
     <!-- ================================================================
     SCRIPT — SISTEMA COMPLETO
     ================================================================ -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // ================================================================
-        // 0. INICIALIZAR AOS
-        // ================================================================
-        AOS.init({
-            duration: 800,
-            once: true,
-            offset: 100,
-            easing: 'ease-out-cubic'
-        });
-
-        // ================================================================
+        // 0. AOS desactivado para máximo rendimiento.
+// ================================================================
         // 1. SISTEMA DE PARTÍCULAS 3D
         // ================================================================
         (function initParticles() {
+            // Partículas 3D desactivadas: este proceso ejecutaba requestAnimationFrame
+            // continuamente y consumía CPU/GPU incluso cuando no había interacción.
             const canvas = document.getElementById('particles-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d', {alpha:true});
-            let particles = [];
-            let raf = 0;
-            let running = true;
-            const mobile = Math.min(window.innerWidth, window.innerHeight) < 700;
-            const PARTICLE_COUNT = mobile ? 55 : 85;
-            const LINK_DISTANCE = mobile ? 125 : 150;
-
-            function resize() {
-                const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-                canvas.width = Math.floor(window.innerWidth * dpr);
-                canvas.height = Math.floor(window.innerHeight * dpr);
-                canvas.style.width = window.innerWidth + 'px';
-                canvas.style.height = window.innerHeight + 'px';
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-                particles.forEach(p => {
-                    p.x = Math.min(p.x, window.innerWidth);
-                    p.y = Math.min(p.y, window.innerHeight);
-                });
-            }
-            window.addEventListener('resize', resize, {passive:true});
-            document.addEventListener('visibilitychange', () => {
-                running = document.visibilityState === 'visible';
-                if (running && !raf) animate();
-            });
-            resize();
-
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * window.innerWidth;
-                    this.y = Math.random() * window.innerHeight;
-                    this.size = Math.random() * 1.8 + 0.4;
-                    this.speedX = (Math.random() - 0.5) * 0.28;
-                    this.speedY = (Math.random() - 0.5) * 0.28;
-                    this.opacity = Math.random() * 0.22 + 0.04;
-                }
-                update() {
-                    this.x += this.speedX; this.y += this.speedY;
-                    if (this.x < 0 || this.x > window.innerWidth) this.speedX *= -1;
-                    if (this.y < 0 || this.y > window.innerHeight) this.speedY *= -1;
-                }
-                draw() {
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(212,175,55,${this.opacity})`; ctx.fill();
-                }
-            }
-            for (let i=0;i<PARTICLE_COUNT;i++) particles.push(new Particle());
-
-            function connectParticles() {
-                for (let i=0;i<particles.length;i++) for (let j=i+1;j<particles.length;j++) {
-                    const a=particles[i], b=particles[j], dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
-                    if (d2 < LINK_DISTANCE*LINK_DISTANCE) {
-                        const opacity=(1-Math.sqrt(d2)/LINK_DISTANCE)*0.055;
-                        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
-                        ctx.strokeStyle=`rgba(212,175,55,${opacity})`; ctx.lineWidth=0.4; ctx.stroke();
-                    }
-                }
-            }
-            function animate() {
-                raf = 0;
-                if (!running) return;
-                ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-                particles.forEach(p=>{p.update();p.draw();});
-                connectParticles();
-                raf=requestAnimationFrame(animate);
-            }
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) animate();
+            if (canvas) canvas.style.display = 'none';
         })();
 
         // ================================================================
@@ -3945,7 +4084,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzILXQNXhW6y5l_hRjgwS5c5Nz2dBXzn3iquNbAZRxMNv4MqKDwYK-jlqzk0WyF2eGa/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyTFfySpclWkkfmD5aqQOrEkae6oJ07s50JWj14083gJGNZyIBbEo4hw9WjcrMrsAzs/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5597,13 +5736,13 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                                 <div class="container">
                                     <h1>✦ SHEIBIS</h1>
                                     ${content}
-                                    <div class="footer-text">SHEIBIS · Enterprise Suite</div>
+                                    <div class="footer-text">SHEIBIS · Sistema Administrativo</div>
                                 </div>
                             
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzILXQNXhW6y5l_hRjgwS5c5Nz2dBXzn3iquNbAZRxMNv4MqKDwYK-jlqzk0WyF2eGa/exec
+     https://script.google.com/macros/s/AKfycbyTFfySpclWkkfmD5aqQOrEkae6oJ07s50JWj14083gJGNZyIBbEo4hw9WjcrMrsAzs/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -5613,6 +5752,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
      - Usuario registrado: createOrder guarda el pedido en PEDIDOS.
      - No se suman puntos automáticamente.
 -->
+
+
+
 
 
 
@@ -6566,6 +6708,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 if (result && result.inventory) {
                     try { localStorage.setItem('sheibis_inventory_master_v1', JSON.stringify(result.inventory)); } catch (_) {}
                 }
+                if (window.SHEIBIS_CLOUD_V2 && typeof window.SHEIBIS_CLOUD_V2.publish === 'function') {
+                    window.SHEIBIS_CLOUD_V2.publish('Pedido confirmado · inventario actualizado').catch(()=>{});
+                }
 
                 userOrders = [...(Array.isArray(userOrders) ? userOrders : []), orderData];
                 currentUser.orders = JSON.stringify(userOrders);
@@ -6876,7 +7021,7 @@ setInterval(updateOnlineUsers, ONLINE_HEARTBEAT_MS);
         // inicia sesión/se registra (o cuando entra como invitado).
         // Esto evita crear filas nuevas cada vez que se recarga o reabre Chrome.
 
-        console.log('✦ SHEIBIS — Enterprise Suite v5.0');
+        console.log('✦ SHEIBIS — Sistema Administrativo v5.0');
         console.log('📱 WhatsApp Admin:', CONFIG.phoneNumber);
         console.log('📊 Google Sheets URL:', CONFIG.googleSheetsUrl);
         console.log('🔗 Google Apps Script:', CONFIG.googleAppsScriptUrl);
@@ -6944,7 +7089,7 @@ setInterval(updateOnlineUsers, ONLINE_HEARTBEAT_MS);
             }, 250);
         });
 
-        console.log('✅ SHEIBIS Enterprise Suite cargado exitosamente');
+        console.log('✅ SHEIBIS Sistema Administrativo cargado exitosamente');
         console.log(`📦 ${PRODUCTOS.length} productos disponibles`);
         console.log(`📂 ${CATALOGOS.length} categorías disponibles`);
         console.log('✦ Sistema listo para operar');
@@ -7488,6 +7633,140 @@ window.premiumMenuAction=async function(action){
             if(views[action]) return openPremiumView(views[action].title,views[action].sub,views[action].html);
         };
 </script>
+<style id="sheibis-worker-roles-css">
+#sbRoleChoice,#sbWorkerAuth,#sbWorkerPerms{position:fixed;inset:0;z-index:2147483600;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,5,12,.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+#sbRoleChoice.show,#sbWorkerAuth.show,#sbWorkerPerms.show{display:flex}
+.sbw-modal{width:min(760px,96vw);max-height:92vh;overflow:auto;border:1px solid rgba(212,175,55,.25);border-radius:30px;background:linear-gradient(145deg,rgba(20,29,45,.985),rgba(5,10,19,.99));box-shadow:0 40px 140px rgba(0,0,0,.75),0 0 80px rgba(212,175,55,.08);padding:30px;color:#fff}
+.sbw-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}.sbw-kicker{color:#d4af37;font:700 .56rem Orbitron,sans-serif;letter-spacing:2.5px;text-transform:uppercase}.sbw-head h2{margin:5px 0;color:#fff;font:800 1.55rem 'Space Grotesk',sans-serif}.sbw-head p{margin:0;color:#8190a5;font-size:.74rem;line-height:1.55}.sbw-close{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#cdd7e5;width:38px;height:38px;border-radius:12px;cursor:pointer}.sbw-role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.sbw-role{position:relative;text-align:left;padding:24px;border-radius:23px;border:1px solid rgba(255,255,255,.09);background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));cursor:pointer;color:#fff;transition:.25s}.sbw-role:hover{transform:translateY(-3px);border-color:rgba(212,175,55,.35);box-shadow:0 18px 50px rgba(0,0,0,.28)}.sbw-role i{font-size:1.65rem;color:#d4af37;margin-bottom:14px}.sbw-role h3{margin:0 0 7px;font-size:1rem}.sbw-role p{margin:0;color:#8190a5;font-size:.7rem;line-height:1.55}.sbw-badge{position:absolute;right:14px;top:14px;padding:5px 8px;border-radius:999px;color:#d4af37;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.16);font:700 .46rem Orbitron,sans-serif}.sbw-auth-switch{display:flex;gap:8px;margin-bottom:18px;padding:5px;border:1px solid rgba(255,255,255,.07);border-radius:15px;background:rgba(255,255,255,.025)}.sbw-auth-switch button{flex:1;border:0;background:transparent;color:#7f8da0;padding:11px;border-radius:11px;cursor:pointer;font-weight:800}.sbw-auth-switch button.active{background:linear-gradient(135deg,#d4af37,#f0d68a);color:#111}.sbw-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sbw-field{display:flex;flex-direction:column;gap:6px}.sbw-field.full{grid-column:1/-1}.sbw-field label{color:#8b99aa;font-size:.62rem;text-transform:uppercase;letter-spacing:.7px}.sbw-field input{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:13px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);color:#fff;outline:none}.sbw-field input:focus{border-color:rgba(212,175,55,.45);box-shadow:0 0 0 3px rgba(212,175,55,.07)}.sbw-actions{display:flex;gap:9px;margin-top:16px}.sbw-btn{border:1px solid rgba(212,175,55,.2);background:rgba(212,175,55,.08);color:#f0d68a;border-radius:13px;padding:11px 15px;cursor:pointer;font-weight:800}.sbw-btn.primary{background:linear-gradient(135deg,#d4af37,#f0d68a);color:#111;border-color:transparent}.sbw-btn.muted{background:rgba(255,255,255,.04);color:#cbd5e1;border-color:rgba(255,255,255,.08)}.sbw-status{min-height:18px;margin-top:11px;color:#8b99aa;font-size:.68rem}.sbw-status.ok{color:#73e6a4}.sbw-status.err{color:#ff9292}.sbw-role-note{margin-top:15px;padding:12px 14px;border-radius:14px;background:rgba(212,175,55,.045);border:1px solid rgba(212,175,55,.12);color:#aeb9c8;font-size:.65rem;line-height:1.5}.sbw-perm-toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}.sbw-worker-list{display:grid;gap:10px}.sbw-worker{padding:15px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.025)}.sbw-worker-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.sbw-worker-name{font-weight:800;color:#fff}.sbw-worker-meta{display:block;color:#758398;font-size:.6rem;margin-top:3px}.sbw-perm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.sbw-perm{display:flex;align-items:center;gap:7px;padding:8px 9px;border-radius:10px;background:rgba(0,0,0,.14);border:1px solid rgba(255,255,255,.06);color:#b9c5d3;font-size:.58rem;cursor:pointer}.sbw-perm input{accent-color:#d4af37}.sbw-worker-actions{display:flex;gap:7px;margin-top:10px}.sbw-current{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.13);color:#8ef0b5;font-size:.52rem;font-weight:800}
+body.sbw-worker-session #sbAdminPanel .sb-worker-admin-only{display:none!important}.sbw-worker-logout-side{margin-top:auto!important;color:#ffb2b2!important}
+@media(max-width:650px){.sbw-role-grid,.sbw-form{grid-template-columns:1fr}.sbw-perm-grid{grid-template-columns:1fr 1fr}.sbw-modal{padding:20px;border-radius:23px}}
+</style>
+<div id="sbRoleChoice" aria-hidden="true">
+  <div class="sbw-modal">
+    <div class="sbw-head"><div><div class="sbw-kicker">SHEIBIS · ACCESO PROFESIONAL</div><h2>Selecciona el tipo de acceso</h2><p>Elige el perfil que corresponde a la persona que va a entrar al área privada.</p></div><button class="sbw-close" type="button" onclick="SHEIBIS_ROLES.closeChoice()">×</button></div>
+    <div class="sbw-role-grid">
+      <button class="sbw-role" type="button" onclick="SHEIBIS_ROLES.openWorkerAuth('login')"><span class="sbw-badge">PERSONAL</span><i class="fas fa-user-gear"></i><h3>Usuario trabajador</h3><p>Cuenta independiente con permisos definidos por el administrador. Solo podrá utilizar las herramientas que tenga autorizadas.</p></button>
+      <button class="sbw-role" type="button" onclick="SHEIBIS_ROLES.openAdmin()"><span class="sbw-badge">CONTROL TOTAL</span><i class="fas fa-shield-halved"></i><h3>Administrador</h3><p>Acceso al centro administrativo completo mediante la autenticación privada existente.</p></button>
+    </div>
+    <div class="sbw-role-note"><b>Seguridad:</b> un trabajador no recibe automáticamente permisos administrativos. El administrador decide qué módulos puede utilizar.</div>
+  </div>
+</div>
+<div id="sbWorkerAuth" aria-hidden="true">
+  <div class="sbw-modal" style="width:min(560px,96vw)">
+    <div class="sbw-head"><div><div class="sbw-kicker">SHEIBIS · PERSONAL</div><h2 id="sbwAuthTitle">Acceso trabajador</h2><p id="sbwAuthSub">Inicia sesión con tu cuenta de trabajador.</p></div><button class="sbw-close" type="button" onclick="SHEIBIS_ROLES.closeWorkerAuth()">×</button></div>
+    <div class="sbw-auth-switch"><button id="sbwLoginTab" class="active" type="button" onclick="SHEIBIS_ROLES.setAuthMode('login')">Iniciar sesión</button><button id="sbwRegisterTab" type="button" onclick="SHEIBIS_ROLES.setAuthMode('register')">Crear cuenta</button></div>
+    <form id="sbwAuthForm" onsubmit="return SHEIBIS_ROLES.submitWorker(event)">
+      <div class="sbw-form">
+        <div class="sbw-field full sbw-reg-field"><label>Nombre completo</label><input id="sbwName" autocomplete="name" placeholder="Nombre del trabajador"></div>
+        <div class="sbw-field"><label>Usuario</label><input id="sbwUser" autocomplete="username" placeholder="usuario"></div>
+        <div class="sbw-field sbw-reg-field"><label>Correo</label><input id="sbwEmail" type="email" autocomplete="email" placeholder="correo@ejemplo.com"></div>
+        <div class="sbw-field"><label>Contraseña</label><input id="sbwPass" type="password" autocomplete="current-password" placeholder="Contraseña"></div>
+        <div class="sbw-field sbw-reg-field"><label>Confirmar contraseña</label><input id="sbwPass2" type="password" autocomplete="new-password" placeholder="Repite la contraseña"></div>
+      </div>
+      <div id="sbwAuthStatus" class="sbw-status"></div>
+      <div class="sbw-actions"><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES.backToChoice()">Atrás</button><button class="sbw-btn primary" id="sbwSubmit" type="submit">Entrar</button></div>
+    </form>
+  </div>
+</div>
+<div id="sbWorkerPerms" aria-hidden="true">
+  <div class="sbw-modal" style="width:min(1050px,97vw)">
+    <div class="sbw-head"><div><div class="sbw-kicker">SHEIBIS · CONTROL DE PERSONAL</div><h2>Permisos de usuarios trabajadores</h2><p>Asigna exactamente qué herramientas puede utilizar cada trabajador. Los cambios se guardan de forma centralizada en Google Sheets y se aplican a todos los dispositivos.</p></div><button class="sbw-close" type="button" onclick="SHEIBIS_ROLES.closePerms()">×</button></div>
+    <div class="sbw-perm-toolbar"><button class="sbw-btn" type="button" onclick="SHEIBIS_ROLES.refreshPerms()">↻ Actualizar</button><button class="sbw-btn" type="button" onclick="SHEIBIS_ROLES.exportPerms()">⇩ Exportar permisos</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES.closePerms()">Cerrar</button></div>
+    <div id="sbwWorkerList" class="sbw-worker-list"></div>
+  </div>
+</div>
+
+<script id="sheibis-worker-roles-js">
+(function(){
+  'use strict';
+  const KEY='SHEIBIS_WORKER_ACCOUNTS_V1', SESSION='SHEIBIS_WORKER_SESSION_V1';
+  const DEFAULTS={dashboard:true,news:true,activity:true,productsView:true,productsEdit:false,inventoryView:true,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false};
+  const LABELS={dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios',workerPermissions:'Gestionar trabajadores'};
+  const $=id=>document.getElementById(id);
+  function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return []}}
+  function save(a){localStorage.setItem(KEY,JSON.stringify(a))}
+  function session(){try{return JSON.parse(localStorage.getItem(SESSION)||'null')}catch(e){return null}}
+  function setSession(w){if(w)localStorage.setItem(SESSION,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions||{}}));else localStorage.removeItem(SESSION)}
+  async function hash(v){if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}return btoa(unescape(encodeURIComponent(v)))}
+  function choice(show){$('sbRoleChoice')?.classList.toggle('show',!!show);$('sbRoleChoice')?.setAttribute('aria-hidden',show?'false':'true')}
+  function auth(show){$('sbWorkerAuth')?.classList.toggle('show',!!show);$('sbWorkerAuth')?.setAttribute('aria-hidden',show?'false':'true')}
+  function perms(show){$('sbWorkerPerms')?.classList.toggle('show',!!show);$('sbWorkerPerms')?.setAttribute('aria-hidden',show?'false':'true')}
+  function status(msg,type){const el=$('sbwAuthStatus');if(!el)return;el.textContent=msg;el.className='sbw-status '+(type||'')}
+  function setMode(mode){window.__sbwMode=mode;const reg=mode==='register';document.querySelectorAll('.sbw-reg-field').forEach(x=>x.style.display=reg?'flex':'none');$('sbwLoginTab')?.classList.toggle('active',!reg);$('sbwRegisterTab')?.classList.toggle('active',reg);$('sbwAuthTitle').textContent=reg?'Crear cuenta de trabajador':'Acceso trabajador';$('sbwAuthSub').textContent=reg?'Crea una cuenta que después podrá recibir permisos del administrador.':'Inicia sesión con tu cuenta de trabajador.';$('sbwSubmit').textContent=reg?'Crear cuenta':'Entrar';status('')}
+  function has(p){const s=session();return !!(s&&s.permissions&&s.permissions[p])}
+  function isWorker(){return !!session() && document.body.classList.contains('sbw-worker-session')}
+  function openAdmin(){
+    choice(false); auth(false); perms(false);
+    setSession(null); document.body.classList.remove('sbw-worker-session'); window.SHEIBIS_WORKER=null;
+    if(window.SB_ADMIN&&typeof SB_ADMIN.closePanel==='function'){try{SB_ADMIN.closePanel()}catch(e){}}
+    if(window.SB_ADMIN&&typeof SB_ADMIN.openLogin==='function')SB_ADMIN.openLogin();
+  }
+  function openWorkerAuth(mode){choice(false);auth(true);setMode(mode||'login');setTimeout(()=>$('sbwUser')?.focus(),80)}
+  function back(){auth(false);choice(true)}
+  async function submit(e){e.preventDefault();const mode=window.__sbwMode||'login',user=String($('sbwUser')?.value||'').trim().toLowerCase(),pass=String($('sbwPass')?.value||'');if(!user||!pass){status('Completa usuario y contraseña.','err');return false}const arr=load();
+    if(mode==='register'){
+      const name=String($('sbwName')?.value||'').trim(),email=String($('sbwEmail')?.value||'').trim().toLowerCase(),p2=String($('sbwPass2')?.value||'');
+      if(name.length<3||!email.includes('@')){status('Escribe nombre y correo válidos.','err');return false}
+      if(pass.length<6){status('La contraseña debe tener al menos 6 caracteres.','err');return false}
+      if(pass!==p2){status('Las contraseñas no coinciden.','err');return false}
+      if(arr.some(w=>w.username===user)){status('Ese usuario ya existe.','err');return false}
+      const id='W'+Date.now().toString(36).toUpperCase(),ph=await hash(pass),w={id,name,email,username:user,passwordHash:ph,createdAt:new Date().toISOString(),permissions:{...DEFAULTS}};arr.push(w);save(arr);setSession(w);auth(false);activateWorker(w);showNotice('Cuenta creada','Tu cuenta de trabajador fue creada. El administrador debe asignarte permisos adicionales si los necesitas.','fa-user-check');
+    }else{
+      const ph=await hash(pass),w=arr.find(x=>x.username===user&&x.passwordHash===ph);if(!w){status('Usuario o contraseña incorrectos.','err');return false}setSession(w);auth(false);activateWorker(w);showNotice('Sesión iniciada','Bienvenido, '+w.name+'. Tu acceso está limitado a los permisos asignados.','fa-user-gear');
+    }
+    return false;
+  }
+  function activateWorker(w){document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;hideUnauthorizedTabs(w.permissions||{});if(window.SB_ADMIN&&typeof SB_ADMIN.openPanel==='function'){try{SB_ADMIN.adminActive=true;SB_ADMIN.openPanel();}catch(e){console.warn(e)}}}
+  function hideUnauthorizedTabs(p){const map={dashboard:'dashboard',news:'news',activity:'activity',productsView:'products',inventoryView:'inventory',catalogPro:'merchandising',analytics:'analytics',tools:'tools'};Object.keys(map).forEach(k=>{const b=document.querySelector('[data-v11-tab="'+map[k]+'"]');if(b)b.style.display=p[k]?'':'none'});if(!p.dashboard){const first=Object.keys(map).find(k=>p[k]);if(first&&window.SB_ADMIN)SB_ADMIN.showTab(map[first])}else if(window.SB_ADMIN)SB_ADMIN.showTab('dashboard')}
+  function guardAction(permission){return !isWorker()||has(permission)}
+  function openPerms(){
+    if(isWorker() || !window.SB_ADMIN || !SB_ADMIN.adminActive){
+      showNotice('Acceso restringido','Solo el administrador puede gestionar las cuentas y permisos de trabajadores.','fa-lock'); return;
+    }
+    renderPerms(); perms(true);
+  }
+  function renderPerms(){const host=$('sbwWorkerList');if(!host)return;const arr=load();if(!arr.length){host.innerHTML='<div class="sbw-role-note">Todavía no existen cuentas de trabajadores. Un trabajador puede crearse desde el acceso del logo de SHEIBIS.</div>';return}host.innerHTML=arr.map(w=>{const p=w.permissions||{};return '<article class="sbw-worker"><div class="sbw-worker-head"><div><span class="sbw-worker-name">'+esc(w.name)+'</span><span class="sbw-worker-meta">@'+esc(w.username)+' · '+esc(w.email||'sin correo')+'</span></div>'+(session()?.id===w.id?'<span class="sbw-current">● SESIÓN ACTUAL</span>':'')+'</div><div class="sbw-perm-grid">'+Object.keys(LABELS).map(k=>'<label class="sbw-perm"><input type="checkbox" '+(p[k]?'checked':'')+' onchange="SHEIBIS_ROLES.setPerm(\''+escAttr(w.id)+'\',\''+k+'\',this.checked)"> '+esc(LABELS[k])+'</label>').join('')+'</div><div class="sbw-worker-actions"><button class="sbw-btn" type="button" onclick="SHEIBIS_ROLES.allPerms(\''+escAttr(w.id)+'\',true)">Dar acceso total</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES.allPerms(\''+escAttr(w.id)+'\',false)">Restablecer básicos</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES.deleteWorker(\''+escAttr(w.id)+'\')">Eliminar cuenta</button></div></article>'}).join('')}
+  function setPerm(id,key,val){const arr=load(),w=arr.find(x=>x.id===id);if(!w)return;w.permissions=w.permissions||{};w.permissions[key]=!!val;save(arr);if(session()?.id===id){setSession(w);window.SHEIBIS_WORKER=w;hideUnauthorizedTabs(w.permissions)} }
+  function allPerms(id,on){const arr=load(),w=arr.find(x=>x.id===id);if(!w)return;w.permissions={...DEFAULTS};Object.keys(LABELS).forEach(k=>w.permissions[k]=!!on);if(!on){w.permissions={...DEFAULTS,productsEdit:false,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false}}save(arr);if(session()?.id===id){setSession(w);window.SHEIBIS_WORKER=w;hideUnauthorizedTabs(w.permissions)}renderPerms()}
+  function deleteWorker(id){if(!confirm('¿Eliminar esta cuenta de trabajador?'))return;const arr=load().filter(w=>w.id!==id);save(arr);if(session()?.id===id){setSession(null);document.body.classList.remove('sbw-worker-session');window.SHEIBIS_WORKER=null}renderPerms()}
+  function logoutWorker(silent){setSession(null);document.body.classList.remove('sbw-worker-session');window.SHEIBIS_WORKER=null;if(window.SB_ADMIN&&SB_ADMIN.adminActive){try{SB_ADMIN.closePanel()}catch(e){}}if(!silent)showNotice('Sesión cerrada','La sesión del trabajador se cerró correctamente.','fa-right-from-bracket')}
+  function exportPerms(){const blob=new Blob([JSON.stringify(load(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sheibis-permisos-trabajadores.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+  function showNotice(title,msg,icon){if(typeof window.showToast==='function'){window.showToast(msg,{title,icon:icon||'fa-circle-info',duration:4200})}else alert(title+'\n\n'+msg)}
+  function esc(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+  function escAttr(v){return String(v).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+  window.SHEIBIS_ROLES={openChoice:()=>choice(true),closeChoice:()=>choice(false),openAdmin,openWorkerAuth,closeWorkerAuth:()=>auth(false),backToChoice:back,setAuthMode:setMode,submitWorker:submit,openPermissions:openPerms,closePerms:()=>perms(false),refreshPerms:renderPerms,setPerm,allPerms,deleteWorker,exportPerms,logoutWorker,has,session,isWorker,activateWorker};
+  document.addEventListener('DOMContentLoaded',()=>{
+    const logo=document.querySelector('.brand-top');
+    if(logo){
+      logo.setAttribute('title','Pulsa 5 veces para acceder al área privada');
+      let clicks=0,timer=null;
+      logo.addEventListener('click',function(e){
+        e.preventDefault(); e.stopImmediatePropagation(); clicks++; clearTimeout(timer);
+        timer=setTimeout(()=>{clicks=0},2200);
+        if(clicks>=5){clicks=0;clearTimeout(timer);if(window.SB_ADMIN&&typeof SB_ADMIN.closeLogin==='function')SB_ADMIN.closeLogin();choice(true);}
+      },true);
+    }
+    const s=session();
+    if(s){const w=load().find(x=>x.id===s.id);if(w){setSession(w);activateWorker(w)}else{setSession(null);document.body.classList.remove('sbw-worker-session')}}
+    setTimeout(()=>installPermissionsEntry(),900);
+  });
+  function installPermissionsEntry(){
+    const tabs=document.getElementById('sbV11Tabs');if(!tabs||document.getElementById('sbWorkerPermsBtn'))return;
+    const b=document.createElement('button');b.id='sbWorkerPermsBtn';b.className='sb-v11-tab sb-worker-admin-only';b.textContent='♙ Permisos trabajadores';b.onclick=()=>openPerms();tabs.appendChild(b);
+    const main=document.querySelector('#sbAdminPanel .sb-ultra-sidebar');
+    if(main&&!main.querySelector('#sbWorkerPermsSide')){const x=document.createElement('button');x.id='sbWorkerPermsSide';x.className='sb-ultra-btn sb-worker-admin-only';x.innerHTML='<i class="fas fa-user-shield"></i><span>Permisos trabajadores</span>';x.onclick=()=>openPerms();main.appendChild(x)}
+    if(main&&!main.querySelector('#sbWorkerLogoutSide')){const y=document.createElement('button');y.id='sbWorkerLogoutSide';y.className='sb-ultra-btn';y.style.display='none';y.innerHTML='<i class="fas fa-right-from-bracket"></i><span>Cerrar sesión trabajador</span>';y.onclick=()=>logoutWorker();main.appendChild(y)}
+    const workerLogout=document.getElementById('sbWorkerLogoutSide');if(workerLogout)workerLogout.style.display=isWorker()?'flex':'none';
+  }
+  // Protección de acciones administrativas sensibles para trabajadores.
+  setTimeout(()=>{
+    if(!window.SB_ADMIN)return;
+    const wrap=(name,perm)=>{const fn=SB_ADMIN[name];if(typeof fn!=='function'||fn.__workerGuard)return;const g=function(){if(isWorker()&&!has(perm)){showNotice('Permiso requerido','Tu cuenta de trabajador no tiene autorización para esta acción.','fa-lock');return false}return fn.apply(this,arguments)};g.__workerGuard=true;SB_ADMIN[name]=g};
+    [['add','productsEdit'],['edit','productsEdit'],['remove','productsEdit'],['save','productsEdit'],['addCategory','productsEdit'],['editCategory','productsEdit'],['saveCategory','productsEdit'],['deleteCategory','productsEdit'],['moveCategory','productsEdit'],['backup','backup'],['exportInventoryExcel','documents'],['exportInventoryPDF','documents']].forEach(x=>wrap(x[0],x[1]));
+  },1400);
+})();
+</script>
+
 
 <style>
 .catalog-coming-soon{cursor:default;position:relative;filter:saturate(.72)}
@@ -8215,6 +8494,8 @@ window.premiumMenuAction=async function(action){
   </div>
 </div>
 
+</script>
+
 <script>
 (function(){
 'use strict';
@@ -8479,6 +8760,7 @@ window.SB_ADMIN={
 
   login(){
     const p=document.getElementById('sbAdminPass');if(!p)return;
+    document.body.classList.remove('sbw-worker-session'); window.SHEIBIS_WORKER=null;
     if(p.value!==PASS){
       const s=document.getElementById('sbLoginStatus');if(s)s.textContent='Contraseña incorrecta.';
       p.select();return;
@@ -9319,6 +9601,958 @@ document.addEventListener('keydown',function(event){
     }
 });
 
-</script></body>
+</script><script id="sheibisCatalogProEngine">
+(function(){
+'use strict';
+var sbpState={category:null,min:10,max:Infinity,mode:'all',sort:'recommended'};
+function num(v,d){var n=Number(v);return isFinite(n)?n:(d||0)}
+function safe(v){return typeof esc==='function'?esc(v):String(v??'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
+function productScore(p){return (p.recomendado?1000000:0)+(p.destacado?500000:0)+(p.nuevo?100000:0)+(num(p.ventas)*100)+(num(p.valoracion)*10)+num(p.descuento)*2}
+function productDiscount(p){var b=num(p.precioAntes),c=num(p.precio);return b>c?((b-c)/b)*100:num(p.descuento)}
+function productIsNew(p){if(p.nuevo===true)return true;var d=String(p.fechaAlta||'');if(!d)return false;var t=Date.parse(d);return isFinite(t)&&(Date.now()-t<1000*60*60*24*30)}
+function priceBounds(products){var prices=products.map(function(p){return Math.max(0,num(p.precio))}).filter(function(x){return x>0});var max=prices.length?Math.max.apply(null,prices):500;return {min:10,max:Math.max(500,Math.ceil(max/10)*10)};}
+function categoryCardData(cat){var ps=getProducts().filter(function(p){return String(p.categoria)===String(cat.id)});var b=priceBounds(ps),discounts=ps.filter(function(p){return productDiscount(p)>0}).length;return {count:ps.length,b:b,discounts:discounts};}
+function renderCatalogosPro(){
+ var grid=document.getElementById('catalogGrid');if(!grid)return;
+ var cats=getCategories().filter(function(c){return c.proximamente!==true});
+ var total=document.getElementById('totalProducts');if(total)total.textContent=getProducts().length;
+ var tc=document.getElementById('totalCategories');if(tc)tc.textContent=cats.length;
+ grid.innerHTML=cats.map(function(cat){var d=categoryCardData(cat),has=cat.imagen&&cat.imagen!=='';return '<div class="catalog-card catalog-card-visible catalog-only-category" onclick="openCatalog(\''+safe(String(cat.id)).replace(/'/g,"\\'")+'\')" aria-label="Abrir catálogo '+safe(cat.nombre)+'">'+(has?'<div class="catalog-image-frame"><img src="'+safe(cat.imagen)+'" alt="'+safe(cat.nombre)+'" class="catalog-image" loading="lazy"></div>':'<span class="catalog-icon"><i class="fas '+safe(cat.icono||'fa-folder-open')+'"></i></span>')+'<div class="catalog-name">'+safe(cat.nombre)+'</div><div class="catalog-open-label"><i class="fas fa-arrow-right"></i> Ver catálogo</div><div class="sbp-card-info"><span><i class="fas fa-box"></i> '+d.count+' productos</span><span><i class="fas fa-tag"></i> Desde Q '+d.b.min.toFixed(0)+'</span>'+(d.discounts?'<span><i class="fas fa-percent"></i> '+d.discounts+' oferta'+(d.discounts===1?'':'s')+'</span>':'')+'</div><div class="catalog-glow"></div></div>';}).join('');
+}
+function filterProducts(products){var min=sbpState.min,max=sbpState.max,mode=sbpState.mode;var list=products.filter(function(p){var price=num(p.precio);if(price<min||price>max)return false;if(mode==='recommended')return p.recomendado===true||p.destacado===true||productScore(p)>0;if(mode==='offers')return productDiscount(p)>0;if(mode==='new')return productIsNew(p);if(mode==='bestsellers')return num(p.ventas)>0;return true;});
+ list.sort(function(a,b){if(sbpState.sort==='priceAsc')return num(a.precio)-num(b.precio);if(sbpState.sort==='priceDesc')return num(b.precio)-num(a.precio);if(sbpState.sort==='new')return (productIsNew(b)?1:0)-(productIsNew(a)?1:0)||num(b.id)-num(a.id);if(sbpState.sort==='sales')return num(b.ventas)-num(a.ventas)||productScore(b)-productScore(a);if(sbpState.sort==='discount')return productDiscount(b)-productDiscount(a);return productScore(b)-productScore(a)||num(b.id)-num(a.id);});return list;}
+function productMarkup(p){var qty=quantities[p.id]||1,main=(Array.isArray(p.imagenes)&&p.imagenes.length?p.imagenes[0]:p.imagen),has=!!main,before=num(p.precioAntes),current=num(p.precio),disc=productDiscount(p),stars=num(p.valoracion);var badges='';if(p.recomendado||p.destacado)badges+='<span class="sbp-product-badge recommended">★ Recomendado</span>';if(num(p.ventas)>0)badges+='<span class="sbp-product-badge hot">🔥 Más vendido</span>';if(productIsNew(p))badges+='<span class="sbp-product-badge new">✦ Nuevo</span>';if(disc>0)badges+='<span class="sbp-product-badge offer">-'+disc.toFixed(0)+'%</span>';var rating=stars>0?'<span class="sbp-rating">'+('★'.repeat(Math.round(stars)))+' '+stars.toFixed(1)+'</span>':'';return '<div class="product-detail-item '+(p.agotado?'sheibis-out':'')+'" data-id="'+safe(p.id)+'"><div class="product-detail-image sheibis-product-clickable" data-product-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="Ampliar imagen de '+safe(p.nombre)+'" onclick="sheibisOpenProductImage('+Number(p.id)+',0)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();sheibisOpenProductImage('+Number(p.id)+',0)}">'+(disc>0?'<span class="product-discount-badge">-'+disc.toFixed(0)+'%</span>':'')+(has?'<img src="'+safe(main)+'" alt="'+safe(p.nombre)+'" loading="lazy">':'<span class="icon-placeholder"><i class="fas '+safe(p.icono||'fa-star')+'"></i></span>')+'</div><div class="product-detail-info"><div class="sbp-product-topline"><div class="sbp-badges">'+badges+'</div>'+rating+'</div><div class="product-detail-name">'+safe(p.nombre)+'</div><div class="product-detail-desc">'+safe(p.desc||'')+'</div>'+(disc>0?'<div class="product-price-row"><span class="product-price-before">Q '+before.toFixed(2)+'</span><span class="product-price-current">Q '+current.toFixed(2)+'</span><span class="product-discount-text">Ahorras '+disc.toFixed(0)+'%</span></div>':'<div class="product-price-row"><span class="product-price-current">Q '+current.toFixed(2)+'</span></div>')+(p.agotado?'<div class="sheibis-out-badge">🚫 AGOTADO</div>':'<div class="product-detail-actions"><div class="qty-control-detail"><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',-1)"><i class="fas fa-minus"></i></button><span class="qty-display-detail" id="qty-detail-'+Number(p.id)+'">'+qty+'</span><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',1)"><i class="fas fa-plus"></i></button></div><button class="btn-add-detail" onclick="addToCartDetail('+Number(p.id)+')"><i class="fas fa-plus"></i> Agregar</button></div>')+'</div></div>';}
+function renderCategoryProducts(){var cat=getCategories().find(function(c){return String(c.id)===String(sbpState.category)});if(!cat)return;var all=getProducts().filter(function(p){return String(p.categoria)===String(cat.id)}),bounds=priceBounds(all);if(!isFinite(sbpState.max)||sbpState.max>bounds.max)sbpState.max=bounds.max;if(sbpState.min<10)sbpState.min=10;if(sbpState.min>sbpState.max)sbpState.min=10;var list=filterProducts(all);var host=document.getElementById('productList');if(!host)return;var head='<div class="sbp-category-head"><div class="sbp-category-meta"><span class="sbp-meta-chip"><i class="fas fa-box"></i> '+all.length+' productos</span><span class="sbp-meta-chip"><i class="fas fa-tags"></i> Q '+bounds.min.toFixed(0)+' – Q '+bounds.max.toFixed(0)+'+</span><span class="sbp-meta-chip"><i class="fas fa-fire"></i> Selección recomendada</span></div><p>'+safe(cat.descripcion||'Explora los productos seleccionados de este catálogo y utiliza los filtros para encontrar exactamente lo que buscas.')+'</p></div><div class="sbp-toolbar"><div class="sbp-toolbar-head"><span class="sbp-toolbar-title">Encuentra lo que buscas</span><span class="sbp-toolbar-count">Mostrando <b>'+list.length+'</b> de '+all.length+'</span></div><div class="sbp-chips"><button class="sbp-chip '+(sbpState.mode==='all'?'active':'')+'" onclick="SBP.setMode(\'all\')">Todos</button><button class="sbp-chip '+(sbpState.mode==='recommended'?'active':'')+'" onclick="SBP.setMode(\'recommended\')">★ Recomendados</button><button class="sbp-chip '+(sbpState.mode==='bestsellers'?'active':'')+'" onclick="SBP.setMode(\'bestsellers\')">🔥 Más vendidos</button><button class="sbp-chip '+(sbpState.mode==='new'?'active':'')+'" onclick="SBP.setMode(\'new\')">✦ Novedades</button><button class="sbp-chip '+(sbpState.mode==='offers'?'active':'')+'" onclick="SBP.setMode(\'offers\')">🏷️ Ofertas</button></div><div class="sbp-price-grid"><div class="sbp-price-box"><div class="sbp-price-line"><span>Precio mínimo</span><strong id="sbpMinValue">Q '+sbpState.min.toFixed(0)+'</strong></div><input id="sbpMin" class="sbp-range" type="range" min="10" max="'+bounds.max+'" step="10" value="'+sbpState.min+'" oninput="SBP.setPrice(this.value,\'min\')"></div><div class="sbp-price-box"><div class="sbp-price-line"><span>Precio máximo</span><strong id="sbpMaxValue">Q '+sbpState.max.toFixed(0)+'+</strong></div><input id="sbpMax" class="sbp-range" type="range" min="10" max="'+bounds.max+'" step="10" value="'+Math.min(bounds.max,sbpState.max)+'" oninput="SBP.setPrice(this.value,\'max\')"></div></div><div class="sbp-sort-row"><label>Ordenar por</label><select id="sbpSort" class="sbp-sort" onchange="SBP.setSort(this.value)"><option value="recommended" '+(sbpState.sort==='recommended'?'selected':'')+'>★ Más recomendados</option><option value="sales" '+(sbpState.sort==='sales'?'selected':'')+'>🔥 Más vendidos</option><option value="new" '+(sbpState.sort==='new'?'selected':'')+'>✦ Más nuevos</option><option value="discount" '+(sbpState.sort==='discount'?'selected':'')+'>🏷️ Mayor descuento</option><option value="priceAsc" '+(sbpState.sort==='priceAsc'?'selected':'')+'>Precio: menor a mayor</option><option value="priceDesc" '+(sbpState.sort==='priceDesc'?'selected':'')+'>Precio: mayor a menor</option></select></div></div><div class="sbp-results">'+(list.length?list.map(productMarkup).join(''):'<div class="sbp-empty"><i class="fas fa-filter"></i><br><strong>No encontramos productos con esos filtros.</strong><br>Prueba ampliando el rango de precios o seleccionando “Todos”.</div>')+'</div>';
+host.innerHTML=head;}
+window.SBP={setMode:function(mode){sbpState.mode=mode;renderCategoryProducts()},setSort:function(sort){sbpState.sort=sort;renderCategoryProducts()},setPrice:function(value,which){var v=Math.max(10,num(value,10));if(which==='min')sbpState.min=Math.min(v,sbpState.max-10);else sbpState.max=Math.max(v,sbpState.min+10);if(sbpState.max<sbpState.min)sbpState.max=sbpState.min;renderCategoryProducts()}};
+window.renderCatalogos=renderCatalogosPro;
+window.openCatalog=function(categoriaId){var cat=getCategories().find(function(c){return String(c.id)===String(categoriaId)});if(!cat)return;sbpState.category=categoriaId;sbpState.min=10;sbpState.max=Infinity;sbpState.mode='all';sbpState.sort='recommended';var title=document.getElementById('detailTitle');if(title)title.textContent=cat.nombre;renderCategoryProducts();if(typeof showProductsTab==='function')showProductsTab();};
+function installAdminMerch(){if(!window.SB_ADMIN)return;var tabs=document.getElementById('sbV11Tabs');if(tabs&&!tabs.querySelector('[data-v11-tab="merchandising"]')){var b=document.createElement('button');b.className='sb-v11-tab';b.dataset.v11Tab='merchandising';b.textContent='★ Catálogo PRO';b.onclick=function(){SB_ADMIN.showTab('merchandising')};tabs.appendChild(b)}var panel=document.getElementById('sbAdminPanel');if(panel&&!document.getElementById('sbV11Merchandising')){var sec=document.createElement('section');sec.id='sbV11Merchandising';sec.className='sb-v11-section';panel.appendChild(sec)}var oldShow=SB_ADMIN.showTab;if(!oldShow.__sbpWrapped){var wrap=function(tab){if(tab!=='merchandising'){oldShow.call(SB_ADMIN,tab);return}if(!SB_ADMIN.adminActive)return;document.querySelectorAll('.sb-v11-section').forEach(function(x){x.classList.remove('active')});document.querySelectorAll('.sb-v11-tab').forEach(function(x){x.classList.toggle('active',x.dataset.v11Tab===tab)});var p=document.getElementById('sbProductAdminContent'),iv=document.getElementById('sbInventoryView');if(p)p.style.display='none';if(iv)iv.style.display='none';var sec=document.getElementById('sbV11Merchandising');if(sec){sec.classList.add('active');renderMerchandising(sec)}};wrap.__sbpWrapped=true;SB_ADMIN.showTab=wrap}
+}
+function renderMerchandising(el){
+  var ps=getProducts(),cats=getCategories();
+  var rec=ps.filter(function(p){return p.recomendado}).length;
+  var hot=ps.filter(function(p){return num(p.ventas)>0}).length;
+  var nw=ps.filter(productIsNew).length;
+  var offers=ps.filter(function(p){return productDiscount(p)>0}).length;
+  el.innerHTML=`
+    <div class="sbp-admin-card">
+      <div class="sbp-admin-head">
+        <div><h3>★ Catálogo PRO</h3><small>Controla qué productos aparecen como recomendados, destacados, nuevos y más vendidos.</small></div>
+        <button class="sb-v11-btn" onclick="SBP_ADMIN.saveAll()">💾 Guardar cambios</button>
+      </div>
+      <div class="sbp-admin-summary">
+        <div class="sbp-admin-kpi"><b>${rec}</b><span>Recomendados</span></div>
+        <div class="sbp-admin-kpi"><b>${hot}</b><span>Con ventas</span></div>
+        <div class="sbp-admin-kpi"><b>${nw}</b><span>Novedades</span></div>
+        <div class="sbp-admin-kpi"><b>${offers}</b><span>En oferta</span></div>
+      </div>
+      <div class="sbp-admin-grid">
+        ${ps.map(function(p){
+          var main=p.imagen||'';
+          var tags=Array.isArray(p.tags)?p.tags.join(', '):'';
+          return `<div class="sbp-admin-product">
+            <div>${main?`<img src="${safe(main)}" alt="">`:`<div style="width:52px;height:52px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.06)"><i class="fas ${safe(p.icono||'fa-box')}"></i></div>`}</div>
+            <div><strong>${safe(p.nombre)}</strong><small>${safe(categoryName(p.categoria))} · Q ${num(p.precio).toFixed(2)}</small></div>
+            <div class="sbp-admin-controls">
+              <label><input type="checkbox" data-sbp-field="recomendado" data-sbp-id="${safe(p.id)}" ${p.recomendado?'checked':''}> ★ Recomendado</label>
+              <label><input type="checkbox" data-sbp-field="destacado" data-sbp-id="${safe(p.id)}" ${p.destacado?'checked':''}> ✦ Destacado</label>
+              <label><input type="checkbox" data-sbp-field="nuevo" data-sbp-id="${safe(p.id)}" ${p.nuevo?'checked':''}> 🆕 Novedad</label>
+              <label>🔥 Ventas <input type="number" min="0" step="1" data-sbp-field="ventas" data-sbp-id="${safe(p.id)}" value="${num(p.ventas)}"></label>
+              <label>★ Valoración <input type="number" min="0" max="5" step="0.1" data-sbp-field="valoracion" data-sbp-id="${safe(p.id)}" value="${num(p.valoracion).toFixed(1)}"></label>
+              <input type="text" data-sbp-field="tags" data-sbp-id="${safe(p.id)}" value="${safe(tags)}" placeholder="Etiquetas: premium, oferta, recomendado">
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="sbp-admin-card">
+      <div class="sbp-admin-head"><div><h3>📚 Resumen de categorías</h3><small>Control rápido de productos y rangos de precio por catálogo.</small></div></div>
+      ${cats.filter(function(c){return c.proximamente!==true}).map(function(c){
+        var d=categoryCardData(c);
+        return `<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)"><strong style="color:#fff;font-size:.7rem">${safe(c.nombre)}</strong><span style="color:rgba(255,255,255,.5);font-size:.6rem">${d.count} productos · Q ${d.b.min.toFixed(0)}–Q ${d.b.max.toFixed(0)}+</span></div>`;
+      }).join('')}
+    </div>`;
+}
+window.SBP_ADMIN={saveAll:function(){var ps=getProducts();document.querySelectorAll('[data-sbp-field]').forEach(function(input){var p=ps.find(function(x){return String(x.id)===String(input.dataset.sbpId)});if(!p)return;var f=input.dataset.sbpField;if(f==='recomendado'||f==='destacado'||f==='nuevo')p[f]=!!input.checked;else if(f==='ventas')p[f]=Math.max(0,Math.floor(num(input.value)));else if(f==='valoracion')p[f]=Math.max(0,Math.min(5,num(input.value)));else if(f==='tags')p[f]=String(input.value||'').split(/[,;]+/).map(function(x){return x.trim()}).filter(Boolean)});if(typeof saveProducts==='function'&&saveProducts()){SB_ADMIN.log('product','Catálogo PRO actualizado: recomendaciones, novedades, ventas y valoraciones');renderMerchandising(document.getElementById('sbV11Merchandising'));if(typeof refreshStore==='function')refreshStore();if(typeof showToast==='function')showToast('Cambios del catálogo PRO guardados correctamente.',{title:'CATÁLOGO PRO',icon:'fa-star',duration:3500})}}};
+var tries=0;function boot(){tries++;installAdminMerch();if(tries<30&&!window.SB_ADMIN)setTimeout(boot,200)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,0);
+})();
+</script>
+
+<!-- SHEIBIS ULTRA PRO ADMIN — INTEGRACIÓN ESTABLE -->
+<style id="sb-ultra-admin-style">
+/* ==========================================================
+   SHEIBIS ADMIN ULTRA PRO — NAVEGACIÓN LATERAL DERECHA
+   ========================================================== */
+#sbAdminPanel .sb-box.sb-ultra-layout{width:min(1500px,97vw)!important;height:min(94vh,980px)!important;max-height:94vh!important;padding:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+#sbAdminPanel .sb-ultra-layout>.sb-head{flex:0 0 auto;padding:18px 22px!important;border-bottom:1px solid rgba(255,255,255,.07)!important}
+.sb-ultra-body{display:flex;min-height:0;flex:1;overflow:hidden;direction:ltr}
+.sb-ultra-main{min-width:0;flex:1;overflow:auto;padding:20px 22px 28px;direction:ltr}
+.sb-ultra-sidebar{order:2;width:278px;flex:0 0 278px;overflow:auto;padding:14px 12px;background:linear-gradient(180deg,rgba(7,12,21,.98),rgba(3,7,13,.98));border-left:1px solid rgba(212,175,55,.14);direction:rtl}
+.sb-ultra-sidebar>*{direction:ltr}
+.sb-ultra-brand{padding:10px 10px 15px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px}
+.sb-ultra-brand b{display:block;color:#f3d98a;font-size:13px;letter-spacing:1.8px}.sb-ultra-brand span{display:block;color:#728198;font-size:10px;margin-top:4px}
+.sb-ultra-group{margin:12px 0}.sb-ultra-group-title{font-size:9px;color:#64748b;letter-spacing:1.6px;font-weight:800;padding:7px 10px;text-transform:uppercase}
+.sb-ultra-item{width:100%;display:flex;align-items:center;gap:10px;border:1px solid transparent;background:transparent;color:#aebbd0;border-radius:11px;padding:10px 10px;margin:3px 0;cursor:pointer;text-align:left;font-size:11px;transition:.16s}
+.sb-ultra-item:hover{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.08);color:#fff}.sb-ultra-item.active{background:linear-gradient(90deg,rgba(212,175,55,.15),rgba(212,175,55,.045));border-color:rgba(212,175,55,.28);color:#f4dc96}
+.sb-ultra-item i{width:18px;text-align:center;color:#d4af37}.sb-ultra-item span{flex:1}.sb-ultra-badge{font-size:8px;padding:3px 6px;border-radius:99px;background:rgba(34,197,94,.12);color:#8ff7bd;border:1px solid rgba(34,197,94,.18)}
+.sb-ultra-sep{height:1px;background:rgba(255,255,255,.06);margin:10px 5px}.sb-ultra-danger{color:#ff9c9c}.sb-ultra-danger i{color:#ff7777}
+.sb-ultra-news{display:grid;grid-template-columns:1fr;gap:14px}.sb-news-card{border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));border-radius:18px;padding:17px}.sb-news-card h3{margin:0;color:#fff;font-size:14px}.sb-news-card>p{color:#718096;font-size:10px;line-height:1.55;margin:5px 0 14px}.sb-news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.sb-news-kpi{padding:13px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06)}.sb-news-kpi b{display:block;font-size:21px;color:#fff}.sb-news-kpi span{font-size:9px;color:#718096}.sb-news-list{display:grid;gap:7px}.sb-news-row{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045)}.sb-news-row i{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;background:rgba(212,175,55,.11);color:#d4af37;flex:0 0 26px}.sb-news-row strong{display:block;color:#dbe4f2;font-size:10px}.sb-news-row small{display:block;color:#69778d;font-size:9px;margin-top:3px;line-height:1.4}.sb-news-pill{display:inline-flex;padding:3px 7px;border-radius:99px;font-size:8px;background:rgba(59,130,246,.11);color:#9fc5ff;margin-top:5px}
+.sb-ultra-command{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.sb-ultra-command button{min-height:74px;text-align:left;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.025);color:#dbe4f2;padding:12px;cursor:pointer}.sb-ultra-command button:hover{background:rgba(255,255,255,.055);border-color:rgba(212,175,55,.2)}.sb-ultra-command i{color:#d4af37;font-size:15px}.sb-ultra-command b{display:block;font-size:10px;margin-top:8px}.sb-ultra-command span{display:block;color:#68768a;font-size:8px;margin-top:3px}
+@media(max-width:900px){.sb-ultra-sidebar{width:230px;flex-basis:230px}.sb-news-grid,.sb-ultra-command{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){#sbAdminPanel .sb-box.sb-ultra-layout{width:100vw!important;height:100vh!important;max-height:100vh!important;border-radius:0!important}.sb-ultra-body{flex-direction:column}.sb-ultra-sidebar{order:2;width:100%;flex:0 0 auto;max-height:42vh;border-left:0;border-top:1px solid rgba(212,175,55,.14)}.sb-ultra-main{order:1;padding:14px}.sb-news-grid,.sb-ultra-command{grid-template-columns:1fr}.sb-ultra-group{margin:6px 0}}
+</style>
+<script>
+(function(){
+'use strict';
+function ultraEsc(v){return typeof esc==='function'?esc(v):String(v??'').replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])})}
+function ultraNum(v){var n=Number(v);return Number.isFinite(n)?n:0}
+function ultraProducts(){return typeof getProducts==='function'?getProducts():[]}
+function ultraCats(){return typeof getCategories==='function'?getCategories():[]}
+function ultraNewsRender(el){
+ var ps=ultraProducts(),cs=ultraCats(),logs=(window.SB_ADMIN&&SB_ADMIN.getLogs)?SB_ADMIN.getLogs():[];
+ var low=0,out=0,newP=0,offers=0;
+ var inv=typeof ensureInventory==='function'?ensureInventory():{};
+ ps.forEach(function(p){var st=ultraNum(inv[String(p.id)]?.stock);if(st===0)out++;else if(st<=2)low++;if(p.nuevo) newP++;if(ultraNum(p.precioAntes)>ultraNum(p.precio))offers++});
+ var recent=logs.slice(0,8);
+ el.innerHTML='<div class="sb-ultra-news">'+
+ '<div class="sb-news-card"><h3>Centro de novedades</h3><p>Una vista única de lo que está cambiando en SHEIBIS. Los datos mostrados provienen del catálogo, inventario, registro administrativo y servicios de usuarios disponibles.</p><div class="sb-news-grid">'+
+ '<div class="sb-news-kpi"><b>'+ps.length+'</b><span>Productos activos</span></div><div class="sb-news-kpi"><b>'+cs.length+'</b><span>Catálogos</span></div><div class="sb-news-kpi"><b>'+newP+'</b><span>Novedades marcadas</span></div><div class="sb-news-kpi"><b>'+offers+'</b><span>Ofertas</span></div><div class="sb-news-kpi"><b>'+low+'</b><span>Stock bajo</span></div><div class="sb-news-kpi"><b>'+out+'</b><span>Agotados</span></div></div></div>'+
+ '<div class="sb-news-card"><h3>Novedades de la página</h3><p>Eventos y cambios recientes detectados en la administración.</p><div class="sb-news-list">'+
+ (recent.length?recent.map(function(x){return '<div class="sb-news-row"><i class="fas '+ultraEsc(x.icon||'fa-circle-info')+'"></i><div><strong>'+ultraEsc(x.text||'Actualización del sistema')+'</strong><small>'+ultraEsc(x.time||'')+'</small><span class="sb-news-pill">Actividad administrativa</span></div></div>'}).join(''):'<div class="sb-news-row"><i class="fas fa-circle-info"></i><div><strong>No hay novedades administrativas todavía</strong><small>Cuando realices cambios aparecerán aquí.</small></div></div>')+'</div></div>'+
+ '<div class="sb-news-card"><h3>Novedades de usuarios</h3><p>Información de usuarios obtenida desde el sistema, sin inventar métricas que no estén disponibles.</p><div id="sbUltraUserNews"><div class="sb-news-row"><i class="fas fa-users"></i><div><strong>Consultando usuarios...</strong><small>Actualizando estado en línea y registro disponible.</small></div></div></div></div>'+
+ '<div class="sb-news-card"><h3>Centro de acciones</h3><p>Accesos directos a operaciones que normalmente requieren varios pasos.</p><div class="sb-ultra-command">'+
+ '<button onclick="SB_ADMIN.add();SB_ADMIN.showTab(\'products\')"><i class="fas fa-plus"></i><b>Nuevo producto</b><span>Crear ficha comercial</span></button>'+
+ '<button onclick="SB_ADMIN.addCategory();SB_ADMIN.showTab(\'products\')"><i class="fas fa-folder-plus"></i><b>Nuevo catálogo</b><span>Agregar categoría</span></button>'+
+ '<button onclick="SB_ADMIN.showTab(\'inventory\')"><i class="fas fa-boxes-stacked"></i><b>Control de stock</b><span>Revisar existencias</span></button>'+
+ '<button onclick="SB_ADMIN.showTab(\'analytics\')"><i class="fas fa-chart-line"></i><b>Rendimiento</b><span>Indicadores del catálogo</span></button>'+
+ '<button onclick="SB_ADMIN.showTab(\'users\')"><i class="fas fa-users"></i><b>Usuarios</b><span>Puntos y conexión</span></button>'+
+ '<button onclick="SB_ADMIN.backup()"><i class="fas fa-database"></i><b>Crear respaldo</b><span>Guardar estado actual</span></button>'+
+ '</div></div></div>';
+ var box=document.getElementById('sbUltraUserNews');
+ if(box && typeof apiRequest==='function') apiRequest('getOnlineUsers',{}, {timeout:20000}).then(function(d){var users=Array.isArray(d?.users)?d.users:[],count=Number(d?.count||users.length);box.innerHTML='<div class="sb-news-grid"><div class="sb-news-kpi"><b>'+count+'</b><span>Conectados ahora</span></div><div class="sb-news-kpi"><b>'+users.length+'</b><span>Sesiones visibles</span></div></div><div class="sb-news-list" style="margin-top:10px">'+(users.slice(0,8).map(function(u){return '<div class="sb-news-row"><i class="fas fa-user-check"></i><div><strong>'+ultraEsc(u.nombre||'INVITADO')+'</strong><small>'+ultraEsc(u.tipoUsuario||'Usuario')+' · conectado</small></div></div>'}).join('')||'<div class="sb-news-row"><i class="fas fa-user-slash"></i><div><strong>No hay usuarios conectados visibles</strong><small>El servicio no devolvió sesiones activas.</small></div></div>')+'</div>'}).catch(function(){box.innerHTML='<div class="sb-news-row"><i class="fas fa-cloud-slash"></i><div><strong>No se pudo actualizar usuarios</strong><small>La información local de la página sigue disponible.</small></div></div>'});
+}
+function ultraBuildSidebar(){
+ var panel=document.getElementById('sbAdminPanel'),box=panel?.querySelector('.sb-box');if(!box||box.classList.contains('sb-ultra-layout'))return;
+ box.classList.add('sb-ultra-layout');
+ var head=box.querySelector('.sb-head');
+ var body=document.createElement('div');body.className='sb-ultra-body';
+ var main=document.createElement('div');main.className='sb-ultra-main';
+ var sidebar=document.createElement('aside');sidebar.className='sb-ultra-sidebar';sidebar.id='sbUltraSidebar';
+ var children=Array.from(box.children);children.forEach(function(ch){if(ch!==head)main.appendChild(ch)});
+ body.appendChild(main);body.appendChild(sidebar);box.appendChild(body);
+ sidebar.innerHTML='<div class="sb-ultra-brand"><b>SHEIBIS ADMIN</b><span>Centro de control profesional</span></div>'+
+ '<div class="sb-ultra-group"><div class="sb-ultra-group-title">Resumen</div>'+
+ ultraBtn('dashboard','fa-gauge-high','Dashboard','Vista general')+ultraBtn('news','fa-bolt','Novedades','Página y usuarios')+ultraBtn('analytics','fa-chart-line','Analítica','Indicadores')+ultraBtn('activity','fa-clock-rotate-left','Actividad','Historial administrativo')+'</div>'+
+ '<div class="sb-ultra-sep"></div><div class="sb-ultra-group"><div class="sb-ultra-group-title">Catálogo</div>'+
+ ultraBtn('products','fa-box-open','Productos','Crear y editar')+ultraBtn('inventory','fa-boxes-stacked','Inventario','Existencias')+ultraBtn('merchandising','fa-star','Catálogo PRO','Recomendados y novedades')+'</div>'+
+ '<div class="sb-ultra-sep"></div><div class="sb-ultra-group"><div class="sb-ultra-group-title">Personas</div>'+ultraBtn('users','fa-users','Usuarios','Puntos y conexiones')+'</div>'+
+ '<div class="sb-ultra-sep"></div><div class="sb-ultra-group"><div class="sb-ultra-group-title">Operación</div>'+ultraBtn('tools','fa-screwdriver-wrench','Herramientas','Respaldo y mantenimiento')+ultraBtn('print','fa-file-lines','Documentos','Informes y PDF')+ultraBtn('automation','fa-wand-magic-sparkles','Automatización','Tareas automáticas')+ultraBtn('intelligence','fa-brain','IA · Inteligencia','10 módulos avanzados')+'</div>'+
+ '<div class="sb-ultra-sep"></div><div class="sb-ultra-group"><div class="sb-ultra-group-title">Acciones</div>'+ultraBtn('addproduct','fa-plus','Nuevo producto','Acceso directo')+ultraBtn('addcategory','fa-folder-plus','Nuevo catálogo','Acceso directo')+ultraBtn('backup','fa-database','Crear respaldo','Copia inmediata')+'</div>'+
+ '<div class="sb-ultra-sep"></div>'+ultraBtn('close','fa-right-from-bracket','Cerrar administración','Salir del panel',true);
+ function ultraBtn(id,icon,title,sub,danger){return '<button type="button" class="sb-ultra-item '+(danger?'sb-ultra-danger':'')+'" data-ultra-action="'+id+'"><i class="fas '+icon+'"></i><span><b>'+title+'</b><small style="display:block;color:#65748a;font-size:8px;margin-top:2px">'+sub+'</small></span></button>'}
+ sidebar.querySelectorAll('[data-ultra-action]').forEach(function(b){b.addEventListener('click',function(){var a=b.dataset.ultraAction;if(a==='addproduct'){SB_ADMIN.add();SB_ADMIN.showTab('products');return}if(a==='addcategory'){SB_ADMIN.addCategory();SB_ADMIN.showTab('products');return}if(a==='backup'){SB_ADMIN.backup();return}if(a==='close'){SB_ADMIN.closePanel();return}if(a==='print'){var p=document.getElementById('sbPrintTools');if(p)p.style.display=p.style.display==='none'?'block':'none';return}if(a==='automation'){var p=document.getElementById('sbAutomationCenter');if(p)p.style.display=p.style.display==='none'?'block':'none';return}if(a==='news'){SB_ADMIN.showTab('news');return}SB_ADMIN.showTab(a)})});
+}
+function ultraInstall(){
+ if(!window.SB_ADMIN){setTimeout(ultraInstall,250);return}
+ ultraBuildSidebar();
+ var original=SB_ADMIN.showTab;
+ if(original.__ultraWrapped)return;
+ var wrapped=function(tab){
+   if(tab==='news'){
+     if(!SB_ADMIN.adminActive)return;
+     document.querySelectorAll('.sb-v11-section').forEach(function(x){x.classList.remove('active')});
+     document.querySelectorAll('.sb-v11-tab').forEach(function(x){x.classList.remove('active')});
+     var p=document.getElementById('sbProductAdminContent'),iv=document.getElementById('sbInventoryView');if(p)p.style.display='none';if(iv)iv.style.display='none';
+     var sec=document.getElementById('sbV11News');if(!sec){sec=document.createElement('section');sec.id='sbV11News';sec.className='sb-v11-section';document.querySelector('.sb-ultra-main')?.appendChild(sec)}sec.classList.add('active');ultraNewsRender(sec);
+   } else original.call(SB_ADMIN,tab);
+   document.querySelectorAll('.sb-ultra-item').forEach(function(x){x.classList.toggle('active',x.dataset.ultraAction===tab)});
+ };
+ wrapped.__ultraWrapped=true;SB_ADMIN.showTab=wrapped;
+ var oldLogin=SB_ADMIN.login; if(!oldLogin.__ultraWrapped){var l=function(){var r=oldLogin.apply(SB_ADMIN,arguments);setTimeout(function(){ultraBuildSidebar();},80);return r};l.__ultraWrapped=true;SB_ADMIN.login=l}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ultraInstall);else ultraInstall();
+})();
+</script>
+<!-- SHEIBIS ADMIN 19000 — PRESENTACIÓN AVANZADA Y CENTRO DE CONTROL -->
+<style id="sb-admin-19000-style">
+#sbAdminPanel .sb-ultra-layout{background:radial-gradient(circle at 12% 0%,rgba(212,175,55,.075),transparent 28%),radial-gradient(circle at 100% 100%,rgba(61,110,255,.06),transparent 32%),#050912!important;border:1px solid rgba(255,255,255,.10)!important;box-shadow:0 35px 100px rgba(0,0,0,.68),0 0 0 1px rgba(212,175,55,.035) inset!important;overflow:hidden!important}
+#sbAdminPanel .sb-head{position:relative!important;z-index:5!important;background:linear-gradient(180deg,rgba(9,15,26,.98),rgba(7,12,21,.92))!important;border-bottom:1px solid rgba(255,255,255,.075)!important;backdrop-filter:blur(18px)!important}
+#sbAdminPanel .sb-ultra-body{min-height:0!important;background:linear-gradient(135deg,rgba(255,255,255,.012),transparent 35%)!important}
+#sbAdminPanel .sb-ultra-main{background:linear-gradient(180deg,rgba(4,8,15,.58),rgba(4,8,15,.22))!important;scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.35) transparent}
+#sbAdminPanel .sb-ultra-main::-webkit-scrollbar,#sbAdminPanel .sb-ultra-sidebar::-webkit-scrollbar{width:6px}#sbAdminPanel .sb-ultra-main::-webkit-scrollbar-thumb,#sbAdminPanel .sb-ultra-sidebar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.28);border-radius:99px}
+#sbAdminPanel .sb-ultra-sidebar{width:300px!important;flex-basis:300px!important;padding:16px 13px!important;background:linear-gradient(180deg,rgba(5,10,18,.99),rgba(3,7,13,.99))!important;border-left:1px solid rgba(255,255,255,.08)!important;box-shadow:-18px 0 45px rgba(0,0,0,.18) inset!important}
+#sbAdminPanel .sb-ultra-brand{padding:13px 12px 16px!important;border-bottom:0!important;margin-bottom:8px!important;background:linear-gradient(135deg,rgba(212,175,55,.10),rgba(255,255,255,.025));border:1px solid rgba(212,175,55,.14)!important;border-radius:17px;box-shadow:0 12px 30px rgba(0,0,0,.16)}
+#sbAdminPanel .sb-ultra-brand:before{content:'●  CONTROL EN VIVO';display:block;color:#7ef2ae;font-size:8px;letter-spacing:1.4px;font-weight:900;margin-bottom:8px}
+#sbAdminPanel .sb-ultra-brand b{font-size:15px!important;letter-spacing:2.2px!important;color:#ffe8a4!important;text-shadow:0 0 18px rgba(212,175,55,.12)}
+#sbAdminPanel .sb-ultra-brand span{font-size:9px!important;color:#8391a7!important;margin-top:5px!important}
+#sbAdminPanel .sb-ultra-group{margin:13px 0!important}.sb-ultra-group-title{font-size:8px!important;letter-spacing:1.8px!important;color:#58677d!important;padding:8px 10px!important}
+#sbAdminPanel .sb-ultra-item{min-height:48px!important;padding:9px 11px!important;margin:4px 0!important;border-radius:13px!important;border-color:transparent!important;background:rgba(255,255,255,.012)!important;position:relative;overflow:hidden}
+#sbAdminPanel .sb-ultra-item:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.045),transparent 60%);opacity:0;transition:.18s}
+#sbAdminPanel .sb-ultra-item:hover:after,#sbAdminPanel .sb-ultra-item.active:after{opacity:1}
+#sbAdminPanel .sb-ultra-item:hover{transform:translateX(-2px);border-color:rgba(255,255,255,.08)!important;background:rgba(255,255,255,.045)!important;color:#fff!important}
+#sbAdminPanel .sb-ultra-item.active{background:linear-gradient(90deg,rgba(212,175,55,.17),rgba(212,175,55,.035))!important;border-color:rgba(212,175,55,.30)!important;color:#ffe7a0!important;box-shadow:0 8px 22px rgba(0,0,0,.16),inset 3px 0 0 #d4af37}
+#sbAdminPanel .sb-ultra-item i{font-size:13px!important;color:#d4af37!important;filter:drop-shadow(0 0 7px rgba(212,175,55,.12))}
+#sbAdminPanel .sb-ultra-item b{font-size:10px!important;font-weight:850!important}.sb-ultra-item small{font-size:8px!important;color:#6e7d92!important}
+#sbAdminPanel .sb-ultra-sep{margin:12px 7px!important;background:linear-gradient(90deg,transparent,rgba(255,255,255,.09),transparent)!important}
+#sbAdminPanel .sb-ultra-danger{background:rgba(255,70,70,.025)!important}.sb-ultra-danger i{color:#ff7474!important}
+
+/* Cabecera superior del panel */
+#sbAdminPanel .sb-19000-headline{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 15px;padding:15px 16px;border:1px solid rgba(255,255,255,.075);border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.014));box-shadow:0 15px 35px rgba(0,0,0,.16)}
+.sb-19000-title{min-width:0}.sb-19000-title b{display:block;color:#f7e7b1;font-size:16px;letter-spacing:.2px}.sb-19000-title span{display:block;color:#718096;font-size:9px;margin-top:5px;line-height:1.5}
+.sb-19000-status{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;border:1px solid rgba(34,197,94,.18);background:rgba(34,197,94,.055);color:#9df4bd;font-size:8px;font-weight:900;white-space:nowrap}.sb-19000-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 12px rgba(74,222,128,.75);animation:sb19000pulse 1.8s infinite}@keyframes sb19000pulse{50%{opacity:.45;transform:scale(.8)}}
+.sb-19000-search{display:flex;align-items:center;gap:8px;min-width:230px;max-width:390px;padding:9px 11px;border:1px solid rgba(255,255,255,.075);border-radius:12px;background:rgba(0,0,0,.16)}.sb-19000-search i{color:#708096;font-size:11px}.sb-19000-search input{width:100%;border:0;outline:0;background:transparent;color:#e5edf8;font-size:10px}.sb-19000-search input::placeholder{color:#59677b}
+
+/* Panel de bienvenida y métricas */
+#sbV11News .sb-19000-overview{display:grid;grid-template-columns:1.35fr .65fr;gap:12px;margin-bottom:12px}.sb-19000-overview-card{border:1px solid rgba(255,255,255,.075);border-radius:20px;padding:18px;background:radial-gradient(circle at 0 0,rgba(212,175,55,.10),transparent 38%),linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));box-shadow:0 18px 45px rgba(0,0,0,.14)}.sb-19000-overview-card h2{margin:0;color:#fff;font-size:18px}.sb-19000-overview-card p{color:#718096;font-size:10px;line-height:1.6;margin:7px 0 0}.sb-19000-chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px}.sb-19000-chip{padding:5px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.028);color:#a9b7ca;font-size:8px}.sb-19000-chip strong{color:#f2d88c}.sb-19000-health{display:grid;gap:8px}.sb-19000-health-row{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid rgba(255,255,255,.06);border-radius:13px;background:rgba(255,255,255,.025)}.sb-19000-health-row i{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:rgba(212,175,55,.09);color:#d4af37}.sb-19000-health-row b{display:block;color:#dbe4f2;font-size:9px}.sb-19000-health-row span{display:block;color:#68768a;font-size:8px;margin-top:2px}.sb-19000-ok{margin-left:auto;color:#7df0ac!important;font-weight:800}
+
+/* Cards y KPIs del centro de novedades */
+#sbV11News .sb-news-card{border-color:rgba(255,255,255,.075)!important;background:linear-gradient(145deg,rgba(255,255,255,.043),rgba(255,255,255,.012))!important;box-shadow:0 16px 40px rgba(0,0,0,.13)!important;border-radius:20px!important;padding:18px!important}
+#sbV11News .sb-news-card h3{font-size:13px!important;letter-spacing:.15px}.sb-news-card>p{font-size:9px!important}
+#sbV11News .sb-news-kpi{border-radius:14px!important;background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.014))!important;border-color:rgba(255,255,255,.065)!important;transition:.18s}.sb-news-kpi:hover{transform:translateY(-2px);border-color:rgba(212,175,55,.18)!important}.sb-news-kpi b{font-size:22px!important;color:#f7f9fc!important}.sb-news-kpi span{font-size:8px!important}
+#sbV11News .sb-news-row{border-color:rgba(255,255,255,.055)!important;background:rgba(255,255,255,.018)!important;min-height:44px}.sb-news-row strong{font-size:9px!important}.sb-news-row small{font-size:8px!important}
+
+/* Comandos */
+#sbV11News .sb-ultra-command button{position:relative;overflow:hidden;min-height:84px!important;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012))!important;border-color:rgba(255,255,255,.065)!important;border-radius:16px!important;transition:.18s}.sb-ultra-command button:after{content:'›';position:absolute;right:11px;top:11px;color:#536176;font-size:15px}.sb-ultra-command button:hover{transform:translateY(-2px);border-color:rgba(212,175,55,.24)!important;box-shadow:0 12px 25px rgba(0,0,0,.15)}
+
+/* Barra de búsqueda contextual y resultados */
+.sb-19000-results{display:none;position:relative;margin:-4px 0 12px;border:1px solid rgba(212,175,55,.18);border-radius:15px;background:rgba(5,10,18,.97);padding:8px;box-shadow:0 20px 40px rgba(0,0,0,.3);z-index:20}.sb-19000-results.show{display:block}.sb-19000-result{display:flex;align-items:center;gap:9px;padding:9px;border-radius:10px;color:#cdd8e7;cursor:pointer;font-size:9px}.sb-19000-result:hover{background:rgba(255,255,255,.055)}.sb-19000-result i{width:24px;color:#d4af37;text-align:center}.sb-19000-result small{display:block;color:#65748a;margin-top:2px;font-size:7px}
+
+@media(max-width:1050px){#sbAdminPanel .sb-ultra-sidebar{width:270px!important;flex-basis:270px!important}.sb-19000-overview{grid-template-columns:1fr!important}.sb-19000-search{min-width:180px}}
+@media(max-width:700px){#sbAdminPanel .sb-ultra-sidebar{width:100%!important;flex-basis:auto!important;max-height:44vh!important}.sb-19000-search{display:none}.sb-19000-headline{align-items:flex-start}.sb-19000-overview{grid-template-columns:1fr!important}}
+</style>
+<script>
+(function(){
+'use strict';
+var installed=false,clockTimer=null;
+function q(id){return document.getElementById(id)}
+function esc19000(v){return typeof esc==='function'?esc(v):String(v??'').replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])})}
+function nums19000(){var ps=typeof getProducts==='function'?getProducts():[],cs=typeof getCategories==='function'?getCategories():[],inv=typeof ensureInventory==='function'?ensureInventory():{};var stock=0,low=0,out=0,value=0;ps.forEach(function(p){var n=Number(inv[String(p.id)]?.stock)||0;stock+=n;value+=(Number(p.precio)||0)*n;if(n===0)out++;else if(n<=2)low++});return {ps:ps,cs:cs,stock:stock,low:low,out:out,value:value}}
+function buildSearch(){var main=document.querySelector('#sbAdminPanel .sb-ultra-main');if(!main||q('sb19000Headline'))return;var h=document.createElement('div');h.id='sb19000Headline';h.className='sb-19000-headline';h.innerHTML='<div class="sb-19000-title"><b>Centro de Control · SHEIBIS</b><span>Administración avanzada · catálogo · inventario · usuarios · seguridad · operación</span></div><div class="sb-19000-search"><i class="fas fa-magnifying-glass"></i><input id="sb19000Search" type="search" autocomplete="off" placeholder="Buscar una función del panel…"><div id="sb19000Results" class="sb-19000-results"></div></div><div class="sb-19000-status"><span class="sb-19000-dot"></span><span id="sb19000Clock">SISTEMA ACTIVO</span></div>';main.prepend(h);var input=q('sb19000Search');if(input){input.addEventListener('input',function(){search19000(input.value)});input.addEventListener('keydown',function(e){if(e.key==='Escape'){input.value='';search19000('')}})}}
+var actions=[
+ {id:'dashboard',icon:'fa-gauge-high',title:'Dashboard',sub:'Resumen general'},
+ {id:'news',icon:'fa-bolt',title:'Novedades',sub:'Página y usuarios'},
+ {id:'analytics',icon:'fa-chart-line',title:'Analítica',sub:'Indicadores'},
+ {id:'activity',icon:'fa-clock-rotate-left',title:'Actividad',sub:'Historial administrativo'},
+ {id:'products',icon:'fa-box-open',title:'Productos',sub:'Crear y editar'},
+ {id:'inventory',icon:'fa-boxes-stacked',title:'Inventario',sub:'Existencias'},
+ {id:'merchandising',icon:'fa-star',title:'Catálogo PRO',sub:'Recomendados y novedades'},
+ {id:'users',icon:'fa-users',title:'Usuarios',sub:'Puntos y conexiones'},
+ {id:'tools',icon:'fa-screwdriver-wrench',title:'Herramientas',sub:'Mantenimiento y respaldo'},
+ {id:'print',icon:'fa-file-lines',title:'Documentos',sub:'Informes y PDF'},
+ {id:'automation',icon:'fa-wand-magic-sparkles',title:'Automatización',sub:'Tareas automáticas'},
+ {id:'addproduct',icon:'fa-plus',title:'Nuevo producto',sub:'Crear ficha'},
+ {id:'addcategory',icon:'fa-folder-plus',title:'Nuevo catálogo',sub:'Crear categoría'},
+ {id:'backup',icon:'fa-database',title:'Crear respaldo',sub:'Copia inmediata'}
+];
+function search19000(term){var r=q('sb19000Results');if(!r)return;term=String(term||'').trim().toLowerCase();if(!term){r.classList.remove('show');r.innerHTML='';return}var hits=actions.filter(function(a){return (a.title+' '+a.sub).toLowerCase().indexOf(term)>=0}).slice(0,8);r.innerHTML=hits.length?hits.map(function(a){return '<div class="sb-19000-result" data-search-action="'+a.id+'"><i class="fas '+a.icon+'"></i><div><b>'+esc19000(a.title)+'</b><small>'+esc19000(a.sub)+'</small></div></div>'}).join(''):'<div class="sb-19000-result"><i class="fas fa-circle-info"></i><div><b>Sin resultados</b><small>Prueba con productos, inventario, usuarios o respaldo.</small></div></div>';r.classList.add('show');r.querySelectorAll('[data-search-action]').forEach(function(el){el.onclick=function(){var a=el.dataset.searchAction;if(window.SB_ADMIN){if(a==='addproduct'){SB_ADMIN.add();SB_ADMIN.showTab('products')}else if(a==='addcategory'){SB_ADMIN.addCategory();SB_ADMIN.showTab('products')}else if(a==='backup'){SB_ADMIN.backup()}else if(a==='print'){var x=q('sbPrintTools');if(x)x.style.display=x.style.display==='none'?'block':'none'}else if(a==='automation'){var x=q('sbAutomationCenter');if(x)x.style.display=x.style.display==='none'?'block':'none'}else SB_ADMIN.showTab(a)}r.classList.remove('show');q('sb19000Search').value=''}})}
+function refreshClock(){var c=q('sb19000Clock');if(!c)return;var d=new Date();c.textContent='ACTIVO · '+d.toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+function enrichNews(){var sec=q('sbV11News');if(!sec||sec.dataset.sb19000==='1')return;sec.dataset.sb19000='1';var data=nums19000();var top=document.createElement('div');top.className='sb-19000-overview';top.innerHTML='<div class="sb-19000-overview-card"><h2>SHEIBIS · Centro inteligente</h2><p>Panel de operación central para supervisar catálogo, existencias, novedades y actividad. Los indicadores se calculan con la información disponible en la página y no sustituyen los datos del servidor.</p><div class="sb-19000-chip-row"><span class="sb-19000-chip"><strong>'+data.ps.length+'</strong> productos</span><span class="sb-19000-chip"><strong>'+data.cs.length+'</strong> catálogos</span><span class="sb-19000-chip"><strong>'+data.stock+'</strong> unidades</span><span class="sb-19000-chip"><strong>Q'+data.value.toFixed(0)+'</strong> valor de stock</span></div></div><div class="sb-19000-overview-card"><div class="sb-19000-health"><div class="sb-19000-health-row"><i class="fas fa-database"></i><div><b>Datos locales</b><span>Catálogo cargado</span></div><strong class="sb-19000-ok">OK</strong></div><div class="sb-19000-health-row"><i class="fas fa-boxes-stacked"></i><div><b>Inventario</b><span>'+data.low+' bajo · '+data.out+' agotado</span></div><strong class="sb-19000-ok">VIGILADO</strong></div><div class="sb-19000-health-row"><i class="fas fa-shield-halved"></i><div><b>Sesión administrativa</b><span>Bloqueo y cierre disponibles</span></div><strong class="sb-19000-ok">ACTIVA</strong></div></div></div>';sec.prepend(top)}
+function install(){if(installed)return;var panel=q('sbAdminPanel');if(!panel||!window.SB_ADMIN){setTimeout(install,300);return}installed=true;buildSearch();if(!clockTimer){refreshClock();clockTimer=setInterval(refreshClock,1000)}var oldShow=SB_ADMIN.showTab;if(oldShow.__sb19000)return;var wrap=function(tab){oldShow.call(SB_ADMIN,tab);setTimeout(function(){buildSearch();if(tab==='news'){var s=q('sbV11News');if(s){s.dataset.sb19000='';enrichNews()}}},40)};wrap.__sb19000=true;SB_ADMIN.showTab=wrap;setTimeout(function(){var s=q('sbV11News');if(s)enrichNews()},150)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
+<!-- SHEIBIS INTELLIGENCE 10X · AUTOMATIZACIÓN + IA LOCAL -->
+<style id="sheibis-intelligence-10x">
+#sbV11Intelligence{color:#dce5f2}
+.sb-i10-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:22px;border:1px solid rgba(212,175,55,.18);border-radius:24px;background:radial-gradient(circle at 0 0,rgba(212,175,55,.13),transparent 34%),linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.012));box-shadow:0 22px 60px rgba(0,0,0,.18);margin-bottom:16px}
+.sb-i10-head h1{margin:0;color:#fff;font-size:22px;font-weight:850}.sb-i10-head p{margin:7px 0 0;color:#7e8ca0;font-size:10px;line-height:1.55;max-width:760px}
+.sb-i10-badge{display:flex;align-items:center;gap:7px;white-space:nowrap;padding:9px 12px;border-radius:999px;border:1px solid rgba(34,197,94,.18);background:rgba(34,197,94,.045);color:#8ff7bd;font-size:7px;font-weight:900;letter-spacing:1px}
+.sb-i10-badge i{font-size:6px}
+.sb-i10-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.sb-i10-card{position:relative;overflow:hidden;padding:18px;border:1px solid rgba(255,255,255,.075);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.042),rgba(255,255,255,.012));transition:.2s}
+.sb-i10-card:hover{transform:translateY(-2px);border-color:rgba(212,175,55,.22);box-shadow:0 18px 40px rgba(0,0,0,.16)}
+.sb-i10-card:after{content:"";position:absolute;width:150px;height:150px;right:-80px;top:-80px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.10),transparent 68%);pointer-events:none}
+.sb-i10-top{display:flex;align-items:center;gap:11px}.sb-i10-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:rgba(212,175,55,.10);border:1px solid rgba(212,175,55,.16);color:#f0d68a;font-size:15px}
+.sb-i10-top h3{margin:0;color:#fff;font-size:12px}.sb-i10-top small{display:block;color:#66758a;font-size:8px;margin-top:3px}
+.sb-i10-card p{color:#7e8ca0;font-size:9px;line-height:1.55;margin:13px 0}
+.sb-i10-result{min-height:58px;padding:11px 12px;border-radius:14px;background:rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.055);font-size:9px;color:#aebbd0}
+.sb-i10-result strong{color:#fff}.sb-i10-good{color:#8ff7bd}.sb-i10-warn{color:#ffd37a}.sb-i10-danger{color:#ff9b9b}
+.sb-i10-actions{display:flex;gap:7px;flex-wrap:wrap}.sb-i10-btn{border:1px solid rgba(212,175,55,.18);background:rgba(212,175,55,.065);color:#f0d68a;padding:9px 11px;border-radius:11px;cursor:pointer;font:800 8px Orbitron,sans-serif}.sb-i10-btn:hover{filter:brightness(1.16);transform:translateY(-1px)}.sb-i10-btn.secondary{border-color:rgba(255,255,255,.09);background:rgba(255,255,255,.03);color:#b6c2d3}
+.sb-i10-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}.sb-i10-kpi{padding:13px;border-radius:15px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025)}.sb-i10-kpi span{display:block;color:#66758a;font-size:7px;text-transform:uppercase;letter-spacing:1px}.sb-i10-kpi b{display:block;color:#fff;font:800 18px Orbitron,sans-serif;margin-top:5px}
+.sb-i10-progress{height:6px;border-radius:99px;background:rgba(255,255,255,.05);overflow:hidden;margin-top:9px}.sb-i10-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#d4af37,#f0d68a)}
+.sb-i10-list{max-height:190px;overflow:auto}.sb-i10-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.045)}.sb-i10-row:last-child{border-bottom:0}.sb-i10-row i{color:#d4af37;width:20px;text-align:center}.sb-i10-row div{flex:1}.sb-i10-row b{display:block;color:#e9eef5;font-size:9px}.sb-i10-row small{color:#69778b;font-size:7px}
+@media(max-width:900px){.sb-i10-grid{grid-template-columns:1fr}.sb-i10-kpis{grid-template-columns:repeat(2,1fr)}.sb-i10-head{flex-direction:column}}
+</style>
+<script id="sheibis-intelligence-10x-js">
+(function(){
+'use strict';
+var ID='sbV11Intelligence';
+function q(id){return document.getElementById(id)}
+function escI(v){return String(v??'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function n(v){var x=Number(v);return Number.isFinite(x)?x:0}
+function products(){try{return typeof getProducts==='function'?(getProducts()||[]):[]}catch(e){return[]}}
+function cats(){try{return typeof getCategories==='function'?(getCategories()||[]):[]}catch(e){return[]}}
+function inv(){try{return typeof ensureInventory==='function'?(ensureInventory()||{}):{}}catch(e){return{}}}
+function stock(p){var o=inv();var x=o[String(p.id)];if(x&&typeof x==='object')return Math.max(0,n(x.stock));return Math.max(0,n(x))}
+function log(t){try{if(window.SB_ADMIN&&SB_ADMIN.log)SB_ADMIN.log('intelligence',t)}catch(e){}}
+function money(v){return 'Q'+n(v).toFixed(2)}
+function mount(){
+ if(q(ID))return q(ID);
+ var m=document.querySelector('#sbAdminPanel .sb-ultra-main');if(!m)return null;
+ var sec=document.createElement('section');sec.id=ID;sec.className='sb-v11-section';m.appendChild(sec);return sec
+}
+function dataset(){
+ var ps=products(), low=0,out=0,units=0,value=0,sales=0;
+ ps.forEach(function(p){var st=stock(p);units+=st;value+=st*n(p.precio);sales+=n(p.ventas);if(st===0||p.agotado)out++;else if(st<=2)low++});
+ return {ps:ps,cs:cats(),low:low,out:out,units:units,value:value,sales:sales}
+}
+function render(){
+ var el=mount();if(!el)return;
+ var d=dataset(), name=d.ps.length?escI(d.ps[0].nombre):'tu catálogo';
+ el.innerHTML=
+ '<div class="sb-i10-head"><div><h1><i class="fas fa-brain" style="color:#d4af37;margin-right:9px"></i> SHEIBIS Intelligence</h1><p>10 módulos de automatización y análisis local para detectar oportunidades, anticipar problemas y acelerar la operación. Las recomendaciones se calculan con los datos disponibles en tu página; ninguna acción sensible se ejecuta automáticamente sin confirmación.</p></div><div class="sb-i10-badge"><i class="fas fa-circle"></i> MOTOR ACTIVO</div></div>'+
+ '<div class="sb-i10-kpis"><div class="sb-i10-kpi"><span>Productos</span><b>'+d.ps.length+'</b></div><div class="sb-i10-kpi"><span>Unidades</span><b>'+d.units+'</b></div><div class="sb-i10-kpi"><span>Stock bajo</span><b>'+d.low+'</b></div><div class="sb-i10-kpi"><span>Ventas registradas</span><b>'+d.sales+'</b></div></div>'+
+ '<div class="sb-i10-grid">'+
+ card('1','fa-brain','Asistente IA operativo','Analiza el estado actual y entrega un diagnóstico priorizado.','<div id="i10_ai" class="sb-i10-result">Pulsa <strong>Analizar ahora</strong> para generar un diagnóstico.</div>','<button class="sb-i10-btn" onclick="SHEIBIS_I10.ai()">Analizar ahora</button>')+
+ card('2','fa-chart-line','Pronóstico de demanda','Estima demanda próxima usando ventas registradas y stock actual.','<div id="i10_forecast" class="sb-i10-result">Calcula una proyección para detectar productos que podrían quedarse sin existencias.</div>','<button class="sb-i10-btn" onclick="SHEIBIS_I10.forecast()">Proyectar demanda</button>')+
+ card('3','fa-boxes-stacked','Reabastecimiento inteligente','Propone un nivel objetivo de unidades para productos con rotación o stock crítico.','<div id="i10_restock" class="sb-i10-result">Genera una lista priorizada de reposición.</div>','<button class="sb-i10-btn" onclick="SHEIBIS_I10.restock()">Calcular reposición</button>')+
+ card('4','fa-triangle-exclamation','Detector de anomalías','Busca precios imposibles, descuentos extraños, stock negativo y datos incompletos.','<div id="i10_anomaly" class="sb-i10-result">Ejecuta una auditoría de consistencia.</div>','<button class="sb-i10-btn" onclick="SHEIBIS_I10.anomaly()">Auditar catálogo</button>')+
+ card('5','fa-wand-magic-sparkles','Merchandising automático','Sugiere qué productos marcar como nuevos, recomendados o destacados según señales disponibles.','<div id="i10_merch" class="sb-i10-result">Genera sugerencias sin modificar nada.</div>','<button class="sb-i10-btn" onclick="SHEIBIS_I10.merch()">Generar sugerencias</button>')+
+ card('6','fa-tags','Promociones inteligentes','Detecta productos con margen visual de promoción: sin oferta, stock alto o baja señal de ventas.','<div id="i10_promo" class="sb-i10-result">Analiza oportunidades comerciales.</div>','<button class="sb-i10-btn" onclick="SHEIBIS_I10.promo()">Detectar oportunidades</button>')+
+ card('7','fa-pen-to-square','Asistente de contenido','Crea borradores de títulos, etiquetas y descripciones cortas a partir de los datos del producto.','<div id="i10_content" class="sb-i10-result">Selecciona un producto para generar un borrador local.</div>','<div class="sb-i10-actions"><select id="i10_product" class="sb-i10-btn secondary" style="flex:1;min-width:150px">'+d.ps.map(function(p){return '<option value="'+escI(p.id)+'">'+escI(p.nombre)+'</option>'}).join('')+'</select><button class="sb-i10-btn" onclick="SHEIBIS_I10.content()">Generar</button></div>')+
+ card('8','fa-shield-halved','Monitor de seguridad','Revisa sesión administrativa, bloqueo, actividad y señales de configuración para alertarte de riesgos operativos.','<div id="i10_security" class="sb-i10-result">Ejecuta la revisión de seguridad.</div>','<button class="sb-i10-btn" onclick="SHEIBIS_I10.security()">Revisar seguridad</button>')+
+ card('9','fa-robot','Automatización programada','Activa tareas locales: revisión periódica de stock, alertas y recordatorio de respaldo.','<div id="i10_auto" class="sb-i10-result">Estado: <strong id="i10_auto_state">desactivado</strong>. Las tareas no modifican precios ni inventario por sí solas.</div>','<div class="sb-i10-actions"><button class="sb-i10-btn" onclick="SHEIBIS_I10.toggleAuto()">Activar / desactivar</button><button class="sb-i10-btn secondary" onclick="SHEIBIS_I10.runAuto()">Ejecutar ahora</button></div>')+
+ card('10','fa-gauge-high','Centro de salud del sistema','Mide integridad básica del catálogo, conexión disponible y estado de los módulos administrativos.','<div id="i10_health" class="sb-i10-result">Ejecuta un chequeo completo.</div>','<button class="sb-i10-btn" onclick="SHEIBIS_I10.health()">Comprobar sistema</button>')+
+ '</div>';
+ updateAutoState();
+}
+function card(num,icon,title,sub,body,actions){return '<article class="sb-i10-card"><div class="sb-i10-top"><div class="sb-i10-icon"><i class="fas '+icon+'"></i></div><div><h3>'+num+'. '+title+'</h3><small>'+sub+'</small></div></div><p>'+sub+'</p>'+body+'<div style="margin-top:10px">'+actions+'</div></article>'}
+function ai(){
+ var d=dataset(), issues=[],opps=[];
+ if(d.out)issues.push(d.out+' producto(s) agotado(s)');
+ if(d.low)issues.push(d.low+' producto(s) con stock bajo');
+ d.ps.forEach(function(p){if(n(p.precio)<=0)issues.push('Precio inválido: '+p.nombre);if(!p.desc)issues.push('Sin descripción: '+p.nombre);if(!p.imagen)opps.push('Agregar imagen: '+p.nombre)});
+ if(!d.ps.length)issues.push('No hay productos cargados');
+ var msg=issues.length?'<span class="sb-i10-danger"><strong>Prioridades:</strong> '+escI(issues.slice(0,4).join(' · '))+'</span>':'<span class="sb-i10-good"><strong>Operación estable:</strong> no se detectaron problemas básicos.</span>';
+ if(opps.length)msg+='<div style="margin-top:7px"><span class="sb-i10-warn"><strong>Oportunidad:</strong> '+escI(opps[0])+'</span></div>';
+ q('i10_ai').innerHTML=msg;log('IA local: diagnóstico operativo ejecutado');
+}
+function forecast(){
+ var d=dataset(),rows=d.ps.map(function(p){var st=stock(p),v=n(p.ventas),daily=v/30,days=daily>0?st/daily:999;if(v>0)return {p:p,st:st,v:v,days:days}}).filter(Boolean).sort(function(a,b){return a.days-b.days});
+ var critical=rows.filter(function(x){return x.days<7});
+ q('i10_forecast').innerHTML=critical.length?'<span class="sb-i10-warn"><strong>'+critical.length+' producto(s)</strong> podrían quedarse sin stock en menos de 7 días según ventas registradas.</span><div style="margin-top:7px">'+critical.slice(0,3).map(function(x){return escI(x.p.nombre)+' · '+x.days.toFixed(1)+' días'}).join('<br>')+'</div>':'<span class="sb-i10-good">No hay una señal crítica de menos de 7 días con las ventas registradas.</span>';
+ log('Pronóstico de demanda ejecutado');
+}
+function restock(){
+ var d=dataset(),rows=d.ps.map(function(p){var st=stock(p),v=n(p.ventas),target=Math.max(5,Math.ceil(v/30*14)),need=Math.max(0,target-st);return {p:p,st:st,v:v,target:target,need:need}}).filter(function(x){return x.need>0}).sort(function(a,b){return b.need-a.need});
+ q('i10_restock').innerHTML=rows.length?'<span class="sb-i10-warn"><strong>'+rows.length+' reposición(es) sugeridas.</strong></span><div style="margin-top:7px">'+rows.slice(0,5).map(function(x){return escI(x.p.nombre)+' · pedir '+x.need+' · objetivo '+x.target}).join('<br>')+'</div>':'<span class="sb-i10-good">No se requiere reposición según la regla actual.</span>';
+ log('Reabastecimiento inteligente calculado');
+}
+function anomaly(){
+ var d=dataset(),a=[];
+ d.ps.forEach(function(p){var price=n(p.precio),before=n(p.precioAntes),st=stock(p);if(price<=0)a.push('Precio inválido · '+p.nombre);if(before>0&&price>before)a.push('Precio actual mayor al anterior · '+p.nombre);if(st<0)a.push('Stock negativo · '+p.nombre);if(!p.categoria)a.push('Sin categoría · '+p.nombre)});
+ q('i10_anomaly').innerHTML=a.length?'<span class="sb-i10-danger"><strong>'+a.length+' anomalía(s)</strong> detectada(s).</span><div style="margin-top:7px">'+a.slice(0,6).map(escI).join('<br>')+'</div>':'<span class="sb-i10-good"><strong>Catálogo consistente:</strong> no se detectaron anomalías básicas.</span>';
+ log('Auditoría de anomalías ejecutada');
+}
+function merch(){
+ var d=dataset(),s=d.ps.slice().sort(function(a,b){return n(b.ventas)-n(a.ventas)}).slice(0,5);
+ q('i10_merch').innerHTML=s.length?'<span class="sb-i10-good">Sugerencias generadas sin modificar productos.</span><div style="margin-top:7px">'+s.map(function(p,i){return (i<2?'★ Recomendado':'✦ Destacado')+' · '+escI(p.nombre)+' · '+n(p.ventas)+' ventas'}).join('<br>')+'</div>':'Sin productos para analizar.';
+ log('Sugerencias de merchandising generadas');
+}
+function promo(){
+ var d=dataset(),s=d.ps.filter(function(p){return n(p.precioAntes)<=n(p.precio)&&stock(p)>2}).slice(0,6);
+ q('i10_promo').innerHTML=s.length?'<span class="sb-i10-warn"><strong>'+s.length+' oportunidad(es)</strong> encontradas.</span><div style="margin-top:7px">'+s.map(function(p){return escI(p.nombre)+' · stock '+stock(p)+' · sin descuento actual'}).join('<br>')+'</div>':'<span class="sb-i10-good">No hay oportunidades evidentes con la regla actual.</span>';
+ log('Oportunidades de promoción detectadas');
+}
+function content(){
+ var d=dataset(),id=q('i10_product')?.value,p=d.ps.find(function(x){return String(x.id)===String(id)});if(!p){q('i10_content').innerHTML='<span class="sb-i10-danger">No se encontró el producto.</span>';return}
+ var title=(p.nombre||'Producto').trim(),desc=(p.desc||'Producto SHEIBIS de calidad.').trim(),tags=Array.isArray(p.tags)?p.tags.join(', '):(p.tags||'calidad, compra online');
+ q('i10_content').innerHTML='<strong>Título:</strong> '+escI(title)+'<div style="margin-top:5px"><strong>Descripción:</strong> '+escI(desc.slice(0,180))+'</div><div style="margin-top:5px"><strong>Etiquetas:</strong> '+escI(tags)+'</div>';
+ log('Borrador de contenido generado para '+title);
+}
+function security(){
+ var logs=window.SB_ADMIN&&SB_ADMIN.getLogs?SB_ADMIN.getLogs():[],active=window.SB_ADMIN&&SB_ADMIN.adminActive;
+ var ok=active&&logs.length>=0;
+ q('i10_security').innerHTML=ok?'<span class="sb-i10-good"><strong>Sesión administrativa activa.</strong></span><div style="margin-top:7px">Bloqueo por inactividad disponible · '+logs.length+' eventos registrados localmente.</div>':'<span class="sb-i10-danger">La sesión administrativa no está activa.</span>';
+ log('Revisión de seguridad ejecutada');
+}
+function autoKey(){return 'sheibis_i10_auto'}
+function updateAutoState(){var on=localStorage.getItem(autoKey())==='1';var x=q('i10_auto_state');if(x)x.textContent=on?'ACTIVO':'DESACTIVADO'}
+function toggleAuto(){var on=localStorage.getItem(autoKey())==='1';localStorage.setItem(autoKey(),on?'0':'1');updateAutoState();showToast(on?'Automatización desactivada.':'Automatización activada. Revisión periódica habilitada mientras esta página permanezca abierta.',{title:'AUTOMATIZACIÓN',icon:'fa-robot'});log(on?'Automatización 10X desactivada':'Automatización 10X activada');if(!on)runAuto()}
+function runAuto(){var d=dataset(),msg='Revisión automática: '+d.out+' agotados · '+d.low+' con stock bajo · '+d.ps.length+' productos.';if(d.out||d.low)showToast(msg,{title:'ALERTA INTELIGENTE',icon:'fa-triangle-exclamation',duration:5000});else showToast('Revisión automática completada: no hay alertas de stock.',{title:'SISTEMA ESTABLE',icon:'fa-circle-check'});log(msg);return msg}
+function health(){
+ var d=dataset(),checks=[d.ps.length>0,d.cs.length>0,typeof getProducts==='function',typeof ensureInventory==='function',!!window.SB_ADMIN];
+ var ok=checks.filter(Boolean).length,total=checks.length;
+ q('i10_health').innerHTML='<span class="'+(ok===total?'sb-i10-good':'sb-i10-warn')+'"><strong>'+ok+'/'+total+' controles correctos.</strong></span><div class="sb-i10-progress"><i style="width:'+(ok/total*100)+'%"></i></div><div style="margin-top:7px">Productos, catálogos, inventario, administrador y funciones base.</div>';
+ log('Chequeo de salud del sistema: '+ok+'/'+total);
+}
+window.SHEIBIS_I10={render:render,ai:ai,forecast:forecast,restock:restock,anomaly:anomaly,merch:merch,promo:promo,content:content,security:security,toggleAuto:toggleAuto,runAuto:runAuto,health:health};
+function install(){
+ if(!window.SB_ADMIN){setTimeout(install,300);return}
+ var sec=mount();if(!sec){setTimeout(install,300);return}
+ render();
+ var old=SB_ADMIN.showTab;
+ if(old.__i10)return;
+ var wrap=function(tab){
+   if(tab==='intelligence'){
+     if(!SB_ADMIN.adminActive)return;
+     document.querySelectorAll('#sbAdminPanel .sb-v11-section').forEach(function(x){x.classList.remove('active');x.style.display='none'});
+     var p=q('sbProductAdminContent'),iv=q('sbInventoryView'),pr=q('sbPrintTools'),au=q('sbAutomationCenter');
+     if(p)p.style.display='none';if(iv)iv.style.display='none';if(pr)pr.style.display='none';if(au)au.style.display='none';
+     var e=mount();e.style.display='block';e.classList.add('active');SHEIBIS_I10.render();
+     document.querySelectorAll('#sbAdminPanel .sb-ultra-item').forEach(function(x){x.classList.toggle('active',x.dataset.ultraAction==='intelligence')});
+     var t=q('sbWorkspaceTitle');if(t)t.remove();
+     var m=document.querySelector('#sbAdminPanel .sb-ultra-main');if(m){var h=document.createElement('div');h.id='sbWorkspaceTitle';h.className='sb-workspace-title';h.innerHTML='<div><h1><i class="fas fa-brain" style="color:#d4af37;margin-right:8px"></i>IA · Inteligencia y Automatización</h1><p>10 módulos para análisis, automatización, prevención y crecimiento operativo.</p></div><div class="sb-workspace-status"><i class="fas fa-circle"></i> MOTOR ACTIVO</div>';m.prepend(h)}
+     return;
+   }
+   return old.call(SB_ADMIN,tab);
+ };
+ wrap.__i10=true;SB_ADMIN.showTab=wrap;
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
+
+
+
+<style id="sheibis-backend-v2-ui">
+  #sbWorkerPerms .sbw-cloud-state{display:inline-flex;align-items:center;gap:7px;margin-left:auto;padding:6px 10px;border-radius:999px;font-size:.52rem;font-weight:800;color:#8ef0b5;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.13)}
+  #sbWorkerPerms .sbw-cloud-state.syncing{color:#ffe18a;background:rgba(245,196,60,.06);border-color:rgba(245,196,60,.14)}
+  #sbWorkerPerms .sbw-cloud-state.error{color:#ffb4b4;background:rgba(255,70,70,.05);border-color:rgba(255,70,70,.14)}
+  #sbWorkerPerms .sbw-perm-toolbar{align-items:center}
+</style>
+<script id="sheibis-backend-v2-integration">
+(function(){
+'use strict';
+const WKEY='sheibis_workers_v1', OLDKEY='SHEIBIS_WORKER_ACCOUNTS_V1', SKEY='sheibis_worker_session_v1', SERVERKEY='SHEIBIS_WORKER_SERVER_SESSION_V2', CLOUDKEY='sheibis_cloud_version_v2';
+const $=id=>document.getElementById(id);
+const DEFAULTS={dashboard:true,news:true,activity:true,productsView:true,productsEdit:false,inventoryView:true,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false};
+const LABELS=window.SHEIBIS_ROLES_LABELS||{dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Agregar / editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios',workerPermissions:'Gestionar trabajadores'};
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt=t=>{try{return new Date(t).toLocaleString('es-GT',{dateStyle:'short',timeStyle:'short'})}catch(e){return String(t||'')}};
+const localWorkers=()=>{try{let a=JSON.parse(localStorage.getItem(WKEY)||'null');if(!Array.isArray(a))a=JSON.parse(localStorage.getItem(OLDKEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}};
+const localSession=()=>{try{return JSON.parse(localStorage.getItem(SKEY)||'null')}catch(e){return null}};
+const serverSession=()=>{try{return JSON.parse(localStorage.getItem(SERVERKEY)||'null')}catch(e){return null}};
+const saveServerSession=w=>localStorage.setItem(SERVERKEY,JSON.stringify({token:w.token,id:w.id,username:w.username,name:w.name,permissions:w.permissions||{}}));
+const clearServerSession=()=>localStorage.removeItem(SERVERKEY);
+async function hash(v){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function api(action,payload={},options={}){return await apiRequest(action,payload,{timeout:options.timeout||25000})}
+function setCloudBadge(state){const bar=document.querySelector('#sbWorkerPerms .sbw-perm-toolbar');if(!bar)return;let b=bar.querySelector('.sbw-cloud-state');if(!b){b=document.createElement('span');b.className='sbw-cloud-state';bar.appendChild(b)}b.className='sbw-cloud-state '+(state==='syncing'?'syncing':state==='error'?'error':'');b.innerHTML=state==='syncing'?'<i class="fas fa-rotate"></i> Sincronizando…':state==='error'?'<i class="fas fa-triangle-exclamation"></i> Error de nube':'<i class="fas fa-cloud"></i> Google Sheets conectado'}
+
+/* ========================= NUBE GLOBAL ========================= */
+async function cloudPull(){
+  try{
+    const d=await api('getStoreState',{});const v=Number(d.version||0),local=Number(localStorage.getItem(CLOUDKEY)||0);
+    if(v>=local && d.state){
+      if(Array.isArray(d.state.products)&&window.PRODUCTOS){window.PRODUCTOS.length=0;d.state.products.forEach(x=>window.PRODUCTOS.push(x));localStorage.setItem('sheibis_products_v11',JSON.stringify(window.PRODUCTOS));}
+      if(Array.isArray(d.state.categories)&&window.CATALOGOS){window.CATALOGOS.length=0;d.state.categories.forEach(x=>window.CATALOGOS.push(x));localStorage.setItem('sheibis_categories_v11',JSON.stringify(window.CATALOGOS));}
+      if(d.state.inventory&&typeof d.state.inventory==='object')localStorage.setItem('sheibis_inventory_master_v1',JSON.stringify(d.state.inventory));
+      if(Array.isArray(d.state.inventoryMovements))localStorage.setItem('sheibis_inventory_moves_v1',JSON.stringify(d.state.inventoryMovements));
+      localStorage.setItem(CLOUDKEY,String(v));
+      if(typeof refreshStore==='function')refreshStore();
+      if(window.SB_ADMIN?.adminActive){try{SB_ADMIN.render();SB_ADMIN.renderCategories();if($('sbInventoryView')?.style.display!=='none')SB_ADMIN.renderInventory()}catch(e){}}
+    }
+    return d;
+  }catch(e){console.warn('SHEIBIS cloud pull',e);return null}
+}
+async function cloudPublish(reason){
+  try{
+    const state={products:JSON.parse(JSON.stringify(window.PRODUCTOS||[])),categories:JSON.parse(JSON.stringify(window.CATALOGOS||[])),inventory:(typeof getInventory==='function'?JSON.parse(JSON.stringify(getInventory())):{}),inventoryMovements:(typeof getInventoryMoves==='function'?JSON.parse(JSON.stringify(getInventoryMoves())):[])};
+    setCloudBadge('syncing');const d=await api('saveStoreState',{state,reason:String(reason||'Actualización SHEIBIS')});localStorage.setItem(CLOUDKEY,String(d.version||0));setCloudBadge('ok');return d;
+  }catch(e){setCloudBadge('error');throw e}
+}
+window.SHEIBIS_CLOUD_V2={pull:cloudPull,publish:cloudPublish};
+
+/* ========================= TRABAJADORES CENTRALIZADOS ========================= */
+async function migrateWorkers(){
+  const arr=localWorkers(); if(!arr.length)return;
+  let remote=[];try{remote=(await api('getWorkers',{})).workers||[]}catch(e){return}
+  for(const w of arr){
+    if(!w?.username||!w?.passwordHash)continue;
+    if(remote.some(x=>String(x.username).toLowerCase()===String(w.username).toLowerCase()))continue;
+    try{await api('registerWorker',{name:w.name,email:w.email,username:w.username,passwordHash:w.passwordHash});}catch(e){}
+  }
+}
+function applyWorker(w){
+  if(!w)return;document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;
+  localStorage.setItem(SKEY,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions||{}}));
+  try{if(window.SHEIBIS_ROLES?.activateWorker)window.SHEIBIS_ROLES.activateWorker(w)}catch(e){}
+}
+async function serverSubmit(e){
+  e.preventDefault();const mode=window.__sbwMode||'login',user=String($('sbwUser')?.value||'').trim().toLowerCase(),pass=String($('sbwPass')?.value||''),status=$('sbwAuthStatus');const set=(m,c)=>{if(status){status.textContent=m;status.className='sbw-status '+(c||'')}};
+  if(!user||!pass){set('Ingresa usuario y contraseña.','err');return false}
+  if(mode==='register'){
+    const name=String($('sbwName')?.value||'').trim(),email=String($('sbwEmail')?.value||'').trim().toLowerCase(),p2=String($('sbwPass2')?.value||'');
+    if(name.length<3||!email.includes('@')){set('Escribe un nombre y correo válidos.','err');return false}
+    if(pass.length<6){set('La contraseña debe tener al menos 6 caracteres.','err');return false}
+    if(pass!==p2){set('Las contraseñas no coinciden.','err');return false}
+    try{const passwordHash=await hash(pass),d=await api('registerWorker',{name,email,username:user,passwordHash});if(!d.worker){throw new Error('No se pudo crear la cuenta.')};const login=await api('loginWorker',{username:user,passwordHash});saveServerSession(login.worker);applyWorker(login.worker);set('Cuenta creada correctamente.','ok');if(window.SHEIBIS_ROLES?.closeWorkerAuth)window.SHEIBIS_ROLES.closeWorkerAuth();if(window.showNotice)showNotice('Cuenta creada','Tu cuenta de trabajador fue creada correctamente.','fa-user-check');return false}catch(err){set(err.message||'No se pudo crear la cuenta.','err');return false}
+  }
+  try{const passwordHash=await hash(pass),d=await api('loginWorker',{username:user,passwordHash});saveServerSession(d.worker);applyWorker(d.worker);set('Acceso correcto.','ok');if(window.SHEIBIS_ROLES?.closeWorkerAuth)window.SHEIBIS_ROLES.closeWorkerAuth();if(window.showNotice)showNotice('Sesión iniciada','Bienvenido, '+d.worker.name+'.','fa-user-check');return false}catch(err){set(err.message||'Usuario o contraseña incorrectos.','err');return false}
+}
+async function restoreWorkerSession(){
+  const s=serverSession();if(!s?.token)return false;try{const d=await api('getWorkerSession',{token:s.token});saveServerSession(d.worker);applyWorker(d.worker);return true}catch(e){clearServerSession();return false}
+}
+async function fetchWorkers(){return (await api('getWorkers',{})).workers||[]}
+function renderServerWorkers(list){
+  const host=$('sbwWorkerList');if(!host)return;const arr=list||[];
+  if(!arr.length){host.innerHTML='<div class="sbw-role-note">Todavía no existen cuentas de trabajadores.</div>';return}
+  host.innerHTML=arr.map(w=>{const p=w.permissions||{},enabled=Object.values(p).filter(Boolean).length,active=w.active!==false;return '<article class="sbw-worker"><div class="sbw-worker-head"><div><span class="sbw-worker-name">'+esc(w.name)+'</span><span class="sbw-worker-status '+(active?'active':'off')+'">● '+(active?'ACTIVO':'DESACTIVADO')+'</span><span class="sbw-worker-meta">@'+esc(w.username)+' · '+esc(w.email||'sin correo')+'</span></div>'+(serverSession()?.id===w.id?'<span class="sbw-current">● SESIÓN ACTUAL</span>':'')+'</div><div class="sbw-worker-summary"><div class="sbw-stat"><b>'+enabled+'</b><span>Permisos activos</span></div><div class="sbw-stat"><b>'+esc(fmt(w.lastSeen||w.createdAt).split(',')[0])+'</b><span>Última actividad</span></div><div class="sbw-stat"><b>'+esc(fmt(w.createdAt).split(',')[0])+'</b><span>Alta</span></div><div class="sbw-stat"><b>'+ (active?'Operativo':'Bloqueado')+'</b><span>Estado</span></div></div><div class="sbw-perm-grid">'+Object.keys(LABELS).map(k=>'<label class="sbw-perm"><input type="checkbox" '+(p[k]?'checked':'')+' '+(!active?'disabled':'')+' onchange="SHEIBIS_ROLES_PRO.setPerm(\''+esc(w.id)+'\',\''+k+'\',this.checked)"> '+esc(LABELS[k])+'</label>').join('')+'</div><div class="sbw-worker-actions"><button class="sbw-btn" type="button" onclick="SHEIBIS_ROLES_PRO.allPerms(\''+esc(w.id)+'\',true)">Dar acceso total</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES_PRO.allPerms(\''+esc(w.id)+'\',false)">Restablecer básicos</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES_PRO.toggle(\''+esc(w.id)+'\')">'+(active?'Desactivar temporalmente':'Reactivar usuario')+'</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES_PRO.history(\''+esc(w.id)+'\')">Historial</button><button class="sbw-btn danger" type="button" onclick="SHEIBIS_ROLES_PRO.deleteWorker(\''+esc(w.id)+'\')">Eliminar</button></div><div id="sbwHist_'+esc(w.id)+'" class="sbw-history"></div></article>'}).join('');
+}
+async function refreshWorkers(){try{setCloudBadge('syncing');const list=await fetchWorkers();renderServerWorkers(list);setCloudBadge('ok');return list}catch(e){setCloudBadge('error');if(window.showNotice)showNotice('Trabajadores','No se pudo actualizar la lista desde Google Sheets.','fa-cloud');return[]}}
+async function openWorkerPerms(){if(document.body.classList.contains('sbw-worker-session'))return;if(typeof window.SHEIBIS_ROLES?.openPermissions==='function'){const el=$('sbWorkerPerms');if(el){el.classList.add('show');el.setAttribute('aria-hidden','false')}}await refreshWorkers()}
+async function setPerm(id,key,val){try{const list=await fetchWorkers(),w=list.find(x=>String(x.id)===String(id));if(!w)return;w.permissions=w.permissions||{};w.permissions[key]=!!val;const d=await api('setWorkerPermissions',{workerId:id,permissions:w.permissions});if(serverSession()?.id===id){saveServerSession(d.worker);applyWorker(d.worker)}await refreshWorkers();}catch(e){if(window.showNotice)showNotice('Permisos','No se pudo guardar el permiso: '+e.message,'fa-lock')}}
+async function allPerms(id,on){try{const list=await fetchWorkers(),w=list.find(x=>String(x.id)===String(id));if(!w)return;const p={...DEFAULTS};Object.keys(LABELS).forEach(k=>p[k]=!!on);const d=await api('setWorkerPermissions',{workerId:id,permissions:p});if(serverSession()?.id===id){saveServerSession(d.worker);applyWorker(d.worker)}await refreshWorkers();}catch(e){if(window.showNotice)showNotice('Permisos','No se pudieron actualizar los permisos.','fa-lock')}}
+async function toggleWorker(id){try{const list=await fetchWorkers(),w=list.find(x=>String(x.id)===String(id));if(!w)return;const active=w.active===false;await api('setWorkerStatus',{workerId:id,active:active});await refreshWorkers();if(serverSession()?.id===id&&!active){clearServerSession();localStorage.removeItem(SKEY);document.body.classList.remove('sbw-worker-session');window.SHEIBIS_WORKER=null;location.reload()}}catch(e){if(window.showNotice)showNotice('Trabajador','No se pudo cambiar el estado.','fa-user-shield')}}
+async function deleteWorker(id){if(!confirm('¿Eliminar definitivamente esta cuenta de trabajador?'))return;try{await api('deleteWorker',{workerId:id});if(serverSession()?.id===id){clearServerSession();localStorage.removeItem(SKEY);document.body.classList.remove('sbw-worker-session');window.SHEIBIS_WORKER=null}await refreshWorkers()}catch(e){if(window.showNotice)showNotice('Trabajador','No se pudo eliminar la cuenta.','fa-user-xmark')}}
+async function history(id){const box=$('sbwHist_'+id);if(!box)return;try{const d=await api('getActivity',{workerId:id,limit:50});const rows=d.activity||[];box.classList.add('show');box.innerHTML='<div class="sbw-history-title"><i class="fas fa-clock-rotate-left"></i> Historial centralizado</div>'+(rows.length?rows.map(x=>'<div class="sbw-history-item"><b>'+esc(x.action)+'<br><span style="font-weight:400;color:#6d7b8d">'+esc(x.detail)+'</span></b><span>'+esc(fmt(x.fecha))+'</span></div>').join(''):'<div class="sbw-empty">Todavía no hay acciones registradas.</div>')}catch(e){box.classList.add('show');box.innerHTML='<div class="sbw-empty">No se pudo cargar el historial.</div>'}}
+async function exportWorkers(){try{const list=await fetchWorkers();const blob=new Blob([JSON.stringify(list,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SHEIBIS_trabajadores_permisos.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}catch(e){}}
+function logoutWorker(){clearServerSession();localStorage.removeItem(SKEY);localStorage.removeItem(WKEY);document.body.classList.remove('sbw-worker-session');window.SHEIBIS_WORKER=null;if(window.SB_ADMIN?.closePanel)try{SB_ADMIN.closePanel()}catch(e){}if(window.showNotice)showNotice('Sesión cerrada','La sesión del trabajador se cerró correctamente.','fa-right-from-bracket')}
+
+/* Sustituye únicamente la capa de almacenamiento de trabajadores; conserva la interfaz amarilla existente. */
+function installWorkerBackend(){
+  if(window.SHEIBIS_ROLES){
+    SHEIBIS_ROLES.submitWorker=serverSubmit;
+    SHEIBIS_ROLES.openPermissions=openWorkerPerms;
+    SHEIBIS_ROLES.refreshPerms=refreshWorkers;
+    SHEIBIS_ROLES.exportPerms=exportWorkers;
+    SHEIBIS_ROLES.logoutWorker=logoutWorker;
+  }
+  window.SHEIBIS_ROLES_PRO=Object.assign(window.SHEIBIS_ROLES_PRO||{}, {setPerm:setPerm,allPerms:allPerms,toggle:toggleWorker,deleteWorker:deleteWorker,history:history,open:openWorkerPerms,render:refreshWorkers});
+}
+
+/* ========================= ENVÍO DE ACTIVIDAD / PRESENCIA ========================= */
+async function heartbeat(){try{if(typeof currentUser!=='undefined'&&currentUser?.id){await api('heartbeat',{userId:currentUser.id,nombre:currentUser.nombre||'Usuario',tipoUsuario:currentUser.tipoUsuario||'CLIENTE',session:localStorage.getItem('sheibis_session')?.slice(0,40)||''})}}catch(e){}}
+window.SHEIBIS_BACKEND_V2={heartbeat:heartbeat,activity:(action,detail,meta)=>api('logActivity',{action,detail,meta,userId:(typeof currentUser!=='undefined'&&currentUser?.id)||'',role:document.body.classList.contains('sbw-worker-session')?'WORKER':'CLIENTE'})};
+
+async function boot(){
+  installWorkerBackend();
+  await migrateWorkers();
+  await restoreWorkerSession();
+  cloudPull().catch(()=>{});
+  heartbeat();setInterval(heartbeat,30000);
+  setInterval(()=>{if(!document.hidden)cloudPull().catch(()=>{})},15000);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,300);
+})();
+</script>
+</body>
 </html>
-    
+
+<!-- SHEIBIS ADMIN LEFT WORKSPACE · LIMPIEZA VISUAL FINAL -->
+<style id="sheibis-admin-left-workspace">
+/* ============================================================
+   PANEL ADMINISTRADOR — MODO WORKSPACE PROFESIONAL
+   Solo herramientas + menú izquierdo. Sin cabecera duplicada,
+   sin barra superior y sin menú derecho.
+   ============================================================ */
+#sbAdminPanel{
+  position:fixed!important;
+  inset:0!important;
+  display:none!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+  padding:0!important;
+  background:#03060c!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  z-index:99999!important;
+}
+#sbAdminPanel.sb-show{display:flex!important}
+#sbAdminPanel .sb-box.sb-ultra-layout{
+  width:100vw!important;
+  height:100vh!important;
+  max-width:none!important;
+  max-height:none!important;
+  min-width:0!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  box-shadow:none!important;
+  background:
+    radial-gradient(circle at 72% 0%,rgba(212,175,55,.055),transparent 28%),
+    radial-gradient(circle at 100% 100%,rgba(55,105,220,.055),transparent 32%),
+    #03070e!important;
+}
+/* Elimina por completo la cabecera que aparece en la captura */
+#sbAdminPanel .sb-box.sb-ultra-layout>.sb-head{display:none!important}
+#sbAdminPanel .sb-ultra-body{display:flex!important;flex:1!important;min-height:0!important;overflow:hidden!important;direction:ltr!important}
+/* MENU IZQUIERDO */
+#sbAdminPanel .sb-ultra-sidebar{
+  order:1!important;
+  width:292px!important;
+  flex:0 0 292px!important;
+  height:100%!important;
+  max-height:none!important;
+  overflow:auto!important;
+  padding:18px 13px 15px!important;
+  box-sizing:border-box!important;
+  border:0!important;
+  border-right:1px solid rgba(212,175,55,.14)!important;
+  background:
+    linear-gradient(180deg,rgba(7,13,23,.99),rgba(3,7,14,.99))!important;
+  box-shadow:18px 0 55px rgba(0,0,0,.20)!important;
+  direction:ltr!important;
+}
+#sbAdminPanel .sb-ultra-sidebar>*{direction:ltr!important}
+#sbAdminPanel .sb-ultra-brand{
+  padding:16px 14px 17px!important;
+  margin-bottom:14px!important;
+  border:1px solid rgba(212,175,55,.15)!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,rgba(212,175,55,.09),rgba(255,255,255,.018))!important;
+  box-shadow:0 15px 35px rgba(0,0,0,.18)!important;
+}
+#sbAdminPanel .sb-ultra-brand:before{content:'●  SISTEMA ADMINISTRATIVO ACTIVO'!important;display:block!important;color:#79efaa!important;font-size:7px!important;letter-spacing:1.25px!important;font-weight:900!important;margin-bottom:9px!important}
+#sbAdminPanel .sb-ultra-brand b{font-size:16px!important;letter-spacing:2.4px!important;color:#ffe7a0!important}
+#sbAdminPanel .sb-ultra-brand span{font-size:9px!important;color:#7c8ba1!important;margin-top:6px!important}
+#sbAdminPanel .sb-ultra-group{margin:14px 0!important}
+#sbAdminPanel .sb-ultra-group-title{font-size:7px!important;letter-spacing:1.9px!important;color:#536278!important;padding:7px 10px!important}
+#sbAdminPanel .sb-ultra-item{
+  min-height:49px!important;
+  margin:4px 0!important;
+  padding:9px 11px!important;
+  border-radius:14px!important;
+  background:rgba(255,255,255,.012)!important;
+  border:1px solid transparent!important;
+  color:#aebbd0!important;
+}
+#sbAdminPanel .sb-ultra-item:hover{transform:translateX(3px)!important;background:rgba(255,255,255,.045)!important;border-color:rgba(255,255,255,.09)!important;color:#fff!important}
+#sbAdminPanel .sb-ultra-item.active{background:linear-gradient(90deg,rgba(212,175,55,.17),rgba(212,175,55,.035))!important;border-color:rgba(212,175,55,.31)!important;color:#ffe7a0!important;box-shadow:inset 3px 0 0 #d4af37,0 10px 25px rgba(0,0,0,.16)!important}
+#sbAdminPanel .sb-ultra-item i{width:20px!important;font-size:13px!important;color:#d4af37!important}
+#sbAdminPanel .sb-ultra-item b{font-size:10px!important;font-weight:850!important}
+#sbAdminPanel .sb-ultra-item small{font-size:8px!important;color:#68778d!important}
+#sbAdminPanel .sb-ultra-sep{margin:13px 8px!important;background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent)!important}
+#sbAdminPanel .sb-ultra-danger{background:rgba(255,65,65,.025)!important;color:#ffaaaa!important}
+#sbAdminPanel .sb-ultra-danger i{color:#ff7474!important}
+/* AREA DE HERRAMIENTAS */
+#sbAdminPanel .sb-ultra-main{
+  order:2!important;
+  flex:1!important;
+  min-width:0!important;
+  height:100%!important;
+  max-height:none!important;
+  overflow:auto!important;
+  padding:28px 30px 40px!important;
+  box-sizing:border-box!important;
+  background:linear-gradient(180deg,rgba(5,9,16,.45),rgba(2,5,10,.12))!important;
+}
+#sbAdminPanel .sb-ultra-main>#sb19000Headline{display:none!important}
+#sbAdminPanel .sb-ultra-main>.sb-head{display:none!important}
+/* Quita las barras antiguas que duplicaban el menú */
+#sbAdminPanel .sb-admin-tabs,
+#sbAdminPanel #sbV11Tabs{display:none!important}
+/* El centro de documentos y automatización solo aparecen al elegirlos */
+#sbAdminPanel #sbPrintTools,
+#sbAdminPanel #sbAutomationCenter{display:none!important}
+#sbAdminPanel .sb-v11-section{display:none!important;animation:sbWorkspaceIn .25s ease}
+#sbAdminPanel .sb-v11-section.active{display:block!important}
+@keyframes sbWorkspaceIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+/* Encabezado nuevo, uno solo por herramienta */
+#sbAdminPanel .sb-workspace-title{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 18px;padding:18px 20px;border:1px solid rgba(255,255,255,.075);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));box-shadow:0 18px 45px rgba(0,0,0,.16)}
+#sbAdminPanel .sb-workspace-title h1{margin:0;color:#fff;font-size:20px;font-weight:800;letter-spacing:.1px}
+#sbAdminPanel .sb-workspace-title p{margin:5px 0 0;color:#718096;font-size:9px;line-height:1.5}
+#sbAdminPanel .sb-workspace-status{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid rgba(34,197,94,.16);border-radius:999px;background:rgba(34,197,94,.045);color:#91f0b6;font-size:7px;font-weight:900;letter-spacing:.7px;white-space:nowrap}
+#sbAdminPanel .sb-workspace-status i{font-size:6px}
+/* Noticias: solo información útil y acciones reales */
+#sbAdminPanel #sbV11News .sb-news-card{box-shadow:0 18px 45px rgba(0,0,0,.15)!important}
+#sbAdminPanel #sbV11News .sb-ultra-command{grid-template-columns:repeat(3,1fr)!important}
+#sbAdminPanel #sbV11News .sb-news-grid{grid-template-columns:repeat(3,1fr)!important}
+/* Productos / inventario / merchandising ocupan todo el espacio disponible */
+#sbAdminPanel #sbProductAdminContent,
+#sbAdminPanel #sbInventoryView,
+#sbAdminPanel #sbV11Merchandising{width:100%!important;box-sizing:border-box!important}
+/* Al seleccionar productos, solo se muestra el contenido de productos */
+#sbAdminPanel.workspace-products #sbProductAdminContent{display:block!important}
+#sbAdminPanel.workspace-inventory #sbInventoryView{display:block!important}
+#sbAdminPanel.workspace-merchandising #sbV11Merchandising{display:block!important}
+/* Oculta cualquier sección V11 residual */
+#sbAdminPanel.workspace-products .sb-v11-section,
+#sbAdminPanel.workspace-inventory .sb-v11-section,
+#sbAdminPanel.workspace-merchandising .sb-v11-section{display:none!important}
+/* Responsive: el menú sigue estando a la izquierda */
+@media(max-width:850px){
+  #sbAdminPanel .sb-ultra-sidebar{width:238px!important;flex-basis:238px!important}
+  #sbAdminPanel .sb-ultra-main{padding:20px!important}
+  #sbAdminPanel #sbV11News .sb-news-grid,#sbAdminPanel #sbV11News .sb-ultra-command{grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:600px){
+  #sbAdminPanel .sb-ultra-sidebar{width:205px!important;flex-basis:205px!important;padding:12px 8px!important}
+  #sbAdminPanel .sb-ultra-main{padding:14px!important}
+  #sbAdminPanel .sb-ultra-brand{padding:13px 10px!important}
+  #sbAdminPanel .sb-ultra-brand b{font-size:13px!important}
+  #sbAdminPanel .sb-ultra-item{min-height:45px!important;padding:8px!important}
+  #sbAdminPanel .sb-ultra-item b{font-size:9px!important}
+  #sbAdminPanel .sb-ultra-item small{font-size:7px!important}
+  #sbAdminPanel .sb-workspace-title{padding:14px!important}
+  #sbAdminPanel .sb-workspace-title h1{font-size:16px!important}
+  #sbAdminPanel .sb-workspace-status{display:none!important}
+  #sbAdminPanel #sbV11News .sb-news-grid,#sbAdminPanel #sbV11News .sb-ultra-command{grid-template-columns:1fr!important}
+}
+</style>
+<script id="sheibis-admin-left-workspace-js">
+(function(){
+'use strict';
+var installed=false;
+function q(id){return document.getElementById(id)}
+function main(){return document.querySelector('#sbAdminPanel .sb-ultra-main')}
+function admin(){return window.SB_ADMIN}
+function hideAll(){
+  var p=q('sbAdminPanel');if(!p)return;
+  p.classList.remove('workspace-products','workspace-inventory','workspace-merchandising');
+  document.querySelectorAll('#sbAdminPanel .sb-v11-section').forEach(function(x){x.classList.remove('active');x.style.display='none'});
+  var prod=q('sbProductAdminContent'),inv=q('sbInventoryView'),print=q('sbPrintTools'),auto=q('sbAutomationCenter');
+  if(prod)prod.style.display='none';
+  if(inv)inv.style.display='none';
+  if(print)print.style.display='none';
+  if(auto)auto.style.display='none';
+}
+function title(icon,name,desc){
+  var m=main();if(!m)return;
+  var old=q('sbWorkspaceTitle');if(old)old.remove();
+  var d=document.createElement('div');d.id='sbWorkspaceTitle';d.className='sb-workspace-title';
+  d.innerHTML='<div><h1><i class="fas '+icon+'" style="color:#d4af37;margin-right:8px"></i>'+name+'</h1><p>'+desc+'</p></div><div class="sb-workspace-status"><i class="fas fa-circle"></i> ÁREA ACTIVA</div>';
+  m.prepend(d);
+}
+function activeButton(tab){document.querySelectorAll('#sbAdminPanel .sb-ultra-item').forEach(function(b){b.classList.toggle('active',b.dataset.ultraAction===tab)})}
+function news(){
+  var sec=q('sbV11News');
+  if(!sec){sec=document.createElement('section');sec.id='sbV11News';sec.className='sb-v11-section';var m=main();if(m)m.appendChild(sec)}
+  sec.style.display='block';sec.classList.add('active');
+  if(typeof ultraNewsRender==='function') { try{ ultraNewsRender(sec); }catch(e){ console.error(e); } }
+  title('fa-bolt','Novedades SHEIBIS','Cambios, alertas, actividad y oportunidades de mejora disponibles en el sistema.');
+}
+function activate(tab){
+  if(!admin()||!admin().adminActive)return;
+  hideAll();activeButton(tab);
+  var p=q('sbAdminPanel');
+  if(tab==='close'){admin().closePanel();return}
+  if(tab==='dashboard'){
+    var s=q('sbV11Dashboard');if(s){s.style.display='block';s.classList.add('active');admin().renderDashboard()}
+    title('fa-gauge-high','Dashboard','Visión general del catálogo, inventario y estado operativo.');return;
+  }
+  if(tab==='news'){news();return}
+  if(tab==='analytics'){
+    var s=q('sbV11Analytics');if(s){s.style.display='block';s.classList.add('active');admin().renderAnalytics()}
+    title('fa-chart-line','Analítica','Indicadores y lectura del rendimiento disponible en el sistema.');return;
+  }
+  if(tab==='activity'){
+    var s=q('sbV11Activity');if(s){s.style.display='block';s.classList.add('active');admin().renderActivity()}
+    title('fa-clock-rotate-left','Actividad','Registro de acciones administrativas recientes.');return;
+  }
+  if(tab==='users'){
+    var s=q('sbV11Users');if(s){s.style.display='block';s.classList.add('active');admin().renderUsers()}
+    title('fa-users','Usuarios','Puntos, sesiones y herramientas de gestión de usuarios.');return;
+  }
+  if(tab==='tools'){
+    var s=q('sbV11Tools');if(s){s.style.display='block';s.classList.add('active');admin().renderTools()}
+    title('fa-screwdriver-wrench','Herramientas','Mantenimiento, respaldos y controles operativos.');return;
+  }
+  if(tab==='products'){
+    p.classList.add('workspace-products');var el=q('sbProductAdminContent');if(el){el.style.display='block';admin().render();admin().renderCategories()}
+    title('fa-box-open','Productos','Crear, editar, eliminar y organizar productos y catálogos.');return;
+  }
+  if(tab==='inventory'){
+    p.classList.add('workspace-inventory');var el=q('sbInventoryView');if(el){el.style.display='block';admin().renderInventory()}
+    title('fa-boxes-stacked','Inventario','Existencias, movimientos y control del stock disponible.');return;
+  }
+  if(tab==='merchandising'){
+    p.classList.add('workspace-merchandising');var el=q('sbV11Merchandising');if(el){el.style.display='block';el.classList.add('active');if(typeof renderMerchandising==='function')renderMerchandising(el)}
+    title('fa-star','Catálogo PRO','Recomendados, destacados, novedades, ventas, valoraciones y etiquetas.');return;
+  }
+  if(tab==='print'){
+    var el=q('sbPrintTools');if(el){el.style.display='block'}
+    title('fa-file-lines','Documentos','Informes administrativos, inventario, productos y exportación PDF.');return;
+  }
+  if(tab==='automation'){
+    var el=q('sbAutomationCenter');if(el){el.style.display='block'}
+    title('fa-wand-magic-sparkles','Automatización','Herramientas automáticas disponibles para mantenimiento y operación.');return;
+  }
+  if(tab==='addproduct'){admin().add();activeButton('products');p.classList.add('workspace-products');var el=q('sbProductAdminContent');if(el)el.style.display='block';title('fa-plus','Nuevo producto','Crea una nueva ficha de producto desde este espacio.');return}
+  if(tab==='addcategory'){admin().addCategory();activeButton('products');p.classList.add('workspace-products');var el=q('sbProductAdminContent');if(el)el.style.display='block';title('fa-folder-plus','Nuevo catálogo','Crea y configura un nuevo catálogo o categoría.');return}
+  if(tab==='backup'){admin().backup();return}
+}
+function install(){
+ if(installed)return;
+ var p=q('sbAdminPanel');if(!p||!admin()){setTimeout(install,250);return}
+ var sidebar=q('sbUltraSidebar');if(!sidebar){setTimeout(install,250);return}
+ installed=true;
+ /* Reemplaza los clics del menú para que cada opción ocupe toda el área de trabajo. */
+ sidebar.querySelectorAll('[data-ultra-action]').forEach(function(b){
+   var clone=b.cloneNode(true);b.parentNode.replaceChild(clone,b);
+   clone.addEventListener('click',function(){activate(clone.dataset.ultraAction)})
+ });
+ /* Entra directamente al dashboard al abrir administración. */
+ var oldLogin=admin().login;
+ if(!oldLogin.__leftWorkspace){
+   var login=function(){var r=oldLogin.apply(admin(),arguments);setTimeout(function(){if(admin().adminActive)activate('dashboard')},120);return r};
+   login.__leftWorkspace=true;admin().login=login;
+ }
+ var oldClose=admin().closePanel;
+ if(!oldClose.__leftWorkspace){
+   var close=function(){var r=oldClose.apply(admin(),arguments);document.body.classList.remove('sheibis-admin-workspace');return r};
+   close.__leftWorkspace=true;admin().closePanel=close;
+ }
+ /* Evita que otros wrappers vuelvan a abrir el contenido como pestañas superiores. */
+ admin().showTab=function(tab){activate(tab)};
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
+<style id="sheibis-worker-pro-ui-v2">
+#sbWorkerPerms .sbw-modal{max-height:92vh;overflow:auto;background:linear-gradient(145deg,#07101d,#0a1321 58%,#0d1726);border:1px solid rgba(212,175,55,.16);box-shadow:0 35px 120px rgba(0,0,0,.58)}
+.sbw-worker{position:relative;overflow:hidden}.sbw-worker::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(#d4af37,transparent);opacity:.7}.sbw-worker-status{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:4px 8px;border-radius:999px;font-size:.48rem;font-weight:900}.sbw-worker-status.active{color:#8ef0b5;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.15)}.sbw-worker-status.off{color:#ffb4b4;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.15)}
+.sbw-worker-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}.sbw-stat{padding:9px;border-radius:12px;background:rgba(0,0,0,.14);border:1px solid rgba(255,255,255,.05)}.sbw-stat b{display:block;color:#fff;font-size:.72rem}.sbw-stat span{color:#728196;font-size:.5rem}.sbw-worker-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}.sbw-worker-actions .danger{color:#ffb2b2;border-color:rgba(255,100,100,.16);background:rgba(255,70,70,.045)}
+.sbw-history{display:none;margin-top:11px;padding:12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.06)}.sbw-history.show{display:block}.sbw-history-title{color:#d4af37;font-weight:900;font-size:.6rem;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}.sbw-history-item{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.045)}.sbw-history-item:last-child{border-bottom:0}.sbw-history-item b{color:#dce5ef;font-size:.58rem}.sbw-history-item span{color:#68788c;font-size:.5rem;text-align:right}.sbw-empty{color:#718096;font-size:.58rem;padding:8px 0}.sbw-session-pill{display:inline-flex;align-items:center;gap:5px;color:#8ef0b5;font-size:.5rem}
+@media(max-width:700px){.sbw-worker-summary{grid-template-columns:1fr 1fr}.sbw-form{grid-template-columns:1fr}.sbw-field.full{grid-column:auto}}
+</style>
+<script id="sheibis-worker-pro-engine-v2">
+(function(){
+'use strict';
+const KEY='sheibis_workers_v1',SESSION='sheibis_worker_session_v1',HKEY='sheibis_worker_history_v1';
+const $=id=>document.getElementById(id);
+const load=()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return[]}};
+const save=a=>localStorage.setItem(KEY,JSON.stringify(a));
+const getHist=()=>{try{const x=JSON.parse(localStorage.getItem(HKEY)||'{}');return x&&typeof x==='object'?x:{}}catch(e){return{}}};
+const log=(id,action,detail)=>{if(!id)return;const h=getHist();h[id]=Array.isArray(h[id])?h[id]:[];h[id].unshift({action,detail:detail||'',at:new Date().toISOString()});h[id]=h[id].slice(0,100);localStorage.setItem(HKEY,JSON.stringify(h));};
+const hash=async v=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')};
+const esc=v=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt=t=>{try{return new Date(t).toLocaleString('es-GT',{dateStyle:'short',timeStyle:'short'})}catch(e){return String(t||'')}};
+const current=()=>{try{return JSON.parse(localStorage.getItem(SESSION)||'null')}catch(e){return null}};
+const isWorker=()=>document.body.classList.contains('sbw-worker-session');
+function labels(){return window.SHEIBIS_ROLES_LABELS||{dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Agregar / editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios',workerPermissions:'Gestionar trabajadores'}};
+function toast(msg,title='SHEIBIS'){if(window.showToast)window.showToast(msg,{title,icon:'fa-circle-info',duration:3500});}
+function renderHistory(id){const box=$('sbwHist_'+id);if(!box)return;const h=getHist()[id]||[];box.innerHTML='<div class="sbw-history-title"><i class="fas fa-clock-rotate-left"></i> Historial de acciones</div>'+(h.length?h.slice(0,30).map(x=>'<div class="sbw-history-item"><b>'+esc(x.action)+'<br><span style="font-weight:400;color:#6d7b8d">'+esc(x.detail)+'</span></b><span>'+esc(fmt(x.at))+'</span></div>').join(''):'<div class="sbw-empty">Todavía no hay acciones registradas.</div>');}
+function toggleHistory(id){const box=$('sbwHist_'+id);if(!box)return;box.classList.toggle('show');if(box.classList.contains('show'))renderHistory(id);}
+function render(){const host=$('sbwWorkerList');if(!host)return;const arr=load();if(!arr.length){host.innerHTML='<div class="sbw-role-note">Todavía no existen cuentas de trabajadores.</div>';return}const L=labels();host.innerHTML=arr.map(w=>{const p=w.permissions||{}, h=getHist()[w.id]||[], enabled=Object.values(p).filter(Boolean).length, active=w.active!==false;return '<article class="sbw-worker"><div class="sbw-worker-head"><div><span class="sbw-worker-name">'+esc(w.name)+'</span><span class="sbw-worker-status '+(active?'active':'off')+'">● '+(active?'ACTIVO':'DESACTIVADO')+'</span><span class="sbw-worker-meta">@'+esc(w.username)+' · '+esc(w.email||'sin correo')+'</span></div>'+(current()?.id===w.id?'<span class="sbw-current">● SESIÓN ACTUAL</span>':'')+'</div><div class="sbw-worker-summary"><div class="sbw-stat"><b>'+enabled+'</b><span>Permisos activos</span></div><div class="sbw-stat"><b>'+h.length+'</b><span>Acciones registradas</span></div><div class="sbw-stat"><b>'+esc(fmt(w.createdAt).split(',')[0])+'</b><span>Alta</span></div><div class="sbw-stat"><b>'+ (active?'Operativo':'Bloqueado')+'</b><span>Estado</span></div></div><div class="sbw-perm-grid">'+Object.keys(L).map(k=>'<label class="sbw-perm"><input type="checkbox" '+(p[k]?'checked':'')+' '+(!active?'disabled':'')+' onchange="SHEIBIS_ROLES_PRO.setPerm(\''+esc(w.id)+'\',\''+k+'\',this.checked)"> '+esc(L[k])+'</label>').join('')+'</div><div class="sbw-worker-actions"><button class="sbw-btn" type="button" onclick="SHEIBIS_ROLES_PRO.allPerms(\''+esc(w.id)+'\',true)">Dar acceso total</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES_PRO.allPerms(\''+esc(w.id)+'\',false)">Restablecer básicos</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES_PRO.toggle(\''+esc(w.id)+'\')">'+(active?'Desactivar temporalmente':'Reactivar usuario')+'</button><button class="sbw-btn muted" type="button" onclick="SHEIBIS_ROLES_PRO.history(\''+esc(w.id)+'\')">Historial</button><button class="sbw-btn danger" type="button" onclick="SHEIBIS_ROLES_PRO.deleteWorker(\''+esc(w.id)+'\')">Eliminar</button></div><div id="sbwHist_'+esc(w.id)+'" class="sbw-history"></div></article>'}).join('');}
+function update(id,fn){const a=load(),w=a.find(x=>x.id===id);if(!w)return null;fn(w);save(a);return w;}
+function setPerm(id,key,val){if(isWorker()){toast('Solo el administrador puede modificar permisos.','Acceso restringido');return}const w=update(id,w=>{w.permissions=w.permissions||{};w.permissions[key]=!!val});if(w){log(id,'Permiso actualizado',key+': '+(val?'activado':'desactivado'));render();}}
+function allPerms(id,on){if(isWorker()){toast('Solo el administrador puede modificar permisos.','Acceso restringido');return}const w=update(id,w=>{w.permissions=w.permissions||{};Object.keys(labels()).forEach(k=>w.permissions[k]=!!on)});if(w){log(id,on?'Acceso total concedido':'Permisos básicos restaurados',on?'Todos los módulos habilitados':'Configuración predeterminada');render();}}
+function toggle(id){if(isWorker())return;const w=update(id,w=>w.active=w.active===false);if(w){log(id,w.active?'Usuario reactivado':'Usuario desactivado','Cambio realizado por administrador');render();if(current()?.id===id&&!w.active){localStorage.removeItem(SESSION);document.body.classList.remove('sbw-worker-session');window.SHEIBIS_WORKER=null;location.reload()}}}
+function del(id){if(isWorker())return;const a=load(),w=a.find(x=>x.id===id);if(!w)return;if(!confirm('¿Eliminar definitivamente a '+w.name+'? Esta acción no se puede deshacer.'))return;log(id,'Cuenta eliminada','Eliminada por administrador');save(a.filter(x=>x.id!==id));render();}
+window.SHEIBIS_ROLES_LABELS=labels();
+window.SHEIBIS_ROLES_PRO={render,setPerm,allPerms,toggle,deleteWorker:del,history:toggleHistory};
+function openPerms(){if(isWorker()){toast('Solo el administrador puede gestionar trabajadores.','Acceso restringido');return}render();const el=$('sbWorkerPerms');if(el){el.classList.add('show');el.setAttribute('aria-hidden','false');}}
+function closePerms(){const el=$('sbWorkerPerms');if(el){el.classList.remove('show');el.setAttribute('aria-hidden','true');}}
+async function workerSubmit(e){e.preventDefault();const mode=window.__sbwMode||'login',user=String($('sbwUser')?.value||'').trim().toLowerCase(),pass=String($('sbwPass')?.value||''),status=$('sbwAuthStatus');const set=(m,c)=>{if(status){status.textContent=m;status.className='sbw-status '+(c||'')}};if(!user||!pass){set('Ingresa usuario y contraseña.','err');return false}const arr=load();if(mode==='register'){const name=String($('sbwName')?.value||'').trim(),email=String($('sbwEmail')?.value||'').trim().toLowerCase(),p2=String($('sbwPass2')?.value||'');if(name.length<3||!email.includes('@')){set('Escribe un nombre y correo válidos.','err');return false}if(pass.length<6){set('La contraseña debe tener al menos 6 caracteres.','err');return false}if(pass!==p2){set('Las contraseñas no coinciden.','err');return false}if(arr.some(w=>w.username===user)){set('Ese usuario ya existe.','err');return false}if(arr.some(w=>w.email===email)){set('Ese correo ya está registrado.','err');return false}const ph=await hash(pass),w={id:'W'+Date.now().toString(36).toUpperCase(),name,email,username:user,passwordHash:ph,createdAt:new Date().toISOString(),active:true,permissions:{dashboard:true,news:true,activity:true,productsView:true,productsEdit:false,inventoryView:true,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false}};arr.push(w);save(arr);localStorage.setItem(SESSION,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions}));log(w.id,'Cuenta creada','El trabajador creó su cuenta');document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;if(window.SHEIBIS_ROLES?.activateWorker)window.SHEIBIS_ROLES.activateWorker(w);toast('Cuenta creada correctamente.','Cuenta de trabajador');return false;}const ph=await hash(pass),w=arr.find(x=>x.username===user&&x.passwordHash===ph);if(!w){set('Usuario o contraseña incorrectos.','err');return false}if(w.active===false){set('Esta cuenta está temporalmente desactivada. Contacta al administrador.','err');return false}localStorage.setItem(SESSION,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions||{}}));log(w.id,'Inicio de sesión','Acceso al panel de trabajador');document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;if(window.SHEIBIS_ROLES?.activateWorker)window.SHEIBIS_ROLES.activateWorker(w);toast('Bienvenido, '+w.name+'.','Sesión iniciada');return false;}
+function install(){if(window.SHEIBIS_ROLES){window.SHEIBIS_ROLES.openPermissions=openPerms;window.SHEIBIS_ROLES.closePerms=closePerms;window.SHEIBIS_ROLES.submitWorker=workerSubmit;}const u=$('sbwUser');if(u){u.closest('.sbw-field')?.classList.remove('sbw-reg-field');u.removeAttribute('disabled');}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
+<style id="sb-worker-enterprise-final-ui">
+/* Permisos de trabajadores: misma estética del sidebar, con acento amarillo solicitado. */
+#sbWorkerPerms .sbw-modal{background:linear-gradient(145deg,#07101d 0%,#0a1321 62%,#0d1726 100%);border-color:rgba(245,196,60,.28)}
+#sbWorkerPerms .sbw-head{border-bottom:1px solid rgba(245,196,60,.10)}
+#sbWorkerPerms .sbw-kicker{color:#f4c84b}
+#sbWorkerPerms .sbw-perm-toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 14px}
+#sbWorkerPerms .sbw-perm-toolbar .sbw-btn{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.035)}
+#sbWorkerPerms .sbw-perm-toolbar .sbw-btn:first-child{background:rgba(245,196,60,.10);border-color:rgba(245,196,60,.28);color:#ffe18a}
+#sbWorkerPerms .sbw-worker{border-color:rgba(255,255,255,.07);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.018));}
+#sbWorkerPerms .sbw-worker::before{background:linear-gradient(#f5c43c,transparent)}
+#sbWorkerPerms .sbw-worker-actions .sbw-btn{transition:transform .16s ease,border-color .16s ease,background .16s ease}
+#sbWorkerPerms .sbw-worker-actions .sbw-btn:hover{transform:translateY(-1px);border-color:rgba(245,196,60,.32);background:rgba(245,196,60,.07)}
+#sbWorkerPerms .sbw-worker-actions .sbw-btn.sbw-suspend{color:#ffd978;border-color:rgba(245,196,60,.28);background:rgba(245,196,60,.075)}
+#sbWorkerPerms .sbw-worker-actions .sbw-btn.sbw-delete{color:#ffb7b7;border-color:rgba(255,92,92,.22);background:rgba(255,70,70,.045)}
+#sbUltraSidebar .sb-worker-permissions-item{background:linear-gradient(135deg,rgba(245,196,60,.16),rgba(245,196,60,.045));border-color:rgba(245,196,60,.32);box-shadow:inset 0 0 0 1px rgba(245,196,60,.035),0 8px 24px rgba(0,0,0,.12)}
+#sbUltraSidebar .sb-worker-permissions-item i{color:#f5c43c}
+#sbUltraSidebar .sb-worker-permissions-item b{color:#ffe18a}
+#sbUltraSidebar .sb-worker-permissions-item small{color:#b99b48!important}
+#sbUltraSidebar .sb-worker-permissions-item.active{background:linear-gradient(135deg,rgba(245,196,60,.22),rgba(245,196,60,.07));border-color:rgba(245,196,60,.5)}
+#sbWorkerPerms .sbw-worker-list{content-visibility:auto;contain:layout paint style}
+@media(max-width:700px){#sbWorkerPerms .sbw-perm-toolbar{display:grid;grid-template-columns:1fr 1fr}#sbWorkerPerms .sbw-perm-toolbar .sbw-btn:last-child{grid-column:1/-1}}
+</style>
+<script id="sb-worker-enterprise-final-js">
+(function(){
+'use strict';
+function installWorkerSidebar(){
+  const side=document.getElementById('sbUltraSidebar');
+  if(!side||side.dataset.workerPermsReady==='1')return;
+  side.dataset.workerPermsReady='1';
+  const close=side.querySelector('[data-ultra-action="close"]');
+  if(!close)return;
+  const item=document.createElement('button');
+  item.type='button';
+  item.className='sb-ultra-item sb-worker-permissions-item sb-worker-admin-only';
+  item.dataset.ultraAction='worker-permissions';
+  item.innerHTML='<i class="fas fa-user-shield"></i><span><b>Permisos trabajadores</b><small style="display:block;font-size:8px;margin-top:2px">Acceso y control de personal</small></span>';
+  item.addEventListener('click',function(){
+    if(window.SHEIBIS_ROLES_PRO&&typeof SHEIBIS_ROLES_PRO.open==='function')SHEIBIS_ROLES_PRO.open();
+    else if(window.SHEIBIS_ROLES&&typeof SHEIBIS_ROLES.openPermissions==='function')SHEIBIS_ROLES.openPermissions();
+  });
+  close.parentNode.insertBefore(item,close);
+  const oldTop=document.getElementById('sbWorkerPermsBtn');if(oldTop)oldTop.style.display='none';
+  const oldMain=document.getElementById('sbWorkerPermsSide');if(oldMain)oldMain.style.display='none';
+}
+function syncWorkerSidebar(){
+  const side=document.getElementById('sbUltraSidebar');if(!side)return;
+  installWorkerSidebar();
+  const isWorker=document.body.classList.contains('sbw-worker-session');
+  const item=side.querySelector('.sb-worker-permissions-item');if(item)item.style.display=isWorker?'none':'';
+  const close=side.querySelector('[data-ultra-action="close"]');if(close)close.style.marginTop='auto';
+}
+function patchPermissionsEngine(){
+  const P=window.SHEIBIS_ROLES_PRO;if(!P||P.__finalPatch)return;
+  P.__finalPatch=true;
+  const originalOpen=typeof P.open==='function'?P.open:null;
+  P.open=function(){
+    if(document.body.classList.contains('sbw-worker-session'))return;
+    if(originalOpen)originalOpen();
+    setTimeout(function(){
+      const el=document.getElementById('sbWorkerPerms');if(el){el.classList.add('show');el.setAttribute('aria-hidden','false')}
+    },0);
+  };
+  const oldRender=P.render;
+  if(typeof oldRender==='function')P.render=function(){oldRender();decorateWorkerCards()};
+}
+function decorateWorkerCards(){
+  document.querySelectorAll('#sbwWorkerList .sbw-worker').forEach(function(card){
+    const actions=card.querySelector('.sbw-worker-actions');if(!actions||actions.dataset.decorated==='1')return;
+    actions.dataset.decorated='1';
+    const buttons=Array.from(actions.querySelectorAll('button'));
+    const suspend=buttons.find(b=>/Desactivar temporalmente|Reactivar usuario/.test(b.textContent||''));
+    if(suspend)suspend.classList.add('sbw-suspend');
+    const del=buttons.find(b=>/^Eliminar$/.test((b.textContent||'').trim()));
+    if(del)del.classList.add('sbw-delete');
+  });
+}
+function watch(){
+  installWorkerSidebar();syncWorkerSidebar();patchPermissionsEngine();decorateWorkerCards();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(watch,180)});else setTimeout(watch,180);
+setInterval(function(){
+  if(!document.hidden)watch();
+},1200);
+})();
+</script>
+
+<style id="sb-worker-remove-duplicate-only">
+/* Elimina únicamente las entradas duplicadas antiguas; conserva la entrada amarilla del sidebar. */
+#sbWorkerPermsBtn,
+#sbWorkerPermsSide{display:none!important}
+</style>
+<script id="sb-worker-remove-duplicate-only-js">
+(function(){
+  'use strict';
+  function removeDuplicates(){
+    const a=document.getElementById('sbWorkerPermsBtn');
+    const b=document.getElementById('sbWorkerPermsSide');
+    if(a)a.remove();
+    if(b)b.remove();
+  }
+  function keepYellowEntry(){
+    const side=document.getElementById('sbUltraSidebar');
+    if(!side)return;
+    const item=side.querySelector('.sb-worker-permissions-item');
+    if(item){
+      item.style.display='';
+      item.style.visibility='visible';
+    }
+  }
+  function run(){removeDuplicates();keepYellowEntry();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);
+  else run();
+  setTimeout(run,700);
+  setTimeout(run,1600);
+  setTimeout(run,2800);
+})();
+</script>
