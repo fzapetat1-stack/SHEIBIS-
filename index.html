@@ -4099,47 +4099,13 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // Catálogos base. Se pueden administrar desde el panel privado.
         // Los productos siguen usando el ID de la categoría, por lo que cambiar
         // el nombre de una categoría no rompe los productos existentes.
-        var CATALOGOS = window.CATALOGOS = [
-            { id: "belleza", nombre: "Belleza", icono: "fa-spa", imagen: "", descripcion: "Descubre nuestra selección de belleza.", proximamente: false },
-            { id: "objetos", nombre: "Objetos", icono: "fa-gem", imagen: "", descripcion: "Encuentra objetos especiales para ti.", proximamente: false },
-            { id: "accesorios", nombre: "Accesorios", icono: "fa-gem", imagen: "", descripcion: "Accesorios seleccionados para complementar tu estilo.", proximamente: false }
-        ];
+        var CATALOGOS = window.CATALOGOS = [];
+var PRODUCTOS = window.PRODUCTOS = [];
 
-var PRODUCTOS = window.PRODUCTOS = [
+        // IMPORTANTE: NO hay productos ni categorías de demostración en el HTML.
+        // Google Sheets (Catalogos + Productos) es la única fuente oficial.
 
-    // ============================================================
-    // CATALOGO: BELLEZA — 3 PRODUCTOS
-    // ============================================================
-    { id: 1, nombre: "Audífonos Pro X1", precio: 450, categoria: "belleza", icono: "fa-headphones", desc: "Cancelación de ruido activa, 40h de batería.", imagen: "https://cdn.phototourl.com/free/2026-06-30-ee27ce42-454e-4fb9-aaac-bb20b9548d3b.jpg" },
-    { id: 2, nombre: "Audífonos Ultra Bass", precio: 320, categoria: "belleza", icono: "fa-headphones", desc: "Bajos profundos, Bluetooth 5.2.", imagen: "https://cdn.phototourl.com/free/2026-06-30-ee27ce42-454e-4fb9-aaac-bb20b9548d3b.jpg" },
-    { id: 3, nombre: "Audífonos Studio Pro", precio: 680, categoria: "belleza", icono: "fa-headphones", desc: "Sonido de estudio, conectividad multipunto.", imagen: "https://cdn.phototourl.com/free/2026-06-30-ee27ce42-454e-4fb9-aaac-bb20b9548d3b.jpg" },
-
-    // ============================================================
-    // CATALOGO: OBJETOS — 3 PRODUCTOS
-    // ============================================================
-    { id: 4, nombre: "Cargador Rápido 65W", precio: 180, categoria: "objetos", icono: "fa-bolt", desc: "Carga super rápida para laptop y celular." },
-    { id: 5, nombre: "Cargador Inalámbrico", precio: 220, categoria: "objetos", icono: "fa-bolt", desc: "Carga rápida Qi, soporte ajustable." },
-    { id: 6, nombre: "Power Bank 20000mAh", precio: 350, categoria: "objetos", icono: "fa-battery-full", desc: "3 puertos, pantalla digital." },
-
-    // ============================================================
-    // CATALOGO: ACCESORIOS — 3 PRODUCTOS
-    // ============================================================
-    { id: 7, nombre: "Cámara 4K Action", precio: 1200, categoria: "accesorios", icono: "fa-camera", desc: "4K 60fps, estabilización." },
-    { id: 8, nombre: "Cable USB-C Premium", precio: 80, categoria: "accesorios", icono: "fa-plug", desc: "Carga rápida, trenzado, 2 metros." },
-    { id: 9, nombre: "Funda Transparente", precio: 120, categoria: "accesorios", icono: "fa-mobile-alt", desc: "Anti-amarillamiento, protección contra caídas." }
-];
-
-        // CONTROL DE INTEGRIDAD: exactamente 9 productos, 3 por catálogo.
-        (function validarCatalogos(){
-            const esperados={belleza:3,objetos:3,accesorios:3};
-            const errores=[];
-            CATALOGOS.forEach(cat=>{
-                const total=PRODUCTOS.filter(p=>p.categoria===cat.id).length;
-                if(total!==esperados[cat.id]) errores.push(`${cat.nombre}: ${total}/3`);
-            });
-            if(PRODUCTOS.length!==9) errores.push(`Total: ${PRODUCTOS.length}/9`);
-            if(errores.length) console.warn('SHEIBIS · revisión de catálogos:',errores.join(' | '));
-        })();
+        // Catálogo validado únicamente después de sincronizar con Google Sheets.
 
         // ================================================================
         // 5. ESTADO GLOBAL
@@ -8604,9 +8570,12 @@ function queueGlobalCatalogSave_(){
     try{
       await apiRequest('saveCatalog',{categories:getCategories(),products:getProducts()});
       globalCatalogLastServerUpdate=new Date().toISOString();
+      // Después de guardar, volvemos a leer Catalogos/Productos para que
+      // esta misma página y los demás usuarios reciban exactamente lo que
+      // quedó escrito en Google Sheets.
+      await syncGlobalCatalog_(true);
     }catch(e){
       console.error('SHEIBIS catálogo global',e);
-      // Respaldo local para no perder el cambio si hay un fallo temporal.
       try{
         localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
         localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
@@ -8639,11 +8608,13 @@ async function syncGlobalCatalog_(force=false){
     const data=await apiRequest('getCatalog',{});
     if(!data || data.ok===false)return;
 
-    // Primera instalación: subimos el catálogo base que ya existe en este HTML.
+    // Si Sheets está vacío, NO se suben datos del HTML.
+    // El HTML no contiene productos/categorías de demostración.
     if(data.initialized===false){
-      await apiRequest('saveCatalog',{categories:getCategories(),products:getProducts()});
-      globalCatalogLastServerUpdate=new Date().toISOString();
-      return;
+      if(Array.isArray(window.PRODUCTOS)) window.PRODUCTOS.length=0;
+      if(Array.isArray(window.CATALOGOS)) window.CATALOGOS.length=0;
+      refreshStore();
+      return true;
     }
 
     const serverProducts=Array.isArray(data.products)?data.products:[];
@@ -8674,6 +8645,7 @@ async function syncGlobalCatalog_(force=false){
       SB_ADMIN.render();
       SB_ADMIN.renderCategories();
     }
+    return true;
   }catch(e){
     // Si no hay conexión temporal, se mantiene la copia local.
     console.warn('SHEIBIS · no se pudo sincronizar catálogo global:',e.message);
@@ -8682,30 +8654,17 @@ async function syncGlobalCatalog_(force=false){
   }
 }
 
-function loadProducts(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const a=JSON.parse(raw);if(!Array.isArray(a)||!Array.isArray(window.PRODUCTOS))return;window.PRODUCTOS.length=0;a.forEach(p=>{if(p&&p.id!==undefined)window.PRODUCTOS.push(p);});}catch(e){console.error('SHEIBIS load products',e);}}
+function loadProducts(){
+  // La copia local NO puede sobrescribir el catálogo de Google Sheets.
+  // Los datos llegan exclusivamente mediante syncGlobalCatalog_().
+  return getProducts();
+}
 function makeCategoryId(name){const base=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'categoria';let id=base,n=2;while(getCategories().some(c=>String(c.id)===id)){id=base+'-'+n++;}return id;}
 function loadCategories(){
-  try{
-    const cats=getCategories();
-    const raw=localStorage.getItem(CATEGORY_KEY);
-    if(raw){
-      const saved=JSON.parse(raw);
-      if(Array.isArray(saved)){
-        cats.length=0;
-        saved.forEach(c=>{
-          if(c&&c.id&&c.nombre) cats.push({
-            id:String(c.id),nombre:String(c.nombre),
-            icono:c.icono||'fa-folder-open',imagen:c.imagen||'',
-            descripcion:c.descripcion||'',proximamente:c.proximamente!==false
-          });
-        });
-      }
-    }
-  }catch(e){console.error('SHEIBIS load categories',e);}
+  // La copia local NO puede sobrescribir el catálogo de Google Sheets.
+  // Los datos llegan exclusivamente mediante syncGlobalCatalog_().
+  return getCategories();
 }
-function nextId(){return getProducts().reduce((m,p)=>Math.max(m,Number(p.id)||0),0)+1;}
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-
 function refreshCategorySelect(){
   const select=document.getElementById('sbCategory');
   if(!select)return;
@@ -8720,6 +8679,7 @@ function refreshStore(){
     refreshCategorySelect();
     if(activeCategory&&originalOpenCatalog&&getCategories().some(c=>String(c.id)===String(activeCategory))) originalOpenCatalog(activeCategory);
     const t=document.getElementById('totalProducts');if(t)t.textContent=getProducts().length;
+    const tc=document.getElementById('totalCategories');if(tc)tc.textContent=getCategories().length;
   }catch(e){console.error('SHEIBIS refresh',e);}
 }
 
@@ -9169,12 +9129,28 @@ document.addEventListener('click',function(e){
   }
 });
 
-document.addEventListener('DOMContentLoaded',function(){
-  loadCategories();loadProducts();ensureInventory();refreshCategorySelect();refreshStore();SB_ADMIN.renderCategories();
-  // Catálogo compartido: primero entra el usuario; la red se sincroniza después.
-  // Esto evita que una respuesta lenta de Apps Script retrase el inicio.
-  setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },1200);
-  setInterval(function(){ syncGlobalCatalog_(); },60000);
+document.addEventListener('DOMContentLoaded',async function(){
+  // Arranque limpio: nunca mostrar datos antiguos/locales como catálogo.
+  if(Array.isArray(window.PRODUCTOS)) window.PRODUCTOS.length=0;
+  if(Array.isArray(window.CATALOGOS)) window.CATALOGOS.length=0;
+  try{
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(CATEGORY_KEY);
+  }catch(_){ }
+
+  ensureInventory();
+  refreshCategorySelect();
+  refreshStore();
+  SB_ADMIN.renderCategories();
+
+  // PRIMERO: leer Catalogos + Productos desde Google Sheets.
+  // Después se inicia la sincronización periódica.
+  const catalogLoaded = await syncGlobalCatalog_(true);
+  await syncGlobalInventory_(true);
+  if(!catalogLoaded){
+    console.warn('SHEIBIS: no se pudo cargar el catálogo oficial desde Google Sheets.');
+  }
+  setInterval(function(){ if(!document.hidden) syncGlobalCatalog_(); },5000);
   clearInterval(globalInventorySyncTimer);
   globalInventorySyncTimer=setInterval(function(){ syncGlobalInventory_(); },30000);
   window.addEventListener('focus',function(){
@@ -10037,13 +10013,13 @@ async function cloudPull(){
   try{
     const d=await api('getStoreState',{});const v=Number(d.version||0),local=Number(localStorage.getItem(CLOUDKEY)||0);
     if(v>=local && d.state){
-      if(Array.isArray(d.state.products)&&window.PRODUCTOS){window.PRODUCTOS.length=0;d.state.products.forEach(x=>window.PRODUCTOS.push(x));localStorage.setItem('sheibis_products_v11',JSON.stringify(window.PRODUCTOS));}
-      if(Array.isArray(d.state.categories)&&window.CATALOGOS){window.CATALOGOS.length=0;d.state.categories.forEach(x=>window.CATALOGOS.push(x));localStorage.setItem('sheibis_categories_v11',JSON.stringify(window.CATALOGOS));}
+      // IMPORTANTE: EstadoGlobal NO es la fuente del catálogo.
+      // El catálogo oficial vive únicamente en las hojas Catalogos y Productos
+      // y se sincroniza mediante syncGlobalCatalog_(). Esto evita que una copia
+      // vieja de EstadoGlobal vuelva a mostrar 10 catálogos/15 productos.
       if(d.state.inventory&&typeof d.state.inventory==='object')localStorage.setItem('sheibis_inventory_master_v1',JSON.stringify(d.state.inventory));
       if(Array.isArray(d.state.inventoryMovements))localStorage.setItem('sheibis_inventory_moves_v1',JSON.stringify(d.state.inventoryMovements));
       localStorage.setItem(CLOUDKEY,String(v));
-      if(typeof refreshStore==='function')refreshStore();
-      if(window.SB_ADMIN?.adminActive){try{SB_ADMIN.render();SB_ADMIN.renderCategories();if($('sbInventoryView')?.style.display!=='none')SB_ADMIN.renderInventory()}catch(e){}}
     }
     return d;
   }catch(e){console.warn('SHEIBIS cloud pull',e);return null}
@@ -10124,7 +10100,7 @@ async function boot(){
   await restoreWorkerSession();
   cloudPull().catch(()=>{});
   heartbeat();setInterval(heartbeat,30000);
-  setInterval(()=>{if(!document.hidden)cloudPull().catch(()=>{})},15000);
+  setInterval(()=>{if(!document.hidden){cloudPull().catch(()=>{});syncGlobalCatalog_();}},5000);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,300);
 })();
