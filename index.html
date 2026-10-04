@@ -6439,26 +6439,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 function getPublicCatalogData_(){
   const rawCats=Array.isArray(CATALOGOS)?CATALOGOS:[], rawProducts=Array.isArray(PRODUCTOS)?PRODUCTOS:[];
   const cats=[], seenIds={}, seenNames={};
-  rawCats.forEach(function(cat){
-    if(!cat||!String(cat.id||'').trim()||!String(cat.nombre||'').trim())return;
-    const ik=sheibisNormText_(cat.id), nk=sheibisNormText_(cat.nombre);
-    if(seenIds[ik]||seenNames[nk])return;
-    seenIds[ik]=1; seenNames[nk]=1;
-    cats.push(cat);
-  });
-  const aliases={};
-  cats.forEach(function(cat){
-    aliases[sheibisNormText_(cat.id)]=String(cat.id);
-    aliases[sheibisNormText_(cat.nombre)]=String(cat.id);
-  });
-  const validProducts=[];
-  rawProducts.forEach(function(p){
-    if(!p||p.id===undefined||!String(p.nombre||'').trim())return;
-    const c=aliases[sheibisNormText_(p.categoria)];
-    if(c){p.categoria=c;validProducts.push(p);}
-  });
-  // Mostrar cada catálogo activo aunque todavía no tenga productos.
-  // El administrador puede crear la categoría primero y agregar productos después.
+  rawCats.forEach(function(cat){if(!cat||!String(cat.id||'').trim()||!String(cat.nombre||'').trim())return; const ik=sheibisNormText_(cat.id), nk=sheibisNormText_(cat.nombre); if(seenIds[ik]||seenNames[nk])return; seenIds[ik]=1; seenNames[nk]=1; cats.push(cat);});
+  const aliases={}; cats.forEach(function(cat){aliases[sheibisNormText_(cat.id)]=String(cat.id);aliases[sheibisNormText_(cat.nombre)]=String(cat.id);});
+  const validProducts=[]; rawProducts.forEach(function(p){if(!p||p.id===undefined||!String(p.nombre||'').trim())return; const c=aliases[sheibisNormText_(p.categoria)]; if(c){p.categoria=c;validProducts.push(p);}});
   const publicCats=cats.filter(function(cat){return cat.proximamente!==true;});
   return {categories:publicCats,products:validProducts};
 }
@@ -8496,20 +8479,26 @@ async function syncGlobalCatalog_(force=false){
     const serverProducts=Array.isArray(data.products)?data.products:[];
     const serverCategories=Array.isArray(data.categories)?data.categories:[];
     const localProducts=Array.isArray(window.PRODUCTOS)?window.PRODUCTOS.slice():[];
-    const localCategories=Array.isArray(window.CATALOGOS)?window.CATALOGOS.slice():[];
-
-    // Conserva las galerías locales si el servidor solo devuelve la imagen principal.
     serverProducts.forEach(function(sp){
       const lp=localProducts.find(function(x){return String(x.id)===String(sp.id);});
       if(lp && !Array.isArray(sp.imagenes) && Array.isArray(lp.imagenes)) sp.imagenes=lp.imagenes.slice();
     });
 
-    // Nunca reemplazar catálogos/productos existentes por una respuesta vacía.
-    // Si Sheets todavía no tiene datos, publicar la copia local para inicializarla.
-    const serverIsEmpty = serverCategories.length===0 && serverProducts.length===0;
+    // No borrar los datos que ya existen si el servidor responde con listas vacías.
+    // Si el servidor sí tiene datos, se sincronizan normalmente con la página.
+    const localCategories=Array.isArray(window.CATALOGOS)?window.CATALOGOS.slice():[];
+    const serverIsEmpty=serverCategories.length===0 && serverProducts.length===0;
+
     if(serverIsEmpty && (localCategories.length>0 || localProducts.length>0)){
-      await apiRequest('saveCatalog',{categories:localCategories,products:localProducts});
-      globalCatalogLastServerUpdate=new Date().toISOString();
+      // La hoja puede estar vacía aunque esta versión incluya datos iniciales.
+      // Intentar inicializar el backend con los datos disponibles en el HTML.
+      const saveResult=await apiRequest('saveCatalog',{
+        categories:localCategories,
+        products:localProducts
+      });
+      if(saveResult && saveResult.ok===false){
+        console.warn('SHEIBIS: el servidor no aceptó la inicialización del catálogo.');
+      }
     } else {
       if(Array.isArray(window.PRODUCTOS) && serverProducts.length>0){
         window.PRODUCTOS.length=0;
@@ -8519,7 +8508,6 @@ async function syncGlobalCatalog_(force=false){
         window.CATALOGOS.length=0;
         serverCategories.forEach(c=>window.CATALOGOS.push(c));
       }
-      // Si solo una de las listas vino vacía, no borrar la lista local correspondiente.
       try{
         localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
         localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
