@@ -3619,6 +3619,27 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
 @media(max-width:700px){.sbp-price-grid,.sbp-admin-grid{grid-template-columns:1fr}.sbp-admin-summary{grid-template-columns:1fr 1fr}.sbp-sort{width:100%}.sbp-sort-row{display:block}.sbp-sort-row label{display:block;margin-bottom:5px}}
 </style>
 
+<style>
+
+/* Imágenes de producto: mostrar el producto completo sin recortarlo */
+.product-detail-image,
+.product-card .product-image,
+.product-item .product-image,
+.catalog-image-frame {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+.product-detail-image img,
+.product-card img,
+.product-item img,
+.catalog-image {
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+</style>
 </head>
 <body>
 
@@ -4084,7 +4105,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbywrCEjLwVbu96C_zAaydgSq36RGFJSz3AQnuLOj8pLBpzeg4fzmljy5g1Ol6tBYBw4/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyXvI1OgnKmDMOX75iYH6DZH7tDGTzL9hJBHYyY9tkrapby9yWcbG1-oKVbbOdyUPz-/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5742,7 +5763,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbywrCEjLwVbu96C_zAaydgSq36RGFJSz3AQnuLOj8pLBpzeg4fzmljy5g1Ol6tBYBw4/exec
+     https://script.google.com/macros/s/AKfycbyXvI1OgnKmDMOX75iYH6DZH7tDGTzL9hJBHYyY9tkrapby9yWcbG1-oKVbbOdyUPz-/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -6442,7 +6463,7 @@ function getPublicCatalogData_(){
   rawCats.forEach(function(cat){if(!cat||!String(cat.id||'').trim()||!String(cat.nombre||'').trim())return; const ik=sheibisNormText_(cat.id), nk=sheibisNormText_(cat.nombre); if(seenIds[ik]||seenNames[nk])return; seenIds[ik]=1; seenNames[nk]=1; cats.push(cat);});
   const aliases={}; cats.forEach(function(cat){aliases[sheibisNormText_(cat.id)]=String(cat.id);aliases[sheibisNormText_(cat.nombre)]=String(cat.id);});
   const validProducts=[]; rawProducts.forEach(function(p){if(!p||p.id===undefined||!String(p.nombre||'').trim())return; const c=aliases[sheibisNormText_(p.categoria)]; if(c){p.categoria=c;validProducts.push(p);}});
-  const publicCats=cats.filter(function(cat){return cat.proximamente!==true;});
+  const publicCats=cats.filter(function(cat){return cat.proximamente!==true&&validProducts.some(function(p){return String(p.categoria)===String(cat.id);});});
   return {categories:publicCats,products:validProducts};
 }
 function getPublicProducts_(){return getPublicCatalogData_().products;}
@@ -8429,22 +8450,48 @@ async function saveInventoryGlobal_(id, stock, name){
 }
 
 function queueGlobalCatalogSave_(){
-  clearTimeout(globalCatalogSaveTimer);
+  // No cancelar una escritura pendiente: de lo contrario, la sincronización
+  // periódica podía descartar el producto recién agregado antes de subirlo.
+  if(globalCatalogSaveTimer) clearTimeout(globalCatalogSaveTimer);
   globalCatalogSaveTimer=setTimeout(async function(){
+    globalCatalogSaveTimer=null;
+    const snapshot={
+      categories:JSON.parse(JSON.stringify(getCategories())),
+      products:JSON.parse(JSON.stringify(getProducts()))
+    };
     try{
-      await apiRequest('saveCatalog',{categories:getCategories(),products:getProducts()});
-      globalCatalogLastServerUpdate=new Date().toISOString();
-    }catch(e){
-      console.error('SHEIBIS catálogo global',e);
-      // Respaldo local para no perder el cambio si hay un fallo temporal.
+      const result=await apiRequest('saveCatalog',snapshot,{timeout:30000});
+      if(!result || result.ok===false) throw new Error(result?.error||'El servidor no confirmó el catálogo.');
+      globalCatalogLastServerUpdate=result.updatedAt||new Date().toISOString();
+
+      // Aplicar la respuesta confirmada por Sheets y volver a pintar la tienda.
+      if(Array.isArray(result.products) && Array.isArray(window.PRODUCTOS)){
+        window.PRODUCTOS.length=0;
+        result.products.forEach(p=>window.PRODUCTOS.push(p));
+      }
+      if(Array.isArray(result.categories) && Array.isArray(window.CATALOGOS)){
+        window.CATALOGOS.length=0;
+        result.categories.forEach(c=>window.CATALOGOS.push(c));
+      }
       try{
         localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
         localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
       }catch(_){}
+      refreshStore();
+      if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
+        SB_ADMIN.render();
+        SB_ADMIN.renderCategories();
+        if(typeof SB_ADMIN.renderDashboard==='function') SB_ADMIN.renderDashboard();
+      }
+    }catch(e){
+      console.error('SHEIBIS catálogo global: no se confirmó el guardado',e);
+      // No se oculta el error ni se reemplaza la copia local cuando la red falla.
+      showToast('El producto quedó en este navegador, pero Google Sheets no confirmó el guardado. Revisa la conexión y vuelve a intentarlo.',{
+        title:'Error de sincronización',icon:'fa-cloud-arrow-up',duration:7000
+      });
     }
-  },150);
+  },250);
 }
-
 function saveProducts(){
   try{
     localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
@@ -8463,7 +8510,12 @@ function saveCategories(){
 
 async function syncGlobalCatalog_(force=false){
   if(globalCatalogSyncBusy)return;
-  if(globalCatalogSaveTimer){clearTimeout(globalCatalogSaveTimer);globalCatalogSaveTimer=null;}
+  // Si hay cambios locales pendientes de subir, no descargues datos antiguos
+  // que puedan sobrescribirlos. La cola de guardado tiene prioridad.
+  if(globalCatalogSaveTimer){
+    if(force) return;
+    return;
+  }
   globalCatalogSyncBusy=true;
   try{
     const data=await apiRequest('getCatalog',{});
@@ -8484,35 +8536,20 @@ async function syncGlobalCatalog_(force=false){
       if(lp && !Array.isArray(sp.imagenes) && Array.isArray(lp.imagenes)) sp.imagenes=lp.imagenes.slice();
     });
 
-    // No borrar los datos que ya existen si el servidor responde con listas vacías.
-    // Si el servidor sí tiene datos, se sincronizan normalmente con la página.
-    const localCategories=Array.isArray(window.CATALOGOS)?window.CATALOGOS.slice():[];
-    const serverIsEmpty=serverCategories.length===0 && serverProducts.length===0;
-
-    if(serverIsEmpty && (localCategories.length>0 || localProducts.length>0)){
-      // La hoja puede estar vacía aunque esta versión incluya datos iniciales.
-      // Intentar inicializar el backend con los datos disponibles en el HTML.
-      const saveResult=await apiRequest('saveCatalog',{
-        categories:localCategories,
-        products:localProducts
-      });
-      if(saveResult && saveResult.ok===false){
-        console.warn('SHEIBIS: el servidor no aceptó la inicialización del catálogo.');
-      }
-    } else {
-      if(Array.isArray(window.PRODUCTOS) && serverProducts.length>0){
-        window.PRODUCTOS.length=0;
-        serverProducts.forEach(p=>window.PRODUCTOS.push(p));
-      }
-      if(Array.isArray(window.CATALOGOS) && serverCategories.length>0){
-        window.CATALOGOS.length=0;
-        serverCategories.forEach(c=>window.CATALOGOS.push(c));
-      }
-      try{
-        localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
-        localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
-      }catch(_){}
+    // Google Sheets es la FUENTE OFICIAL. Reemplazamos la copia local.
+    if(Array.isArray(window.PRODUCTOS)){
+      window.PRODUCTOS.length=0;
+      serverProducts.forEach(p=>window.PRODUCTOS.push(p));
     }
+    if(Array.isArray(window.CATALOGOS)){
+      window.CATALOGOS.length=0;
+      serverCategories.forEach(c=>window.CATALOGOS.push(c));
+    }
+
+    try{
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+      localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
+    }catch(_){}
 
     refreshStore();
     if(typeof SB_ADMIN!=='undefined' && SB_ADMIN.adminActive){
@@ -9019,7 +9056,7 @@ document.addEventListener('DOMContentLoaded',function(){
   // Catálogo compartido: primero entra el usuario; la red se sincroniza después.
   // Esto evita que una respuesta lenta de Apps Script retrase el inicio.
   setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },1200);
-  setInterval(function(){ syncGlobalCatalog_(); },60000);
+  setInterval(function(){ syncGlobalCatalog_(); },8000);
   clearInterval(globalInventorySyncTimer);
   globalInventorySyncTimer=setInterval(function(){ syncGlobalInventory_(); },30000);
   window.addEventListener('focus',function(){
