@@ -8527,7 +8527,7 @@ async function syncGlobalCatalog_(force=false){
   }
 }
 
-function loadProducts(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const a=JSON.parse(raw);if(!Array.isArray(a)||!Array.isArray(window.PRODUCTOS))return;window.PRODUCTOS.length=0;a.forEach(p=>{if(p&&p.id!==undefined)window.PRODUCTOS.push(p);});}catch(e){console.error('SHEIBIS load products',e);}}
+function loadProducts(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const a=JSON.parse(raw);if(!Array.isArray(a)||!Array.isArray(window.PRODUCTOS))return;/* No sustituir productos base por una caché vacía accidental. */if(a.length===0&&window.PRODUCTOS.length>0){console.warn('SHEIBIS · caché local de productos vacía; se conservan los productos existentes.');return;}window.PRODUCTOS.length=0;a.forEach(p=>{if(p&&p.id!==undefined)window.PRODUCTOS.push(p);});}catch(e){console.error('SHEIBIS load products',e);}}
 function makeCategoryId(name){const base=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'categoria';let id=base,n=2;while(getCategories().some(c=>String(c.id)===id)){id=base+'-'+n++;}return id;}
 function loadCategories(){
   try{
@@ -8536,14 +8536,19 @@ function loadCategories(){
     if(raw){
       const saved=JSON.parse(raw);
       if(Array.isArray(saved)){
-        cats.length=0;
-        saved.forEach(c=>{
-          if(c&&c.id&&c.nombre) cats.push({
-            id:String(c.id),nombre:String(c.nombre),
-            icono:c.icono||'fa-folder-open',imagen:c.imagen||'',
-            descripcion:c.descripcion||'',proximamente:c.proximamente!==false
+        // No permitir que una caché vacía elimine los catálogos base.
+        if(saved.length===0 && cats.length>0){
+          console.warn('SHEIBIS · caché local de categorías vacía; se conservan los catálogos existentes.');
+        } else {
+          cats.length=0;
+          saved.forEach(c=>{
+            if(c&&c.id&&c.nombre) cats.push({
+              id:String(c.id),nombre:String(c.nombre),
+              icono:c.icono||'fa-folder-open',imagen:c.imagen||'',
+              descripcion:c.descripcion||'',proximamente:c.proximamente===true
+            });
           });
-        });
+        }
       }
     }
   }catch(e){console.error('SHEIBIS load categories',e);}
