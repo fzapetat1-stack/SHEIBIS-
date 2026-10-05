@@ -4105,7 +4105,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzra3G_EKCoShrVUi6A39xVGevvyrsd-m55kYy8ez0yb0uJaGwf5v5CGKHIfJBomp1F/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzsaVAE_4i7okZEWQREz6pW2F7xmXAjzS1v_wBAmOTHBbXoBoT_tXApqZFauZ_mqc0/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5763,7 +5763,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzra3G_EKCoShrVUi6A39xVGevvyrsd-m55kYy8ez0yb0uJaGwf5v5CGKHIfJBomp1F/exec
+     https://script.google.com/macros/s/AKfycbzsaVAE_4i7okZEWQREz6pW2F7xmXAjzS1v_wBAmOTHBbXoBoT_tXApqZFauZ_mqc0/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -6463,8 +6463,9 @@ function getPublicCatalogData_(){
   rawCats.forEach(function(cat){if(!cat||!String(cat.id||'').trim()||!String(cat.nombre||'').trim())return; const ik=sheibisNormText_(cat.id), nk=sheibisNormText_(cat.nombre); if(seenIds[ik]||seenNames[nk])return; seenIds[ik]=1; seenNames[nk]=1; cats.push(cat);});
   const aliases={}; cats.forEach(function(cat){aliases[sheibisNormText_(cat.id)]=String(cat.id);aliases[sheibisNormText_(cat.nombre)]=String(cat.id);});
   const validProducts=[]; rawProducts.forEach(function(p){if(!p||p.id===undefined||!String(p.nombre||'').trim())return; const c=aliases[sheibisNormText_(p.categoria)]; if(c){p.categoria=c;validProducts.push(p);}});
-  const publicCats=cats.filter(function(cat){return cat.proximamente!==true&&validProducts.some(function(p){return String(p.categoria)===String(cat.id);});});
-  return {categories:publicCats,products:validProducts};
+  // Mostrar todos los catálogos válidos, incluso si todavía no tienen productos.
+  // La categoría recién creada no debe desaparecer por no tener artículos vinculados.
+  return {categories:cats,products:validProducts};
 }
 function getPublicProducts_(){return getPublicCatalogData_().products;}
 function getPublicCategories_(){return getPublicCatalogData_().categories;}
@@ -6476,7 +6477,7 @@ function renderCatalogos() {
                 const count=d.products.filter(function(p){return String(p.categoria)===String(cat.id);}).length;
                 return `<div class="catalog-card catalog-card-visible catalog-only-category" onclick="openCatalog('${String(cat.id).replace(/'/g,"\\'")}')" data-aos="fade-up" aria-label="Abrir catálogo ${cat.nombre}">${hasImage?`<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy"></div>`:`<span class="catalog-icon"><i class="fas ${cat.icono||'fa-folder-open'}"></i></span>`}<div class="catalog-name">${cat.nombre}</div><div class="catalog-open-label"><i class="fas fa-arrow-right"></i> Ver catálogo · ${count} producto${count===1?'':'s'}</div><div class="catalog-glow"></div></div>`;
             }).join('');
-            if(!d.categories.length)catalogGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,.55)">No hay catálogos con productos disponibles.</div>';
+            if(!d.categories.length)catalogGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,.55)">Todavía no hay catálogos disponibles.</div>';
             if(typeof AOS!=='undefined')AOS.refresh();
         }
         function getMinPrice(categoriaId) {
