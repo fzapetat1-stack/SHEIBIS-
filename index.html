@@ -8574,7 +8574,7 @@ async function syncGlobalCatalog_(force=false){
   }
 }
 
-function loadProducts(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const a=JSON.parse(raw);if(!Array.isArray(a)||!Array.isArray(window.PRODUCTOS))return;window.PRODUCTOS.length=0;a.forEach(p=>{if(p&&p.id!==undefined)window.PRODUCTOS.push(p);});}catch(e){console.error('SHEIBIS load products',e);}}
+function loadProducts(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const a=JSON.parse(raw);if(!Array.isArray(a)||!Array.isArray(window.PRODUCTOS))return;if(!a.length){let sc=[];try{sc=JSON.parse(localStorage.getItem(CATEGORY_KEY)||'[]');}catch(_){}if(!Array.isArray(sc)||!sc.length)return;}window.PRODUCTOS.length=0;a.forEach(p=>{if(p&&p.id!==undefined)window.PRODUCTOS.push(p);});}catch(e){console.error('SHEIBIS load products',e);}}
 function makeCategoryId(name){const base=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'categoria';let id=base,n=2;while(getCategories().some(c=>String(c.id)===id)){id=base+'-'+n++;}return id;}
 function loadCategories(){
   try{
@@ -8582,7 +8582,7 @@ function loadCategories(){
     const raw=localStorage.getItem(CATEGORY_KEY);
     if(raw){
       const saved=JSON.parse(raw);
-      if(Array.isArray(saved)){
+      if(Array.isArray(saved)&&saved.length){
         cats.length=0;
         saved.forEach(c=>{
           if(c&&c.id&&c.nombre) cats.push({
@@ -9088,6 +9088,27 @@ document.addEventListener('keydown',function(e){
     e.preventDefault();SB_ADMIN.backup();
   }
 });
+
+/* ============================================================
+   SHEIBIS FIX — EXPORTAR HELPERS AL ÁMBITO GLOBAL
+   Los motores "Catálogo PRO", "Galería" y "Automatización" viven en
+   <script> separados y NO pueden ver las funciones declaradas dentro
+   de este bloque. Sin esta exportación renderCatalogosPro() lanza
+   "getCategories is not defined" y el inicio queda vacío.
+   ============================================================ */
+(function exportSheibisHelpers(){
+  var map={
+    getProducts:getProducts, getCategories:getCategories,
+    getInventory:getInventory, ensureInventory:ensureInventory,
+    getInventoryMoves:getInventoryMoves,
+    saveProducts:saveProducts, saveCategories:saveCategories,
+    refreshStore:refreshStore, categoryName:categoryName,
+    nextId:nextId, esc:esc
+  };
+  Object.keys(map).forEach(function(k){
+    if(typeof map[k]==='function' && typeof window[k]!=='function') window[k]=map[k];
+  });
+})();
 
 })();
 
