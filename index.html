@@ -4099,7 +4099,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyAuXGAbza0kQ11kXg1SCAGA4OIDiD33uCDrBIwTaXnXBOfgGvCnSnniR5CUu1aZB6B/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzEEfqD9um1lJpJu2H0hD3wAM6FLNIMZqdnnmJtpp96V225B9JvpM1FC4jJEHAlZbe6/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5776,7 +5776,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbyAuXGAbza0kQ11kXg1SCAGA4OIDiD33uCDrBIwTaXnXBOfgGvCnSnniR5CUu1aZB6B/exec
+     https://script.google.com/macros/s/AKfycbzEEfqD9um1lJpJu2H0hD3wAM6FLNIMZqdnnmJtpp96V225B9JvpM1FC4jJEHAlZbe6/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -7562,12 +7562,12 @@ body.sbw-worker-session #sbAdminPanel .sb-worker-admin-only{display:none!importa
 (function(){
   'use strict';
   const KEY='SHEIBIS_WORKER_ACCOUNTS_V1', SESSION='SHEIBIS_WORKER_SESSION_V1';
-  const DEFAULTS={dashboard:true,news:true,activity:true,productsView:true,productsEdit:false,inventoryView:true,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false};
-  const LABELS={dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios',workerPermissions:'Gestionar trabajadores'};
+  const DEFAULTS={dashboard:false,news:false,activity:false,productsView:false,productsEdit:false,inventoryView:false,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false};
+  const LABELS={dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios'};
   const $=id=>document.getElementById(id);
   function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return []}}
   function save(a){localStorage.setItem(KEY,JSON.stringify(a))}
-  function session(){try{return JSON.parse(localStorage.getItem(SESSION)||'null')}catch(e){return null}}
+  function session(){return window.SHEIBIS_WORKER||null}
   function setSession(w){if(w)localStorage.setItem(SESSION,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions||{}}));else localStorage.removeItem(SESSION)}
   async function hash(v){if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}return btoa(unescape(encodeURIComponent(v)))}
   function choice(show){$('sbRoleChoice')?.classList.toggle('show',!!show);$('sbRoleChoice')?.setAttribute('aria-hidden',show?'false':'true')}
@@ -7575,8 +7575,8 @@ body.sbw-worker-session #sbAdminPanel .sb-worker-admin-only{display:none!importa
   function perms(show){$('sbWorkerPerms')?.classList.toggle('show',!!show);$('sbWorkerPerms')?.setAttribute('aria-hidden',show?'false':'true')}
   function status(msg,type){const el=$('sbwAuthStatus');if(!el)return;el.textContent=msg;el.className='sbw-status '+(type||'')}
   function setMode(mode){window.__sbwMode=mode;const reg=mode==='register';document.querySelectorAll('.sbw-reg-field').forEach(x=>x.style.display=reg?'flex':'none');$('sbwLoginTab')?.classList.toggle('active',!reg);$('sbwRegisterTab')?.classList.toggle('active',reg);$('sbwAuthTitle').textContent=reg?'Crear cuenta de trabajador':'Acceso trabajador';$('sbwAuthSub').textContent=reg?'Crea una cuenta que después podrá recibir permisos del administrador.':'Inicia sesión con tu cuenta de trabajador.';$('sbwSubmit').textContent=reg?'Crear cuenta':'Entrar';status('')}
-  function has(p){const s=session();return !!(s&&s.permissions&&s.permissions[p])}
-  function isWorker(){return !!session() && document.body.classList.contains('sbw-worker-session')}
+  function has(p){const w=window.SHEIBIS_WORKER;return !!(w&&w.permissions&&w.permissions[p])}
+  function isWorker(){return document.body.classList.contains('sbw-worker-session')}
   function openAdmin(){
     choice(false); auth(false); perms(false);
     setSession(null); document.body.classList.remove('sbw-worker-session'); window.SHEIBIS_WORKER=null;
@@ -7592,14 +7592,19 @@ body.sbw-worker-session #sbAdminPanel .sb-worker-admin-only{display:none!importa
       if(pass.length<6){status('La contraseña debe tener al menos 6 caracteres.','err');return false}
       if(pass!==p2){status('Las contraseñas no coinciden.','err');return false}
       if(arr.some(w=>w.username===user)){status('Ese usuario ya existe.','err');return false}
-      const id='W'+Date.now().toString(36).toUpperCase(),ph=await hash(pass),w={id,name,email,username:user,passwordHash:ph,createdAt:new Date().toISOString(),permissions:{...DEFAULTS}};arr.push(w);save(arr);setSession(w);auth(false);activateWorker(w);showNotice('Cuenta creada','Tu cuenta de trabajador fue creada. El administrador debe asignarte permisos adicionales si los necesitas.','fa-user-check');
+      const id='W'+Date.now().toString(36).toUpperCase(),ph=await hash(pass),w={id,name,email,username:user,passwordHash:ph,createdAt:new Date().toISOString(),permissions:{...DEFAULTS}};arr.push(w);save(arr);setSession(w);auth(false);activateWorker(w);showNotice('Cuenta creada','Tu cuenta fue creada. Está pendiente de aprobación: el administrador debe habilitarte los módulos.','fa-user-check');
     }else{
       const ph=await hash(pass),w=arr.find(x=>x.username===user&&x.passwordHash===ph);if(!w){status('Usuario o contraseña incorrectos.','err');return false}setSession(w);auth(false);activateWorker(w);showNotice('Sesión iniciada','Bienvenido, '+w.name+'. Tu acceso está limitado a los permisos asignados.','fa-user-gear');
     }
     return false;
   }
-  function activateWorker(w){document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;hideUnauthorizedTabs(w.permissions||{});if(window.SB_ADMIN&&typeof SB_ADMIN.openPanel==='function'){try{SB_ADMIN.adminActive=true;SB_ADMIN.openPanel();}catch(e){console.warn(e)}}}
-  function hideUnauthorizedTabs(p){const map={dashboard:'dashboard',news:'news',activity:'activity',productsView:'products',inventoryView:'inventory',catalogPro:'merchandising',analytics:'analytics',tools:'tools'};Object.keys(map).forEach(k=>{const b=document.querySelector('[data-v11-tab="'+map[k]+'"]');if(b)b.style.display=p[k]?'':'none'});if(!p.dashboard){const first=Object.keys(map).find(k=>p[k]);if(first&&window.SB_ADMIN)SB_ADMIN.showTab(map[first])}else if(window.SB_ADMIN)SB_ADMIN.showTab('dashboard')}
+  function activateWorker(w){
+    if(!w)return;
+    document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;
+    if(window.SB_ADMIN&&typeof SB_ADMIN.openWorkerPanel==='function'){try{SB_ADMIN.openWorkerPanel(w)}catch(e){console.warn(e)}}
+    if(window.SHEIBIS_ACCESS)setTimeout(function(){SHEIBIS_ACCESS.apply(w,{navigate:true})},60);
+  }
+  function hideUnauthorizedTabs(p){if(window.SHEIBIS_ACCESS&&window.SHEIBIS_WORKER)SHEIBIS_ACCESS.apply(window.SHEIBIS_WORKER)}
   function guardAction(permission){return !isWorker()||has(permission)}
   function openPerms(){
     if(isWorker() || !window.SB_ADMIN || !SB_ADMIN.adminActive){
@@ -7628,8 +7633,7 @@ body.sbw-worker-session #sbAdminPanel .sb-worker-admin-only{display:none!importa
         if(clicks>=5){clicks=0;clearTimeout(timer);if(window.SB_ADMIN&&typeof SB_ADMIN.closeLogin==='function')SB_ADMIN.closeLogin();choice(true);}
       },true);
     }
-    const s=session();
-    if(s){const w=load().find(x=>x.id===s.id);if(w){setSession(w);activateWorker(w)}else{setSession(null);document.body.classList.remove('sbw-worker-session')}}
+    /* La sesión del trabajador se restaura desde el servidor (Google Sheets), no desde localStorage. */
     setTimeout(()=>installPermissionsEntry(),900);
   });
   function installPermissionsEntry(){
@@ -7640,12 +7644,7 @@ body.sbw-worker-session #sbAdminPanel .sb-worker-admin-only{display:none!importa
     if(main&&!main.querySelector('#sbWorkerLogoutSide')){const y=document.createElement('button');y.id='sbWorkerLogoutSide';y.className='sb-ultra-btn';y.style.display='none';y.innerHTML='<i class="fas fa-right-from-bracket"></i><span>Cerrar sesión trabajador</span>';y.onclick=()=>logoutWorker();main.appendChild(y)}
     const workerLogout=document.getElementById('sbWorkerLogoutSide');if(workerLogout)workerLogout.style.display=isWorker()?'flex':'none';
   }
-  // Protección de acciones administrativas sensibles para trabajadores.
-  setTimeout(()=>{
-    if(!window.SB_ADMIN)return;
-    const wrap=(name,perm)=>{const fn=SB_ADMIN[name];if(typeof fn!=='function'||fn.__workerGuard)return;const g=function(){if(isWorker()&&!has(perm)){showNotice('Permiso requerido','Tu cuenta de trabajador no tiene autorización para esta acción.','fa-lock');return false}return fn.apply(this,arguments)};g.__workerGuard=true;SB_ADMIN[name]=g};
-    [['add','productsEdit'],['edit','productsEdit'],['remove','productsEdit'],['save','productsEdit'],['addCategory','productsEdit'],['editCategory','productsEdit'],['saveCategory','productsEdit'],['deleteCategory','productsEdit'],['moveCategory','productsEdit'],['backup','backup'],['exportInventoryExcel','documents'],['exportInventoryPDF','documents']].forEach(x=>wrap(x[0],x[1]));
-  },1400);
+  /* Las guardas de acciones ahora las aplica SHEIBIS_ACCESS (script al final del documento). */
 })();
 </script>
 
@@ -8697,6 +8696,21 @@ window.SB_ADMIN={
     this.cancelForm();this.cancelCategoryForm();
     this.render();this.renderCategories();
     this.log('login','Acceso al centro de administración');
+  },
+
+  /* Apertura del panel para un TRABAJADOR autenticado por el servidor (sin contraseña de admin). */
+  openWorkerPanel(w){
+    if(!w)return;
+    document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;
+    loadCategories();loadProducts();ensureInventory();
+    this.closeLogin();
+    this.adminActive=true;
+    this.stopLock();window.__sbwQuietUntil=Date.now()+1800;
+    document.getElementById('sbAdminPanel')?.classList.add('sb-show');
+    this.showTab('dashboard');
+    this.cancelForm();this.cancelCategoryForm();
+    this.render();this.renderCategories();
+    this.log('login','Acceso de trabajador: '+(w.name||w.username||''));
   },
 
   closePanel(){
@@ -9964,8 +9978,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 'use strict';
 const WKEY='sheibis_workers_v1', OLDKEY='SHEIBIS_WORKER_ACCOUNTS_V1', SKEY='sheibis_worker_session_v1', SERVERKEY='SHEIBIS_WORKER_SERVER_SESSION_V2', CLOUDKEY='sheibis_cloud_version_v2';
 const $=id=>document.getElementById(id);
-const DEFAULTS={dashboard:true,news:true,activity:true,productsView:true,productsEdit:false,inventoryView:true,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false};
-const LABELS=window.SHEIBIS_ROLES_LABELS||{dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Agregar / editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios',workerPermissions:'Gestionar trabajadores'};
+const DEFAULTS={dashboard:false,news:false,activity:false,productsView:false,productsEdit:false,inventoryView:false,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false};
+const LABELS=window.SHEIBIS_ROLES_LABELS||{dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Agregar / editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios'};
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt=t=>{try{return new Date(t).toLocaleString('es-GT',{dateStyle:'short',timeStyle:'short'})}catch(e){return String(t||'')}};
 const localWorkers=()=>{try{let a=JSON.parse(localStorage.getItem(WKEY)||'null');if(!Array.isArray(a))a=JSON.parse(localStorage.getItem(OLDKEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}};
@@ -11262,6 +11276,261 @@ document.addEventListener('change',function(e){var t=e.target;if(t&&t.dataset&&t
 })();
 
 </script>
+<style id="sheibis-worker-access-css">
+/* ====== SHEIBIS · Acceso de trabajadores: módulos bloqueados / permitidos ====== */
+#sbUltraSidebar .sb-ultra-item.sbw-locked{opacity:.52;filter:grayscale(.55);cursor:not-allowed;background:rgba(255,255,255,.012)!important;border-color:rgba(255,255,255,.04)!important;box-shadow:none!important;transform:none!important}
+#sbUltraSidebar .sb-ultra-item.sbw-locked:hover{opacity:.7}
+#sbUltraSidebar .sb-ultra-item.sbw-locked small{color:#c9a645!important}
+#sbUltraSidebar .sb-ultra-item .sbw-lock-ico{margin-left:auto;color:#f5c43c;font-size:.7rem;flex:0 0 auto}
+body.sbw-worker-session #sbUltraSidebar .sb-worker-permissions-item,
+body.sbw-worker-session #sbWorkerPermsBtn,
+body.sbw-worker-session #sbWorkerPermsSide{display:none!important}
+body.sbw-worker-session #sbUltraSidebar .sb-ultra-brand b{color:#f5c43c}
+/* botones internos que el administrador no habilitó */
+body.sbw-deny-productsEdit #sbAdminPanel [onclick*="SB_ADMIN.add("],
+body.sbw-deny-productsEdit #sbAdminPanel [onclick*="SB_ADMIN.addCategory("],
+body.sbw-deny-productsEdit #sbAdminPanel [onclick*="SB_ADMIN.save("],
+body.sbw-deny-productsEdit #sbAdminPanel [onclick*="SB_ADMIN.saveCategory("],
+body.sbw-deny-productsEdit #sbAdminPanel [onclick*="SB_ADMIN.bulkPrice("],
+body.sbw-deny-productsEdit #sbProductList [data-action],
+body.sbw-deny-productsEdit #sbCategoryList [data-cat-action],
+body.sbw-deny-inventoryEdit #sbAdminPanel [onclick*="adjustStock"],
+body.sbw-deny-inventoryEdit #sbAdminPanel [onclick*="reconcileInventory"],
+body.sbw-deny-pointsEdit #sbAdminPanel [onclick*="adjustUserPoints"],
+body.sbw-deny-pointsEdit #sbAdminPanel [onclick*="saveUserPoints"],
+body.sbw-deny-backup #sbAdminPanel [onclick*="SB_ADMIN.backup("],
+body.sbw-deny-backup #sbAdminPanel [onclick*="restorePicker"],
+body.sbw-deny-documents #sbAdminPanel [onclick*="exportInventory"],
+body.sbw-deny-documents #sbAdminPanel [onclick*="printReport"],
+body.sbw-deny-documents #sbAdminPanel [onclick*="downloadPDF"]{opacity:.38!important;cursor:not-allowed!important;filter:grayscale(.7)}
+body.sbw-deny-inventoryEdit #sbInventoryView input,
+body.sbw-deny-inventoryEdit #sbInventoryView select,
+body.sbw-deny-inventoryEdit #sbInventoryView textarea,
+body.sbw-deny-pointsEdit #sbV11Users input{pointer-events:none;opacity:.55}
+/* atajos internos (Dashboard, etc.) hacia módulos bloqueados */
+body.sbw-deny-productsView #sbAdminPanel [onclick*="showTab('products')"],
+body.sbw-deny-inventoryView #sbAdminPanel [onclick*="showTab('inventory')"],
+body.sbw-deny-analytics #sbAdminPanel [onclick*="showTab('analytics')"],
+body.sbw-deny-activity #sbAdminPanel [onclick*="showTab('activity')"],
+body.sbw-deny-usersView #sbAdminPanel [onclick*="showTab('users')"],
+body.sbw-deny-tools #sbAdminPanel [onclick*="showTab('tools')"],
+body.sbw-deny-catalogPro #sbAdminPanel [onclick*="showTab('merchandising')"],
+body.sbw-deny-dashboard #sbAdminPanel [onclick*="showTab('dashboard')"],
+body.sbw-deny-news #sbAdminPanel [onclick*="showTab('news')"]{opacity:.38!important;cursor:not-allowed!important;filter:grayscale(.7)}
+/* pantalla de cuenta pendiente / sin módulos */
+body.sbw-pending #sbAdminPanel .sb-ultra-main>*:not(#sbwPending){display:none!important}
+#sbwPending{display:none}
+body.sbw-pending #sbwPending{display:flex;align-items:center;justify-content:center;min-height:62vh;padding:24px}
+#sbwPending .sbw-pending-card{max-width:520px;text-align:center;padding:38px 30px;border-radius:26px;border:1px solid rgba(245,196,60,.22);background:linear-gradient(145deg,rgba(245,196,60,.07),rgba(255,255,255,.02));box-shadow:0 30px 90px rgba(0,0,0,.35)}
+#sbwPending .sbw-pending-card>i{font-size:2.2rem;color:#f5c43c;margin-bottom:16px}
+#sbwPending h2{margin:0 0 10px;color:#fff;font:800 1.4rem 'Space Grotesk',sans-serif}
+#sbwPending p{margin:0 0 20px;color:#9aa8bb;font-size:.82rem;line-height:1.65}
+#sbwPending button{border:0;border-radius:13px;padding:12px 20px;cursor:pointer;font-weight:800;background:linear-gradient(135deg,#d4af37,#f0d68a);color:#111}
+#sbwSnack{position:fixed;left:50%;bottom:26px;transform:translate(-50%,24px);opacity:0;pointer-events:none;z-index:2147483647;display:flex;align-items:center;gap:12px;max-width:min(92vw,460px);padding:13px 18px;border-radius:16px;background:rgba(8,14,26,.97);border:1px solid rgba(245,196,60,.35);box-shadow:0 18px 60px rgba(0,0,0,.55);transition:.28s}
+#sbwSnack.show{opacity:1;transform:translate(-50%,0)}
+#sbwSnack>i{color:#f5c43c;font-size:1.05rem}
+#sbwSnack b{display:block;color:#f5c43c;font:800 .56rem Orbitron,sans-serif;letter-spacing:1.6px;margin-bottom:3px}
+#sbwSnack span{color:#dbe3ef;font-size:.76rem;line-height:1.45}
+</style>
+<script id="sheibis-worker-access-js">
+(function(){
+'use strict';
+/* Una sola fuente de verdad: window.SHEIBIS_WORKER (viene de Google Sheets) */
+var SERVERKEY='SHEIBIS_WORKER_SERVER_SESSION_V2';
+var ALL=['dashboard','news','activity','productsView','productsEdit','inventoryView','inventoryEdit','catalogPro','analytics','tools','automation','documents','backup','usersView','pointsEdit'];
+var NAMES={dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Productos',productsEdit:'Editar productos',inventoryView:'Inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios'};
+/* acción del menú lateral / pestaña  ->  permiso necesario */
+var TAB_PERM={dashboard:'dashboard',news:'news',analytics:'analytics',activity:'activity',products:'productsView',inventory:'inventoryView',merchandising:'catalogPro',users:'usersView',tools:'tools',print:'documents',automation:'automation',intelligence:'analytics',addproduct:'productsEdit',addcategory:'productsEdit',backup:'backup',ads:'__admin',stats:'analytics'};
+var NAV_ORDER=['dashboard','news','analytics','activity','products','inventory','merchandising','users','tools','print','automation','intelligence'];
+/* métodos que modifican datos  ->  permiso necesario */
+var GUARDS={
+  SB_ADMIN:[['add','productsEdit'],['edit','productsEdit'],['remove','productsEdit'],['save','productsEdit'],['addCategory','productsEdit'],['editCategory','productsEdit'],['saveCategory','productsEdit'],['toggleCategorySoon','productsEdit'],['moveCategory','productsEdit'],['deleteCategory','productsEdit'],['bulkPrice','productsEdit'],
+    ['inventoryCell','inventoryEdit'],['adjustStock','inventoryEdit'],['reconcileInventory','inventoryEdit'],
+    ['adjustUserPoints','pointsEdit'],['saveUserPoints','pointsEdit'],
+    ['backup','backup'],['restorePicker','backup'],
+    ['clearLogs','tools'],['setThreshold','tools'],['maintenance','tools'],
+    ['exportInventoryExcel','documents'],['exportInventoryPDF','documents'],['printReport','documents'],['downloadPDF','documents']],
+  SB_AUTOMATIONS:[['save','automation'],['runNow','automation'],['backup','backup']]
+};
+var DO_PERM={pdf:'documents',inv:'documents',json:'backup',both:'backup',lastsnap:'backup',run:'automation'};
+
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
+function worker(){return document.body.classList.contains('sbw-worker-session')?(window.SHEIBIS_WORKER||null):null}
+function can(perm){var w=worker();if(!w)return true;if(perm==='__admin')return false;return !!(w.permissions&&w.permissions[perm])}
+function canAction(a){return TAB_PERM.hasOwnProperty(a)?can(TAB_PERM[a]):true}
+function toast(msg,title,icon){
+  var el=document.getElementById('sbwSnack');
+  if(!el){el=document.createElement('div');el.id='sbwSnack';el.setAttribute('role','status');document.body.appendChild(el)}
+  el.innerHTML='<i class="fas '+esc(icon||'fa-lock')+'"></i><div><b>'+esc(title||'ACCESO BLOQUEADO')+'</b><span>'+esc(msg)+'</span></div>';
+  el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show')},3800);
+}
+var lastDeny=0;
+function deny(perm){
+  if(Date.now()<(window.__sbwQuietUntil||0))return;
+  var n=Date.now();if(n-lastDeny<600)return;lastDeny=n;
+  var nm=NAMES[perm];
+  toast(nm?'«'+nm+'» está bloqueado para tu cuenta. Pide al administrador que te lo habilite.':'Esta función es solo para el administrador.');
+}
+function doLogout(){try{if(window.SHEIBIS_ROLES&&typeof SHEIBIS_ROLES.logoutWorker==='function')SHEIBIS_ROLES.logoutWorker();}catch(e){console.warn(e)}}
+
+/* ---------- Menú lateral: bloquear lo no autorizado ---------- */
+function setLock(b,locked){
+  if(b.classList.contains('sbw-locked')===locked)return;
+  b.classList.toggle('sbw-locked',locked);
+  b.setAttribute('aria-disabled',locked?'true':'false');
+  var small=b.querySelector('small'),ico=b.querySelector('.sbw-lock-ico');
+  if(locked){
+    b.dataset.sbwTitle=b.getAttribute('title')||'';b.title='Bloqueado: el administrador no te ha dado acceso';
+    if(small&&!b.dataset.sbwSub){b.dataset.sbwSub=small.textContent;small.textContent='Bloqueado por el administrador'}
+    if(!ico){ico=document.createElement('i');ico.className='fas fa-lock sbw-lock-ico';b.appendChild(ico)}
+  }else{
+    if(b.dataset.sbwTitle!==undefined){if(b.dataset.sbwTitle)b.title=b.dataset.sbwTitle;else b.removeAttribute('title');delete b.dataset.sbwTitle}
+    if(small&&b.dataset.sbwSub){small.textContent=b.dataset.sbwSub;delete b.dataset.sbwSub}
+    if(ico)ico.remove();
+  }
+}
+function decorateClose(b,on){
+  var t=b.querySelector('b'),s=b.querySelector('small');if(!t)return;
+  if(on){if(!b.dataset.sbwOrigT){b.dataset.sbwOrigT=t.textContent;b.dataset.sbwOrigS=s?s.textContent:''}t.textContent='Cerrar sesión';if(s)s.textContent='Salir de tu cuenta'}
+  else if(b.dataset.sbwOrigT){t.textContent=b.dataset.sbwOrigT;if(s)s.textContent=b.dataset.sbwOrigS||'';delete b.dataset.sbwOrigT;delete b.dataset.sbwOrigS}
+}
+function allowedNav(){return NAV_ORDER.filter(canAction)}
+function activeAction(){var el=document.querySelector('#sbUltraSidebar .sb-ultra-item.active');return el?el.dataset.ultraAction:null}
+
+function showPending(on,w){
+  document.body.classList.toggle('sbw-pending',!!on);
+  var main=document.querySelector('#sbAdminPanel .sb-ultra-main'),v=document.getElementById('sbwPending');
+  if(!on){if(v)v.remove();return}
+  if(!main)return;
+  var none=!w||!ALL.some(function(k){return w.permissions&&w.permissions[k]});
+  var html='<div class="sbw-pending-card"><i class="fas fa-user-lock"></i><h2>'+(none?'Cuenta pendiente de aprobación':'Sin módulos de consulta habilitados')+'</h2><p>'+
+    (none?'Tu cuenta fue creada correctamente, pero el administrador todavía no te ha habilitado ningún módulo. Todo aparece bloqueado hasta que lo autorice. Esta pantalla se actualiza sola cuando recibas acceso.':'El administrador no te habilitó módulos para consultar. Cuando lo haga, aparecerán desbloqueados aquí automáticamente.')+
+    '</p><button type="button" onclick="SB_ADMIN.closePanel()">Cerrar sesión</button></div>';
+  if(!v){v=document.createElement('div');v.id='sbwPending';main.appendChild(v)}
+  if(v.dataset.sig!==html){v.innerHTML=html;v.dataset.sig=html}
+}
+
+function goFirstAllowed(){
+  var list=allowedNav(),side=document.getElementById('sbUltraSidebar');
+  if(!list.length||!side){return false}
+  var btn=side.querySelector('[data-ultra-action="'+list[0]+'"]');
+  window.__sbwQuietUntil=Date.now()+1200;
+  if(btn){btn.click();return true}
+  try{SB_ADMIN.showTab(list[0]);return true}catch(e){return false}
+}
+
+var lastSig='';
+function apply(w,opts){
+  opts=opts||{};w=w||worker();
+  var on=!!worker();
+  var perms=(on&&w&&w.permissions)||{};
+  ALL.forEach(function(k){document.body.classList.toggle('sbw-deny-'+k,on&&!perms[k])});
+  var side=document.getElementById('sbUltraSidebar');
+  if(!on){
+    document.body.classList.remove('sbw-pending');
+    if(lastSig!==''||(side&&side.querySelector('.sbw-locked'))){
+      if(side){side.querySelectorAll('.sbw-locked').forEach(function(b){setLock(b,false)});side.querySelectorAll('[data-ultra-action="close"]').forEach(function(b){decorateClose(b,false)});
+        var br=side.querySelector('.sb-ultra-brand');if(br&&br.dataset.sbwOrig){br.innerHTML=br.dataset.sbwOrig;delete br.dataset.sbwOrig}}
+      showPending(false);lastSig='';
+    }
+    return;
+  }
+  if(!side)return;
+  var sig=JSON.stringify(perms)+'|'+(w&&w.name)+'|'+(side.dataset.sbwBuilt||'');
+  if(!side.dataset.sbwBuilt){side.dataset.sbwBuilt=String(Date.now())}
+  sig=JSON.stringify(perms)+'|'+(w&&(w.name||w.username))+'|'+side.dataset.sbwBuilt;
+  var changed=(sig!==lastSig)||opts.navigate;
+  if(changed){
+    side.querySelectorAll('[data-ultra-action]').forEach(function(b){
+      var a=b.dataset.ultraAction;
+      if(a==='worker-permissions')return;
+      if(a==='close'){decorateClose(b,true);return}
+      setLock(b,!canAction(a));
+    });
+    var br=side.querySelector('.sb-ultra-brand');
+    if(br){if(!br.dataset.sbwOrig)br.dataset.sbwOrig=br.innerHTML;br.innerHTML='<b>SHEIBIS PERSONAL</b><span>'+esc((w&&(w.name||w.username))||'Trabajador')+'</span>'}
+    lastSig=sig;
+  }
+  /* ¿la vista actual sigue permitida? */
+  var cur=activeAction(),list=allowedNav();
+  if(!list.length){showPending(true,w);return}
+  showPending(false);
+  if(opts.navigate||(cur&&cur!=='close'&&!canAction(cur))||(!cur&&changed)){goFirstAllowed()}
+}
+
+/* ---------- Guardas de acciones ---------- */
+function wrapTab(){
+  var A=window.SB_ADMIN;if(!A||typeof A.showTab!=='function'||A.showTab.__sbw)return;
+  var inner=A.showTab;
+  var g=function(tab){if(worker()&&TAB_PERM.hasOwnProperty(tab)&&!can(TAB_PERM[tab])){deny(TAB_PERM[tab]);return false}return inner.apply(this,arguments)};
+  g.__sbw=true;A.showTab=g;
+}
+function wrapMethods(){
+  Object.keys(GUARDS).forEach(function(objName){
+    var obj=window[objName];if(!obj)return;
+    GUARDS[objName].forEach(function(p){
+      var name=p[0],perm=p[1],fn=obj[name];
+      if(typeof fn!=='function'||fn.__sbw)return;
+      var g=function(){if(worker()&&!can(perm)){deny(perm);return false}return fn.apply(this,arguments)};
+      g.__sbw=true;obj[name]=g;
+    });
+  });
+}
+function wrapClose(){
+  var A=window.SB_ADMIN;if(!A||typeof A.closePanel!=='function'||A.closePanel.__sbw)return;
+  var inner=A.closePanel;
+  var g=function(){var was=!!worker();var r=inner.apply(this,arguments);if(was&&worker())doLogout();return r};
+  g.__sbw=true;A.closePanel=g;
+}
+
+/* Interceptar clics ANTES que cualquier otro manejador (fase de captura en window) */
+window.addEventListener('click',function(e){
+  var w=worker();if(!w||!e.target||!e.target.closest)return;
+  var b=e.target.closest('#sbAdminPanel [data-ultra-action]');
+  if(b){
+    var a=b.dataset.ultraAction;
+    if(a==='worker-permissions'){e.stopImmediatePropagation();e.preventDefault();return}
+    if(a==='close'){e.stopImmediatePropagation();e.preventDefault();SB_ADMIN.closePanel();return}
+    if(!canAction(a)){e.stopImmediatePropagation();e.preventDefault();deny(TAB_PERM[a]);return}
+    return;
+  }
+  var d=e.target.closest('#sbFinalView [data-do]');
+  if(d&&DO_PERM[d.dataset.do]&&!can(DO_PERM[d.dataset.do])){e.stopImmediatePropagation();e.preventDefault();deny(DO_PERM[d.dataset.do])}
+},true);
+
+/* ---------- Permisos en vivo: si el admin cambia algo, se aplica solo ---------- */
+function readSession(){try{return JSON.parse(localStorage.getItem(SERVERKEY)||'null')}catch(e){return null}}
+function refreshFromServer(){
+  var w=worker();if(!w||typeof apiRequest!=='function')return;
+  var s=readSession();if(!s||!s.token)return;
+  apiRequest('getWorkerSession',{token:s.token},{timeout:15000}).then(function(d){
+    var nw=d&&d.worker;if(!nw||!worker())return;
+    var changed=JSON.stringify(nw.permissions||{})!==JSON.stringify(w.permissions||{});
+    nw.token=nw.token||s.token;window.SHEIBIS_WORKER=nw;
+    try{localStorage.setItem(SERVERKEY,JSON.stringify({token:nw.token,id:nw.id,username:nw.username,name:nw.name,permissions:nw.permissions||{}}))}catch(e){}
+    apply(nw);
+    if(changed)toast('El administrador actualizó tus permisos.','PERMISOS ACTUALIZADOS','fa-user-check');
+  }).catch(function(err){
+    var m=String(err&&err.message||'');
+    if(/desactivad|expir|no es v[aá]lida|no encontrad/i.test(m)){toast('Tu sesión terminó o tu cuenta fue desactivada por el administrador.','SESIÓN FINALIZADA','fa-user-lock');doLogout();try{SB_ADMIN.closePanel()}catch(e){}}
+  });
+}
+setInterval(function(){if(worker()&&!document.hidden)refreshFromServer()},20000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&worker())refreshFromServer()});
+
+/* ---------- Cierre de sesión por inactividad (30 min) ---------- */
+var lastAct=Date.now();
+['mousemove','mousedown','keydown','touchstart','scroll'].forEach(function(ev){document.addEventListener(ev,function(){lastAct=Date.now()},{passive:true})});
+setInterval(function(){if(worker()&&Date.now()-lastAct>30*60*1000){toast('Cerramos tu sesión por inactividad.','SESIÓN CERRADA','fa-clock');try{SB_ADMIN.closePanel()}catch(e){doLogout()}}},60000);
+
+function tick(){wrapTab();wrapMethods();wrapClose();apply()}
+setInterval(tick,900);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(tick,200)});else setTimeout(tick,200);
+
+window.SHEIBIS_ACCESS={apply:apply,can:can,refresh:refreshFromServer,allowed:allowedNav};
+})();
+</script>
+
 </body>
 </html>
 
@@ -11552,7 +11821,7 @@ const esc=v=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const fmt=t=>{try{return new Date(t).toLocaleString('es-GT',{dateStyle:'short',timeStyle:'short'})}catch(e){return String(t||'')}};
 const current=()=>{try{return JSON.parse(localStorage.getItem(SESSION)||'null')}catch(e){return null}};
 const isWorker=()=>document.body.classList.contains('sbw-worker-session');
-function labels(){return window.SHEIBIS_ROLES_LABELS||{dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Agregar / editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios',workerPermissions:'Gestionar trabajadores'}};
+function labels(){return window.SHEIBIS_ROLES_LABELS||{dashboard:'Dashboard',news:'Novedades',activity:'Actividad',productsView:'Ver productos',productsEdit:'Agregar / editar productos',inventoryView:'Ver inventario',inventoryEdit:'Modificar inventario',catalogPro:'Catálogo PRO',analytics:'Analítica',tools:'Herramientas',automation:'Automatización',documents:'Documentos',backup:'Respaldos',usersView:'Usuarios',pointsEdit:'Puntos de usuarios'}};
 function toast(msg,title='SHEIBIS'){if(window.showToast)window.showToast(msg,{title,icon:'fa-circle-info',duration:3500});}
 function renderHistory(id){const box=$('sbwHist_'+id);if(!box)return;const h=getHist()[id]||[];box.innerHTML='<div class="sbw-history-title"><i class="fas fa-clock-rotate-left"></i> Historial de acciones</div>'+(h.length?h.slice(0,30).map(x=>'<div class="sbw-history-item"><b>'+esc(x.action)+'<br><span style="font-weight:400;color:#6d7b8d">'+esc(x.detail)+'</span></b><span>'+esc(fmt(x.at))+'</span></div>').join(''):'<div class="sbw-empty">Todavía no hay acciones registradas.</div>');}
 function toggleHistory(id){const box=$('sbwHist_'+id);if(!box)return;box.classList.toggle('show');if(box.classList.contains('show'))renderHistory(id);}
@@ -11566,8 +11835,8 @@ window.SHEIBIS_ROLES_LABELS=labels();
 window.SHEIBIS_ROLES_PRO={render,setPerm,allPerms,toggle,deleteWorker:del,history:toggleHistory};
 function openPerms(){if(isWorker()){toast('Solo el administrador puede gestionar trabajadores.','Acceso restringido');return}render();const el=$('sbWorkerPerms');if(el){el.classList.add('show');el.setAttribute('aria-hidden','false');}}
 function closePerms(){const el=$('sbWorkerPerms');if(el){el.classList.remove('show');el.setAttribute('aria-hidden','true');}}
-async function workerSubmit(e){e.preventDefault();const mode=window.__sbwMode||'login',user=String($('sbwUser')?.value||'').trim().toLowerCase(),pass=String($('sbwPass')?.value||''),status=$('sbwAuthStatus');const set=(m,c)=>{if(status){status.textContent=m;status.className='sbw-status '+(c||'')}};if(!user||!pass){set('Ingresa usuario y contraseña.','err');return false}const arr=load();if(mode==='register'){const name=String($('sbwName')?.value||'').trim(),email=String($('sbwEmail')?.value||'').trim().toLowerCase(),p2=String($('sbwPass2')?.value||'');if(name.length<3||!email.includes('@')){set('Escribe un nombre y correo válidos.','err');return false}if(pass.length<6){set('La contraseña debe tener al menos 6 caracteres.','err');return false}if(pass!==p2){set('Las contraseñas no coinciden.','err');return false}if(arr.some(w=>w.username===user)){set('Ese usuario ya existe.','err');return false}if(arr.some(w=>w.email===email)){set('Ese correo ya está registrado.','err');return false}const ph=await hash(pass),w={id:'W'+Date.now().toString(36).toUpperCase(),name,email,username:user,passwordHash:ph,createdAt:new Date().toISOString(),active:true,permissions:{dashboard:true,news:true,activity:true,productsView:true,productsEdit:false,inventoryView:true,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false}};arr.push(w);save(arr);localStorage.setItem(SESSION,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions}));log(w.id,'Cuenta creada','El trabajador creó su cuenta');document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;if(window.SHEIBIS_ROLES?.activateWorker)window.SHEIBIS_ROLES.activateWorker(w);toast('Cuenta creada correctamente.','Cuenta de trabajador');return false;}const ph=await hash(pass),w=arr.find(x=>x.username===user&&x.passwordHash===ph);if(!w){set('Usuario o contraseña incorrectos.','err');return false}if(w.active===false){set('Esta cuenta está temporalmente desactivada. Contacta al administrador.','err');return false}localStorage.setItem(SESSION,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions||{}}));log(w.id,'Inicio de sesión','Acceso al panel de trabajador');document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;if(window.SHEIBIS_ROLES?.activateWorker)window.SHEIBIS_ROLES.activateWorker(w);toast('Bienvenido, '+w.name+'.','Sesión iniciada');return false;}
-function install(){if(window.SHEIBIS_ROLES){window.SHEIBIS_ROLES.openPermissions=openPerms;window.SHEIBIS_ROLES.closePerms=closePerms;window.SHEIBIS_ROLES.submitWorker=workerSubmit;}const u=$('sbwUser');if(u){u.closest('.sbw-field')?.classList.remove('sbw-reg-field');u.removeAttribute('disabled');}}
+async function workerSubmit(e){e.preventDefault();const mode=window.__sbwMode||'login',user=String($('sbwUser')?.value||'').trim().toLowerCase(),pass=String($('sbwPass')?.value||''),status=$('sbwAuthStatus');const set=(m,c)=>{if(status){status.textContent=m;status.className='sbw-status '+(c||'')}};if(!user||!pass){set('Ingresa usuario y contraseña.','err');return false}const arr=load();if(mode==='register'){const name=String($('sbwName')?.value||'').trim(),email=String($('sbwEmail')?.value||'').trim().toLowerCase(),p2=String($('sbwPass2')?.value||'');if(name.length<3||!email.includes('@')){set('Escribe un nombre y correo válidos.','err');return false}if(pass.length<6){set('La contraseña debe tener al menos 6 caracteres.','err');return false}if(pass!==p2){set('Las contraseñas no coinciden.','err');return false}if(arr.some(w=>w.username===user)){set('Ese usuario ya existe.','err');return false}if(arr.some(w=>w.email===email)){set('Ese correo ya está registrado.','err');return false}const ph=await hash(pass),w={id:'W'+Date.now().toString(36).toUpperCase(),name,email,username:user,passwordHash:ph,createdAt:new Date().toISOString(),active:true,permissions:{dashboard:false,news:false,activity:false,productsView:false,productsEdit:false,inventoryView:false,inventoryEdit:false,catalogPro:false,analytics:false,tools:false,automation:false,documents:false,backup:false,usersView:false,pointsEdit:false,workerPermissions:false}};arr.push(w);save(arr);localStorage.setItem(SESSION,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions}));log(w.id,'Cuenta creada','El trabajador creó su cuenta');document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;if(window.SHEIBIS_ROLES?.activateWorker)window.SHEIBIS_ROLES.activateWorker(w);toast('Cuenta creada correctamente.','Cuenta de trabajador');return false;}const ph=await hash(pass),w=arr.find(x=>x.username===user&&x.passwordHash===ph);if(!w){set('Usuario o contraseña incorrectos.','err');return false}if(w.active===false){set('Esta cuenta está temporalmente desactivada. Contacta al administrador.','err');return false}localStorage.setItem(SESSION,JSON.stringify({id:w.id,username:w.username,name:w.name,permissions:w.permissions||{}}));log(w.id,'Inicio de sesión','Acceso al panel de trabajador');document.body.classList.add('sbw-worker-session');window.SHEIBIS_WORKER=w;if(window.SHEIBIS_ROLES?.activateWorker)window.SHEIBIS_ROLES.activateWorker(w);toast('Bienvenido, '+w.name+'.','Sesión iniciada');return false;}
+function install(){/* El registro, el inicio de sesión y la lista de permisos usan Google Sheets (sheibis-backend-v2-integration). */const u=$('sbwUser');if(u){u.closest('.sbw-field')?.classList.remove('sbw-reg-field');u.removeAttribute('disabled');}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
 </script>
@@ -11676,7 +11945,7 @@ setInterval(function(){
     const side=document.getElementById('sbUltraSidebar');
     if(!side)return;
     const item=side.querySelector('.sb-worker-permissions-item');
-    if(item){
+    if(item&&!document.body.classList.contains('sbw-worker-session')){
       item.style.display='';
       item.style.visibility='visible';
     }
