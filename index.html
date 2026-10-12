@@ -10369,18 +10369,28 @@ window.addEventListener('online',function(){sbRetryN=0;sbRetryPlaceholders()});
 setInterval(function(){sbSweepImgs();sbRetryPlaceholders()},15000);
 setTimeout(sbSweepImgs,2500);
 
-/* ----- Verificador de imágenes en el panel de productos ----- */
-function sbTestImg(url,cb){
-  var c=sbCands(url),i=0;
-  (function nxt(){
-    if(i>=c.length)return cb(false);
-    var im=new Image(),done=false,k=i;im.referrerPolicy='no-referrer';
-    var tm=setTimeout(function(){if(done)return;done=true;i++;nxt()},7000);
-    im.onload=function(){if(done)return;done=true;clearTimeout(tm);if(im.naturalWidth>2)cb(true,c[k]);else{i++;nxt()}};
-    im.onerror=function(){if(done)return;done=true;clearTimeout(tm);i++;nxt()};
-    im.src=c[k];
-  })();
+/* ----- Verificador de imágenes (panel de administración) ----- */
+function sbLoads(u,ms,cb){
+  var im=new Image(),d=false,tm=setTimeout(function(){if(!d){d=true;cb(false)}},ms);im.referrerPolicy='no-referrer';
+  im.onload=function(){if(d)return;d=true;clearTimeout(tm);cb(im.naturalWidth>2)};
+  im.onerror=function(){if(d)return;d=true;clearTimeout(tm);cb(false)};
+  im.src=u;
 }
+/* ok = la ven todos · proxy = se ve gracias a un servicio alterno · private = SOLO la ves tú (privada/necesita tu sesión) · broken = no carga */
+function sbClassify(url,cb){
+  var c=sbCands(url),direct=c[0],prox=c.filter(function(x){return /weserv\.nl|wsrv\.nl|duckduckgo\.com|gadgets\/proxy/.test(x)}),res={direct:null,anon:null};
+  function fin(){if(res.direct===null||res.anon===null)return;cb(res.direct&&res.anon?'ok':res.direct?'private':res.anon?'proxy':'broken')}
+  sbLoads(direct,9000,function(ok){res.direct=ok;fin()});
+  var left=prox.length,any=false;
+  if(!left){res.anon=false;fin();return}
+  prox.forEach(function(u){sbLoads(u,10000,function(ok){if(ok)any=true;left--;if(res.anon===null&&(any||left===0)){res.anon=any;fin()}})});
+}
+var SB_IMG_MSG={
+  ok:['✅','La ven todos'],
+  proxy:['✅','Se ve (carga por un servicio alterno)'],
+  private:['⚠️','SOLO LA VES TÚ: la foto es privada o necesita tu sesión. Los demás verán la imagen rota. Si es de Google Drive: Compartir → "Cualquier persona con el enlace"; si es de Facebook/Instagram/WhatsApp, súbela a Imgur o ImgBB y pega el enlace directo.'],
+  broken:['❌','No carga: el enlace venció o no es una imagen directa (clic derecho en la foto → "Copiar dirección de la imagen")']
+};
 var sbChkT=null;
 function sbCheckProductImages(){
   var m=document.getElementById('sbImage'),x=document.getElementById('sbImages');if(!m)return;
@@ -10388,14 +10398,53 @@ function sbCheckProductImages(){
   var box=document.getElementById('sbImgCheck');
   if(!box){box=document.createElement('div');box.id='sbImgCheck';box.style.cssText='margin-top:10px;display:grid;gap:6px;font:600 .74rem Inter,sans-serif';(x||m).parentNode.appendChild(box)}
   if(!urls.length){box.innerHTML='';return}
-  box.innerHTML=urls.map(function(u,k){return '<div data-k="'+k+'" style="display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.05)"><span>⏳</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;opacity:.8">'+esc(u)+'</span></div>'}).join('');
-  urls.forEach(function(u,k){sbTestImg(u,function(ok){
-    var r=box.querySelector('[data-k="'+k+'"]');if(!r)return;
-    r.firstChild.textContent=ok?'✅':'⚠️';
-    if(!ok){r.style.background='rgba(255,80,80,.14)';r.lastChild.textContent='No carga como imagen. Usa un enlace directo a la foto (clic derecho en la foto → "Copiar dirección de la imagen"), no el link de la página del producto: '+u}
+  box.innerHTML=urls.map(function(u,k){return '<div data-k="'+k+'" style="padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.05);line-height:1.4"><b>⏳ Revisando…</b> <span style="opacity:.7;word-break:break-all">'+esc(u)+'</span></div>'}).join('');
+  urls.forEach(function(u,k){sbClassify(u,function(st){
+    var r=box.querySelector('[data-k="'+k+'"]');if(!r)return;var mg=SB_IMG_MSG[st];
+    r.style.background=(st==='ok'||st==='proxy')?'rgba(60,200,120,.13)':'rgba(255,80,80,.16)';
+    r.innerHTML='<b>'+mg[0]+' '+esc(mg[1])+'</b><br><span style="opacity:.65;word-break:break-all">'+esc(u)+'</span>';
   })});
 }
 document.addEventListener('input',function(e){var t=e.target;if(t&&(t.id==='sbImage'||t.id==='sbImages')){clearTimeout(sbChkT);sbChkT=setTimeout(sbCheckProductImages,700)}});
+
+/* Revisar las fotos de TODOS los productos de una vez */
+function sbScanAll(){
+  var out=document.getElementById('sbScanOut');if(!out)return;
+  var prods=(Array.isArray(window.PRODUCTOS)?window.PRODUCTOS:[]).filter(function(p){return p&&p.id!==undefined}),jobs=[],rows={};
+  out.innerHTML='<div id="sbScanSum" style="font:700 .8rem Inter,sans-serif;margin:10px 0">⏳ Revisando '+prods.length+' producto(s)…</div><div id="sbScanRows" style="display:grid;gap:8px"></div>';
+  var list=document.getElementById('sbScanRows'),counts={ok:0,proxy:0,private:0,broken:0,empty:0};
+  prods.forEach(function(p){
+    var urls=[];[p.imagen].concat(Array.isArray(p.imagenes)?p.imagenes:[]).forEach(function(u){u=String(u||'').trim();if(u&&urls.indexOf(u)<0)urls.push(u)});
+    var row=document.createElement('div');row.style.cssText='padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.05);font:600 .76rem/1.45 Inter,sans-serif';
+    row.innerHTML='<b>'+esc(p.nombre||('Producto '+p.id))+'</b><div class="st"></div>';list.appendChild(row);rows[p.id]=row;
+    if(!urls.length){counts.empty++;row.style.background='rgba(255,80,80,.16)';row.querySelector('.st').innerHTML='⚠️ Sin foto guardada. <button type="button" class="sbx-btn" data-edit="'+esc(p.id)+'" style="margin-left:6px">Editar</button>';return}
+    urls.forEach(function(u){jobs.push({p:p,u:u,row:row})});
+  });
+  var total=jobs.length,done=0,active=0,bad=0;
+  function sum(){var el=document.getElementById('sbScanSum');if(!el)return;el.innerHTML=(done<total?'⏳ Revisando fotos… '+done+'/'+total+' · ':'Listo · ')+'✅ '+(counts.ok+counts.proxy)+' bien · ⚠️ '+(counts.private+counts.empty)+' con aviso · ❌ '+counts.broken+' no cargan'}
+  function next(){
+    while(active<4&&jobs.length){
+      (function(j){active++;sbClassify(j.u,function(st){
+        active--;done++;counts[st]++;var mg=SB_IMG_MSG[st],st0=j.row.querySelector('.st');
+        st0.insertAdjacentHTML('beforeend','<div style="margin-top:4px">'+mg[0]+' '+(st==='ok'||st==='proxy'?esc(mg[1]):'<b>'+esc(mg[1])+'</b>')+'<br><span style="opacity:.6;word-break:break-all">'+esc(j.u)+'</span></div>');
+        if(st==='private'||st==='broken'){j.row.style.background='rgba(255,80,80,.16)';if(!j.row.querySelector('[data-edit]'))st0.insertAdjacentHTML('beforeend','<button type="button" class="sbx-btn" data-edit="'+esc(j.p.id)+'" style="margin-top:6px">Editar este producto</button>')}
+        sum();next();
+      })})(jobs.shift());
+    }
+  }
+  sum();if(!total)return;next();
+}
+document.addEventListener('click',function(e){
+  var sc=e.target.closest&&e.target.closest('#sbScanBtn');if(sc){e.preventDefault();sbScanAll();return}
+  var ed=e.target.closest&&e.target.closest('[data-edit]');
+  if(ed&&ed.closest('#sbScanOut')&&window.SB_ADMIN&&SB_ADMIN.edit){SB_ADMIN.edit(ed.getAttribute('data-edit'));var f=document.getElementById('sbProductForm');if(f)f.scrollIntoView({behavior:'smooth',block:'center'})}
+});
+function sbInstallScan(){
+  var tb=document.querySelector('#sbProductAdminContent .sb-toolbar');if(!tb||document.getElementById('sbScanBtn'))return;
+  var b=document.createElement('button');b.type='button';b.id='sbScanBtn';b.className='sbx-btn gold';b.style.cssText='margin-top:8px;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:800';b.textContent='🔍 Revisar fotos de todos los productos';
+  var o=document.createElement('div');o.id='sbScanOut';tb.appendChild(b);tb.parentNode.insertBefore(o,tb.nextSibling);
+}
+window.SBIMG={scan:sbScanAll,classify:sbClassify,install:sbInstallScan};
 
 /* ======================= PRODUCTOS: carrusel automático cada 3 s ======================= */
 var slideTimer=null;
@@ -10765,7 +10814,7 @@ var mo=null,moT=null;
 function onMut(){
   clearTimeout(moT);
   moT=setTimeout(function(){
-    $$('.product-detail-image[data-product-id]').forEach(prepSlides);setTimeout(sbSweepImgs,1500);
+    $$('.product-detail-image[data-product-id]').forEach(prepSlides);setTimeout(sbSweepImgs,1500);sbInstallScan();
     ensureSearch();installAssistant();
     if(document.getElementById('tabCatalogs')&&!document.getElementById('sbAds'))renderAds();
   },120);
