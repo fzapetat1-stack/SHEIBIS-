@@ -5020,79 +5020,93 @@ function saveSession() {
                     : '<i class="fas fa-eye"></i>';
             };
 
-            modal.querySelector('#sbDeleteConfirm').onclick=async()=>{
+            const confirmBtn=modal.querySelector('#sbDeleteConfirm');
+            const cancelBtn=modal.querySelector('#sbDeleteCancel');
+            const errBox=modal.querySelector('#sbDeleteError');
+            let deleting=false;
+
+            const friendlyError=(e)=>{
+                const msg=String((e&&e.message)||'');
+                if(e&&e.code==='TIMEOUT') return 'El servidor tardó demasiado en responder. Revisa tu conexión e inténtalo de nuevo.';
+                if(e&&(e.name==='TypeError'||/failed to fetch|network|load failed/i.test(msg))) return 'No hay conexión con el servidor. Revisa tu internet e inténtalo de nuevo.';
+                if(e&&e.code==='INVALID_SERVER_RESPONSE') return 'El servidor no respondió correctamente. Inténtalo otra vez en unos segundos.';
+                if(/acci[oó]n no reconocida/i.test(msg)){ console.error('SHEIBIS · el Apps Script publicado no tiene la acción deleteAccount. Publica una nueva versión.',e); return 'La eliminación de cuentas no está disponible en este momento. Inténtalo más tarde.'; }
+                return msg||'No fue posible eliminar la cuenta.';
+            };
+
+            const finishDeletion=()=>{
+                try{localStorage.removeItem(SHEIBIS_SESSION_KEY);}catch(_){}
+                try{localStorage.removeItem('sheibis_pending_avatar');}catch(_){}
+                try{sessionStorage.removeItem(ONLINE_SESSION_KEY);sessionStorage.removeItem('sheibis_guest');}catch(_){}
+                close();
+                /* Misma limpieza completa que "Salir": usuario, puntos, carrito, pedidos y pantalla de inicio */
+                try{ window.handleLogout(); }
+                catch(_){
+                    currentUser=null;userPoints=0;userOrders=[];cart=[];quantities={};
+                    authContainer.classList.remove('show');topBar.classList.remove('show');appContainer.classList.remove('show');bannerContainer.classList.add('show');
+                }
+                showToast(
+                    'Tu cuenta fue eliminada correctamente. Gracias por haber formado parte de SHEIBIS.',
+                    {title:'CUENTA ELIMINADA',kicker:'SHEIBIS · SEGURIDAD',icon:'fa-user-check',duration:6500}
+                );
+            };
+
+            const doDelete=async()=>{
+                if(deleting) return;
                 const reasonEl=modal.querySelector('input[name="sbDeleteReason"]:checked');
                 const reason=reasonEl ? reasonEl.value : '';
                 const other=String(modal.querySelector('#sbDeleteOther')?.value||'').trim();
                 const pass=String(passwordInput.value||'').trim();
-                const err=modal.querySelector('#sbDeleteError');
-                const btn=modal.querySelector('#sbDeleteConfirm');
 
-                err.textContent='';
+                errBox.textContent='';
 
                 if(!reason){
-                    err.textContent='Selecciona el motivo de la eliminación.';
+                    errBox.textContent='Selecciona el motivo de la eliminación.';
                     return;
                 }
-
                 if(!pass){
-                    err.textContent='Ingresa tu contraseña para confirmar la eliminación.';
+                    errBox.textContent='Ingresa tu contraseña para confirmar la eliminación.';
                     passwordInput.focus();
                     return;
                 }
-
-                if(pass.length<1){
-                    err.textContent='La contraseña ingresada no es válida.';
+                if(!currentUser || !currentUser.id){
+                    errBox.textContent='Tu sesión expiró. Inicia sesión de nuevo para eliminar tu cuenta.';
                     return;
                 }
 
-                btn.disabled=true;
-                btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando…';
+                deleting=true;
+                confirmBtn.disabled=true;
+                cancelBtn.disabled=true;
+                confirmBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando…';
 
                 try{
                     await apiRequest(
                         'deleteAccount',
-                        {
-                            id:currentUser.id,
-                            password:pass,
-                            reason:reason,
-                            reasonDetail:other
-                        },
+                        {id:currentUser.id,password:pass,reason:reason,reasonDetail:other},
                         {timeout:30000}
                     );
-
-                    localStorage.removeItem(SHEIBIS_SESSION_KEY);
-                    sessionStorage.removeItem(ONLINE_SESSION_KEY);
-
-                    currentUser=null;
-                    userPoints=0;
-                    userOrders=[];
-                    cart=[];
-                    quantities={};
-
-                    close();
-
-                    authContainer.classList.add('show');
-                    topBar.classList.remove('show');
-                    appContainer.classList.remove('show');
-                    bannerContainer.classList.remove('show');
-
-                    showToast(
-                        'Tu cuenta fue eliminada correctamente. Gracias por haber formado parte de SHEIBIS.',
-                        {
-                            title:'CUENTA ELIMINADA',
-                            kicker:'SHEIBIS · SEGURIDAD',
-                            icon:'fa-user-check'
-                        }
-                    );
-
                 }catch(e){
-                    err.textContent=e.message||'No fue posible eliminar la cuenta.';
-                    btn.disabled=false;
-                    btn.innerHTML='<i class="fas fa-trash-can"></i> Eliminar mi cuenta';
-                    passwordInput.focus();
+                    /* Si una petición anterior ya la eliminó (respuesta perdida), se considera completada. */
+                    const alreadyGone=e && e.code==='SERVER_ERROR' && /usuario no encontrado/i.test(String(e.message||''));
+                    if(!alreadyGone){
+                        errBox.textContent=friendlyError(e);
+                        deleting=false;
+                        confirmBtn.disabled=false;
+                        cancelBtn.disabled=false;
+                        confirmBtn.innerHTML='<i class="fas fa-trash-can"></i> Eliminar mi cuenta';
+                        passwordInput.focus();
+                        return;
+                    }
                 }
+                finishDeletion();
             };
+
+            confirmBtn.onclick=doDelete;
+            passwordInput.addEventListener('keydown',(ev)=>{ if(ev.key==='Enter'){ ev.preventDefault(); doDelete(); } });
+            document.addEventListener('keydown',function escClose(ev){
+                if(!document.body.contains(modal)){ document.removeEventListener('keydown',escClose); return; }
+                if(ev.key==='Escape' && !deleting) close();
+            });
 
             setTimeout(()=>passwordInput?.focus(),180);
         };
@@ -7395,6 +7409,21 @@ function startSheibisTrackingAutoRefresh(){
 
 window.premiumMenuAction=async function(action){
     if(typeof toggleMenu==='function') toggleMenu();
+
+    /* ACCIONES DE CUENTA (no son vistas internas).
+       Se ejecutan de inmediato y de forma síncrona para conservar el gesto
+       del toque: así el navegador sí permite abrir la galería/cámara. */
+    if(action==='photo' || action==='deleteAccount' || action==='account'){
+        try{
+            if(action==='photo') window.chooseProfilePhoto();
+            else if(action==='deleteAccount') window.showDeleteAccountModal();
+            else window.showUserProfile();
+        }catch(err){
+            console.error('SHEIBIS · acción de cuenta falló:',action,err);
+            try{ showToast('No se pudo completar la acción. Inténtalo de nuevo.',{title:'CUENTA SHEIBIS',icon:'fa-circle-exclamation'}); }catch(_){}
+        }
+        return;
+    }
 
     const restricted=['orders'];
 
@@ -10742,37 +10771,130 @@ ready(function(){
 });
 
 /* ---------- 2. Foto de perfil ---------- */
-window.chooseProfilePhoto=function(){
- if(!currentUser||currentUser.isGuest===true){toast('Inicia sesión para configurar tu foto de perfil.','CUENTA SHEIBIS','fa-user-lock');return}
- var input=document.createElement('input');input.type='file';input.accept='image/*';
- input.style.cssText='position:fixed;left:-9999px;opacity:0';document.body.appendChild(input);
- var done=function(){setTimeout(function(){input.remove()},500)};
- input.onchange=function(){
-  var file=input.files&&input.files[0];done();if(!file)return;
-  if(file.type&&file.type.indexOf('image/')!==0){toast('Selecciona una imagen válida.','IMAGEN NO VÁLIDA','fa-image');return}
-  var url=URL.createObjectURL(file),img=new Image();
-  img.onerror=function(){URL.revokeObjectURL(url);toast('No se pudo leer la imagen. Prueba con una foto JPG o PNG.','IMAGEN NO VÁLIDA','fa-image')};
-  img.onload=function(){
-   URL.revokeObjectURL(url);
-   var side=Math.min(img.width,img.height),sx=(img.width-side)/2,sy=(img.height-side)/2,out=null;
-   /* Google Sheets admite máx. 50 000 caracteres por celda: se comprime por debajo de 45 000 */
-   var sizes=[320,260,200,160,120],qs=[.82,.7,.58,.46,.36];
-   for(var i=0;i<sizes.length&&!out;i++){var c=document.createElement('canvas');c.width=c.height=sizes[i];var x=c.getContext('2d');x.fillStyle='#111';x.fillRect(0,0,c.width,c.height);x.drawImage(img,sx,sy,side,side,0,0,c.width,c.height);
-    for(var j=0;j<qs.length;j++){var d=c.toDataURL('image/jpeg',qs[j]);if(d.length<=45000){out=d;break}}}
-   if(!out){toast('No se pudo comprimir la foto. Elige otra imagen.','IMAGEN NO VÁLIDA','fa-image');return}
-   toast('Guardando tu nueva foto de perfil…','GUARDANDO FOTO','fa-cloud-arrow-up');
-   apiRequest('updateUser',{id:currentUser.id,fields:{avatar:out}},{timeout:30000}).then(function(data){
-     currentUser=Object.assign({},currentUser,data&&data.user?data.user:{},{avatar:out});
-     try{userAvatar.src=out;menuAvatar.src=out}catch(e){}
-     try{saveSession()}catch(e){}
-     try{var p=document.getElementById('sbAccountPhoto');if(p)p.src=out}catch(e){}
-     toast('Tu foto quedó guardada en tu perfil.','FOTO ACTUALIZADA','fa-camera');
-   }).catch(function(err){toast((err&&err.message)||'No fue posible guardar la foto.','NO SE PUDO GUARDAR','fa-circle-exclamation')});
-  };
-  img.src=url;
+(function(){
+ var PENDING_KEY='sheibis_pending_avatar';
+ var MAX_CHARS=45000; /* Google Sheets admite máx. 50 000 caracteres por celda */
+ var SIZES=[320,260,200,160,120], QUALITIES=[.82,.7,.58,.46,.36];
+
+ function applyAvatarUI(src){
+  try{userAvatar.src=src}catch(e){}
+  try{menuAvatar.src=src}catch(e){}
+  try{var p=document.getElementById('sbAccountPhoto');if(p)p.src=src}catch(e){}
+ }
+ function readPending(){try{return JSON.parse(localStorage.getItem(PENDING_KEY)||'null')}catch(e){return null}}
+ function writePending(v){try{if(v)localStorage.setItem(PENDING_KEY,JSON.stringify(v));else localStorage.removeItem(PENDING_KEY)}catch(e){}}
+
+ /* Lee la imagen con <img>; si el navegador no puede (p. ej. HEIC raro), intenta createImageBitmap */
+ function loadImage(file){
+  return new Promise(function(resolve,reject){
+   var url=URL.createObjectURL(file),img=new Image();
+   img.onload=function(){URL.revokeObjectURL(url);resolve({src:img,w:img.naturalWidth||img.width,h:img.naturalHeight||img.height})};
+   img.onerror=function(){
+    URL.revokeObjectURL(url);
+    if(typeof createImageBitmap==='function'){
+     createImageBitmap(file).then(function(bm){resolve({src:bm,w:bm.width,h:bm.height})}).catch(function(){reject(new Error('decode'))});
+    }else reject(new Error('decode'));
+   };
+   img.src=url;
+  });
+ }
+ /* Recorte cuadrado centrado + compresión progresiva hasta caber en una celda */
+ function compress(im){
+  var side=Math.min(im.w,im.h),sx=(im.w-side)/2,sy=(im.h-side)/2;
+  for(var i=0;i<SIZES.length;i++){
+   var c=document.createElement('canvas');c.width=c.height=SIZES[i];
+   var x=c.getContext('2d');if(!x)return null;
+   x.fillStyle='#111';x.fillRect(0,0,c.width,c.height);
+   x.drawImage(im.src,sx,sy,side,side,0,0,c.width,c.height);
+   for(var j=0;j<QUALITIES.length;j++){
+    var d=c.toDataURL('image/jpeg',QUALITIES[j]);
+    if(d&&d.length<=MAX_CHARS&&d.indexOf('data:image/jpeg')===0)return d;
+   }
+  }
+  return null;
+ }
+ function isRetryable(e){
+  /* Errores de red/tiempo = reintentables. Errores devueltos por el servidor = definitivos. */
+  return !e || e.code==='TIMEOUT' || e.code==='INVALID_SERVER_RESPONSE' || e.name==='TypeError' || /failed to fetch|network|load failed/i.test(String(e.message||''));
+ }
+ function pushAvatar(id,avatar){
+  return apiRequest('updateUser',{id:id,fields:{avatar:avatar}},{timeout:30000});
+ }
+ function commitSynced(avatar,data){
+  /* Conserva SIEMPRE la foto elegida aunque el servidor devuelva otros campos */
+  currentUser=Object.assign({},currentUser,data&&data.user?data.user:{},{avatar:avatar});
+  applyAvatarUI(avatar);
+  try{saveSession()}catch(e){}
+  writePending(null);
+ }
+ window.sheibisRetryPendingAvatar=function(){
+  var pend=readPending();
+  if(!pend)return;
+  if(typeof currentUser==='undefined'||!currentUser||currentUser.isGuest===true||String(currentUser.id)!==String(pend.id)){return}
+  if(currentUser.avatar!==pend.avatar){currentUser.avatar=pend.avatar;applyAvatarUI(pend.avatar);try{saveSession()}catch(e){}}
+  pushAvatar(pend.id,pend.avatar).then(function(data){
+   commitSynced(pend.avatar,data);
+   toast('Tu foto de perfil se sincronizó correctamente.','FOTO SINCRONIZADA','fa-cloud-arrow-up');
+  }).catch(function(e){ if(!isRetryable(e)) writePending(null); });
  };
- input.click();
-};
+ ready(function(){
+  setTimeout(window.sheibisRetryPendingAvatar,4000);
+  setInterval(window.sheibisRetryPendingAvatar,45000);
+ });
+
+ window.chooseProfilePhoto=function(){
+  if(!currentUser||currentUser.isGuest===true){toast('Inicia sesión para configurar tu foto de perfil.','CUENTA SHEIBIS','fa-user-lock');return}
+  var input=document.createElement('input');
+  input.type='file';input.accept='image/*';
+  input.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;width:1px;height:1px';
+  document.body.appendChild(input);
+  var cleanup=function(){setTimeout(function(){try{input.remove()}catch(e){}},800)};
+  /* Si el usuario cancela el selector, el input no queda huérfano */
+  input.addEventListener('cancel',cleanup);
+
+  input.onchange=function(){
+   var file=input.files&&input.files[0];cleanup();
+   if(!file)return;
+   if(file.type&&file.type.indexOf('image/')!==0){toast('Selecciona una imagen válida (JPG, PNG, WEBP…).','IMAGEN NO VÁLIDA','fa-image');return}
+   if(file.size>40*1024*1024){toast('La imagen es demasiado pesada. Elige una de menos de 40 MB.','IMAGEN DEMASIADO GRANDE','fa-image');return}
+   var owner=currentUser;
+   toast('Procesando tu foto…','FOTO DE PERFIL','fa-image');
+   loadImage(file).then(function(im){
+    if(!im.w||!im.h)throw new Error('decode');
+    var out=compress(im);
+    if(!out){toast('No se pudo comprimir la foto. Elige otra imagen.','IMAGEN NO VÁLIDA','fa-image');return}
+    if(!currentUser||String(currentUser.id)!==String(owner.id)){return} /* cerró sesión mientras tanto */
+
+    var previous=currentUser.avatar||'';
+    /* 1) Se muestra de inmediato y queda guardada en este dispositivo */
+    currentUser.avatar=out;applyAvatarUI(out);try{saveSession()}catch(e){}
+    toast('Guardando tu nueva foto de perfil…','GUARDANDO FOTO','fa-cloud-arrow-up');
+
+    /* 2) Se guarda en Google Sheets */
+    return pushAvatar(currentUser.id,out).then(function(data){
+     commitSynced(out,data);
+     toast('Tu foto quedó guardada en tu perfil.','FOTO ACTUALIZADA','fa-camera');
+    }).catch(function(err){
+     if(isRetryable(err)){
+      /* Sin conexión / servidor lento: la foto se conserva y se reintenta sola */
+      writePending({id:currentUser.id,avatar:out});
+      toast('Tu foto ya aparece en tu perfil. No pudimos sincronizarla todavía; lo intentaremos de nuevo automáticamente.','FOTO GUARDADA EN ESTE DISPOSITIVO','fa-cloud');
+     }else{
+      /* El servidor la rechazó: se restaura la anterior para no mostrar algo que no existe en la nube */
+      currentUser.avatar=previous;
+      if(previous)applyAvatarUI(previous);
+      else{try{var g='https://www.gravatar.com/avatar/'+md5(String(currentUser.email||'').toLowerCase().trim())+'?d=identicon&s=200';applyAvatarUI(g)}catch(e){}}
+      try{saveSession()}catch(e){}
+      toast((err&&err.message)||'No fue posible guardar la foto.','NO SE PUDO GUARDAR','fa-circle-exclamation');
+     }
+    });
+   }).catch(function(){
+    toast('No se pudo leer la imagen. Prueba con una foto JPG o PNG.','IMAGEN NO VÁLIDA','fa-image');
+   });
+  };
+  input.click();
+ };
+})();
 
 /* ---------- 3. Carrito: método de pago ---------- */
 var PAY={bi:'BI',banrural:'Banrural',zigi:'Zigi',fri:'Fri'};
