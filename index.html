@@ -9633,6 +9633,7 @@ function renderMerchandising(el){
       }).join('')}
     </div>`;
 }
+window.renderMerchandising=renderMerchandising;
 window.SBP_ADMIN={saveAll:function(){var ps=getProducts();document.querySelectorAll('[data-sbp-field]').forEach(function(input){var p=ps.find(function(x){return String(x.id)===String(input.dataset.sbpId)});if(!p)return;var f=input.dataset.sbpField;if(f==='recomendado'||f==='destacado'||f==='nuevo')p[f]=!!input.checked;else if(f==='ventas')p[f]=Math.max(0,Math.floor(num(input.value)));else if(f==='valoracion')p[f]=Math.max(0,Math.min(5,num(input.value)));else if(f==='tags')p[f]=String(input.value||'').split(/[,;]+/).map(function(x){return x.trim()}).filter(Boolean)});if(typeof saveProducts==='function'&&saveProducts()){SB_ADMIN.log('product','Catálogo PRO actualizado: recomendaciones, novedades, ventas y valoraciones');renderMerchandising(document.getElementById('sbV11Merchandising'));if(typeof refreshStore==='function')refreshStore();if(typeof showToast==='function')showToast('Cambios del catálogo PRO guardados correctamente.',{title:'CATÁLOGO PRO',icon:'fa-star',duration:3500})}}};
 var tries=0;function boot(){tries++;installAdminMerch();if(tries<30&&!window.SB_ADMIN)setTimeout(boot,200)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,0);
 })();
