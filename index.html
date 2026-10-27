@@ -4099,7 +4099,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyzdND03N6jPC5vHyYgwdprH1eFs6rpQ8DuIx9Xb75hFMxdWHRZnwxIec2p5yS1Zq7X/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxofcdp5sfSYy7mt9Q9UBc8OLQaNnT3seb2LYf_VxQ_AeEcY9WgnGXA6Tw9bVATLYPw/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -4252,12 +4252,13 @@ var PRODUCTOS = window.PRODUCTOS = [
                 if (action === 'adjustUserPoints') resumen = (payload.delta > 0 ? 'Sumar ' : 'Quitar ') + Math.abs(payload.delta) + ' puntos al usuario ' + payload.userId;
                 else if (action === 'setUserPoints') resumen = 'Fijar en ' + payload.points + ' puntos al usuario ' + payload.userId;
                 else if (action === 'setInventory') resumen = 'Inventario de "' + (it.nombre || it.productId) + '": nuevo stock ' + it.stock;
-                await apiRequest('requestApproval', {
+                const __aprResp = await apiRequest('requestApproval', {
                     targetAction: action,
                     data: payload,
                     requestedBy: w.name || w.nombre || w.email || 'Trabajador',
                     summary: resumen
                 }, options);
+                try { if (window.sbTrackApproval && __aprResp && __aprResp.id) window.sbTrackApproval(__aprResp.id, resumen, action, payload); } catch (_) {}
                 const pendiente = new Error('⏳ Enviado al administrador para aprobación. Todavía no se aplicó.');
                 pendiente.code = 'PENDING_APPROVAL';
                 throw pendiente;
@@ -5795,7 +5796,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbyzdND03N6jPC5vHyYgwdprH1eFs6rpQ8DuIx9Xb75hFMxdWHRZnwxIec2p5yS1Zq7X/exec
+     https://script.google.com/macros/s/AKfycbxofcdp5sfSYy7mt9Q9UBc8OLQaNnT3seb2LYf_VxQ_AeEcY9WgnGXA6Tw9bVATLYPw/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -8502,6 +8503,7 @@ async function syncGlobalInventory_(force=false){
   }
 }
 
+window.__sbSyncInventoryNow=function(){return syncGlobalInventory_(true);};
 async function saveInventoryGlobal_(id, stock, name){
   const inv=ensureInventory(), key=String(id), previous=inv[key]?{...inv[key]}:null;
   const safeStock=Math.max(0,Math.floor(Number(stock)||0));
@@ -12466,5 +12468,242 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   new MutationObserver(function(){clearTimeout(t);t=setTimeout(scan,60);}).observe(document.documentElement,{childList:true,subtree:true});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan);else scan();
   setTimeout(scan,500);setTimeout(scan,1500);
+})();
+</script>
+
+<script id="sheibis-approval-watcher-js">
+/* =====================================================================
+   SHEIBIS · AVISO INSTANTÁNEO DE APROBACIONES (Telegram)
+   - Cuando un trabajador envía una solicitud, queda "vigilada".
+   - Cada pocos segundos se consulta el estado al servidor (sin recargar).
+   - Apenas el administrador pulsa ✅ o ❌ en Telegram, aparece una nueva
+     notificación: APROBADA / DENEGADA / VENCIDA / ERROR.
+   - Sobrevive a recargas de la página (se guarda en localStorage).
+   ===================================================================== */
+(function(){
+  'use strict';
+  if (window.__sbApprovalWatcher) return;
+  window.__sbApprovalWatcher = true;
+
+  var KEY = 'sheibis_pending_approvals_v1';
+  var MAX_AGE = 24 * 60 * 60 * 1000 + 5 * 60 * 1000;
+  var FAST = 2500, SLOW = 8000;
+  var timer = null, busy = false, fails = 0, misses = {}, mem = [];
+
+  /* ---------- almacenamiento ---------- */
+  function read(){
+    try {
+      var a = JSON.parse(localStorage.getItem(KEY) || '[]');
+      return Array.isArray(a) ? a : [];
+    } catch (_) { return mem.slice(); }
+  }
+  function write(a){
+    mem = a.slice();
+    try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (_) {}
+    chip();
+  }
+  function fresh(a){
+    var now = Date.now();
+    return a.filter(function(i){ return i && i.id && (now - (i.t || now)) < MAX_AGE; });
+  }
+
+  /* ---------- estilos ---------- */
+  function css(){
+    if (document.getElementById('sbAprCss')) return;
+    var s = document.createElement('style');
+    s.id = 'sbAprCss';
+    s.textContent =
+      '#sbAprHost{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:2147483000;display:flex;flex-direction:column;gap:10px;width:min(94vw,440px);pointer-events:none}' +
+      '.sbapr-card{pointer-events:auto;position:relative;overflow:hidden;display:flex;gap:14px;align-items:flex-start;padding:16px 16px 18px;border-radius:18px;background:linear-gradient(145deg,rgba(14,18,32,.98),rgba(5,8,15,.98));border:1px solid rgba(212,175,55,.55);box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04) inset;color:#f4f1e8;font-family:Inter,system-ui,sans-serif;animation:sbaprIn .35s cubic-bezier(.2,.9,.3,1.2) both}' +
+      '.sbapr-card.sbapr-out{animation:sbaprOut .28s ease forwards}' +
+      '.sbapr-ico{flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px}' +
+      '.sbapr-ok .sbapr-ico{background:rgba(46,204,113,.16);color:#2ecc71;box-shadow:0 0 0 1px rgba(46,204,113,.45)}' +
+      '.sbapr-no .sbapr-ico{background:rgba(231,76,60,.16);color:#ff5a4d;box-shadow:0 0 0 1px rgba(231,76,60,.5)}' +
+      '.sbapr-warn .sbapr-ico{background:rgba(243,156,18,.16);color:#f5a623;box-shadow:0 0 0 1px rgba(243,156,18,.5)}' +
+      '.sbapr-body{flex:1;min-width:0}' +
+      '.sbapr-kick{font-size:10px;letter-spacing:.18em;color:#d4af37;font-weight:700;margin-bottom:3px}' +
+      '.sbapr-title{font-family:Orbitron,Inter,sans-serif;font-size:14px;font-weight:800;letter-spacing:.06em;margin-bottom:6px}' +
+      '.sbapr-ok .sbapr-title{color:#2ecc71}.sbapr-no .sbapr-title{color:#ff5a4d}.sbapr-warn .sbapr-title{color:#f5a623}' +
+      '.sbapr-sum{font-size:13px;line-height:1.4;color:#e9e4d3;word-break:break-word;margin-bottom:4px}' +
+      '.sbapr-txt{font-size:12px;line-height:1.4;color:#b9b4a3}' +
+      '.sbapr-btn{margin-top:10px;border:0;cursor:pointer;padding:8px 18px;border-radius:999px;font-weight:800;font-size:12px;letter-spacing:.06em;color:#14110a;background:linear-gradient(135deg,#d4af37,#f0d68a)}' +
+      '.sbapr-bar{position:absolute;left:0;bottom:0;height:3px;width:100%;transform-origin:left;background:linear-gradient(90deg,#d4af37,#f0d68a);animation:sbaprBar linear forwards}' +
+      '#sbAprChip{position:fixed;left:12px;bottom:12px;z-index:2147482000;display:none;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font:700 11px Inter,system-ui,sans-serif;letter-spacing:.04em;color:#f0d68a;background:rgba(10,14,26,.94);border:1px solid rgba(212,175,55,.5);box-shadow:0 8px 24px rgba(0,0,0,.45)}' +
+      '#sbAprChip i{animation:sbaprSpin 1.6s linear infinite}' +
+      '@keyframes sbaprIn{from{opacity:0;transform:translateY(-22px) scale(.96)}to{opacity:1;transform:none}}' +
+      '@keyframes sbaprOut{to{opacity:0;transform:translateY(-16px) scale(.96)}}' +
+      '@keyframes sbaprBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}' +
+      '@keyframes sbaprSpin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
+
+  /* ---------- indicador "esperando" ---------- */
+  function chip(){
+    try {
+      var n = fresh(read()).length;
+      var c = document.getElementById('sbAprChip');
+      if (!n) { if (c) c.style.display = 'none'; return; }
+      css();
+      if (!c) {
+        c = document.createElement('div');
+        c.id = 'sbAprChip';
+        c.innerHTML = '<i class="fas fa-hourglass-half"></i><span></span>';
+        document.body.appendChild(c);
+      }
+      c.querySelector('span').textContent = n === 1
+        ? 'Esperando respuesta del administrador…'
+        : 'Esperando respuesta del administrador (' + n + ')…';
+      c.style.display = 'flex';
+    } catch (_) {}
+  }
+
+  /* ---------- notificación de resultado ---------- */
+  var META = {
+    APROBADA:  { cls: 'ok',   icon: 'fa-circle-check',         title: 'SOLICITUD APROBADA',  txt: 'El administrador la aprobó y el cambio ya fue aplicado.' },
+    RECHAZADA: { cls: 'no',   icon: 'fa-circle-xmark',         title: 'SOLICITUD DENEGADA',  txt: 'El administrador la denegó. No se hizo ningún cambio.' },
+    VENCIDA:   { cls: 'warn', icon: 'fa-hourglass-end',        title: 'SOLICITUD VENCIDA',   txt: 'Pasó demasiado tiempo sin respuesta. Envíala de nuevo.' },
+    ERROR:     { cls: 'warn', icon: 'fa-triangle-exclamation', title: 'NO SE PUDO APLICAR',  txt: 'El administrador la aprobó, pero ocurrió un error al aplicar el cambio.' }
+  };
+
+  function host(){
+    var h = document.getElementById('sbAprHost');
+    if (!h) { h = document.createElement('div'); h.id = 'sbAprHost'; document.body.appendChild(h); }
+    return h;
+  }
+
+  function showResult(it, estado, resumen){
+    var m = META[estado] || META.ERROR;
+    css();
+    var card = document.createElement('div');
+    card.className = 'sbapr-card sbapr-' + m.cls;
+    card.setAttribute('role', 'alertdialog');
+    card.setAttribute('aria-live', 'assertive');
+
+    var ico = document.createElement('div');
+    ico.className = 'sbapr-ico';
+    ico.innerHTML = '<i class="fas ' + m.icon + '"></i>';
+
+    var body = document.createElement('div');
+    body.className = 'sbapr-body';
+    var k = document.createElement('div'); k.className = 'sbapr-kick'; k.textContent = 'SHEIBIS · RESPUESTA DEL ADMINISTRADOR';
+    var t = document.createElement('div'); t.className = 'sbapr-title'; t.textContent = m.title;
+    var s = document.createElement('div'); s.className = 'sbapr-sum'; s.textContent = resumen || it.resumen || '';
+    var x = document.createElement('div'); x.className = 'sbapr-txt'; x.textContent = m.txt;
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'sbapr-btn'; b.textContent = 'ENTENDIDO';
+    body.appendChild(k); body.appendChild(t);
+    if (s.textContent) body.appendChild(s);
+    body.appendChild(x); body.appendChild(b);
+
+    var bar = document.createElement('div');
+    bar.className = 'sbapr-bar';
+    bar.style.animationDuration = '15s';
+
+    card.appendChild(ico); card.appendChild(body); card.appendChild(bar);
+    host().appendChild(card);
+
+    var closed = false;
+    function close(){
+      if (closed) return; closed = true;
+      card.classList.add('sbapr-out');
+      setTimeout(function(){ try { card.remove(); } catch (_) {} }, 300);
+    }
+    b.addEventListener('click', close);
+    setTimeout(close, 15000);
+
+    try { if (navigator.vibrate) navigator.vibrate(estado === 'APROBADA' ? [120] : [120, 70, 120]); } catch (_) {}
+  }
+
+  /* ---------- refrescar datos tras aprobar ---------- */
+  function afterApproved(it){
+    try {
+      if (it.action === 'setInventory') {
+        if (typeof window.__sbSyncInventoryNow === 'function') window.__sbSyncInventoryNow();
+      } else if (it.action === 'adjustUserPoints' || it.action === 'setUserPoints') {
+        if (window.SB_ADMIN && document.getElementById('sbUsersTable') && typeof window.SB_ADMIN.renderUsers === 'function') {
+          window.SB_ADMIN.renderUsers();
+        }
+      }
+    } catch (_) {}
+  }
+
+  /* ---------- cierre de una solicitud ---------- */
+  function finalize(id, estado, resumen){
+    var list = read();
+    var it = null, rest = [];
+    list.forEach(function(i){ if (i && i.id === id) it = i; else rest.push(i); });
+    if (!it) return;                 // otra pestaña ya la avisó
+    write(rest);
+    delete misses[id];
+    showResult(it, estado, resumen);
+    if (estado === 'APROBADA') afterApproved(it);
+    try {
+      window.dispatchEvent(new CustomEvent('sheibis:approval-result', { detail: { id: id, estado: estado, resumen: resumen || it.resumen || '', action: it.action || '' } }));
+    } catch (_) {}
+  }
+
+  /* ---------- consulta al servidor ---------- */
+  function schedule(ms){
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(tick, ms);
+  }
+  function nextDelay(){
+    if (fails) return Math.min(20000, 3000 * (fails + 1));
+    return document.hidden ? SLOW : FAST;
+  }
+
+  async function tick(){
+    timer = null;
+    var list = fresh(read());
+    if (list.length !== read().length) write(list);
+    if (!list.length) { chip(); return; }
+    if (busy) { schedule(1000); return; }
+    if (typeof apiRequest !== 'function') { schedule(3000); return; }
+    busy = true;
+    try {
+      var ids = list.map(function(i){ return i.id; }).slice(0, 30);
+      var data = await apiRequest('getApprovalStatus', { ids: ids }, { timeout: 20000 });
+      fails = 0;
+      var items = (data && data.items) || [];
+      items.forEach(function(r){
+        var st = String(r.estado || '');
+        if (st === 'APROBADA' || st === 'RECHAZADA' || st === 'VENCIDA' || st === 'ERROR') {
+          finalize(String(r.id), st, r.resumen);
+        } else if (st === 'NO_ENCONTRADA') {
+          misses[r.id] = (misses[r.id] || 0) + 1;
+          if (misses[r.id] >= 3) {
+            write(read().filter(function(i){ return i.id !== r.id; }));
+            delete misses[r.id];
+          }
+        }
+      });
+    } catch (e) {
+      fails++;
+    } finally {
+      busy = false;
+    }
+    if (fresh(read()).length) schedule(nextDelay());
+  }
+
+  /* ---------- API pública: se llama al enviar la solicitud ---------- */
+  window.sbTrackApproval = function(id, resumen, action, data){
+    if (!id) return;
+    var list = read().filter(function(i){ return i && i.id !== id; });
+    list.push({ id: String(id), resumen: String(resumen || ''), action: String(action || ''), userId: data && data.userId ? String(data.userId) : '', t: Date.now() });
+    write(list);
+    schedule(900);
+  };
+
+  /* ---------- reanudar al volver a la página / reconectar ---------- */
+  function wake(){ if (fresh(read()).length && !busy) schedule(200); }
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) wake(); });
+  window.addEventListener('focus', wake);
+  window.addEventListener('online', wake);
+  window.addEventListener('storage', function(e){ if (e.key === KEY) { chip(); wake(); } });
+
+  function boot(){ chip(); if (fresh(read()).length) schedule(800); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+
+  window.__sbApprovalWatcherDebug = { tick: tick, read: read, finalize: finalize };
 })();
 </script>
