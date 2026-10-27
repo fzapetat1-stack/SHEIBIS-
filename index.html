@@ -4243,6 +4243,25 @@ var PRODUCTOS = window.PRODUCTOS = [
         };
 
         async function apiRequest(action, payload = {}, options = {}) {
+            // --- Aprobación por Telegram para trabajadores ---
+            const NECESITA_APROBACION = { adjustUserPoints: 1, setUserPoints: 1, setInventory: 1 };
+            if (NECESITA_APROBACION[action] && document.body.classList.contains('sbw-worker-session')) {
+                const w = window.SHEIBIS_WORKER || {};
+                const it = payload.item || {};
+                let resumen = action;
+                if (action === 'adjustUserPoints') resumen = (payload.delta > 0 ? 'Sumar ' : 'Quitar ') + Math.abs(payload.delta) + ' puntos al usuario ' + payload.userId;
+                else if (action === 'setUserPoints') resumen = 'Fijar en ' + payload.points + ' puntos al usuario ' + payload.userId;
+                else if (action === 'setInventory') resumen = 'Inventario de "' + (it.nombre || it.productId) + '": nuevo stock ' + it.stock;
+                await apiRequest('requestApproval', {
+                    targetAction: action,
+                    data: payload,
+                    requestedBy: w.name || w.nombre || w.email || 'Trabajador',
+                    summary: resumen
+                }, options);
+                const pendiente = new Error('⏳ Enviado al administrador para aprobación. Todavía no se aplicó.');
+                pendiente.code = 'PENDING_APPROVAL';
+                throw pendiente;
+            }
             const endpoint = String(CONFIG.googleAppsScriptUrl || '').trim();
             if (!endpoint || endpoint.includes('PEGA_AQUI_LA_URL')) {
                 const e = new Error('Falta configurar la URL de Google Apps Script.');
