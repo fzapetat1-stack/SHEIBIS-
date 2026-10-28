@@ -13082,7 +13082,6 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   function loadRv(){
     var id=S.p.id;S.rv=null;paintRv();
-    if(typeof api!=='function'){S.rv={err:1};paintRv();return;}
     rvApi('getReviews',{productId:String(id),userId:uid()},{timeout:20000}).then(function(d){if(S&&S.p.id===id){S.rv=d;paintRv();paintRate();}}).catch(function(){if(S&&S.p.id===id){S.rv={err:1};paintRv();}});
   }
   function msg(t,id){var m=$(id||'sbxMsg');if(m)m.textContent=t||'';}
@@ -13147,7 +13146,6 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     return pr;
   }
   function sbxFlushQ(){
-    if(typeof api!=='function')return;
     rqGet().forEach(function(x){if(rqBusy[x.k])return;rqSend(x.k,x.p,1).then(function(){if(S&&S.p&&String(S.p.id)===String(x.p.productId))loadRv();}).catch(function(){});});
   }
   /* ---- Sección "Opiniones reales" de la página principal (todas las reseñas de la tienda) ---- */
@@ -13168,7 +13166,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     el.innerHTML=head+'<div class="sbh-grid">'+cards+'</div>';
   }
   function sbxLoadHome(){
-    if(!$('sbxHomeRv')||typeof api!=='function')return;
+    if(!$('sbxHomeRv'))return;
     rvApi('getAllReviews',{limit:30,userId:uid()},{timeout:20000}).then(sbxPaintHome).catch(function(){
       var w=$('sbxHomeRvWrap');if(w&&!$('sbxHomeRv').querySelector('.sbh-card'))w.style.display='none';
     });
