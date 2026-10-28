@@ -4110,7 +4110,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzp2goW6UZKcIW7MA8sHP6W22INb402S9H1569KAKsPVJQfINbIE6M6aB51ymhX9UfE/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbw-8ZpYCvS8hO-otTfR1N5J1wAbzUIqBXdx8gGLBnxqjmSqZm7ezdnoElWVWb0jObsj/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5807,7 +5807,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzp2goW6UZKcIW7MA8sHP6W22INb402S9H1569KAKsPVJQfINbIE6M6aB51ymhX9UfE/exec
+     https://script.google.com/macros/s/AKfycbw-8ZpYCvS8hO-otTfR1N5J1wAbzUIqBXdx8gGLBnxqjmSqZm7ezdnoElWVWb0jObsj/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -13115,8 +13115,16 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
       if(r.summary)rv.summary=r.summary;
       if(t)t.value='';S.star=0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x){x.classList.remove('on');});
       paintRv();paintRate();
-      msg('✔ Reseña guardada. Ya es visible para todos los clientes.','sbxFm');
-      setTimeout(function(){if(S&&S.p.id===id)fetchRv(id,true,0);},800);
+      try{console.log('[SHEIBIS reseña guardada]',r);}catch(_){}
+      msg('✔ Reseña guardada en Google Sheets'+(r.row?' (hoja «'+(r.sheet||'Resenas')+'», fila '+r.row+')':'')+'. Ya es visible para todos los clientes.','sbxFm');
+      setTimeout(function(){
+        api('getReviews',{productId:String(id),userId:uid()},{timeout:25000}).then(function(d2){
+          if(!S||S.p.id!==id)return;
+          var okk=(d2.reviews||[]).some(function(x){return x.id===r.review.id;});
+          if(okk){S.rv=d2;paintRv();paintRate();}
+          else{msg('⚠ Se envió, pero el servidor todavía no devuelve tu reseña. Código: '+r.review.id,'sbxFm');}
+        }).catch(function(){});
+      },900);
     }).catch(function(e){
       if(!S||S.p.id!==id)return;
       S.sending=false;unlock();
