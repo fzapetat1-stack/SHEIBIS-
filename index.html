@@ -4110,7 +4110,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxFLhSlM_JuC8oHbmo-WUX8XaP2MBQ7WdmEMTp5nJZXDPPfzZh8Ud9OT15Ls1PSGQ6y/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzp2goW6UZKcIW7MA8sHP6W22INb402S9H1569KAKsPVJQfINbIE6M6aB51ymhX9UfE/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5807,7 +5807,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbxFLhSlM_JuC8oHbmo-WUX8XaP2MBQ7WdmEMTp5nJZXDPPfzZh8Ud9OT15Ls1PSGQ6y/exec
+     https://script.google.com/macros/s/AKfycbzp2goW6UZKcIW7MA8sHP6W22INb402S9H1569KAKsPVJQfINbIE6M6aB51ymhX9UfE/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -13096,23 +13096,34 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     var b=document.querySelector('#sbxPD .sbx-cta');if(b){var t=b.textContent;b.textContent='✓ AGREGADO AL CARRITO';setTimeout(function(){if(b)b.textContent=t;},1600);}
   }
   function send(){
+    if(S.sending)return;
     if(!S.star){msg('Elige de 1 a 5 estrellas.','sbxFm');return;}
-    var id=S.p.id,t=$('sbxTxt'),st=S.star,txt=t?t.value:'',nm='Cliente';
+    var id=S.p.id,t=$('sbxTxt'),st=S.star,txt=t?t.value:'',nm='Cliente',em='';
     try{nm=String(currentUser.nombre||currentUser.name||'').trim().replace(/\s+/g,' ').split(' ').slice(0,2).join(' ')||'Cliente';}catch(e){}
-    var tmp={id:'tmp'+Date.now(),nombre:nm,estrellas:st,comentario:txt,fecha:Date.now(),mine:true};
-    var rv=S.rv&&!S.rv.err?S.rv:(S.rv={summary:{count:0,avg:0,dist:[0,0,0,0,0]},reviews:[]});
-    var old=(rv.reviews||[]).filter(function(r){return r.mine;});
-    rv.reviews=[tmp].concat((rv.reviews||[]).filter(function(r){return !r.mine;}));
-    var l=rv.reviews,tot=0,d=[0,0,0,0,0];l.forEach(function(r){tot+=r.estrellas;d[r.estrellas-1]++;});
-    rv.summary={count:l.length,avg:Math.round(tot/l.length*10)/10,dist:d};
-    if(t)t.value='';S.star=0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x){x.classList.remove('on');});
-    paintRv();paintRate();msg('¡Gracias por tu reseña!','sbxFm');S.sending=true;
-    api('addReview',{productId:String(id),userId:uid(),estrellas:st,comentario:txt},{timeout:25000}).then(function(r){
-      if(!S||S.p.id!==id)return;S.sending=false;setTimeout(function(){if(S&&S.p.id===id)fetchRv(id,true,0);try{if(window.sbxHome)window.sbxHome.load();}catch(_){}},900);
-      if(r&&r.review){var cur=S.rv.reviews.filter(function(x){return x.id!==tmp.id;});S.rv.reviews=[r.review].concat(cur);if(r.summary)S.rv.summary=r.summary;paintRv();paintRate();}
+    try{em=String(currentUser.email||currentUser.correo||'');}catch(e){}
+    var btn=document.querySelector('#sbxForm .sbx-send');
+    function unlock(){if(btn){btn.disabled=false;btn.textContent='ENVIAR RESEÑA';}}
+    S.sending=true;if(btn){btn.disabled=true;btn.textContent='GUARDANDO…';}
+    msg('Guardando tu reseña…','sbxFm');
+    api('addReview',{productId:String(id),userId:uid(),email:em,nombre:nm,estrellas:st,comentario:txt},{timeout:45000}).then(function(r){
+      try{if(window.sbxHome)setTimeout(function(){window.sbxHome.load();},700);}catch(_){}
+      if(!S||S.p.id!==id)return;
+      S.sending=false;unlock();
+      if(!(r&&r.review)){msg('No se pudo confirmar el guardado. Intenta de nuevo.','sbxFm');return;}
+      var rv=S.rv&&!S.rv.err?S.rv:(S.rv={summary:{count:0,avg:0,dist:[0,0,0,0,0]},reviews:[]});
+      rv.reviews=[r.review].concat((rv.reviews||[]).filter(function(x){return !x.mine&&x.id!==r.review.id;}));
+      if(r.summary)rv.summary=r.summary;
+      if(t)t.value='';S.star=0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x){x.classList.remove('on');});
+      paintRv();paintRate();
+      msg('✔ Reseña guardada. Ya es visible para todos los clientes.','sbxFm');
+      setTimeout(function(){if(S&&S.p.id===id)fetchRv(id,true,0);},800);
     }).catch(function(e){
-      if(!S||S.p.id!==id)return;S.sending=false;
-      S.rv.reviews=old.concat(S.rv.reviews.filter(function(x){return x.id!==tmp.id;}));msg((e&&e.message)||'No se pudo enviar. Intenta de nuevo.','sbxFm');loadRv();
+      if(!S||S.p.id!==id)return;
+      S.sending=false;unlock();
+      var m=(e&&e.message)||'No se pudo guardar tu reseña. Intenta de nuevo.';
+      if(e&&e.code==='TIMEOUT')m='El servidor tardó en responder. Revisa en unos segundos si tu reseña aparece; si no, vuelve a enviarla.';
+      msg('✖ '+m,'sbxFm');
+      setTimeout(function(){if(S&&S.p.id===id)fetchRv(id,true,0);},1500);
     });
   }
   function onClick(e){
