@@ -11709,6 +11709,34 @@ body::before,body::after{display:none!important}
 .banner-text h3{color:#111!important;-webkit-text-fill-color:#111!important}
 .banner-text p{color:#555!important}
 
+
+/* ===== RESEÑAS EN PRODUCTOS (panel negro + tarjetas) ===== */
+.sbx-rev{background:#fff!important;border:1px solid #e5e5e5!important;border-radius:24px;padding:28px 26px!important;box-shadow:0 10px 36px rgba(0,0,0,.06)}
+.sbx-rev h3{text-align:center;font:800 1.5rem Inter,sans-serif!important;letter-spacing:-.3px;margin:0 0 22px!important}
+.sbx-rev h3::before{content:"OPINIONES REALES";display:block;width:max-content;margin:0 auto 10px;background:#111;color:#fff;font:800 .62rem Inter,sans-serif;letter-spacing:2.5px;padding:6px 14px;border-radius:99px}
+.sbx-rvg{grid-template-columns:260px minmax(0,1fr)!important;gap:22px!important;align-items:start}
+.sbx-rvg>div:first-child{background:#111;border-radius:20px;padding:24px 20px;position:sticky;top:16px}
+.sbx-rvg>div:first-child .sbx-big{color:#fff!important;font-size:3.4rem}
+.sbx-rvg>div:first-child small{color:#bbb!important;display:block;margin:6px 0 14px}
+.sbx-rvg>div:first-child .sbx-bar,.sbx-rvg>div:first-child .sbx-bar span,.sbx-rvg>div:first-child .sbx-bar em{color:#ddd!important}
+.sbx-rvg>div:first-child .sbx-bar i{background:#333}
+.sbx-rvg>div:first-child .sbx-bar u{background:#fff}
+.sbx-rvg .sbx-st{color:#f5a300!important}
+.sbx-ri{display:flex;gap:12px;background:#fafafa;border:1px solid #ececec!important;border-radius:16px;padding:16px!important;margin-bottom:12px;transition:.2s}
+.sbx-ri:hover,.sbx-ri.mine{border-color:#111!important;background:#fff}
+.sbx-ri:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.08)}
+.sbx-av{flex:none;width:42px;height:42px;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;font:800 1rem Inter,sans-serif}
+.sbx-rb{min-width:0;flex:1}
+.sbx-ri .h{justify-content:space-between}
+.sbx-ri .h .nm{font:800 .95rem Inter,sans-serif;color:#111}
+.sbx-ver{display:block;margin-top:8px;font:600 .68rem Inter,sans-serif;color:#2a7d46}
+.sbx-form{background:#fafafa!important;border:1px solid #e5e5e5!important;border-radius:20px}
+.sbx-form textarea{background:#fff!important;border:1.5px solid #ddd!important}
+.sbx-form textarea:focus{border-color:#111!important;outline:0}
+.sbx-pick button{color:#d4d4d4!important;font-size:2rem!important}
+.sbx-pick button.on{color:#f5a300!important;transform:scale(1.08)}
+.sbx-empty{background:#fafafa!important;text-align:center}
+@media(max-width:760px){.sbx-rvg{grid-template-columns:1fr!important}.sbx-rvg>div:first-child{position:static}.sbx-rev{padding:22px 14px!important}}
 </style>
 
 
@@ -13023,7 +13051,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     var sm=d.summary||{count:0,avg:0,dist:[0,0,0,0,0]},list=d.reviews||[],bars='',n;
     for(n=5;n>=1;n--){var c=(sm.dist&&sm.dist[n-1])||0;bars+='<div class="sbx-bar"><span>'+n+' ★</span><i><u style="width:'+(sm.count?Math.round(c/sm.count*100):0)+'%"></u></i><em style="font-style:normal">'+c+'</em></div>';}
     el.innerHTML='<div class="sbx-rvg"><div><div class="sbx-big">'+(sm.count?Number(sm.avg).toFixed(1):'–')+'</div><div class="sbx-st">'+stars(sm.avg||0)+'</div><small style="color:#555555">'+sm.count+(sm.count===1?' reseña':' reseñas')+'</small>'+bars+'</div><div>'+
-      (list.length?list.map(function(r){return '<div class="sbx-ri"><div class="h"><span>'+esc(r.nombre)+'</span><span class="sbx-st" style="font-size:.85rem">'+stars(r.estrellas)+'</span><em>'+fdate(r.fecha)+(r.mine?' · tu reseña':'')+'</em></div>'+(r.comentario?'<p>'+esc(r.comentario)+'</p>':'')+'</div>';}).join(''):'<div class="sbx-empty">Aún no hay reseñas. ¡Sé el primero en opinar!</div>')+'</div></div>';
+      (list.length?list.map(function(r){return '<div class="sbx-ri'+(r.mine?' mine':'')+'"><div class="sbx-av">'+esc(String(r.nombre||'C').charAt(0).toUpperCase())+'</div><div class="sbx-rb"><div class="h"><span class="nm">'+esc(r.nombre||'Cliente')+(r.mine?' · tú':'')+'</span><em>'+fdate(r.fecha)+'</em></div><span class="sbx-st" style="font-size:.95rem">'+stars(r.estrellas)+'</span>'+(r.comentario?'<p>'+esc(r.comentario)+'</p>':'')+'<span class="sbx-ver">✔ Cliente SHEIBIS</span></div></div>';}).join(''):'<div class="sbx-empty">Aún no hay reseñas. ¡Sé el primero en opinar!</div>')+'</div></div>';
   }
   function paintForm(){
     var el=$('sbxForm');if(!el)return;
@@ -13059,8 +13087,23 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   function send(){
     if(!S.star){msg('Elige de 1 a 5 estrellas.','sbxFm');return;}
-    var id=S.p.id,t=$('sbxTxt');msg('Enviando…','sbxFm');
-    api('addReview',{productId:String(id),userId:uid(),estrellas:S.star,comentario:t?t.value:''},{timeout:25000}).then(function(){if(!S||S.p.id!==id)return;if(t)t.value='';msg('¡Gracias por tu reseña!','sbxFm');loadRv();}).catch(function(e){msg((e&&e.message)||'No se pudo enviar.','sbxFm');});
+    var id=S.p.id,t=$('sbxTxt'),st=S.star,txt=t?t.value:'',nm='Cliente';
+    try{nm=String(currentUser.nombre||currentUser.name||'').trim().replace(/\s+/g,' ').split(' ').slice(0,2).join(' ')||'Cliente';}catch(e){}
+    var tmp={id:'tmp'+Date.now(),nombre:nm,estrellas:st,comentario:txt,fecha:Date.now(),mine:true};
+    var rv=S.rv&&!S.rv.err?S.rv:(S.rv={summary:{count:0,avg:0,dist:[0,0,0,0,0]},reviews:[]});
+    var old=(rv.reviews||[]).filter(function(r){return r.mine;});
+    rv.reviews=[tmp].concat((rv.reviews||[]).filter(function(r){return !r.mine;}));
+    var l=rv.reviews,tot=0,d=[0,0,0,0,0];l.forEach(function(r){tot+=r.estrellas;d[r.estrellas-1]++;});
+    rv.summary={count:l.length,avg:Math.round(tot/l.length*10)/10,dist:d};
+    if(t)t.value='';S.star=0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x){x.classList.remove('on');});
+    paintRv();paintRate();msg('¡Gracias por tu reseña!','sbxFm');
+    api('addReview',{productId:String(id),userId:uid(),estrellas:st,comentario:txt},{timeout:25000}).then(function(r){
+      if(!S||S.p.id!==id)return;
+      if(r&&r.review){var cur=S.rv.reviews.filter(function(x){return x.id!==tmp.id;});S.rv.reviews=[r.review].concat(cur);if(r.summary)S.rv.summary=r.summary;paintRv();paintRate();}
+    }).catch(function(e){
+      if(!S||S.p.id!==id)return;
+      S.rv.reviews=old.concat(S.rv.reviews.filter(function(x){return x.id!==tmp.id;}));msg((e&&e.message)||'No se pudo enviar. Intenta de nuevo.','sbxFm');loadRv();
+    });
   }
   function onClick(e){
     var b=e.target.closest('[data-act]');
