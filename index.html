@@ -4109,7 +4109,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzSAbzaWFJCHCXtdn-OMBas6nb4qL_Z7oI09QGUphDqpxk9M1soB5M7kwfLBf-WUeEy/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbw2-qb7db-76YhCgGSxyJ4fXcVUcjYtPHVTxa3Kh_jr_4fnrLLnKcpiWrqduLzicG7U/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5806,7 +5806,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzSAbzaWFJCHCXtdn-OMBas6nb4qL_Z7oI09QGUphDqpxk9M1soB5M7kwfLBf-WUeEy/exec
+     https://script.google.com/macros/s/AKfycbw2-qb7db-76YhCgGSxyJ4fXcVUcjYtPHVTxa3Kh_jr_4fnrLLnKcpiWrqduLzicG7U/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -13096,13 +13096,13 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     var l=rv.reviews,tot=0,d=[0,0,0,0,0];l.forEach(function(r){tot+=r.estrellas;d[r.estrellas-1]++;});
     rv.summary={count:l.length,avg:Math.round(tot/l.length*10)/10,dist:d};
     if(t)t.value='';S.star=0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x){x.classList.remove('on');});
-    paintRv();paintRate();msg('¡Gracias por tu reseña!','sbxFm');
+    paintRv();paintRate();msg('Guardando tu reseña…','sbxFm');
     api('addReview',{productId:String(id),userId:uid(),estrellas:st,comentario:txt},{timeout:25000}).then(function(r){
       if(!S||S.p.id!==id)return;
-      if(r&&r.review){var cur=S.rv.reviews.filter(function(x){return x.id!==tmp.id;});S.rv.reviews=[r.review].concat(cur);if(r.summary)S.rv.summary=r.summary;paintRv();paintRate();}
+      if(r&&r.review){var cur=S.rv.reviews.filter(function(x){return x.id!==tmp.id;});S.rv.reviews=[r.review].concat(cur);if(r.summary)S.rv.summary=r.summary;paintRv();paintRate();}msg('✓ ¡Reseña guardada! Gracias por tu opinión.','sbxFm');
     }).catch(function(e){
       if(!S||S.p.id!==id)return;
-      S.rv.reviews=old.concat(S.rv.reviews.filter(function(x){return x.id!==tmp.id;}));msg((e&&e.message)||'No se pudo enviar. Intenta de nuevo.','sbxFm');loadRv();
+      S.rv.reviews=old.concat(S.rv.reviews.filter(function(x){return x.id!==tmp.id;}));loadRv();msg('❌ No se guardó: '+((e&&e.message)||'No se pudo enviar. Intenta de nuevo.'),'sbxFm');
     });
   }
   function onClick(e){
