@@ -3915,6 +3915,27 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
             </div>
             
             <div class="catalog-grid" id="catalogGrid"></div>
+<style>
+#sbxHomeRvWrap{margin:34px 0 8px;padding:26px 18px;background:#fff;border:1px solid #e5e5e5;border-radius:24px;box-shadow:0 10px 36px rgba(0,0,0,.06);font-family:Inter,sans-serif;color:#111}
+.sbh-tag{display:block;width:max-content;margin:0 auto 10px;background:#111;color:#fff;font:800 .62rem Inter,sans-serif;letter-spacing:2.5px;padding:6px 14px;border-radius:999px}
+.sbh-title{margin:0 0 16px;text-align:center;font:800 1.3rem Inter,sans-serif;letter-spacing:-.3px;color:#111}
+.sbh-sum{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.sbh-big{font:800 2rem Inter,sans-serif}
+.sbh-st{color:#f5a623;letter-spacing:2px}
+.sbh-sum small{color:#555}
+.sbh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.sbh-card{border:1px solid #ececec;border-radius:16px;padding:14px;background:#fafafa;display:flex;flex-direction:column;gap:6px}
+.sbh-card.mine{border-color:#111}
+.sbh-h{display:flex;align-items:center;gap:10px}
+.sbh-h b{display:block;font:700 .85rem Inter,sans-serif}
+.sbh-h em{font-style:normal;font-size:.7rem;color:#777}
+.sbh-av{width:34px;height:34px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:800 .85rem Inter,sans-serif;flex:none}
+.sbh-card p{margin:0;font-size:.85rem;line-height:1.45;color:#222;word-break:break-word}
+.sbh-prod{align-self:flex-start;background:none;border:0;padding:0;font:700 .75rem Inter,sans-serif;color:#111;text-decoration:underline;cursor:pointer;text-align:left}
+.sbh-ver{font-size:.66rem;color:#2e7d32;font-weight:700}
+.sbh-empty{text-align:center;color:#555;font-size:.9rem;padding:10px}
+</style>
+<section id="sbxHomeRvWrap"><span class="sbh-tag">OPINIONES REALES</span><h3 class="sbh-title">Lo que dicen nuestros clientes</h3><div id="sbxHomeRv"><div class="sbh-empty">Cargando opiniones…</div></div></section>
             <div class="footer">
                 <p><i class="fas fa-heart"></i> SHEIBIS — Experiencia Premium</p>
                 <div class="footer-links">
@@ -13122,13 +13143,40 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     var k='rq'+Date.now()+Math.random().toString(36).slice(2,6),q=rqGet();q.push({k:k,p:p});rqSet(q);
     var t8=setTimeout(function(){msg('⏳ El servidor está tardando más de lo normal… sigue intentando.','sbxFm');},8000);
     var pr=rqSend(k,p,0);
-    pr.then(function(){clearTimeout(t8);},function(){clearTimeout(t8);});
+    pr.then(function(){clearTimeout(t8);setTimeout(sbxLoadHome,400);},function(){clearTimeout(t8);});
     return pr;
   }
   function sbxFlushQ(){
     if(typeof api!=='function')return;
     rqGet().forEach(function(x){if(rqBusy[x.k])return;rqSend(x.k,x.p,1).then(function(){if(S&&S.p&&String(S.p.id)===String(x.p.productId))loadRv();}).catch(function(){});});
   }
+  /* ---- Sección "Opiniones reales" de la página principal (todas las reseñas de la tienda) ---- */
+  function sbxPaintHome(d){
+    var w=$('sbxHomeRvWrap'),el=$('sbxHomeRv');if(!el)return;
+    var list=(d&&d.reviews)||[],sm=(d&&d.summary)||{count:0,avg:0};
+    if(w)w.style.display='';
+    if(!list.length){el.innerHTML='<div class="sbh-empty">Aún no hay opiniones. ¡Sé el primero en dejar una reseña desde cualquier producto!</div>';return;}
+    var head='<div class="sbh-sum"><span class="sbh-big">'+Number(sm.avg||0).toFixed(1)+'</span><span class="sbh-st">'+stars(sm.avg||0)+'</span><small>'+(sm.count||list.length)+((sm.count||list.length)===1?' reseña':' reseñas')+'</small></div>';
+    var cards=list.slice(0,12).map(function(r){
+      var p=find(r.productoId),pn=p?p.nombre:'';
+      return '<div class="sbh-card'+(r.mine?' mine':'')+'"><div class="sbh-h"><div class="sbh-av">'+esc(String(r.nombre||'C').charAt(0).toUpperCase())+'</div><div><b>'+esc(r.nombre||'Cliente')+(r.mine?' · tú':'')+'</b><em>'+fdate(r.fecha)+'</em></div></div>'+
+        '<div class="sbh-st">'+stars(r.estrellas)+'</div>'+
+        (r.comentario?'<p>'+esc(r.comentario)+'</p>':'')+
+        (pn?'<button type="button" class="sbh-prod" data-pid="'+esc(String(r.productoId))+'">'+esc(pn)+' ›</button>':'')+
+        '<span class="sbh-ver">✔ Cliente SHEIBIS</span></div>';
+    }).join('');
+    el.innerHTML=head+'<div class="sbh-grid">'+cards+'</div>';
+  }
+  function sbxLoadHome(){
+    if(!$('sbxHomeRv')||typeof api!=='function')return;
+    rvApi('getAllReviews',{limit:30,userId:uid()},{timeout:20000}).then(sbxPaintHome).catch(function(){
+      var w=$('sbxHomeRvWrap');if(w&&!$('sbxHomeRv').querySelector('.sbh-card'))w.style.display='none';
+    });
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('#sbxHomeRv [data-pid]');
+    if(b){e.preventDefault();openP(b.getAttribute('data-pid'));}
+  });
   function send(){
     if(!S.star){msg('Elige de 1 a 5 estrellas.','sbxFm');return;}
     var id=S.p.id,t=$('sbxTxt'),st=S.star,txt=t?t.value:'',nm='Cliente';
@@ -13206,6 +13254,6 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     }
   }
   setInterval(inject,1500);
-  setInterval(sbxFlushQ,20000);setTimeout(sbxFlushQ,4000);
+  setInterval(sbxFlushQ,20000);setTimeout(sbxFlushQ,4000);setTimeout(sbxLoadHome,1500);setInterval(sbxLoadHome,60000);
 })();
 </script>
