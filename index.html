@@ -13010,6 +13010,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
 .sbx-ri{padding:14px 0;border-bottom:1px solid rgba(0,0,0,0.088)}
 .sbx-ri .h{display:flex;align-items:center;gap:10px;font:700 .82rem Inter;color:#111111}.sbx-ri .h em{font-style:normal;font-weight:500;color:#555555;font-size:.72rem}
 .sbx-ri p{margin:6px 0 0;font:500 .9rem/1.55 Inter;color:#111111;overflow-wrap:anywhere}
+.sbx-del{margin-top:10px;border:1px solid #d33;color:#d33;background:#fff;border-radius:999px;padding:7px 16px;font:700 .74rem Inter,sans-serif;cursor:pointer;transition:.2s}.sbx-del:hover{background:#d33;color:#fff}.sbx-del:disabled{opacity:.5;cursor:default}
 .sbx-empty{padding:20px;border-radius:16px;background:rgba(0,0,0,0.04);color:#555555;font:600 .85rem Inter}
 .sbx-form{margin-top:20px;padding:18px;border-radius:20px;background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.112)}
 .sbx-pick{display:flex;gap:4px;margin:6px 0 10px}.sbx-pick button{border:0;background:none;font-size:1.7rem;color:#3c3c3c;cursor:pointer;padding:0 2px}.sbx-pick button.on{color:#111111}
@@ -13071,7 +13072,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     var sm=d.summary||{count:0,avg:0,dist:[0,0,0,0,0]},list=d.reviews||[],bars='',n;
     for(n=5;n>=1;n--){var c=(sm.dist&&sm.dist[n-1])||0;bars+='<div class="sbx-bar"><span>'+n+' ★</span><i><u style="width:'+(sm.count?Math.round(c/sm.count*100):0)+'%"></u></i><em style="font-style:normal">'+c+'</em></div>';}
     el.innerHTML='<div class="sbx-rvg"><div><div class="sbx-big">'+(sm.count?Number(sm.avg).toFixed(1):'–')+'</div><div class="sbx-st">'+stars(sm.avg||0)+'</div><small style="color:#555555">'+sm.count+(sm.count===1?' reseña':' reseñas')+'</small>'+bars+'</div><div>'+
-      (list.length?list.map(function(r){return '<div class="sbx-ri'+(r.mine?' mine':'')+'"><div class="sbx-av">'+esc(String(r.nombre||'C').charAt(0).toUpperCase())+'</div><div class="sbx-rb"><div class="h"><span class="nm">'+esc(r.nombre||'Cliente')+(r.mine?' · tú':'')+'</span><em>'+fdate(r.fecha)+'</em></div><span class="sbx-st" style="font-size:.95rem">'+stars(r.estrellas)+'</span>'+(r.comentario?'<p>'+esc(r.comentario)+'</p>':'')+'<span class="sbx-ver">✔ Cliente SHEIBIS</span></div></div>';}).join(''):'<div class="sbx-empty">Aún no hay reseñas. ¡Sé el primero en opinar!</div>')+'</div></div>';
+      (list.length?list.map(function(r){return '<div class="sbx-ri'+(r.mine?' mine':'')+'"><div class="sbx-av">'+esc(String(r.nombre||'C').charAt(0).toUpperCase())+'</div><div class="sbx-rb"><div class="h"><span class="nm">'+esc(r.nombre||'Cliente')+(r.mine?' · tú':'')+'</span><em>'+fdate(r.fecha)+'</em></div><span class="sbx-st" style="font-size:.95rem">'+stars(r.estrellas)+'</span>'+(r.comentario?'<p>'+esc(r.comentario)+'</p>':'')+'<span class="sbx-ver">✔ Cliente SHEIBIS</span>'+(r.mine?'<div><button type="button" class="sbx-del" data-act="del">🗑 Eliminar mi reseña</button></div>':'')+'</div></div>';}).join(''):'<div class="sbx-empty">Aún no hay reseñas. ¡Sé el primero en opinar!</div>')+'</div></div>';
   }
   function paintForm(){
     var el=$('sbxForm');if(!el)return;
@@ -13106,7 +13107,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbz7RuZXuzYhYK358aXXUfyIIlBSRatzt3j270Gk960a5LUEBrvD13BU48OxmE7iKHPvWA/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbxC7shh83c0BelXtNaTPLGii5-a1vKWXlwNTy0MbDr9xRYm-gTZrf3GNH1rADQSOJWnzg/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -13194,6 +13195,21 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
       if(sbxIsNet(e)){msg('⏳ Conexión lenta: tu reseña quedó en cola y se enviará sola en unos segundos.','sbxFm');return;}S.rv.reviews=old.concat(S.rv.reviews.filter(function(x){return x.id!==tmp.id;}));loadRv();msg('❌ No se guardó: '+((e&&e.message)||'No se pudo enviar. Intenta de nuevo.'),'sbxFm');
     });
   }
+  function delRv(){
+    if(!S||!uid())return;
+    if(!window.confirm('¿Seguro que quieres eliminar tu reseña?'))return;
+    var id=S.p.id,b=document.querySelector('#sbxPD .sbx-del');if(b)b.disabled=true;
+    rqSet(rqGet().filter(function(x){return String(x.p.productId)!==String(id);}));
+    msg('Eliminando tu reseña…','sbxFm');
+    rvApi('deleteReview',{productId:String(id),userId:uid()},{timeout:20000}).then(function(){
+      if(!S||S.p.id!==id)return;
+      loadRv();msg('✓ Tu reseña fue eliminada.','sbxFm');
+    }).catch(function(e){
+      if(b)b.disabled=false;
+      if(!S||S.p.id!==id)return;
+      msg('❌ No se pudo eliminar: '+((e&&e.message)||'Intenta de nuevo.'),'sbxFm');
+    });
+  }
   function onClick(e){
     var b=e.target.closest('[data-act]');
     if(!b){if(e.target.id==='sbxPD')close();return;}
@@ -13207,6 +13223,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     else if(a==='add')addCart();
     else if(a==='star'){S.star=Number(b.getAttribute('data-n'))||0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x,i){x.classList.toggle('on',i<S.star);});}
     else if(a==='send')send();
+    else if(a==='del')delRv();
   }
   /* Abrir la ficha al tocar la imagen o el nombre de cualquier producto */
   function pid(el){var h=el.closest('[data-product-id]')||el.closest('.product-detail-item[data-id]');return h?(h.getAttribute('data-product-id')||h.getAttribute('data-id')):null;}
@@ -13252,5 +13269,70 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   setInterval(inject,1500);
   setInterval(sbxFlushQ,20000);setTimeout(sbxFlushQ,4000);
+})();
+</script>
+<style>
+/* ===== SHEIBIS · mejoras de diseño ===== */
+@keyframes sbxGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes sbxShim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes sbxIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+#sbxPD.on .sbx-wrap{animation:sbxIn .38s cubic-bezier(.16,1,.3,1)}
+.sbx-bar u{transform-origin:left;animation:sbxGrow .9s cubic-bezier(.16,1,.3,1) both}
+.sbx-empty::before{content:"★";display:block;font-size:2rem;color:#f5a300;margin-bottom:6px}
+.sbx-fbar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.sbx-fbar button{border:1px solid #ddd;background:#fff;color:#111;border-radius:999px;padding:7px 14px;font:700 .74rem Inter,sans-serif;cursor:pointer;transition:.2s}
+.sbx-fbar button:hover{border-color:#111}.sbx-fbar button.on{background:#111;color:#fff;border-color:#111}
+.sbx-more{display:block;margin:6px auto 0;border:1px solid #111;background:#fff;color:#111;border-radius:999px;padding:10px 22px;font:800 .78rem Inter,sans-serif;cursor:pointer;transition:.2s}
+.sbx-more:hover{background:#111;color:#fff}
+.sbx-ri{animation:sbxIn .35s ease both}
+img:not(.sbx-ld){background:linear-gradient(90deg,#ececec 25%,#f7f7f7 50%,#ececec 75%);background-size:200% 100%;animation:sbxShim 1.2s linear infinite}
+[data-product-id]:not(tr):not(li){transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s}
+[data-product-id]:not(tr):not(li):hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(0,0,0,.12)}
+[data-product-id] img{transition:transform .5s cubic-bezier(.16,1,.3,1)}
+[data-product-id]:hover img{transform:scale(1.04)}
+#sbxGal .sbx-main img{cursor:zoom-in}
+#sbxZoom{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;cursor:zoom-out;animation:sbxIn .25s ease}
+#sbxZoom img{max-width:94vw;max-height:92vh;object-fit:contain;border-radius:14px;background:#fff}
+#sbxZoom span{position:absolute;top:14px;right:18px;color:#fff;font:700 1.6rem Inter,sans-serif}
+@media(max-width:820px){#sbxPD .sbx-cta,#sbxPD .sbx-send,#sbxPD .sbx-del,#sbxPD .sbx-chip,#sbxPD .sbx-qty button{min-height:44px}#sbxPD .sbx-cta{font-size:.9rem}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+<script>
+(function(){
+  var F='all',MORE=false;
+  function stars(el){var t=(el.querySelector('.sbx-st')||{}).textContent||'';return t.split('\u2605').length-1;}
+  function apply(col){
+    var items=col.querySelectorAll('.sbx-ri'),shown=0,hidden=0,i;
+    for(i=0;i<items.length;i++){
+      var ri=items[i],ok=F==='all'||(F==='txt'?!!ri.querySelector('p'):stars(ri)===Number(F));
+      if(ok&&(MORE||shown<3)){ri.style.display='';shown++;}else{ri.style.display='none';if(ok)hidden++;}
+    }
+    var b=col.querySelector('.sbx-more');
+    if(!b){b=document.createElement('button');b.type='button';b.className='sbx-more';col.appendChild(b);}
+    b.style.display=(hidden>0||(MORE&&shown>3))?'':'none';
+    b.textContent=MORE?'Ver menos':'Ver todas las reseñas ('+(shown+hidden)+')';
+    Array.prototype.forEach.call(col.querySelectorAll('.sbx-fbar button'),function(x){x.classList.toggle('on',x.getAttribute('data-f')===F);});
+  }
+  function enhance(){
+    var col=document.querySelector('#sbxRv .sbx-rvg > div:last-child');
+    if(col&&col.querySelector('.sbx-ri')&&!col.querySelector('.sbx-fbar')){
+      F='all';MORE=false;
+      var bar=document.createElement('div');bar.className='sbx-fbar';
+      bar.innerHTML='<button type="button" data-f="all">Todas</button><button type="button" data-f="5">5 ★</button><button type="button" data-f="4">4 ★</button><button type="button" data-f="txt">Con comentario</button>';
+      col.insertBefore(bar,col.firstChild);apply(col);
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('img:not(.sbx-ld)'),function(im){if(im.complete&&im.naturalWidth)im.classList.add('sbx-ld');});
+  }
+  document.addEventListener('load',function(e){if(e.target&&e.target.tagName==='IMG')e.target.classList.add('sbx-ld');},true);
+  document.addEventListener('error',function(e){if(e.target&&e.target.tagName==='IMG')e.target.classList.add('sbx-ld');},true);
+  document.addEventListener('click',function(e){
+    var t=e.target,col=t.closest&&t.closest('#sbxRv .sbx-rvg > div:last-child'),b;
+    if(col&&(b=t.closest('.sbx-fbar button'))){F=b.getAttribute('data-f');MORE=false;apply(col);return;}
+    if(col&&t.closest('.sbx-more')){MORE=!MORE;apply(col);return;}
+    var im=t.closest&&t.closest('#sbxGal .sbx-main img');
+    if(im){var z=document.createElement('div');z.id='sbxZoom';z.innerHTML='<img alt="" referrerpolicy="no-referrer"><span>✕</span>';z.firstChild.src=im.src;z.addEventListener('click',function(){z.remove();});document.body.appendChild(z);}
+  });
+  document.addEventListener('keydown',function(e){var z=document.getElementById('sbxZoom');if(z&&e.key==='Escape'){z.remove();e.stopPropagation();}},true);
+  setInterval(enhance,700);
 })();
 </script>
