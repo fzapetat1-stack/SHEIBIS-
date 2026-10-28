@@ -13336,3 +13336,74 @@ img:not(.sbx-ld){background:linear-gradient(90deg,#ececec 25%,#f7f7f7 50%,#ecece
   setInterval(enhance,700);
 })();
 </script>
+<style>
+/* ===== SHEIBIS · carrito visible + vuelo al carrito ===== */
+.cart-top-btn{background:#111!important;color:#fff!important;border:1px solid #111!important;box-shadow:0 6px 18px rgba(0,0,0,.22)!important}
+.cart-top-btn i,.cart-top-btn #cartCount{color:#fff!important}
+.cart-top-btn .cart-badge{background:#e11d48!important;color:#fff!important;border:2px solid #fff!important;font-weight:800!important}
+#sbxFab{position:fixed;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));width:62px;height:62px;border:0;border-radius:50%;background:linear-gradient(145deg,#111,#2a2a2a);color:#fff;font-size:1.5rem;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:2147483200;box-shadow:0 12px 30px rgba(0,0,0,.35),0 0 0 4px rgba(255,255,255,.9);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+#sbxFab:hover{transform:scale(1.08)}#sbxFab:active{transform:scale(.94)}
+#sbxFab.show{display:flex;animation:sbxFabIn .5s cubic-bezier(.34,1.56,.64,1)}
+#sbxFab b{position:absolute;top:-6px;right:-6px;min-width:24px;height:24px;padding:0 6px;border-radius:99px;background:#e11d48;color:#fff;font:800 .74rem Inter,sans-serif;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+#sbxFab.has::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(17,17,17,.45);animation:sbxRing 2s ease-out infinite}
+#sbxFab.bump{animation:sbxBump .6s cubic-bezier(.34,1.56,.64,1)}
+#sbxFab.bump b{animation:sbxPop .6s cubic-bezier(.34,1.56,.64,1)}
+.sbx-fly{position:fixed;z-index:2147483400;pointer-events:none;border-radius:18px;background:#fff center/cover no-repeat;border:3px solid #fff;box-shadow:0 18px 40px rgba(0,0,0,.35);will-change:transform,opacity}
+@keyframes sbxFabIn{from{transform:scale(0) rotate(-90deg)}to{transform:none}}
+@keyframes sbxRing{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.55);opacity:0}}
+@keyframes sbxBump{0%{transform:scale(1)}30%{transform:scale(1.28) rotate(-10deg)}60%{transform:scale(.92) rotate(6deg)}100%{transform:scale(1)}}
+@keyframes sbxPop{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}
+body.sbx-cart-open #sbxFab{display:none!important}
+</style>
+<script>
+(function(){
+  var fab,last=0,lastClick=null,lastT=0;
+  function cnt(){var e=document.getElementById('cartCount');return e?(parseInt(e.textContent,10)||0):0;}
+  function ensure(){
+    if(fab)return fab;
+    fab=document.createElement('button');fab.id='sbxFab';fab.type='button';fab.setAttribute('aria-label','Abrir carrito');
+    fab.innerHTML='<i class="fas fa-shopping-bag"></i><b>0</b>';
+    fab.addEventListener('click',function(){if(typeof window.toggleCart==='function')window.toggleCart();});
+    document.body.appendChild(fab);return fab;
+  }
+  function source(t){
+    var im=t.closest('#sbxPD')?document.querySelector('#sbxGal .sbx-main img'):null;
+    if(!im){var card=t.closest('[data-product-id],.product-card,.product-detail-item');im=card&&card.querySelector('img');}
+    return im||null;
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-act="add"],button,a');if(!b)return;
+    var txt=(b.textContent||'')+(b.getAttribute('onclick')||'');
+    if(b.getAttribute('data-act')==='add'||/agreg|a[ñn]adir|carrito|addCart|addToCart/i.test(txt)){
+      lastClick={im:source(b),r:b.getBoundingClientRect()};lastT=Date.now();
+    }
+  },true);
+  function fly(){
+    var f=ensure(),to=f.getBoundingClientRect(),from=lastClick&&lastClick.im?lastClick.im.getBoundingClientRect():(lastClick?lastClick.r:null);
+    if(!from||!to.width)return bump();
+    var s=Math.max(64,Math.min(120,Math.min(from.width,from.height)||90)),d=document.createElement('div');
+    d.className='sbx-fly';d.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(from.left+from.width/2-s/2)+'px;top:'+(from.top+from.height/2-s/2)+'px';
+    var src=lastClick.im&&(lastClick.im.currentSrc||lastClick.im.src);
+    if(src)d.style.backgroundImage='url("'+src.replace(/"/g,'%22')+'")';else{d.style.background='#111';d.innerHTML='<i class="fas fa-shopping-bag" style="color:#fff;font-size:2rem;display:flex;height:100%;align-items:center;justify-content:center"></i>';}
+    document.body.appendChild(d);
+    var dx=to.left+to.width/2-(from.left+from.width/2),dy=to.top+to.height/2-(from.top+from.height/2);
+    var a=d.animate([
+      {transform:'translate(0,0) scale(1) rotate(0deg)',opacity:1},
+      {transform:'translate('+dx*.45+'px,'+(dy*.45-110)+'px) scale(.62) rotate(-8deg)',opacity:1,offset:.5},
+      {transform:'translate('+dx+'px,'+dy+'px) scale(.12) rotate(10deg)',opacity:.35}
+    ],{duration:900,easing:'cubic-bezier(.45,.05,.25,1)',fill:'forwards'});
+    a.onfinish=function(){d.remove();bump();};
+  }
+  function bump(){var f=ensure();f.classList.remove('bump');void f.offsetWidth;f.classList.add('bump');}
+  function tick(){
+    var btn=document.querySelector('.cart-top-btn'),f=ensure(),n=cnt(),vis=!!(btn&&btn.offsetParent!==null);
+    f.classList.toggle('show',vis);f.classList.toggle('has',n>0);
+    var c=document.getElementById('cart');document.body.classList.toggle('sbx-cart-open',!!(c&&c.classList.contains('active')));
+    f.querySelector('b').textContent=n>99?'99+':n;
+    if(n>last&&lastClick&&Date.now()-lastT<2500){fly();lastClick=null;}
+    else if(n>last&&vis){bump();}
+    last=n;
+  }
+  setTimeout(function(){last=cnt();setInterval(tick,300);tick();},800);
+})();
+</script>
