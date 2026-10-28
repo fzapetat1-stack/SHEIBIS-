@@ -4109,7 +4109,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbw2-qb7db-76YhCgGSxyJ4fXcVUcjYtPHVTxa3Kh_jr_4fnrLLnKcpiWrqduLzicG7U/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbx6sZIT6zk71jRWv3R_Xz51HfJy3rF6Y_U0RLSywMWDyvwZX-Gi76snkZwN6lLZ31IN/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5806,7 +5806,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbw2-qb7db-76YhCgGSxyJ4fXcVUcjYtPHVTxa3Kh_jr_4fnrLLnKcpiWrqduLzicG7U/exec
+     https://script.google.com/macros/s/AKfycbx6sZIT6zk71jRWv3R_Xz51HfJy3rF6Y_U0RLSywMWDyvwZX-Gi76snkZwN6lLZ31IN/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -13085,6 +13085,27 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     updateCartUI();msg('');
     var b=document.querySelector('#sbxPD .sbx-cta');if(b){var t=b.textContent;b.textContent='✓ AGREGADO AL CARRITO';setTimeout(function(){if(b)b.textContent=t;},1600);}
   }
+  /* ---- Guardado de reseñas con reintentos y cola local (no se pierde nada) ---- */
+  var RQ_KEY='sbx_rv_q',rqBusy={};
+  function rqGet(){try{return JSON.parse(localStorage.getItem(RQ_KEY)||'[]');}catch(e){return [];}}
+  function rqSet(a){try{localStorage.setItem(RQ_KEY,JSON.stringify(a.slice(-20)));}catch(e){}}
+  function rqDel(k){rqSet(rqGet().filter(function(x){return x.k!==k;}));}
+  function sbxIsNet(e){return !e||!e.code||e.code==='TIMEOUT'||e.code==='INVALID_SERVER_RESPONSE'||e.name==='TypeError';}
+  function rqSend(k,p,n){
+    rqBusy[k]=1;
+    return api('addReview',p,{timeout:30000}).then(function(r){delete rqBusy[k];rqDel(k);return r;},function(e){
+      if(sbxIsNet(e)&&n<2){return new Promise(function(ok){setTimeout(ok,2500*(n+1));}).then(function(){return rqSend(k,p,n+1);});}
+      delete rqBusy[k];if(!sbxIsNet(e))rqDel(k);throw e;
+    });
+  }
+  function sbxSaveReview(p){
+    var k='rq'+Date.now()+Math.random().toString(36).slice(2,6),q=rqGet();q.push({k:k,p:p});rqSet(q);
+    return rqSend(k,p,0);
+  }
+  function sbxFlushQ(){
+    if(typeof api!=='function')return;
+    rqGet().forEach(function(x){if(rqBusy[x.k])return;rqSend(x.k,x.p,2).then(function(){if(S&&S.p&&String(S.p.id)===String(x.p.productId))loadRv();}).catch(function(){});});
+  }
   function send(){
     if(!S.star){msg('Elige de 1 a 5 estrellas.','sbxFm');return;}
     var id=S.p.id,t=$('sbxTxt'),st=S.star,txt=t?t.value:'',nm='Cliente';
@@ -13097,12 +13118,12 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     rv.summary={count:l.length,avg:Math.round(tot/l.length*10)/10,dist:d};
     if(t)t.value='';S.star=0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x){x.classList.remove('on');});
     paintRv();paintRate();msg('Guardando tu reseña…','sbxFm');
-    api('addReview',{productId:String(id),userId:uid(),estrellas:st,comentario:txt},{timeout:25000}).then(function(r){
+    sbxSaveReview({productId:String(id),userId:uid(),nombre:nm,estrellas:st,comentario:txt}).then(function(r){
       if(!S||S.p.id!==id)return;
       if(r&&r.review){var cur=S.rv.reviews.filter(function(x){return x.id!==tmp.id;});S.rv.reviews=[r.review].concat(cur);if(r.summary)S.rv.summary=r.summary;paintRv();paintRate();}msg('✓ ¡Reseña guardada! Gracias por tu opinión.','sbxFm');
     }).catch(function(e){
       if(!S||S.p.id!==id)return;
-      S.rv.reviews=old.concat(S.rv.reviews.filter(function(x){return x.id!==tmp.id;}));loadRv();msg('❌ No se guardó: '+((e&&e.message)||'No se pudo enviar. Intenta de nuevo.'),'sbxFm');
+      if(sbxIsNet(e)){msg('⏳ Conexión lenta: tu reseña quedó en cola y se enviará sola en unos segundos.','sbxFm');return;}S.rv.reviews=old.concat(S.rv.reviews.filter(function(x){return x.id!==tmp.id;}));loadRv();msg('❌ No se guardó: '+((e&&e.message)||'No se pudo enviar. Intenta de nuevo.'),'sbxFm');
     });
   }
   function onClick(e){
@@ -13162,5 +13183,6 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     }
   }
   setInterval(inject,1500);
+  setInterval(sbxFlushQ,20000);setTimeout(sbxFlushQ,4000);
 })();
 </script>
