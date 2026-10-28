@@ -3799,7 +3799,6 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         </div>
         <div class="top-bar-center">
             <a href="#" class="top-nav-link active" onclick="goHome(); return false;">EXPLORAR</a>
-            <a href="#sbReviews" class="top-nav-link" onclick="goHome();setTimeout(function(){var e=document.getElementById('sbReviews');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},120);return false;">RESEÑAS</a>
         </div>
         <div class="top-bar-right">
             <div class="profile-badge" onclick="showUserProfile()">
@@ -3916,7 +3915,6 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
             </div>
             
             <div class="catalog-grid" id="catalogGrid"></div>
-            <section id="sbReviews" aria-label="Reseñas de clientes"></section>
             <div class="footer">
                 <p><i class="fas fa-heart"></i> SHEIBIS — Experiencia Premium</p>
                 <div class="footer-links">
@@ -11712,129 +11710,7 @@ body::before,body::after{display:none!important}
 .banner-text p{color:#555!important}
 
 </style>
-<!-- SHEIBIS · RESEÑAS PÚBLICAS (visibles para todos, con nombre real) -->
-<style id="sbr-css">
-#sbReviews{max-width:1180px;margin:56px auto 40px;padding:0 16px}
-.sbr-wrap{background:#fff;border:1px solid #e5e5e5;border-radius:24px;padding:34px 30px;box-shadow:0 10px 40px rgba(0,0,0,.06)}
-.sbr-head{text-align:center;margin-bottom:26px}
-.sbr-eyebrow{display:inline-block;font:800 .68rem Inter,sans-serif;letter-spacing:2.5px;color:#fff;background:#111;padding:6px 14px;border-radius:99px}
-.sbr-head h2{font:800 clamp(1.5rem,3.4vw,2.2rem) Inter,sans-serif;color:#111;margin:14px 0 6px;letter-spacing:-.5px}
-.sbr-head p{color:#666;font:500 .95rem Inter,sans-serif;margin:0}
-.sbr-grid{display:grid;grid-template-columns:290px 1fr;gap:26px;align-items:start}
-.sbr-sum{background:#111;color:#fff;border-radius:20px;padding:26px 22px;position:sticky;top:84px}
-.sbr-big{font:900 3.6rem/1 Inter,sans-serif;color:#fff}
-.sbr-st{color:#f5a300;letter-spacing:2px;font-size:1.05rem}
-.sbr-sum small{display:block;margin:6px 0 18px;color:#bbb;font:600 .8rem Inter,sans-serif}
-.sbr-bar{display:grid;grid-template-columns:34px 1fr 26px;gap:8px;align-items:center;width:100%;background:none;border:0;color:#ddd;font:700 .75rem Inter,sans-serif;padding:4px 0;cursor:pointer;text-align:left}
-.sbr-bar i{display:block;height:8px;border-radius:9px;background:#333;overflow:hidden}
-.sbr-bar u{display:block;height:100%;background:#fff;border-radius:9px;transition:width .5s}
-.sbr-bar.on span,.sbr-bar:hover span{color:#f5a300}
-.sbr-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
-.sbr-card{background:#fafafa;border:1px solid #ececec;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:.25s;animation:sbrIn .45s both}
-.sbr-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.1);background:#fff;border-color:#111}
-.sbr-card.mine{border-color:#111;background:#fff}
-@keyframes sbrIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.sbr-top{display:flex;align-items:center;gap:11px}
-.sbr-av{width:42px;height:42px;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;font:800 1rem Inter,sans-serif;flex:none}
-.sbr-nm{font:800 .95rem Inter,sans-serif;color:#111;line-height:1.2}
-.sbr-ver{font:600 .68rem Inter,sans-serif;color:#2a7d46;display:block;margin-top:2px}
-.sbr-card p{margin:0;color:#333;font:500 .9rem/1.55 Inter,sans-serif;word-break:break-word}
-.sbr-foot{margin-top:auto;display:flex;justify-content:space-between;gap:8px;color:#888;font:600 .7rem Inter,sans-serif}
-.sbr-prod{max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#efefef;color:#333;padding:3px 9px;border-radius:99px}
-.sbr-more{grid-column:1/-1;justify-self:center;background:#111;color:#fff;border:0;border-radius:99px;padding:12px 28px;font:800 .8rem Inter,sans-serif;letter-spacing:1px;cursor:pointer}
-.sbr-more:hover{background:#333}
-.sbr-empty{grid-column:1/-1;text-align:center;color:#777;padding:34px 10px;font:600 .95rem Inter,sans-serif}
-.sbr-form{margin-top:28px;border-top:1px solid #eee;padding-top:24px;display:grid;gap:12px;max-width:760px;margin-inline:auto}
-.sbr-form h3{margin:0;font:800 1.15rem Inter,sans-serif;color:#111;text-align:center}
-.sbr-as{text-align:center;color:#666;font:600 .8rem Inter,sans-serif}.sbr-as b{color:#111}
-.sbr-form select,.sbr-form textarea{width:100%;background:#fff;color:#111;border:1.5px solid #ddd;border-radius:14px;padding:13px 14px;font:500 .92rem Inter,sans-serif;outline:0;box-sizing:border-box}
-.sbr-form select:focus,.sbr-form textarea:focus{border-color:#111}
-.sbr-form textarea{min-height:96px;resize:vertical}
-.sbr-pick{display:flex;justify-content:center;gap:6px}
-.sbr-pick button{background:none;border:0;font-size:2rem;line-height:1;color:#d4d4d4;cursor:pointer;transition:.15s;padding:0 2px}
-.sbr-pick button.on{color:#f5a300;transform:scale(1.08)}
-.sbr-send{background:#111;color:#fff;border:0;border-radius:14px;padding:15px;font:800 .85rem Inter,sans-serif;letter-spacing:1.2px;cursor:pointer;transition:.2s}
-.sbr-send:hover{background:#2a2a2a;transform:translateY(-1px)}.sbr-send:disabled{opacity:.5;cursor:wait}
-.sbr-msg{text-align:center;font:700 .82rem Inter,sans-serif;min-height:1.1em;color:#2a7d46}.sbr-msg.err{color:#c62828}
-.sbr-login{text-align:center;background:#f4f4f4;border-radius:14px;padding:16px;color:#444;font:600 .88rem Inter,sans-serif}
-@media(max-width:820px){.sbr-grid{grid-template-columns:1fr}.sbr-sum{position:static}.sbr-wrap{padding:24px 16px}}
-</style>
-<script id="sbr-js">
-(function(){
-var S={list:[],sum:null,star:0,pid:'',filter:0,shown:9,busy:false,ok:false};
-function $(i){return document.getElementById(i)}
-function api(a,p,o){return(typeof apiRequest==='function')?apiRequest(a,p||{},o||{}):Promise.reject(new Error('API no disponible'))}
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function uid(){try{return(typeof currentUser!=='undefined'&&currentUser&&!currentUser.isGuest&&currentUser.id)?String(currentUser.id):''}catch(e){return ''}}
-function uname(){try{var n=String(currentUser.nombre||currentUser.name||'').trim().replace(/\s+/g,' ').split(' ').slice(0,2).join(' ');return n||'Cliente'}catch(e){return 'Cliente'}}
-function prods(){try{return typeof getProducts==='function'?getProducts():[]}catch(e){return[]}}
-function pname(id){var p=prods().filter(function(x){return String(x.id)===String(id)})[0];return p?p.nombre:''}
-function stars(n){var s='',i;n=Math.round(n);for(i=1;i<=5;i++)s+=i<=n?'★':'☆';return s}
-function fdate(ms){try{return new Date(ms).toLocaleDateString('es-GT',{day:'numeric',month:'short',year:'numeric'})}catch(e){return ''}}
-function calc(l){var d=[0,0,0,0,0],t=0;l.forEach(function(r){if(r.estrellas>=1){d[r.estrellas-1]++;t+=r.estrellas}});return{count:l.length,avg:l.length?Math.round(t/l.length*10)/10:0,dist:d}}
-function fetchAll(){
-  if(typeof api!=='function')return Promise.reject(new Error('api'));
-  return api('getAllReviews',{limit:120,userId:uid()},{timeout:20000}).then(function(d){if(d&&d.reviews)return d;throw new Error('old')}).catch(function(){
-    var ps=prods().slice(0,40);
-    return Promise.all(ps.map(function(p){return api('getReviews',{productId:String(p.id),userId:uid()},{timeout:20000}).then(function(d){return(d.reviews||[]).map(function(r){r.productoId=p.id;return r})}).catch(function(){return[]})})).then(function(a){return{reviews:[].concat.apply([],a).sort(function(x,y){return y.fecha-x.fecha})}});
-  });
-}
-function card(r){
-  var n=r.nombre||'Cliente',pn=r.producto||pname(r.productoId);
-  return '<article class="sbr-card'+(r.mine?' mine':'')+'"><div class="sbr-top"><div class="sbr-av">'+esc(n.charAt(0).toUpperCase())+'</div><div><div class="sbr-nm">'+esc(n)+(r.mine?' · tú':'')+'</div><span class="sbr-ver">✔ Cliente SHEIBIS</span></div></div><div class="sbr-st">'+stars(r.estrellas)+'</div>'+(r.comentario?'<p>'+esc(r.comentario)+'</p>':'<p style="color:#999">Calificó con '+r.estrellas+' estrellas.</p>')+'<div class="sbr-foot"><span class="sbr-prod">'+esc(pn||'Producto SHEIBIS')+'</span><span>'+(r.pending?'Publicando…':fdate(r.fecha))+'</span></div></article>';
-}
-function paint(){
-  var host=$('sbReviews');if(!host)return;
-  var all=S.list,sm=S.sum||calc(all),vis=S.filter?all.filter(function(r){return r.estrellas===S.filter}):all,bars='',n;
-  for(n=5;n>=1;n--){var c=(sm.dist&&sm.dist[n-1])||0;bars+='<button type="button" class="sbr-bar'+(S.filter===n?' on':'')+'" data-f="'+n+'"><span>'+n+' ★</span><i><u style="width:'+(sm.count?Math.round(c/sm.count*100):0)+'%"></u></i><span>'+c+'</span></button>'}
-  var list=vis.slice(0,S.shown).map(card).join('');
-  if(!list)list='<div class="sbr-empty">'+(S.ok?'Aún no hay reseñas'+(S.filter?' con esa calificación':'')+'. ¡Sé el primero en opinar!':'Cargando reseñas…')+'</div>';
-  if(vis.length>S.shown)list+='<button type="button" class="sbr-more" data-more="1">VER MÁS RESEÑAS</button>';
-  var keep=$('sbrForm')?{t:($('sbrTxt')||{}).value,p:($('sbrPid')||{}).value}:null;
-  host.innerHTML='<div class="sbr-wrap"><div class="sbr-head"><span class="sbr-eyebrow">OPINIONES REALES</span><h2>Lo que dicen nuestros clientes</h2><p>Reseñas públicas de personas que compraron en SHEIBIS.</p></div><div class="sbr-grid"><aside class="sbr-sum"><div class="sbr-big">'+(sm.count?Number(sm.avg).toFixed(1):'–')+'</div><div class="sbr-st">'+stars(sm.avg||0)+'</div><small>'+sm.count+(sm.count===1?' reseña':' reseñas')+'</small>'+bars+'</aside><div class="sbr-list">'+list+'</div></div>'+form()+'</div>';
-  if(keep){if($('sbrTxt')&&keep.t)$('sbrTxt').value=keep.t;if($('sbrPid')&&keep.p)$('sbrPid').value=keep.p}
-  paintStars();
-}
-function form(){
-  if(!uid())return '<div class="sbr-form"><div class="sbr-login">Inicia sesión para compartir tu experiencia con todos.</div></div>';
-  var o='<option value="">Elige el producto que compraste…</option>';prods().forEach(function(p){o+='<option value="'+esc(p.id)+'"'+(String(p.id)===S.pid?' selected':'')+'>'+esc(p.nombre)+'</option>'});
-  var b='',i;for(i=1;i<=5;i++)b+='<button type="button" data-s="'+i+'" aria-label="'+i+' estrellas">★</button>';
-  return '<div class="sbr-form" id="sbrForm"><h3>Escribe tu reseña</h3><div class="sbr-as">Se publicará como <b>'+esc(uname())+'</b></div><select id="sbrPid">'+o+'</select><div class="sbr-pick" id="sbrPick">'+b+'</div><textarea id="sbrTxt" maxlength="600" placeholder="Cuéntanos qué te pareció (opcional)"></textarea><button type="button" class="sbr-send" id="sbrSend">PUBLICAR RESEÑA</button><div class="sbr-msg" id="sbrMsg"></div></div>';
-}
-function paintStars(){Array.prototype.forEach.call(document.querySelectorAll('#sbrPick button'),function(x,i){x.classList.toggle('on',i<S.star)})}
-function msg(t,e){var m=$('sbrMsg');if(m){m.textContent=t||'';m.className='sbr-msg'+(e?' err':'')}}
-function refresh(){
-  if(S.busy)return Promise.resolve();
-  return fetchAll().then(function(d){var mine=S.list.filter(function(r){return r.pending});S.list=mine.concat((d.reviews||[]).filter(function(r){return!mine.some(function(m){return m.uid===uid()&&String(m.productoId)===String(r.productoId)&&r.mine})}));S.sum=d.summary&&d.summary.count!=null?d.summary:null;S.ok=true;if(!document.activeElement||document.activeElement.id!=='sbrTxt')paint()}).catch(function(){S.ok=true;paint()});
-}
-function send(){
-  var pid=($('sbrPid')||{}).value,t=$('sbrTxt'),txt=t?t.value.trim():'';
-  if(!pid){msg('Elige el producto que quieres reseñar.',1);return}
-  if(!S.star){msg('Elige de 1 a 5 estrellas.',1);return}
-  var st=S.star,tmp={id:'tmp'+Date.now(),productoId:pid,nombre:uname(),estrellas:st,comentario:txt,fecha:Date.now(),mine:true,pending:true,uid:uid()};
-  S.busy=true;S.list.unshift(tmp);S.pid=pid;var sb=$('sbrSend');if(sb)sb.disabled=true;
-  var sn=S.sum||calc(S.list.filter(function(r){return!r.pending}));
-  api('addReview',{productId:String(pid),userId:uid(),estrellas:st,comentario:txt},{timeout:25000}).then(function(d){
-    S.busy=false;S.star=0;S.sum=null;S.list=S.list.filter(function(r){return r.id!==tmp.id});
-    var real=d&&d.review?d.review:tmp;real.productoId=pid;real.mine=true;real.nombre=real.nombre||tmp.nombre;
-    S.list=S.list.filter(function(r){return!(r.mine&&String(r.productoId)===String(pid))});S.list.unshift(real);
-    paint();msg('¡Gracias! Tu reseña ya es visible para todos.');var m=$('sbrTxt');if(m)m.value='';setTimeout(refresh,1500);
-  }).catch(function(e){S.busy=false;S.list=S.list.filter(function(r){return r.id!==tmp.id});paint();msg((e&&e.message)||'No se pudo publicar.',1);var m=$('sbrTxt');if(m)m.value=txt});
-  paint();
-}
-document.addEventListener('click',function(e){
-  var t=e.target;if(!t||!t.closest||!t.closest('#sbReviews'))return;
-  var b=t.closest('[data-f]');if(b){var f=Number(b.getAttribute('data-f'));S.filter=S.filter===f?0:f;S.shown=9;paint();return}
-  if(t.closest('[data-more]')){S.shown+=9;paint();return}
-  var s=t.closest('[data-s]');if(s){S.star=Number(s.getAttribute('data-s'));paintStars();return}
-  if(t.closest('#sbrSend'))send();
-});
-document.addEventListener('change',function(e){if(e.target&&e.target.id==='sbrPid')S.pid=e.target.value});
-window.SBRV={refresh:refresh,paint:paint};
-function boot(){paint();refresh();setTimeout(refresh,4000);setInterval(function(){if(!document.hidden)refresh()},25000)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-})();
-</script>
+
 
 </body>
 </html>
@@ -13184,7 +13060,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   function send(){
     if(!S.star){msg('Elige de 1 a 5 estrellas.','sbxFm');return;}
     var id=S.p.id,t=$('sbxTxt');msg('Enviando…','sbxFm');
-    api('addReview',{productId:String(id),userId:uid(),estrellas:S.star,comentario:t?t.value:''},{timeout:25000}).then(function(){if(!S||S.p.id!==id)return;if(t)t.value='';msg('¡Gracias por tu reseña!','sbxFm');loadRv();if(window.SBRV)window.SBRV.refresh();}).catch(function(e){msg((e&&e.message)||'No se pudo enviar.','sbxFm');});
+    api('addReview',{productId:String(id),userId:uid(),estrellas:S.star,comentario:t?t.value:''},{timeout:25000}).then(function(){if(!S||S.p.id!==id)return;if(t)t.value='';msg('¡Gracias por tu reseña!','sbxFm');loadRv();}).catch(function(e){msg((e&&e.message)||'No se pudo enviar.','sbxFm');});
   }
   function onClick(e){
     var b=e.target.closest('[data-act]');
