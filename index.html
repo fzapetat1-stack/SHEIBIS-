@@ -3915,7 +3915,6 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
             </div>
             
             <div class="catalog-grid" id="catalogGrid"></div>
-            <section id="sbxHome" class="sbh" aria-label="Opiniones reales de clientes"></section>
             <div class="footer">
                 <p><i class="fas fa-heart"></i> SHEIBIS — Experiencia Premium</p>
                 <div class="footer-links">
@@ -4110,7 +4109,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzkP3OvQrzvBw1MDOHQ42w2M89TIaqjoFkipxRcZiLsjM_QNJXjdt8oWNIQdpEJwoBJ/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzSAbzaWFJCHCXtdn-OMBas6nb4qL_Z7oI09QGUphDqpxk9M1soB5M7kwfLBf-WUeEy/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5807,7 +5806,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzkP3OvQrzvBw1MDOHQ42w2M89TIaqjoFkipxRcZiLsjM_QNJXjdt8oWNIQdpEJwoBJ/exec
+     https://script.google.com/macros/s/AKfycbzSAbzaWFJCHCXtdn-OMBas6nb4qL_Z7oI09QGUphDqpxk9M1soB5M7kwfLBf-WUeEy/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -9201,7 +9200,7 @@ document.addEventListener('DOMContentLoaded',function(){
   // Catálogo compartido: primero entra el usuario; la red se sincroniza después.
   // Esto evita que una respuesta lenta de Apps Script retrase el inicio.
   setTimeout(function(){ syncGlobalCatalog_(true); syncGlobalInventory_(true); },1200);
-  setInterval(function(){ syncGlobalCatalog_(); },8000);
+  setInterval(function(){ syncGlobalCatalog_(); },30000);
   clearInterval(globalInventorySyncTimer);
   globalInventorySyncTimer=setInterval(function(){ syncGlobalInventory_(); },30000);
   window.addEventListener('focus',function(){
@@ -13048,7 +13047,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   function paintRv(){
     var d=S.rv,el=$('sbxRv');if(!el)return;
     if(!d){el.innerHTML='<div class="sbx-empty">Cargando reseñas…</div>';return;}
-    if(d.err){el.innerHTML='<div class="sbx-empty">No se pudieron cargar las reseñas. <button type=\"button\" data-act=\"rvretry\" style=\"margin-left:8px;padding:6px 14px;border:0;border-radius:99px;background:#111;color:#fff;font:700 .75rem Inter;cursor:pointer\">Reintentar</button></div>';return;}
+    if(d.err){el.innerHTML='<div class="sbx-empty">Las reseñas no están disponibles por ahora.</div>';return;}
     var sm=d.summary||{count:0,avg:0,dist:[0,0,0,0,0]},list=d.reviews||[],bars='',n;
     for(n=5;n>=1;n--){var c=(sm.dist&&sm.dist[n-1])||0;bars+='<div class="sbx-bar"><span>'+n+' ★</span><i><u style="width:'+(sm.count?Math.round(c/sm.count*100):0)+'%"></u></i><em style="font-style:normal">'+c+'</em></div>';}
     el.innerHTML='<div class="sbx-rvg"><div><div class="sbx-big">'+(sm.count?Number(sm.avg).toFixed(1):'–')+'</div><div class="sbx-st">'+stars(sm.avg||0)+'</div><small style="color:#555555">'+sm.count+(sm.count===1?' reseña':' reseñas')+'</small>'+bars+'</div><div>'+
@@ -13060,20 +13059,11 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     var b='',i;for(i=1;i<=5;i++)b+='<button type="button" data-act="star" data-n="'+i+'" aria-label="'+i+' estrellas">★</button>';
     el.innerHTML='<div style="font:800 .9rem Inter;color:#111111">Deja tu reseña</div><div class="sbx-pick" id="sbxPick">'+b+'</div><textarea id="sbxTxt" maxlength="600" placeholder="Cuéntanos qué te pareció (opcional)"></textarea><button type="button" class="sbx-send" data-act="send">ENVIAR RESEÑA</button><div class="sbx-msg" id="sbxFm"></div>';
   }
-  function fetchRv(id,silent,tries){
-    if(typeof api!=='function'){if(!silent){S.rv={err:1};paintRv();}return;}
-    api('getReviews',{productId:String(id),userId:uid()},{timeout:25000}).then(function(d){
-      if(S&&S.p.id===id&&!S.sending){S.rv=d;paintRv();paintRate();}
-    }).catch(function(){
-      if(!S||S.p.id!==id)return;
-      if(tries>0){setTimeout(function(){if(S&&S.p.id===id)fetchRv(id,silent,tries-1);},1500);return;}
-      if(!silent||!S.rv){S.rv={err:1};paintRv();}
-    });
+  function loadRv(){
+    var id=S.p.id;S.rv=null;paintRv();
+    if(typeof api!=='function'){S.rv={err:1};paintRv();return;}
+    api('getReviews',{productId:String(id),userId:uid()},{timeout:20000}).then(function(d){if(S&&S.p.id===id){S.rv=d;paintRv();paintRate();}}).catch(function(){if(S&&S.p.id===id){S.rv={err:1};paintRv();}});
   }
-  function loadRv(){var id=S.p.id;S.rv=null;paintRv();fetchRv(id,false,2);}
-  var rvTimer=null;
-  function stopRvTimer(){if(rvTimer){clearInterval(rvTimer);rvTimer=null;}}
-  function startRvTimer(){stopRvTimer();rvTimer=setInterval(function(){if(S&&!document.hidden&&!S.sending)fetchRv(S.p.id,true,0);},15000);}
   function msg(t,id){var m=$(id||'sbxMsg');if(m)m.textContent=t||'';}
   function show(){
     var p=S.p,o=ov();
@@ -13081,10 +13071,10 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
       '<div class="sbx-card"><div class="sbx-gal" id="sbxGal"></div><div class="sbx-info"><div class="sbx-rate" id="sbxRate"></div><h2 class="sbx-name">'+esc(p.nombre)+'</h2><div id="sbxBuy"></div>'+(p.desc?'<p class="sbx-desc">'+esc(p.desc)+'</p>':'')+'</div>'+
       '<div class="sbx-rev"><h3>Reseñas de clientes</h3><div id="sbxRv"></div><div class="sbx-form" id="sbxForm"></div></div></div></div>';
     o.classList.add('on');o.scrollTop=0;document.documentElement.style.overflow='hidden';
-    paintGal();paintRate();paintBuy();paintForm();loadRv();startRvTimer();
+    paintGal();paintRate();paintBuy();paintForm();loadRv();
   }
   function openP(id){var p=find(id);if(!p)return false;S={p:p,i:0,vimg:null,v:'',qty:1,rv:null,star:0};show();return true;}
-  function close(){stopRvTimer();var o=$('sbxPD');if(o)o.classList.remove('on');document.documentElement.style.overflow='';S=null;}
+  function close(){var o=$('sbxPD');if(o)o.classList.remove('on');document.documentElement.style.overflow='';S=null;}
   function go(d){var n=imgs(S.p).length;if(n<2)return;S.vimg=null;S.i=(S.i+d+n)%n;paintGal();}
   function addCart(){
     var p=S.p;if(p.agotado)return;var vs=vars(p),v=null;
@@ -13096,60 +13086,23 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     var b=document.querySelector('#sbxPD .sbx-cta');if(b){var t=b.textContent;b.textContent='✓ AGREGADO AL CARRITO';setTimeout(function(){if(b)b.textContent=t;},1600);}
   }
   function send(){
-    if(S.sending)return;
     if(!S.star){msg('Elige de 1 a 5 estrellas.','sbxFm');return;}
-    var id=S.p.id,t=$('sbxTxt'),st=S.star,txt=t?t.value:'',nm='Cliente',em='';
+    var id=S.p.id,t=$('sbxTxt'),st=S.star,txt=t?t.value:'',nm='Cliente';
     try{nm=String(currentUser.nombre||currentUser.name||'').trim().replace(/\s+/g,' ').split(' ').slice(0,2).join(' ')||'Cliente';}catch(e){}
-    try{em=String(currentUser.email||currentUser.correo||'');}catch(e){}
-    var btn=document.querySelector('#sbxForm .sbx-send'),t0=Date.now(),tick=null;
-    function unlock(){if(tick){clearInterval(tick);tick=null;}if(btn){btn.disabled=false;btn.textContent='ENVIAR RESEÑA';}}
-    function done(r){
-      /* r = respuesta del servidor con la reseña guardada */
-      unlock();
-      try{if(window.sbxHome)setTimeout(function(){window.sbxHome.load();},700);}catch(_){}
+    var tmp={id:'tmp'+Date.now(),nombre:nm,estrellas:st,comentario:txt,fecha:Date.now(),mine:true};
+    var rv=S.rv&&!S.rv.err?S.rv:(S.rv={summary:{count:0,avg:0,dist:[0,0,0,0,0]},reviews:[]});
+    var old=(rv.reviews||[]).filter(function(r){return r.mine;});
+    rv.reviews=[tmp].concat((rv.reviews||[]).filter(function(r){return !r.mine;}));
+    var l=rv.reviews,tot=0,d=[0,0,0,0,0];l.forEach(function(r){tot+=r.estrellas;d[r.estrellas-1]++;});
+    rv.summary={count:l.length,avg:Math.round(tot/l.length*10)/10,dist:d};
+    if(t)t.value='';S.star=0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x){x.classList.remove('on');});
+    paintRv();paintRate();msg('¡Gracias por tu reseña!','sbxFm');
+    api('addReview',{productId:String(id),userId:uid(),estrellas:st,comentario:txt},{timeout:25000}).then(function(r){
       if(!S||S.p.id!==id)return;
-      S.sending=false;
-      var rv=S.rv&&!S.rv.err?S.rv:(S.rv={summary:{count:0,avg:0,dist:[0,0,0,0,0]},reviews:[]});
-      rv.reviews=[r.review].concat((rv.reviews||[]).filter(function(x){return !x.mine&&x.id!==r.review.id;}));
-      if(r.summary)rv.summary=r.summary;
-      if(t)t.value='';S.star=0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x){x.classList.remove('on');});
-      paintRv();paintRate();
-      var secs=((Date.now()-t0)/1000).toFixed(1);
-      msg('✔ Reseña guardada en Google Sheets'+(r.row?' (hoja «'+(r.sheet||'Resenas')+'», fila '+r.row+')':'')+' en '+secs+' s. Ya es visible para todos los clientes.','sbxFm');
-    }
-    S.sending=true;if(btn){btn.disabled=true;btn.textContent='GUARDANDO… 0 s';}
-    msg('Guardando tu reseña… (puede tardar unos segundos)','sbxFm');
-    tick=setInterval(function(){
-      var s=Math.round((Date.now()-t0)/1000);
-      if(btn)btn.textContent='GUARDANDO… '+s+' s';
-      if(s>=15)msg('Sigue guardando… el servidor de Google está lento, no cierres esta ventana.','sbxFm');
-    },1000);
-    api('addReview',{productId:String(id),userId:uid(),email:em,nombre:nm,estrellas:st,comentario:txt},{timeout:90000}).then(function(r){
-      if(!(r&&r.review)){unlock();if(S&&S.p.id===id){S.sending=false;msg('No se pudo confirmar el guardado. Intenta de nuevo.','sbxFm');}return;}
-      try{console.log('[SHEIBIS reseña guardada]',r);}catch(_){}
-      done(r);
+      if(r&&r.review){var cur=S.rv.reviews.filter(function(x){return x.id!==tmp.id;});S.rv.reviews=[r.review].concat(cur);if(r.summary)S.rv.summary=r.summary;paintRv();paintRate();}
     }).catch(function(e){
-      unlock();
       if(!S||S.p.id!==id)return;
-      var timeout=e&&e.code==='TIMEOUT';
-      if(!timeout){S.sending=false;msg('✖ '+((e&&e.message)||'No se pudo guardar tu reseña. Intenta de nuevo.'),'sbxFm');return;}
-      /* Tardó demasiado: puede que sí se haya guardado. Se comprueba en el servidor varias veces. */
-      msg('El servidor tardó. Comprobando si tu reseña se guardó…','sbxFm');
-      var tries=0;
-      (function check(){
-        if(!S||S.p.id!==id)return;
-        api('getReviews',{productId:String(id),userId:uid()},{timeout:60000}).then(function(d){
-          if(!S||S.p.id!==id)return;
-          var mine=(d.reviews||[]).filter(function(x){return x.mine&&Number(x.estrellas)===Number(st)&&String(x.comentario||'').trim()===String(txt||'').trim();})[0];
-          if(mine){done({review:mine,summary:d.summary});return;}
-          if(++tries<4){setTimeout(check,6000);}
-          else{S.sending=false;msg('✖ No se pudo confirmar que tu reseña se guardó. Pulsa ENVIAR RESEÑA otra vez.','sbxFm');}
-        }).catch(function(){
-          if(!S||S.p.id!==id)return;
-          if(++tries<4){setTimeout(check,6000);}
-          else{S.sending=false;msg('✖ No se pudo conectar con el servidor. Revisa tu internet y vuelve a enviar.','sbxFm');}
-        });
-      })();
+      S.rv.reviews=old.concat(S.rv.reviews.filter(function(x){return x.id!==tmp.id;}));msg((e&&e.message)||'No se pudo enviar. Intenta de nuevo.','sbxFm');loadRv();
     });
   }
   function onClick(e){
@@ -13164,7 +13117,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     else if(a==='qp'){S.qty=Math.min(99,S.qty+1);paintBuy();}
     else if(a==='add')addCart();
     else if(a==='star'){S.star=Number(b.getAttribute('data-n'))||0;Array.prototype.forEach.call(document.querySelectorAll('#sbxPick button'),function(x,i){x.classList.toggle('on',i<S.star);});}
-    else if(a==='send')send();else if(a==='rvretry')loadRv();
+    else if(a==='send')send();
   }
   /* Abrir la ficha al tocar la imagen o el nombre de cualquier producto */
   function pid(el){var h=el.closest('[data-product-id]')||el.closest('.product-detail-item[data-id]');return h?(h.getAttribute('data-product-id')||h.getAttribute('data-id')):null;}
@@ -13209,78 +13162,5 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     }
   }
   setInterval(inject,1500);
-})();
-</script>
-
-<style>
-.sbh{max-width:1100px;margin:38px auto 8px;padding:26px 22px;background:#fff;border:1px solid #e5e5e5;border-radius:24px;box-shadow:0 10px 36px rgba(0,0,0,.06);position:relative;z-index:2}
-.sbh[hidden]{display:none}
-.sbh-badge{display:block;width:max-content;margin:0 auto 10px;background:#111;color:#fff;font:800 .62rem Inter,sans-serif;letter-spacing:2.5px;padding:6px 14px;border-radius:99px}
-.sbh h3{margin:0 0 6px;text-align:center;font:800 1.5rem Inter,sans-serif;color:#111;letter-spacing:-.3px}
-.sbh-sum{display:flex;justify-content:center;align-items:center;gap:10px;margin:0 0 20px;font:700 .9rem Inter,sans-serif;color:#555}
-.sbh-sum b{font:800 1.6rem Inter,sans-serif;color:#111}
-.sbh-st{color:#f5a300;letter-spacing:1px}
-.sbh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.sbh-card{display:flex;gap:12px;background:#fafafa;border:1px solid #ececec;border-radius:16px;padding:16px;transition:.2s}
-.sbh-card:hover,.sbh-card.mine{border-color:#111;background:#fff}
-.sbh-av{flex:none;width:42px;height:42px;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;font:800 1rem Inter,sans-serif}
-.sbh-b{min-width:0;flex:1}
-.sbh-h{display:flex;justify-content:space-between;gap:8px;font:800 .92rem Inter,sans-serif;color:#111}
-.sbh-h em{font:500 .7rem Inter,sans-serif;font-style:normal;color:#777;white-space:nowrap}
-.sbh-p{margin:6px 0 0;font:500 .88rem/1.5 Inter,sans-serif;color:#111;overflow-wrap:anywhere}
-.sbh-prod{display:inline-block;margin-top:8px;padding:0;border:0;background:none;font:700 .72rem Inter,sans-serif;color:#555;text-decoration:underline;cursor:pointer;text-align:left}
-.sbh-ver{display:block;margin-top:6px;font:600 .66rem Inter,sans-serif;color:#2a7d46}
-.sbh-more{display:block;margin:18px auto 0;padding:11px 26px;border:0;border-radius:99px;background:#111;color:#fff;font:800 .75rem Inter,sans-serif;letter-spacing:.08em;cursor:pointer}
-.sbh-empty{padding:18px;text-align:center;border-radius:14px;background:#fafafa;color:#555;font:600 .85rem Inter,sans-serif}
-@media(max-width:600px){.sbh{margin:24px 10px 8px;padding:20px 14px}.sbh-grid{grid-template-columns:1fr}}
-</style>
-<script>
-/* ---------- SHEIBIS · OPINIONES REALES (visibles para TODOS, incluso invitados) ---------- */
-(function(){
-  var DATA=null,SHOWN=6,BUSY=false;
-  function $(id){return document.getElementById(id);}
-  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  function stars(n){var r=Math.round(n),s='',i;for(i=1;i<=5;i++)s+=i<=r?'★':'☆';return s;}
-  function fdate(ms){try{return new Date(ms).toLocaleDateString('es-GT',{day:'numeric',month:'short',year:'numeric'});}catch(e){return '';}}
-  function uid(){try{return (typeof currentUser!=='undefined'&&currentUser&&!currentUser.isGuest&&currentUser.id)?String(currentUser.id):'';}catch(e){return '';}}
-  function prodName(id){try{var l=window.PRODUCTOS||[],i;for(i=0;i<l.length;i++)if(String(l[i].id)===String(id))return l[i].nombre||'';}catch(e){}return '';}
-  function call(a,p,o){
-    if(typeof api==='function')return api(a,p,o);
-    if(typeof apiRequest==='function')return apiRequest(a,p,o);
-    return Promise.reject(new Error('API no disponible'));
-  }
-  function paint(err){
-    var el=$('sbxHome');if(!el)return;
-    if(!DATA){
-      if(err){el.hidden=false;el.innerHTML='<span class="sbh-badge">OPINIONES REALES</span><div class="sbh-empty">No se pudieron cargar las opiniones. <button type="button" class="sbh-more" style="display:inline-block;margin:0 0 0 8px;padding:7px 16px" data-sbh="retry">Reintentar</button></div>';}
-      return;
-    }
-    var list=DATA.reviews||[],sm=DATA.summary||{count:0,avg:0};
-    el.hidden=false;
-    if(!list.length){el.innerHTML='<span class="sbh-badge">OPINIONES REALES</span><h3>Opiniones de clientes</h3><div class="sbh-empty">Aún no hay opiniones. ¡Sé el primero en opinar desde cualquier producto!</div>';return;}
-    var cards=list.slice(0,SHOWN).map(function(r){
-      var pn=prodName(r.productoId);
-      return '<div class="sbh-card'+(r.mine?' mine':'')+'"><div class="sbh-av">'+esc(String(r.nombre||'C').charAt(0).toUpperCase())+'</div><div class="sbh-b"><div class="sbh-h"><span>'+esc(r.nombre||'Cliente')+(r.mine?' · tú':'')+'</span><em>'+fdate(r.fecha)+'</em></div><span class="sbh-st">'+stars(r.estrellas)+'</span>'+(r.comentario?'<p class="sbh-p">'+esc(r.comentario)+'</p>':'')+(pn?'<button type="button" class="sbh-prod" data-sbh="open" data-id="'+esc(r.productoId)+'">'+esc(pn)+'</button>':'')+'<span class="sbh-ver">✔ Cliente SHEIBIS</span></div></div>';
-    }).join('');
-    el.innerHTML='<span class="sbh-badge">OPINIONES REALES</span><h3>Lo que dicen nuestros clientes</h3><div class="sbh-sum"><b>'+Number(sm.avg).toFixed(1)+'</b><span class="sbh-st">'+stars(sm.avg)+'</span><span>'+sm.count+(sm.count===1?' opinión':' opiniones')+'</span></div><div class="sbh-grid">'+cards+'</div>'+(list.length>SHOWN?'<button type="button" class="sbh-more" data-sbh="more">VER MÁS OPINIONES</button>':'');
-  }
-  function load(){
-    if(BUSY)return;BUSY=true;
-    call('getAllReviews',{limit:60,userId:uid()},{timeout:25000}).then(function(d){DATA=d;BUSY=false;paint(false);})
-    .catch(function(){BUSY=false;paint(true);});
-  }
-  document.addEventListener('click',function(e){
-    var b=e.target.closest&&e.target.closest('[data-sbh]');if(!b)return;
-    var a=b.getAttribute('data-sbh');
-    if(a==='more'){SHOWN+=6;paint(false);}
-    else if(a==='retry'){load();}
-    else if(a==='open'){try{if(window.sbxOpenProduct)window.sbxOpenProduct(b.getAttribute('data-id'));}catch(_){}}
-  });
-  window.sbxHome={load:load};
-  function visible(){var el=$('sbxHome');return !!el&&el.offsetParent!==null&&!document.hidden;}
-  setTimeout(load,1800);
-  setTimeout(function(){if(!DATA)load();},7000);
-  setInterval(function(){if(visible())load();},30000);
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)load();});
 })();
 </script>
