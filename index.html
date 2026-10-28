@@ -13062,7 +13062,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   function loadRv(){
     var id=S.p.id;S.rv=null;paintRv();
     if(typeof api!=='function'){S.rv={err:1};paintRv();return;}
-    api('getReviews',{productId:String(id),userId:uid()},{timeout:20000}).then(function(d){if(S&&S.p.id===id){S.rv=d;paintRv();paintRate();}}).catch(function(){if(S&&S.p.id===id){S.rv={err:1};paintRv();}});
+    rvApi('getReviews',{productId:String(id),userId:uid()},{timeout:20000}).then(function(d){if(S&&S.p.id===id){S.rv=d;paintRv();paintRate();}}).catch(function(){if(S&&S.p.id===id){S.rv={err:1};paintRv();}});
   }
   function msg(t,id){var m=$(id||'sbxMsg');if(m)m.textContent=t||'';}
   function show(){
@@ -13085,6 +13085,26 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
     updateCartUI();msg('');
     var b=document.querySelector('#sbxPD .sbx-cta');if(b){var t=b.textContent;b.textContent='✓ AGREGADO AL CARRITO';setTimeout(function(){if(b)b.textContent=t;},1600);}
   }
+  /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
+     Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbxmgu-6LAj4ab-xG8Nq8kqspGZ3RFwdQg83AQ2vX-A1UNm2q1PhUAjwUFOqSdysmlaBzA/exec';
+  function rvApi(a,p,o){
+    var u=String(window.SBX_REVIEWS_URL||'').trim();
+    if(!u)return api(a,p||{},o||{});
+    var c=new AbortController(),t=setTimeout(function(){c.abort();},Number((o&&o.timeout)||20000));
+    return fetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:a},p||{})),cache:'no-store',signal:c.signal})
+      .then(function(r){return r.text();})
+      .then(function(tx){
+        clearTimeout(t);var d;
+        try{d=JSON.parse(tx);}catch(x){var e1=new Error('Respuesta inválida del servidor.');e1.code='INVALID_SERVER_RESPONSE';throw e1;}
+        if(d.ok===false){var e2=new Error(d.message||d.error||'Error del servidor.');e2.code=d.code||'SERVER_ERROR';throw e2;}
+        return d;
+      },function(e){
+        clearTimeout(t);
+        if(e&&e.name==='AbortError'){var e3=new Error('El servidor tardó demasiado en responder.');e3.code='TIMEOUT';throw e3;}
+        throw e;
+      });
+  }
   /* ---- Guardado de reseñas con reintentos y cola local (no se pierde nada) ---- */
   var RQ_KEY='sbx_rv_q',rqBusy={};
   function rqGet(){try{return JSON.parse(localStorage.getItem(RQ_KEY)||'[]');}catch(e){return [];}}
@@ -13093,7 +13113,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   function sbxIsNet(e){return !e||!e.code||e.code==='TIMEOUT'||e.code==='INVALID_SERVER_RESPONSE'||e.name==='TypeError';}
   function rqSend(k,p,n){
     rqBusy[k]=1;
-    return api('addReview',p,{timeout:20000}).then(function(r){delete rqBusy[k];rqDel(k);return r;},function(e){
+    return rvApi('addReview',p,{timeout:20000}).then(function(r){delete rqBusy[k];rqDel(k);return r;},function(e){
       if(sbxIsNet(e)&&n<1){return new Promise(function(ok){setTimeout(ok,2500*(n+1));}).then(function(){return rqSend(k,p,n+1);});}
       delete rqBusy[k];if(!sbxIsNet(e))rqDel(k);throw e;
     });
