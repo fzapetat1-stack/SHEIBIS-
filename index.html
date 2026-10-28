@@ -13364,7 +13364,7 @@ body.sbx-cart-open #sbxFab{display:none!important}
     if(fab)return fab;
     fab=document.createElement('button');fab.id='sbxFab';fab.type='button';fab.setAttribute('aria-label','Abrir carrito');
     fab.innerHTML='<i class="fas fa-shopping-bag"></i><b>0</b>';
-    fab.addEventListener('click',function(){
+    fab.addEventListener('click',function(ev){ev.stopPropagation();
       var x=document.querySelector('#sbxPD.on [data-act="close"]');if(x)x.click();
       var c=document.getElementById('cart');
       if(c&&!c.classList.contains('active')&&typeof window.toggleCart==='function')window.toggleCart();
@@ -13414,4 +13414,3 @@ body.sbx-cart-open #sbxFab{display:none!important}
   setTimeout(function(){last=cnt();setInterval(tick,300);tick();},800);
 })();
 </script>
-
