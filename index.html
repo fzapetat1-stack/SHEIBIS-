@@ -13093,18 +13093,21 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   function sbxIsNet(e){return !e||!e.code||e.code==='TIMEOUT'||e.code==='INVALID_SERVER_RESPONSE'||e.name==='TypeError';}
   function rqSend(k,p,n){
     rqBusy[k]=1;
-    return api('addReview',p,{timeout:30000}).then(function(r){delete rqBusy[k];rqDel(k);return r;},function(e){
-      if(sbxIsNet(e)&&n<2){return new Promise(function(ok){setTimeout(ok,2500*(n+1));}).then(function(){return rqSend(k,p,n+1);});}
+    return api('addReview',p,{timeout:20000}).then(function(r){delete rqBusy[k];rqDel(k);return r;},function(e){
+      if(sbxIsNet(e)&&n<1){return new Promise(function(ok){setTimeout(ok,2500*(n+1));}).then(function(){return rqSend(k,p,n+1);});}
       delete rqBusy[k];if(!sbxIsNet(e))rqDel(k);throw e;
     });
   }
   function sbxSaveReview(p){
     var k='rq'+Date.now()+Math.random().toString(36).slice(2,6),q=rqGet();q.push({k:k,p:p});rqSet(q);
-    return rqSend(k,p,0);
+    var t8=setTimeout(function(){msg('⏳ El servidor está tardando más de lo normal… sigue intentando.','sbxFm');},8000);
+    var pr=rqSend(k,p,0);
+    pr.then(function(){clearTimeout(t8);},function(){clearTimeout(t8);});
+    return pr;
   }
   function sbxFlushQ(){
     if(typeof api!=='function')return;
-    rqGet().forEach(function(x){if(rqBusy[x.k])return;rqSend(x.k,x.p,2).then(function(){if(S&&S.p&&String(S.p.id)===String(x.p.productId))loadRv();}).catch(function(){});});
+    rqGet().forEach(function(x){if(rqBusy[x.k])return;rqSend(x.k,x.p,1).then(function(){if(S&&S.p&&String(S.p.id)===String(x.p.productId))loadRv();}).catch(function(){});});
   }
   function send(){
     if(!S.star){msg('Elige de 1 a 5 estrellas.','sbxFm');return;}
