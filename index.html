@@ -13353,6 +13353,7 @@ img:not(.sbx-ld){background:linear-gradient(90deg,#ececec 25%,#f7f7f7 50%,#ecece
 @keyframes sbxRing{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.55);opacity:0}}
 @keyframes sbxBump{0%{transform:scale(1)}30%{transform:scale(1.28) rotate(-10deg)}60%{transform:scale(.92) rotate(6deg)}100%{transform:scale(1)}}
 @keyframes sbxPop{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}
+#cart.active{z-index:2147483100!important}
 body.sbx-cart-open #sbxFab{display:none!important}
 </style>
 <script>
@@ -13363,7 +13364,13 @@ body.sbx-cart-open #sbxFab{display:none!important}
     if(fab)return fab;
     fab=document.createElement('button');fab.id='sbxFab';fab.type='button';fab.setAttribute('aria-label','Abrir carrito');
     fab.innerHTML='<i class="fas fa-shopping-bag"></i><b>0</b>';
-    fab.addEventListener('click',function(){if(typeof window.toggleCart==='function')window.toggleCart();});
+    fab.addEventListener('click',function(){
+      var x=document.querySelector('#sbxPD.on [data-act="close"]');if(x)x.click();
+      var c=document.getElementById('cart');
+      if(c&&!c.classList.contains('active')&&typeof window.toggleCart==='function')window.toggleCart();
+      if(c){c.scrollTop=0;try{c.scrollIntoView({block:'nearest',behavior:'smooth'});}catch(e){}}
+      document.body.classList.add('sbx-cart-open');
+    });
     document.body.appendChild(fab);return fab;
   }
   function source(t){
@@ -13407,3 +13414,4 @@ body.sbx-cart-open #sbxFab{display:none!important}
   setTimeout(function(){last=cnt();setInterval(tick,300);tick();},800);
 })();
 </script>
+
