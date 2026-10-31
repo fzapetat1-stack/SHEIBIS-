@@ -13826,4 +13826,20 @@ html body .sb-policy-content .sb-prose p{background:none!important;border:0!impo
 html body .sb-policy-content .sb-prose p:hover{background:none!important}
 html body .sb-policy-content .sb-prose p.sb-prose-date{color:var(--pro-mute)!important;font-size:.8rem!important;margin-bottom:6px!important}
 
+
+/* ---------- Catálogos: SIEMPRE 2 por línea (escritorio, tablet y móvil) ---------- */
+html body .catalog-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:20px!important;
+}
+html body .catalog-grid .catalog-card{min-width:0!important;width:100%!important;box-sizing:border-box!important}
+@media (max-width:820px){
+  html body .catalog-grid{gap:12px!important}
+}
+@media (max-width:560px){
+  html body .catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  html body .catalog-card{padding:8px 8px 14px!important;border-radius:18px!important}
+  html body .catalog-card .catalog-name{font-size:.82rem!important;padding:0 4px!important}
+}
 </style>
