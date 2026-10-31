@@ -13843,3 +13843,152 @@ html body .catalog-grid .catalog-card{min-width:0!important;width:100%!important
   html body .catalog-card .catalog-name{font-size:.82rem!important;padding:0 4px!important}
 }
 </style>
+<script>
+/* SHEIBIS · Selector de idioma (ES / EN) — 100% local, sin apps ni servicios externos, no altera colores */
+(function(){
+var D={
+'EXPERIENCIA PREMIUM':'PREMIUM EXPERIENCE','CARGANDO PLATAFORMA':'LOADING PLATFORM','SHEIBIS Premium':'SHEIBIS Premium',
+'Regístrate ahora y comienza a acumular puntos para obtener productos exclusivos':'Sign up now and start earning points to get exclusive products',
+'Iniciar Sesión':'Log In','Registrarme':'Sign Up','Registrarse':'Sign Up','Ingresar como invitado':'Enter as guest','Continuar como invitado':'Continue as guest',
+'¿Olvidaste tu correo o contraseña?':'Forgot your email or password?','O CONTINÚA COMO':'OR CONTINUE AS','Crear Cuenta':'Create Account',
+'Al registrarte aceptas nuestros Términos y Condiciones':'By signing up you accept our Terms and Conditions',
+'EXPLORAR':'EXPLORE','ANÓNIMO':'ANONYMOUS','Salir':'Log out','Inicia sesión para más beneficios':'Log in for more benefits','0 puntos':'0 points','puntos':'points',
+'Cuenta':'Account','Historial de Pedidos':'Order History','Agregar / cambiar foto':'Add / change photo','Eliminar cuenta':'Delete account',
+'Información':'Information','Política de Envíos':'Shipping Policy','Términos y Condiciones':'Terms and Conditions','Soporte':'Support','Contacto':'Contact','Idioma':'Language','Colores':'Colors',
+'Explora nuestros catálogos':'Explore our catalogs','Selecciona una categoría y descubre productos exclusivos':'Select a category and discover exclusive products',
+'Productos':'Products','Categorías':'Categories','Usuarios en línea':'Online users','Ver usuarios':'View users',
+'SHEIBIS — Experiencia Premium':'SHEIBIS — Premium Experience','Términos':'Terms','Envíos':'Shipping','© 2026 · SHEIBIS · Todos los derechos reservados':'© 2026 · SHEIBIS · All rights reserved',
+'Volver a catálogos':'Back to catalogs','Tu carrito':'Your cart','Puntos a ganar:':'Points to earn:','Total:':'Total:','Progreso hacia':'Progress toward',
+'Producto Gratis':'Free Product','Vaciar':'Empty','Solicitar Aprobación':'Request Approval','Los puntos serán aprobados manualmente por el administrador':'Points will be approved manually by the administrator',
+'Puntos':'Points','Compras':'Purchases','Foto / Avatar':'Photo / Avatar','Cerrar':'Close','COMUNIDAD':'COMMUNITY','EN VIVO':'LIVE','usuarios conectados':'users connected',
+'Modo anónimo activado':'Anonymous mode on','Los usuarios se muestran como ANÓNIMO para proteger su identidad.':'Users are shown as ANONYMOUS to protect their identity.',
+'Consultando usuarios conectados…':'Checking connected users…','Actualización automática':'Automatic update','Actualizar':'Refresh','SISTEMA':'SYSTEM','NOTIFICACIÓN':'NOTIFICATION',
+'Notificación':'Notification','Mensaje enviado':'Message sent','Operación confirmada':'Operation confirmed','Información sincronizada correctamente':'Information synced successfully','CONTINUAR':'CONTINUE',
+'Tu carrito está vacío.':'Your cart is empty.','Carrito vacío':'Empty cart','Inicia sesión para acceder a esta opción':'Log in to access this option',
+'Inicia sesión para cambiar tu correo':'Log in to change your email','Inicia sesión para cambiar tu contraseña':'Log in to change your password',
+'Contraseña actualizada correctamente':'Password updated successfully','Correo actualizado correctamente':'Email updated successfully','Sesión cerrada correctamente':'Logged out successfully',
+'Permite ventanas emergentes para ver esta sección':'Allow pop-ups to view this section','Todavía no hay catálogos disponibles.':'No catalogs available yet.',
+'Haz clic para actualizar puntos':'Click to refresh points','Correo':'Email','Contraseña':'Password','Nombre':'Name','Teléfono':'Phone','Buscar':'Search','Buscar productos...':'Search products...',
+'Agregar al carrito':'Add to cart','Ver catálogo':'View catalog','Abrir catálogo':'Open catalog','Próximamente':'Coming soon','Subcategorías':'Subcategories',
+'Elige una categoría para ver sus productos.':'Choose a category to see its products.','Pedidos':'Orders','Cancelar':'Cancel','Aceptar':'Accept','Guardar':'Save','Enviar':'Send','Volver':'Back'
+};
+var P=[[/^(\d+) puntos$/,'$1 points'],[/^(\d+) productos?$/,function(m,n){return n+(n==1?' product':' products')}],[/^(\d+) categorías?$/,function(m,n){return n+(n==1?' category':' categories')}],
+[/^Abrir catálogo (.+)$/,'Open catalog $1'],[/^(\d+) usuarios? conectados?$/,'$1 users connected'],[/^(\d+) pts$/,'$1 pts']];
+var XS={
+'Iniciar Sesión':'Entrar|Se connecter|Anmelden|Accedi|登录',
+'Registrarme':'Cadastrar-me|M\'inscrire|Registrieren|Registrati|注册','Registrarse':'Cadastrar-se|S\'inscrire|Registrieren|Registrati|注册',
+'Ingresar como invitado':'Entrar como convidado|Entrer en invité|Als Gast eintreten|Entra come ospite|以访客身份进入',
+'Continuar como invitado':'Continuar como convidado|Continuer en invité|Als Gast fortfahren|Continua come ospite|以访客身份继续',
+'Crear Cuenta':'Criar conta|Créer un compte|Konto erstellen|Crea account|创建账户',
+'EXPLORAR':'EXPLORAR|EXPLORER|ENTDECKEN|ESPLORA|探索','ANÓNIMO':'ANÓNIMO|ANONYME|ANONYM|ANONIMO|匿名',
+'Salir':'Sair|Quitter|Abmelden|Esci|退出','Cuenta':'Conta|Compte|Konto|Account|账户',
+'Historial de Pedidos':'Histórico de pedidos|Historique des commandes|Bestellverlauf|Storico ordini|订单记录',
+'Agregar / cambiar foto':'Adicionar / mudar foto|Ajouter / changer la photo|Foto hinzufügen / ändern|Aggiungi / cambia foto|添加 / 更换照片',
+'Eliminar cuenta':'Excluir conta|Supprimer le compte|Konto löschen|Elimina account|删除账户',
+'Información':'Informação|Informations|Informationen|Informazioni|信息','Política de Envíos':'Política de envios|Politique d\'expédition|Versandrichtlinie|Politica di spedizione|配送政策',
+'Términos y Condiciones':'Termos e condições|Conditions générales|Allgemeine Geschäftsbedingungen|Termini e condizioni|条款与条件',
+'Soporte':'Suporte|Assistance|Support|Supporto|支持','Contacto':'Contato|Contact|Kontakt|Contatto|联系',
+'Explora nuestros catálogos':'Explore nossos catálogos|Explorez nos catalogues|Entdecken Sie unsere Kataloge|Esplora i nostri cataloghi|浏览我们的目录',
+'Selecciona una categoría y descubre productos exclusivos':'Escolha uma categoria e descubra produtos exclusivos|Choisissez une catégorie et découvrez des produits exclusifs|Wählen Sie eine Kategorie und entdecken Sie exklusive Produkte|Scegli una categoria e scopri prodotti esclusivi|选择一个类别，发现独家产品',
+'Productos':'Produtos|Produits|Produkte|Prodotti|产品','Categorías':'Categorias|Catégories|Kategorien|Categorie|类别',
+'Usuarios en línea':'Usuários online|Utilisateurs en ligne|Benutzer online|Utenti online|在线用户',
+'Volver a catálogos':'Voltar aos catálogos|Retour aux catalogues|Zurück zu den Katalogen|Torna ai cataloghi|返回目录',
+'Tu carrito':'Seu carrinho|Votre panier|Ihr Warenkorb|Il tuo carrello|您的购物车','Total:':'Total:|Total :|Gesamt:|Totale:|总计：',
+'Vaciar':'Esvaziar|Vider|Leeren|Svuota|清空','Solicitar Aprobación':'Solicitar aprovação|Demander l\'approbation|Genehmigung anfordern|Richiedi approvazione|申请批准',
+'Puntos':'Pontos|Points|Punkte|Punti|积分','Compras':'Compras|Achats|Käufe|Acquisti|购买','Cerrar':'Fechar|Fermer|Schließen|Chiudi|关闭',
+'Actualizar':'Atualizar|Actualiser|Aktualisieren|Aggiorna|刷新','Tu carrito está vacío.':'Seu carrinho está vazio.|Votre panier est vide.|Ihr Warenkorb ist leer.|Il tuo carrello è vuoto.|您的购物车是空的。',
+'Contraseña':'Senha|Mot de passe|Passwort|Password|密码','Correo':'E-mail|E-mail|E-Mail|Email|邮箱','Agregar al carrito':'Adicionar ao carrinho|Ajouter au panier|In den Warenkorb|Aggiungi al carrello|加入购物车',
+'Buscar productos...':'Buscar produtos...|Rechercher des produits...|Produkte suchen...|Cerca prodotti...|搜索产品...','Próximamente':'Em breve|Bientôt|Demnächst|Prossimamente|即将推出',
+'Cancelar':'Cancelar|Annuler|Abbrechen|Annulla|取消','Guardar':'Salvar|Enregistrer|Speichern|Salva|保存',
+'Idioma':'Idioma|Langue|Sprache|Lingua|语言','Colores':'Cores|Couleurs|Farben|Colori|颜色'
+};
+var X={};['pt','fr','de','it','zh'].forEach(function(l,i){X[l]={};for(var k in XS)X[l][k]=XS[k].split('|')[i]});
+function look(c){if(lang!=='en'&&X[lang]&&X[lang][c]!==undefined)return X[lang][c];return D[c]}
+var lang='es',rec=new WeakMap(),LS='sheibis_lang',busy=false;
+try{var sv=localStorage.getItem(LS);if(['es','en','pt','fr','de','it','zh'].indexOf(sv)>-1)lang=sv}catch(e){}
+function tr(s){
+  var m=s.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];if(!core)return s;
+  var v=look(core),pre='';
+  if(v===undefined){var k=core.match(/^([^A-Za-zÁÉÍÓÚÑáéíóúñ0-9¿¡]*)([\s\S]*)$/);if(k[1]&&look(k[2])!==undefined){pre=k[1];v=look(k[2])}}
+  if(v===undefined){for(var i=0;i<P.length;i++){if(P[i][0].test(core)){v=core.replace(P[i][0],P[i][1]);break}}}
+  return v===undefined?s:m[1]+pre+v+m[3];
+}
+function conv(base){return lang==='es'?base:tr(base)}
+function doText(n){
+  var r=rec.get(n),cur=n.nodeValue,base=(r&&cur===r.shown)?r.orig:cur,out=conv(base);
+  if(out!==cur)n.nodeValue=out;rec.set(n,{orig:base,shown:out});
+}
+var AT=['placeholder','title','aria-label','alt'];
+function doEl(el){
+  var st=rec.get(el)||{};
+  AT.forEach(function(a){
+    if(!el.hasAttribute||!el.hasAttribute(a))return;
+    var cur=el.getAttribute(a),r=st[a],base=(r&&cur===r.shown)?r.orig:cur,out=conv(base);
+    if(out!==cur)el.setAttribute(a,out);st[a]={orig:base,shown:out};
+  });rec.set(el,st);
+}
+var SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,NOSCRIPT:1};
+function walk(root){
+  if(!root)return;
+  if(root.nodeType===3){if(!root.parentNode||!SKIP[root.parentNode.nodeName])doText(root);return}
+  if(root.nodeType!==1||SKIP[root.nodeName]||(root.closest&&root.closest('[data-no-i18n]')))return;
+  doEl(root);
+  for(var c=root.firstChild;c;c=c.nextSibling)walk(c);
+}
+function applyAll(){busy=true;try{walk(document.body);document.documentElement.lang=lang}finally{busy=false}updBtn()}
+var q=[],sched=false;
+var mo=new MutationObserver(function(ms){
+  if(busy)return;
+  ms.forEach(function(m){if(m.type==='childList')m.addedNodes.forEach(function(n){q.push(n)});else q.push(m.target)});
+  if(!sched){sched=true;requestAnimationFrame(function(){sched=false;var l=q;q=[];busy=true;try{l.forEach(walk)}finally{busy=false}})}
+});
+var LG=[['es','Español'],['en','English'],['pt','Português'],['fr','Français'],['de','Deutsch'],['it','Italiano'],['zh','中文']],box;
+function updBtn(){if(box)[].forEach.call(box.children,function(o){var on=o.dataset.l===lang;o.style.fontWeight=on?'700':'500';o.style.borderColor=on?'var(--pro-jade,#0E8F6A)':'var(--pro-line,#ddd)';o.style.boxShadow=on?'0 0 0 2px var(--pro-jade-l,#E3F4EE)':'none'})}
+function setLang(l){lang=l;try{localStorage.setItem(LS,l)}catch(e){}applyAll()}
+function ui(){
+  var p=document.getElementById('menuPanel'),u=p&&p.querySelector('.menu-user-info');if(!u)return;
+  var sec=document.createElement('div');sec.className='menu-section';sec.id='sbPrefs';
+  sec.innerHTML='<div class="menu-section-title">Idioma</div><div data-no-i18n id="sbLangBox" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px 14px 12px"></div><div class="menu-section-title">Colores</div><div data-no-i18n id="sbThemeBox" style="display:flex;flex-wrap:wrap;gap:10px;padding:6px 14px 12px"></div>';
+  u.parentNode.insertBefore(sec,u.nextSibling);
+  var dv=document.createElement('div');dv.className='menu-divider';sec.parentNode.insertBefore(dv,sec.nextSibling);
+  box=sec.querySelector('#sbLangBox');
+  LG.forEach(function(o){var d=document.createElement('button');d.type='button';d.dataset.l=o[0];d.textContent=o[1];
+    d.style.cssText='padding:9px 8px;border-radius:10px;border:1px solid var(--pro-line,#ddd);background:transparent;color:var(--pro-ink,#111);cursor:pointer;font:inherit;font-size:.85rem';
+    d.onclick=function(){setLang(o[0])};box.appendChild(d)});
+}
+var _al=window.alert,_cf=window.confirm;
+window.alert=function(m){return _al.call(window,conv(String(m)))};
+window.confirm=function(m){return _cf.call(window,conv(String(m)))};
+function init(){ui();applyAll();mo.observe(document.body,{childList:true,subtree:true,characterData:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<style id="sbThemeCss">
+html body[data-theme="azul"]{--pro-jade:#2563EB;--pro-jade-d:#1745A8;--pro-jade-l:#E3ECFD}
+html body[data-theme="morado"]{--pro-jade:#7C3AED;--pro-jade-d:#5B21B6;--pro-jade-l:#EEE5FD}
+html body[data-theme="rosa"]{--pro-jade:#DB2777;--pro-jade-d:#9D174D;--pro-jade-l:#FCE4EF}
+html body[data-theme="naranja"]{--pro-jade:#EA580C;--pro-jade-d:#9A3412;--pro-jade-l:#FDE9DC}
+html body[data-theme="oscuro"]{--pro-ink:#F1F5F3;--pro-ink-2:#C9D3CF;--pro-mute:#97A59F;--pro-paper:#0E1412;--pro-card:#18211E;--pro-line:#2B3833;--pro-jade:#2BC48F;--pro-jade-d:#1E9C71;--pro-jade-l:#173A2E;background:#0E1412;color:#F1F5F3}
+html body[data-theme="oscuro"] .qty-btn-detail,html body[data-theme="oscuro"] .menu-panel,html body[data-theme="oscuro"] .auth-box,
+html body[data-theme="oscuro"] .auth-form .input-group:focus-within,html body[data-theme="oscuro"] .auth-divider span,
+html body[data-theme="oscuro"] .banner-btn-secondary,html body[data-theme="oscuro"] #sbBubble .lbl,
+html body[data-theme="oscuro"] .sbp-toolbar input:focus,html body[data-theme="oscuro"] #sbxPD .sbx-x,
+html body[data-theme="oscuro"] #sbxPD .sbx-card{background:var(--pro-card)!important}
+</style>
+<script>
+/* SHEIBIS · Selector de tema (colores) — local, sin apps */
+(function(){
+var T=[['jade','#0E8F6A','Esmeralda'],['azul','#2563EB','Azul'],['morado','#7C3AED','Morado'],['rosa','#DB2777','Rosa'],['naranja','#EA580C','Naranja'],['oscuro','#0E1412','Oscuro']],LS='sheibis_theme';
+function set(t){var b=document.body;if(t==='jade')b.removeAttribute('data-theme');else b.setAttribute('data-theme',t);try{localStorage.setItem(LS,t)}catch(e){}}
+var m;
+function init(){
+  var cur='jade';try{cur=localStorage.getItem(LS)||'jade'}catch(e){}
+  var box=document.getElementById('sbThemeBox');
+  function mark(t){if(box)[].forEach.call(box.children,function(d){d.style.boxShadow=d.dataset.t===t?'0 0 0 2px var(--pro-card,#fff),0 0 0 4px var(--pro-ink,#111)':'none'})}
+  if(box)T.forEach(function(o){var d=document.createElement('button');d.type='button';d.dataset.t=o[0];d.title=o[2];d.setAttribute('aria-label',o[2]);
+    d.style.cssText='width:30px;height:30px;border-radius:50%;border:1px solid rgba(0,0,0,.25);cursor:pointer;background:'+o[1];d.onclick=function(){set(o[0]);mark(o[0])};box.appendChild(d)});
+  set(cur);mark(cur);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
