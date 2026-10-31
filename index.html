@@ -3802,7 +3802,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         </div>
         <div class="top-bar-right">
             <div class="profile-badge" onclick="showUserProfile()">
-                <img src="" alt="Avatar" class="avatar-img" id="userAvatar" />
+                <img src="" alt="" class="avatar-img" id="userAvatar" onerror="this.removeAttribute('src')" />
                 <span class="user-name" id="userNameDisplay">ANÓNIMO</span>
             </div>
             <div class="points-display" onclick="refreshPoints()" title="Haz clic para actualizar puntos">
@@ -13963,3 +13963,64 @@ function init(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
+<style id="sbTopbarCss">
+/* ===== Barra superior: íconos propios (no dependen de Font Awesome) y diseño unificado con el tema ===== */
+html body header.top-bar .top-bar-right{gap:10px!important;align-items:center!important}
+html body header.top-bar .top-bar-right i.fas{font-size:0!important;line-height:0!important;width:18px!important;height:18px!important;display:inline-block!important;flex:none;background:currentColor!important;-webkit-mask:center/contain no-repeat;mask:center/contain no-repeat;font-family:inherit!important}
+html body header.top-bar .top-bar-right i.fas::before{content:none!important}
+html body header.top-bar i.fa-star{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23000%22%3E%3Cpath d=%22M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z%22/%3E%3C/svg%3E")!important;mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23000%22%3E%3Cpath d=%22M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z%22/%3E%3C/svg%3E")!important}
+html body header.top-bar i.fa-shopping-bag{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M5.5 8h13l1 12.5h-15z%22/%3E%3Cpath d=%22M9 8V6.5a3 3 0 016 0V8%22/%3E%3C/svg%3E")!important;mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M5.5 8h13l1 12.5h-15z%22/%3E%3Cpath d=%22M9 8V6.5a3 3 0 016 0V8%22/%3E%3C/svg%3E")!important}
+html body header.top-bar i.fa-sign-out-alt{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M9 21H5a1 1 0 01-1-1V4a1 1 0 011-1h4%22/%3E%3Cpath d=%22M16 17l5-5-5-5%22/%3E%3Cpath d=%22M21 12H9%22/%3E%3C/svg%3E")!important;mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M9 21H5a1 1 0 01-1-1V4a1 1 0 011-1h4%22/%3E%3Cpath d=%22M16 17l5-5-5-5%22/%3E%3Cpath d=%22M21 12H9%22/%3E%3C/svg%3E")!important}
+html body header.top-bar i.fa-sign-in-alt{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M15 3h4a1 1 0 011 1v16a1 1 0 01-1 1h-4%22/%3E%3Cpath d=%22M10 17l5-5-5-5%22/%3E%3Cpath d=%22M15 12H3%22/%3E%3C/svg%3E")!important;mask-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M15 3h4a1 1 0 011 1v16a1 1 0 01-1 1h-4%22/%3E%3Cpath d=%22M10 17l5-5-5-5%22/%3E%3Cpath d=%22M15 12H3%22/%3E%3C/svg%3E")!important}
+/* Perfil */
+html body header.top-bar .profile-badge{height:42px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:9px!important;padding:4px 16px 4px 4px!important}
+html body header.top-bar .profile-badge .avatar-img{width:34px!important;height:34px!important;flex:none;object-fit:cover!important;font-size:0!important;color:transparent!important;border:2px solid var(--pro-card)!important;
+ background:var(--pro-jade-l) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b95a1' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8.5' r='3.6'/%3E%3Cpath d='M4.8 20c.9-3.6 3.8-5.4 7.2-5.4s6.3 1.8 7.2 5.4'/%3E%3C/svg%3E") center/70% no-repeat!important}
+/* Puntos: acento del tema en vez de ámbar fijo */
+html body header.top-bar .points-display{height:42px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:7px!important;padding:0 16px!important;
+ background:var(--pro-jade-l)!important;border:1px solid rgba(var(--pro-jade-rgb,14,143,106),.38)!important;box-shadow:none!important;color:var(--pro-ink)!important}
+html body header.top-bar .points-display i{color:var(--pro-jade)!important;width:16px!important;height:16px!important}
+html body header.top-bar .points-display .points-number{color:var(--pro-ink)!important;font:800 1rem 'Inter',sans-serif!important}
+
+html body header.top-bar .points-display .points-pulse{background:var(--pro-jade)!important;box-shadow:0 0 0 3px rgba(var(--pro-jade-rgb,14,143,106),.25)!important}
+/* Carrito: ícono + cantidad, sin el globito repetido */
+html body header.top-bar .cart-top-btn{height:42px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:8px!important;padding:0 18px!important;border-radius:99px!important;border:0!important;
+ background:var(--pro-jade)!important;color:#fff!important;box-shadow:0 8px 20px -8px rgba(var(--pro-jade-rgb,14,143,106),.7)!important}
+html body header.top-bar .cart-top-btn .cart-badge{display:none!important}
+html body header.top-bar .cart-top-btn i,html body header.top-bar .cart-top-btn #cartCount{color:#fff!important}
+/* Entrar / Salir */
+html body header.top-bar .logout-btn{height:42px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:8px!important;padding:0 16px!important;border-radius:99px!important;
+ background:transparent!important;border:1px solid var(--pro-line)!important;color:var(--pro-ink)!important;font:700 .8rem 'Inter',sans-serif!important}
+html body header.top-bar .logout-btn:hover{background:var(--pro-jade-l)!important;border-color:var(--pro-jade)!important;color:var(--pro-jade-d)!important}
+html body[data-theme^="d-"] header.top-bar .logout-btn:hover{color:var(--pro-ink)!important}
+html body[data-theme^="d-"] header.top-bar .cart-top-btn{background:var(--pro-btn)!important}
+@media(max-width:640px){html body header.top-bar .top-bar-right{gap:6px!important}html body header.top-bar .points-display,html body header.top-bar .cart-top-btn{padding:0 12px!important}}
+html body header.top-bar .logout-btn i{color:var(--pro-ink)!important}
+html body header.top-bar .logout-btn:hover i{color:inherit!important}
+html body header.top-bar .points-display .points-number + span{font-size:.7rem!important;font-weight:700!important;color:var(--pro-ink-2)!important;opacity:.75!important}
+@media(max-width:700px){
+html body header.top-bar .logout-btn{display:none!important}
+html body header.top-bar .profile-badge{padding:4px!important;width:42px!important;justify-content:center!important}
+html body header.top-bar .profile-badge .user-name{display:none!important}
+html body header.top-bar .top-bar-right{margin-left:auto!important;flex-wrap:nowrap!important}
+}
+</style>
+<style id="sbProductsRow">
+/* ===== Productos en horizontal: foto a la izquierda, datos a la derecha ===== */
+html body .sbp-results{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
+html body .product-detail-item{flex-direction:row!important;align-items:stretch!important;gap:18px!important;padding:12px!important;min-width:0!important}
+html body .product-detail-item:hover{transform:translateY(-3px)!important}
+html body .product-detail-image{flex:0 0 clamp(140px,36%,220px)!important;width:auto!important;height:auto!important;aspect-ratio:auto!important;min-height:170px!important;align-self:stretch!important}
+html body .product-detail-info{flex:1 1 0!important;min-width:0!important;padding:6px 8px 6px 0!important;justify-content:space-between!important}
+html body .product-detail-actions{flex-wrap:wrap!important}
+html body .product-detail-actions .btn-add-detail{flex:1 1 130px!important}
+@media(max-width:1000px){html body .sbp-results{grid-template-columns:1fr!important}}
+@media(max-width:560px){
+  html body .sbp-results{gap:12px!important}
+  html body .product-detail-item{gap:12px!important;padding:10px!important;border-radius:20px!important}
+  html body .product-detail-image{flex-basis:118px!important;min-height:150px!important;border-radius:14px!important}
+  html body .product-detail-name{font-size:1rem!important}
+  html body .product-price-current{font-size:1.3rem!important}
+  html body .product-detail-desc{-webkit-line-clamp:2!important;font-size:.82rem!important}
+}
+</style>
