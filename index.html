@@ -14911,6 +14911,7 @@ table[data-sbx] tr.sbx-f input{height:30px}
 #sbAgeModal .row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
 #sbAgeModal button,#sbAgeAdmin button{flex:1;padding:12px 16px;border-radius:12px;border:1px solid #C8643C;background:#fff;color:#A94E2A;font-weight:700;cursor:pointer}
 #sbAgeModal button.pri,#sbAgeAdmin button.pri{background:#C8643C;color:#fff}
+#sbAgeModal input[type=password]{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:12px;border:1px solid rgba(43,43,43,.2);background:#fff;font-size:1rem;color:#2B2B2B}
 #sbAgeModal .pv{width:100%;max-height:220px;object-fit:contain;border-radius:12px;border:1px solid rgba(43,43,43,.12);margin-top:10px;background:#fff}
 #sbAgeModal .note{font-size:.72rem;background:#FBEFE8;border-radius:10px;padding:10px;color:#6B645C}
 #sbAgeAdmin{margin-top:14px}#sbAgeAdmin button{flex:none;padding:7px 12px;font-size:.74rem}
@@ -14963,7 +14964,7 @@ window.openCatalog=async function(c){
 function key(){var k=sessionStorage.getItem('sb_age_key');if(!k){k=prompt('Clave de administrador (ADMIN_KEY del Apps Script):')||'';if(k)sessionStorage.setItem('sb_age_key',k)}return k}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 async function drawAdmin(){
-  var host=document.getElementById('sbV11Users');if(!host)return;var el=document.getElementById('sbAgeAdmin');
+  var host=document.getElementById('sbV11Auth');if(!host)return;var el=document.getElementById('sbAgeAdmin');
   if(!el){el=document.createElement('div');el.id='sbAgeAdmin';el.className='sb-v11-card';host.appendChild(el)}
   var cats=(window.CATALOGOS||[]);
   el.innerHTML='<h4 style="margin:0 0 10px">VERIFICACIÓN +18</h4><p style="font-size:.76rem;color:#6B645C">Marca los catálogos que requieren identificación:</p><div id="agCats">'+cats.map(function(c){return '<label><input type="checkbox" value="'+esc(c.id)+'" '+(isAdult(c.id)?'checked':'')+'> '+esc(c.nombre)+'</label>'}).join('')+'</div><button class="pri" id="agSave" style="margin-top:8px">Guardar catálogos +18</button><h4 style="margin:18px 0 8px">SOLICITUDES</h4><div id="agList">Cargando…</div>';
@@ -14976,9 +14977,40 @@ async function drawAdmin(){
       if(a==='ver'){var p=await api('ageGetPhoto',{adminKey:key(),id:id});tr.querySelector('.ph').innerHTML=p.ok?'<img src="'+p.image+'">':esc(p.error);return}
       var nota=a==='rechazado'?(prompt('Motivo (opcional):')||''):'';
       var r2=await api('ageReview',{adminKey:key(),id:id,decision:a,nota:nota});if(r2.ok){say('Solicitud '+a+'.');drawAdmin()}else say(r2.error)}
-  }catch(e){L.textContent='No se pudo cargar: '+(e.message||e)}}
-var host=document.getElementById('sbV11Users');
-if(host){var busy=false;new MutationObserver(function(){if(busy||document.getElementById('sbAgeAdmin'))return;busy=true;drawAdmin().finally(function(){setTimeout(function(){busy=false},100)})}).observe(host,{childList:true})}
+  }catch(e){if(/autorizado/i.test(String(e.message||e)))sessionStorage.removeItem('sb_age_key');L.innerHTML='No se pudo cargar: '+esc(e.message||e)+' <button id="agRetry">Reintentar con otra clave</button>';var rb=L.querySelector('#agRetry');if(rb)rb.onclick=drawAdmin}}
+/* ---------- Opción "Autorización" del menú lateral (pide contraseña) ---------- */
+function main(){return document.querySelector('#sbAdminPanel .sb-ultra-main')}
+function hideAll(){var p=document.getElementById('sbAdminPanel');if(!p)return;
+  p.classList.remove('workspace-products','workspace-inventory','workspace-merchandising');
+  p.querySelectorAll('.sb-v11-section').forEach(function(x){x.classList.remove('active');x.style.display='none'});
+  ['sbProductAdminContent','sbInventoryView','sbPrintTools','sbAutomationCenter'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none'})}
+function openSection(){
+  var m=main();if(!m)return;hideAll();
+  document.querySelectorAll('#sbAdminPanel .sb-ultra-item').forEach(function(b){b.classList.toggle('active',b.hasAttribute('data-sb-auth'))});
+  var sec=document.getElementById('sbV11Auth');
+  if(!sec){sec=document.createElement('section');sec.id='sbV11Auth';sec.className='sb-v11-section';m.appendChild(sec)}
+  sec.style.display='block';sec.classList.add('active');
+  var old=document.getElementById('sbWorkspaceTitle');if(old)old.remove();
+  var d=document.createElement('div');d.id='sbWorkspaceTitle';d.className='sb-workspace-title';
+  d.innerHTML='<div><h1><i class="fas fa-user-shield" style="margin-right:8px"></i>Autorización</h1><p>Verificación de edad +18: catálogos restringidos y solicitudes de identificación.</p></div><div class="sb-workspace-status"><i class="fas fa-lock"></i> ACCESO PROTEGIDO</div>';
+  m.prepend(d);drawAdmin()}
+function ask(err){
+  if(document.body.classList.contains('sbw-worker-session')){say('Esta sección es solo para el administrador.');return}
+  show('<span class="badge">🔒</span><h3>Autorización</h3><p>Escribe tu contraseña de administrador para continuar.</p><input type="password" id="agPw" autocomplete="current-password" placeholder="Contraseña"><p id="agErr" style="color:#B3402F;margin:8px 0 0;min-height:18px">'+(err||'')+'</p><div class="row"><button id="agC">Cancelar</button><button class="pri" id="agGo">Entrar</button></div>');
+  var pw=box.querySelector('#agPw'),go=box.querySelector('#agGo');setTimeout(function(){pw.focus()},50);
+  box.querySelector('#agC').onclick=close;
+  async function submit(){if(!pw.value)return;go.disabled=true;go.textContent='Verificando…';
+    try{var r=await api('ageList',{adminKey:pw.value});
+      if(r&&r.ok){sessionStorage.setItem('sb_age_key',pw.value);close();openSection()}
+      else{ask('Contraseña incorrecta.')}}
+    catch(e){ask('No se pudo verificar. Revisa tu conexión.')}}
+  go.onclick=submit;pw.onkeydown=function(e){if(e.key==='Enter')submit()}}
+function inject(){var sb=document.getElementById('sbUltraSidebar');if(!sb||sb.querySelector('[data-sb-auth]'))return;
+  var u=sb.querySelector('[data-ultra-action="users"]');if(!u)return;
+  var b=document.createElement('button');b.type='button';b.className='sb-ultra-item';b.setAttribute('data-sb-auth','1');
+  b.innerHTML='<i class="fas fa-user-shield"></i><span><b>Autorización</b><small style="display:block;color:#555555;font-size:9px">Verificación +18</small></span>';
+  b.onclick=function(){ask()};u.parentNode.insertBefore(b,u.nextSibling)}
+setInterval(inject,800);inject();
 })();
 </script>
 
