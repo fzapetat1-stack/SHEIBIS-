@@ -14693,3 +14693,200 @@ function boot(){var t=0,iv=setInterval(function(){var a=watch(),b=wrapSave();if(
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
+<!-- ============================================================
+  SHEIBIS · PARCHE DE MEJORAS (paleta + panel admin + PDF)
+  CÓMO USAR: pega TODO este bloque justo antes de </body> en tu
+  HTML (después del último </script>). No borres nada de lo anterior.
+============================================================ -->
+<style id="sb-mejoras-css">
+:root{
+  --cream:#FAF7F2; --cream-2:#F1EBE0; --ink:#2B2B2B; --ink-2:#6B645C;
+  --terra:#C8643C; --terra-d:#A94E2A; --salvia:#7A9E7E; --mostaza:#E0A526;
+  --line:rgba(43,43,43,.10); --card:#FFFFFF;
+  --primary-dark:var(--cream); --primary:var(--cream); --secondary:var(--cream-2);
+  --gold:var(--terra); --gold-light:#D9825C; --text-primary:var(--ink);
+  --text-secondary:var(--ink-2); --text-muted:var(--ink-2);
+  --border-gold:rgba(200,100,60,.28);
+}
+body{background:var(--cream)!important;color:var(--ink)!important}
+
+/* ---------- PANEL DE ADMINISTRACIÓN ---------- */
+#sbAdminPanel .sb-box{background:var(--cream)!important;border:1px solid var(--line)!important;border-radius:20px!important;box-shadow:0 30px 80px rgba(43,43,43,.18)!important;color:var(--ink)!important}
+#sbAdminPanel .sb-head{background:#fff;border-bottom:3px solid var(--terra);border-radius:16px;padding:16px 20px!important;margin-bottom:14px}
+#sbAdminPanel .sb-head h2{color:var(--ink)!important;font-weight:800;letter-spacing:.3px}
+#sbAdminPanel .sb-head small{color:var(--ink-2)!important}
+#sbAdminPanel .sb-btn.sb-main,#sbAdminPanel .sb-v11-btn{background:var(--terra)!important;color:#fff!important;border:0!important;border-radius:10px!important;font-weight:700;box-shadow:0 4px 14px rgba(200,100,60,.28);transition:.2s}
+#sbAdminPanel .sb-btn.sb-main:hover,#sbAdminPanel .sb-v11-btn:hover{background:var(--terra-d)!important;transform:translateY(-1px)}
+#sbAdminPanel .sb-btn.sb-muted{background:#fff!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:10px!important}
+#sbAdminPanel .sb-v11-btn.danger{background:#B3402F!important}
+#sbAdminPanel .sb-v11-tabs{display:flex;gap:6px;overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px;margin-bottom:16px}
+#sbAdminPanel .sb-v11-tab{background:transparent!important;color:var(--ink-2)!important;border:0!important;border-radius:10px!important;padding:10px 16px!important;font-weight:600;white-space:nowrap;transition:.2s}
+#sbAdminPanel .sb-v11-tab:hover{background:var(--cream-2)!important;color:var(--ink)!important}
+#sbAdminPanel .sb-v11-tab.active{background:var(--terra)!important;color:#fff!important;box-shadow:0 4px 12px rgba(200,100,60,.3)}
+#sbAdminPanel .sb-v11-card,#sbAdminPanel .sb-auto-center,#sbAdminPanel .sb-print-tools{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:16px!important;box-shadow:0 2px 12px rgba(43,43,43,.05);color:var(--ink)!important}
+#sbAdminPanel .sb-v11-card h4{color:var(--terra-d)!important;letter-spacing:1px;font-size:.78rem}
+#sbAdminPanel .sb-v11-kpi{background:#fff!important;border:1px solid var(--line)!important;border-left:4px solid var(--terra)!important;border-radius:14px!important}
+#sbAdminPanel .sb-v11-kpi:nth-child(3n+2){border-left-color:var(--salvia)!important}
+#sbAdminPanel .sb-v11-kpi:nth-child(3n){border-left-color:var(--mostaza)!important}
+#sbAdminPanel .sb-v11-kpi span{color:var(--ink-2)!important;text-transform:uppercase;font-size:.62rem;letter-spacing:1px}
+#sbAdminPanel .sb-v11-kpi strong{color:var(--ink)!important;font-size:1.7rem}
+#sbAdminPanel table{border-collapse:separate;border-spacing:0;width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+#sbAdminPanel th{background:var(--cream-2)!important;color:var(--ink)!important;font-size:.66rem;text-transform:uppercase;letter-spacing:.8px;padding:12px 10px!important;text-align:left}
+#sbAdminPanel td{color:var(--ink)!important;padding:11px 10px!important;border-top:1px solid var(--line)!important}
+#sbAdminPanel tbody tr:nth-child(even){background:#FCFAF6}
+#sbAdminPanel tbody tr:hover{background:#FBEFE8}
+#sbAdminPanel input,#sbAdminPanel select,#sbAdminPanel textarea{background:#fff!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:10px!important}
+#sbAdminPanel input:focus,#sbAdminPanel select:focus{outline:2px solid rgba(200,100,60,.35)!important;border-color:var(--terra)!important}
+.sb-points-admin-badge{background:rgba(122,158,126,.15)!important;color:#4F7653!important;border:1px solid rgba(122,158,126,.4)!important;border-radius:999px}
+
+/* ---------- CENTRO DE DOCUMENTOS ---------- */
+#sbPrintTools .sb-print-title span{font-weight:800;color:var(--ink)}
+#sbPrintTools .sb-print-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
+#sbPrintTools .sb-print-actions .sb-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px}
+
+/* ---------- NOVEDADES ---------- */
+#sbNovedades{background:linear-gradient(135deg,#fff,#FBEFE8);border:1px solid rgba(200,100,60,.25);border-radius:16px;padding:18px 20px;margin-bottom:16px}
+#sbNovedades h4{margin:0 0 12px;color:var(--terra-d);font-size:.8rem;letter-spacing:1.2px}
+#sbNovedades .nv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+#sbNovedades .nv{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.8rem;color:var(--ink)}
+#sbNovedades .nv b{display:block;font-size:1.4rem}
+#sbNovedades .nv.warn{border-left:4px solid var(--mostaza)}
+#sbNovedades .nv.bad{border-left:4px solid #B3402F}
+#sbNovedades .nv.ok{border-left:4px solid var(--salvia)}
+@media(max-width:700px){#sbAdminPanel .sb-v11-tab{padding:9px 12px!important}}
+</style>
+
+<script id="sb-mejoras-js">
+(function(){
+'use strict';
+var BRAND=[0.78,0.39,0.24], DARK='0.17 0.17 0.17', SAGE='0.48 0.62 0.49', GREY='0.42 0.4 0.36';
+function g(n){try{return window[n]}catch(e){return undefined}}
+function products(){return Array.isArray(window.PRODUCTOS)?window.PRODUCTOS:[]}
+function cats(){return Array.isArray(window.CATALOGOS)?window.CATALOGOS:[]}
+function inv(){try{return (typeof ensureInventory==='function'?ensureInventory():{})||{}}catch(e){return{}}}
+function stock(p){var r=inv()[String(p.id)];return r?Number(r.stock)||0:0}
+function cname(id){var c=cats().find(function(x){return String(x.id)===String(id)});return c?c.nombre:'Sin catálogo'}
+function Q(n){return 'Q'+(Number(n)||0).toLocaleString('es-GT',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function stamp(){return new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}
+function say(m,t){try{if(window.showToast)return window.showToast(m,{title:t||'SHEIBIS',icon:'fa-file-pdf',duration:4000})}catch(e){}alert(m)}
+
+/* ---------- Generador PDF (sin librerías, sin ventanas emergentes) ---------- */
+function makePDF(title,sub,kpis,cols,rows){
+  var W=595,H=842,M=36,pages=[],cur,y;
+  function enc(s){return String(s==null?'':s).replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/[\u2013\u2014]/g,'-').replace(/[^\x20-\xFF]/g,'').replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}
+  function t(s,x,yy,sz,b,c){return 'BT /'+(b?'F2':'F1')+' '+sz+' Tf '+(c||DARK)+' rg '+x.toFixed(1)+' '+yy.toFixed(1)+' Td ('+enc(s)+') Tj ET\n'}
+  function r(x,yy,w,h,c){return c+' rg '+x+' '+yy+' '+w+' '+h+' re f\n'}
+  function cut(s,n){s=String(s==null?'':s);return s.length>n?s.slice(0,n-2)+'..':s}
+  var BR=BRAND.join(' ');
+  function head(){var x=M;cur.c+=r(M-4,y-6,W-2*M+8,20,'0.95 0.92 0.87');cols.forEach(function(c){cur.c+=t(c.h.toUpperCase(),x,y,7.5,true);x+=c.w});y-=22}
+  function page(first){cur={c:''};pages.push(cur);
+    if(first){cur.c+=r(0,H-96,W,96,BR)+r(0,H-100,W,4,'0.88 0.65 0.15')+t('SHEIBIS',M,H-52,28,true,'1 1 1')+t(title,M,H-76,12,false,'1 0.93 0.88')+t(sub,W-M-230,H-76,8.5,false,'1 0.93 0.88');y=H-124;
+      if(kpis&&kpis.length){var bw=(W-2*M-(kpis.length-1)*8)/kpis.length;kpis.forEach(function(k,i){var bx=M+i*(bw+8);cur.c+=r(bx,y-44,bw,50,'0.98 0.96 0.93')+r(bx,y-44,3,50,i%3==1?SAGE:i%3==2?'0.88 0.65 0.15':BR)+t(String(k[1]),bx+12,y-18,15,true)+t(k[0].toUpperCase(),bx+12,y-34,6.5,false,GREY)});y-=70}}
+    else{cur.c+=r(0,H-26,W,26,BR)+t('SHEIBIS · '+title,M,H-17,8,true,'1 1 1');y=H-54}
+    head()}
+  page(true);
+  rows.forEach(function(row,i){
+    if(y<M+24)page(false);
+    if(i%2===0)cur.c+=r(M-4,y-4,W-2*M+8,15,'0.99 0.98 0.96');
+    var x=M;cols.forEach(function(c,k){cur.c+=t(cut(row.cells[k],c.max||40),x,y,8,false,row.warn&&k===c.warn?'0.70 0.25 0.18':DARK);x+=c.w});y-=15});
+  if(!rows.length)cur.c+=t('Sin registros para mostrar.',M,y,9,false,GREY);
+  var now=new Date().toLocaleString('es-GT');
+  pages.forEach(function(p,i){p.c+=r(M-4,30,W-2*M+8,.6,'0.85 0.82 0.78')+t('SHEIBIS · Documento generado el '+now,M,18,7,false,GREY)+t('Página '+(i+1)+' de '+pages.length,W-M-55,18,7,false,GREY)});
+  var o=[],off=[],out='%PDF-1.4\n';
+  function add(s){o.push(s);return o.length}
+  add('');add('');add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+  var kids=[];pages.forEach(function(p){var c=add('<< /Length '+p.c.length+' >>\nstream\n'+p.c+'endstream');var pg=add('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents '+c+' 0 R >>');kids.push(pg+' 0 R')});
+  o[0]='<< /Type /Catalog /Pages 2 0 R >>';o[1]='<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+kids.length+' >>';
+  o.forEach(function(s,i){off.push(out.length);out+=(i+1)+' 0 obj\n'+s+'\nendobj\n'});
+  var xr=out.length;out+='xref\n0 '+(o.length+1)+'\n0000000000 65535 f \n';
+  off.forEach(function(n){out+=('0000000000'+n).slice(-10)+' 00000 n \n'});
+  out+='trailer\n<< /Size '+(o.length+1)+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF';
+  var u=new Uint8Array(out.length);for(var i=0;i<out.length;i++)u[i]=out.charCodeAt(i)&255;
+  return new Blob([u],{type:'application/pdf'});
+}
+function save(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},2000)}
+
+/* ---------- Reportes ---------- */
+function repInventory(){
+  var ps=products(),units=0,val=0,low=0,out=0;
+  var rows=ps.map(function(p){var s=stock(p),pr=Number(p.precio)||0;units+=s;val+=s*pr;if(s<=0)out++;else if(s<=2)low++;
+    return{warn:s<=2,cells:[String(p.id),p.nombre,cname(p.categoria),String(s),s<=0?'AGOTADO':s<=2?'STOCK BAJO':'DISPONIBLE',Q(s*pr)]}});
+  return makePDF('Informe de inventario',ps.length+' productos',[['Productos',ps.length],['Unidades',units],['Stock bajo',low],['Agotados',out],['Valor',Q(val)]],
+    [{h:'ID',w:46,max:8},{h:'Producto',w:190,max:38},{h:'Catálogo',w:100,max:20},{h:'Stock',w:40,max:5,warn:3},{h:'Estado',w:70,max:12,warn:4},{h:'Valor',w:80,max:14}],rows);
+}
+function repProducts(){
+  var ps=products(),rows=ps.map(function(p){var d=Number(p.descuento)||0;return{warn:stock(p)<=0,cells:[String(p.id),p.nombre,cname(p.categoria),Q(p.precio),d?d+'%':'-',String(stock(p))]}});
+  return makePDF('Catálogo de productos',ps.length+' productos',[['Productos',ps.length],['Catálogos',cats().length],['Con descuento',ps.filter(function(p){return Number(p.descuento)>0}).length]],
+    [{h:'ID',w:46,max:8},{h:'Producto',w:200,max:40},{h:'Catálogo',w:110,max:22},{h:'Precio',w:70,max:12},{h:'Desc.',w:40,max:6},{h:'Stock',w:40,max:5,warn:5}],rows);
+}
+function repDashboard(){
+  var ps=products(),units=0,val=0,out=0,low=0;
+  ps.forEach(function(p){var s=stock(p);units+=s;val+=s*(Number(p.precio)||0);if(s<=0)out++;else if(s<=2)low++});
+  var rows=cats().map(function(c){var n=ps.filter(function(p){return String(p.categoria)===String(c.id)}).length;return{cells:[c.nombre,String(n),c.proximamente===false?'ACTIVO':'PRÓXIMAMENTE']}});
+  return makePDF('Resumen administrativo',new Date().toLocaleDateString('es-GT'),[['Productos',ps.length],['Unidades',units],['Valor inventario',Q(val)],['Alertas',out+low]],
+    [{h:'Categoría',w:260,max:50},{h:'Productos',w:100,max:10},{h:'Estado',w:140,max:20}],rows);
+}
+function repUsers(users){
+  var pts=users.reduce(function(s,u){return s+(Number(u.puntos)||0)},0);
+  var rows=users.map(function(u){return{cells:[u.nombre||'-',u.email||'-',String(Number(u.puntos)||0),String(Number(u.totalOrders)||0)]}});
+  return makePDF('Listado de usuarios',users.length+' registrados',[['Usuarios',users.length],['Puntos en total',pts]],
+    [{h:'Nombre',w:150,max:28},{h:'Correo',w:200,max:38},{h:'Puntos',w:70,max:8},{h:'Compras',w:70,max:8}],rows);
+}
+
+async function downloadPDF(type){
+  try{
+    var blob,name;
+    if(type==='users'){say('Preparando listado de usuarios…');
+      var res=await apiRequest('getUsers',{},{timeout:30000});blob=repUsers(Array.isArray(res.users)?res.users:[]);name='USUARIOS'}
+    else if(type==='inventory'){blob=repInventory();name='INVENTARIO'}
+    else if(type==='products'){blob=repProducts();name='PRODUCTOS'}
+    else{blob=repDashboard();name='RESUMEN'}
+    save(blob,'SHEIBIS_'+name+'_'+stamp()+'.pdf');
+    say('Tu PDF se descargó correctamente.','PDF LISTO');
+  }catch(e){console.error(e);say('No se pudo crear el PDF: '+(e.message||e),'ERROR')}
+}
+window.SB_ADMIN=window.SB_ADMIN||{};
+SB_ADMIN.downloadPDF=downloadPDF;
+SB_ADMIN.exportInventoryPDF=function(){return downloadPDF('inventory')};
+
+/* ---------- Centro de documentos: botones claros ---------- */
+function buildTools(){
+  var box=document.querySelector('#sbPrintTools .sb-print-actions');if(!box)return;
+  box.innerHTML=
+   '<button type="button" class="sb-btn sb-main" onclick="SB_ADMIN.downloadPDF(\'dashboard\')">📄 PDF · Resumen</button>'+
+   '<button type="button" class="sb-btn sb-main" onclick="SB_ADMIN.downloadPDF(\'inventory\')">📦 PDF · Inventario</button>'+
+   '<button type="button" class="sb-btn sb-main" onclick="SB_ADMIN.downloadPDF(\'products\')">🛍️ PDF · Productos</button>'+
+   '<button type="button" class="sb-btn sb-main" onclick="SB_ADMIN.downloadPDF(\'users\')">👥 PDF · Usuarios</button>'+
+   '<button type="button" class="sb-btn sb-muted" onclick="SB_ADMIN.printReport(\'dashboard\')">🖨️ Imprimir</button>';
+}
+
+/* ---------- Novedades en el Dashboard ---------- */
+function novedades(){
+  var dash=document.getElementById('sbV11Dashboard');if(!dash)return;
+  var old=document.getElementById('sbNovedades');if(old)old.remove();
+  var ps=products(),out=[],low=[];
+  ps.forEach(function(p){var s=stock(p);if(s<=0)out.push(p);else if(s<=2)low.push(p)});
+  var disc=ps.filter(function(p){return Number(p.descuento)>0}).length;
+  var box=document.createElement('div');box.id='sbNovedades';
+  box.innerHTML='<h4>✦ NOVEDADES DEL DÍA</h4><div class="nv-grid">'+
+   '<div class="nv '+(out.length?'bad':'ok')+'"><b>'+out.length+'</b>Productos agotados'+(out.length?'<br><small>'+out.slice(0,3).map(function(p){return p.nombre}).join(', ')+'</small>':'')+'</div>'+
+   '<div class="nv '+(low.length?'warn':'ok')+'"><b>'+low.length+'</b>Con stock bajo'+(low.length?'<br><small>'+low.slice(0,3).map(function(p){return p.nombre}).join(', ')+'</small>':'')+'</div>'+
+   '<div class="nv ok"><b>'+disc+'</b>Productos con descuento</div>'+
+   '<div class="nv"><b>'+ps.length+'</b>Productos en catálogo</div></div>';
+  dash.insertBefore(box,dash.firstChild);
+}
+function watchDash(){
+  var dash=document.getElementById('sbV11Dashboard');if(!dash)return;
+  var busy=false,mo=new MutationObserver(function(){
+    if(busy||document.getElementById('sbNovedades'))return;
+    busy=true;try{novedades()}finally{setTimeout(function(){busy=false},50)}});
+  mo.observe(dash,{childList:true});
+  if(dash.children.length)novedades();
+}
+function init(){buildTools();watchDash()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+</body>
+</html>
