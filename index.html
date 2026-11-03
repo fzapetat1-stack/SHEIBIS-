@@ -14395,6 +14395,20 @@ html body #sbProductForm>.sb-grid{flex:1 1 auto;min-height:0;overflow:auto;displ
 #sbProductForm .sbp-btn.main{color:#fff;border:0;background:linear-gradient(180deg,#282828,#111);box-shadow:0 8px 22px rgba(0,0,0,.18)}
 #sbProductForm .sbp-note{margin:10px 0 0;font:500 .72rem 'Inter',sans-serif;color:rgba(17,17,17,.55)}
 
+#sbProductForm .sbp-cost-box{padding:14px;border-radius:16px;border:1px solid rgba(0,0,0,.12);background:rgba(0,0,0,.035)}
+#sbProductForm .sbp-cost-box .sb-label{margin-top:0}
+#sbProductForm .sbp-cost-hint{display:block;margin-top:6px;font:500 .72rem 'Inter',sans-serif;color:rgba(17,17,17,.55)}
+#sbProductForm .sbp-sug{margin-top:12px;padding-top:12px;border-top:1px dashed rgba(0,0,0,.15)}
+#sbProductForm .sbp-sug-l{display:block;margin:0 0 8px;font:700 .72rem 'Inter',sans-serif;color:rgba(17,17,17,.62)}
+#sbProductForm .sbp-chips{display:flex;flex-wrap:wrap;gap:6px}
+#sbProductForm .sbp-chip{min-height:34px;padding:0 13px;border-radius:99px;border:1px solid rgba(0,0,0,.18);background:rgba(0,0,0,.05);color:#111;font:800 .76rem 'Inter',sans-serif;cursor:pointer}
+#sbProductForm .sbp-chip.on{background:#111;border-color:#111;color:#fff}
+#sbProductForm .sbp-sugtxt{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px;font:600 .84rem/1.4 'Inter',sans-serif;color:#111}
+#sbProductForm .sbp-use{min-height:34px;padding:0 14px;border:0;border-radius:10px;background:#111;color:#fff;font:800 .76rem 'Inter',sans-serif;cursor:pointer}
+#sbProductForm .sbp-profit{margin-top:10px;padding:11px 13px;border-radius:12px;font:600 .82rem/1.4 'Inter',sans-serif;background:rgba(0,0,0,.06);color:rgba(17,17,17,.65)}
+#sbProductForm .sbp-profit.good{background:rgba(22,163,106,.13);color:#0b6b45}
+#sbProductForm .sbp-profit.bad{background:rgba(226,74,74,.13);color:#a32020}
+#sbProductForm .sbp-profit b{font-weight:800}
 @media(max-width:560px){
   html body #sbProductForm.show{width:calc(100vw - 16px);max-height:calc(100vh - 16px);border-radius:20px}
   html body #sbProductForm>.sb-grid{grid-template-columns:1fr}
@@ -14418,7 +14432,7 @@ function $(i){return document.getElementById(i)}
 
 function tagFields(){
   if(!grid)return;
-  [['sbName',1],['sbCategory',1],['sbPrice',2,1],['sbPriceBefore',2,1],['sbDiscountPreview',2],['sbAgotado',2],['sbImage',3],['sbImages',3],['sbVariants',4],['sbDesc',4]].forEach(function(m){
+  [['sbName',1],['sbCategory',1],['sbPrice',2,1],['sbPriceBefore',2,1],['sbCosto',2],['sbDiscountPreview',2],['sbAgotado',2],['sbImage',3],['sbImages',3],['sbVariants',4],['sbDesc',4]].forEach(function(m){
     var el=$(m[0]);if(!el)return;var c=el;
     while(c&&c.parentNode!==grid)c=c.parentNode;
     if(!c)return;
@@ -14475,8 +14489,62 @@ function build(){
   if(ln)ln.textContent='Nombre del producto';
   if(lc)lc.textContent='Pertenece a (catálogo / subcatálogo)';
   var im=$('sbImage'),lim=im&&im.parentNode.querySelector('.sb-label');if(lim)lim.textContent='Imagen principal (URL)';
+  /* precio de costo + ganancia (solo administración, no se muestra en la tienda) */
+  var pb=$('sbPriceBefore'),pbc=pb;while(pbc&&pbc.parentNode!==grid)pbc=pbc.parentNode;
+  if(pbc&&!$('sbCosto')){
+    var cb=document.createElement('div');cb.className='sbp-cost-box';
+    cb.innerHTML='<label class="sb-label" for="sbCosto">🧾 Precio de costo (Q) · lo que te lo venden</label>'+
+      '<input id="sbCosto" class="sb-input" type="number" min="0" step="0.01" placeholder="Ej. 40.00 (opcional)">'+
+      '<small class="sbp-cost-hint">Solo lo ves tú en administración. Los clientes no lo ven en la tienda.</small>'+
+      '<div class="sbp-sug"><span class="sbp-sug-l">Ganancia que quieres sobre el costo</span>'+
+        '<div class="sbp-chips" id="sbpChips"><button type="button" class="sbp-chip" data-m="30">30%</button><button type="button" class="sbp-chip" data-m="50">50%</button><button type="button" class="sbp-chip" data-m="80">80%</button><button type="button" class="sbp-chip" data-m="100">100%</button></div>'+
+        '<div class="sbp-sugtxt" id="sbpSugTxt"></div></div>'+
+      '<div id="sbpProfit" class="sbp-profit">Escribe el costo para ver cuánto ganas.</div>';
+    pbc.parentNode.insertBefore(cb,pbc.nextSibling);
+    ['sbCosto','sbPrice','sbPriceBefore'].forEach(function(i){var e=$(i);if(e)e.addEventListener('input',updateProfit)});
+    var ec=$('sbCosto');if(ec)ec.addEventListener('input',function(){updateSuggest(false)});
+    var ep=$('sbPrice');if(ep)ep.addEventListener('input',function(e){if(e.isTrusted)priceTouched=true});
+    var eb=$('sbPriceBefore');if(eb)eb.addEventListener('input',function(e){if(e.isTrusted)beforeTouched=true});
+    cb.addEventListener('click',function(e){
+      var ch=e.target.closest&&e.target.closest('.sbp-chip');
+      if(ch){margin=Number(ch.getAttribute('data-m'))||50;try{localStorage.setItem('sbpMargin',String(margin))}catch(x){}priceTouched=false;updateSuggest(true);return}
+      if(e.target.id==='sbpUse'){priceTouched=false;beforeTouched=false;updateSuggest(true)}
+    });
+    updateSuggest(false);  }
   tagFields();
   return true;
+}
+
+var margin=50,priceTouched=false,beforeTouched=false;
+try{var sm=Number(localStorage.getItem('sbpMargin'));if(sm>0)margin=sm}catch(e){}
+function suggested(){var c=$('sbCosto'),cv=c&&c.value!==''?Number(c.value):NaN;return cv>0?Math.ceil(cv*(1+margin/100)):NaN}
+function fillPrices(sp){
+  var p=$('sbPrice'),b=$('sbPriceBefore');
+  if(p&&!priceTouched)p.value=sp.toFixed(2);
+  if(b&&!beforeTouched)b.value=(p&&p.value!==''?Number(p.value):sp).toFixed(2); /* sin descuento por defecto */
+  try{if(window.SB_ADMIN&&SB_ADMIN.updateDiscountPreview)SB_ADMIN.updateDiscountPreview()}catch(e){}
+  updateProfit();
+}
+function updateSuggest(apply){
+  var t=$('sbpSugTxt');if(!t)return;
+  Array.prototype.forEach.call(document.querySelectorAll('#sbpChips .sbp-chip'),function(c){c.classList.toggle('on',Number(c.getAttribute('data-m'))===margin)});
+  var sp=suggested();
+  if(!isFinite(sp)){t.textContent='Escribe el costo y el sistema te sugiere un precio de venta.';return}
+  t.innerHTML='💡 Precio de venta razonable: <b>'+money(sp)+'</b>'+(priceTouched?' <button type="button" class="sbp-use" id="sbpUse">Usar este precio</button>':' · ya puesto en "Precio actual"');
+  if(apply||!priceTouched)fillPrices(sp);
+}
+function money(n){return 'Q '+Number(n).toFixed(2)}
+function updateProfit(){
+  var box=$('sbpProfit'),c=$('sbCosto'),p=$('sbPrice');if(!box||!c||!p)return;
+  var cv=c.value===''?NaN:Number(c.value),pv=p.value===''?NaN:Number(p.value);
+  box.className='sbp-profit';
+  if(!(cv>=0)){box.textContent='Escribe el costo para ver cuánto ganas.';return}
+  if(!(pv>=0)){box.textContent='Escribe el precio actual para calcular tu ganancia.';return}
+  var g=pv-cv;
+  if(g<0){box.classList.add('bad');box.innerHTML='⚠️ Vendes por debajo del costo: pierdes <b>'+money(-g)+'</b> por unidad.';return}
+  var onCost=cv>0?(g/cv*100):0,margin=pv>0?(g/pv*100):0;
+  if(g>0)box.classList.add('good');
+  box.innerHTML='💰 Dejas <b>'+money(g)+'</b> por unidad · <b>'+margin.toFixed(0)+'%</b> del precio de venta'+(cv>0?' ('+onCost.toFixed(0)+'% sobre el costo)':'')+'.';
 }
 
 function setStatus(t){var s=$('sbStatus');if(s)s.textContent=t||''}
@@ -14494,6 +14562,7 @@ function validate(step){
     if(!(pv>=0)){mark(p,true);setStatus('⚠️ Escribe el precio actual.');p&&p.focus();return false}
     if(!(bv>0)){mark(b,true);setStatus('⚠️ Escribe el precio antes (si no hay descuento, usa el mismo precio).');b&&b.focus();return false}
     if(bv<pv){mark(b,true);setStatus('⚠️ El precio antes debe ser mayor o igual al precio actual.');b&&b.focus();return false}
+    var co=$('sbCosto');mark(co,false);if(co&&co.value!==''&&!(Number(co.value)>=0)){mark(co,true);setStatus('⚠️ El precio de costo no es válido.');co.focus();return false}
   }
   setStatus('');return true;
 }
@@ -14531,6 +14600,11 @@ function openUI(){
   $('sbpTitle').textContent=editing?'Editar producto':'Nuevo producto';
   document.body.classList.add('sbp-open');
   setStatus('');
+  var co=$('sbCosto');
+  if(co){var idv=($('sbId')||{}).value,pp=null;try{if(idv)pp=getProducts().filter(function(x){return String(x.id)===String(idv)})[0]}catch(e){}
+    co.value=pp&&Number(pp.precioCosto)>=0&&pp.precioCosto!==''&&pp.precioCosto!=null?Number(pp.precioCosto).toFixed(2):'';
+    priceTouched=!!idv;beforeTouched=!!idv; /* al editar no se cambian los precios solos */
+    updateProfit();updateSuggest(false)}
   go(1,'init');
   setTimeout(tagFields,1700); /* por si las variantes se inyectan un poco después */
   var n=$('sbName');if(n)setTimeout(function(){try{n.focus({preventScroll:true})}catch(e){}},60);
@@ -14552,7 +14626,24 @@ function watch(){
   if(was)openUI();
   return true;
 }
-function boot(){var t=0,iv=setInterval(function(){if(watch()||++t>40)clearInterval(iv)},250)}
+function wrapSave(){
+  var A=window.SB_ADMIN;if(!A||!A.save)return false;if(A.__sbpCost)return true;A.__sbpCost=1;
+  var os=A.save;
+  A.save=function(){
+    var id=($('sbId')||{}).value||'',nm=(($('sbName')||{}).value||'').trim(),cv=($('sbCosto')||{}).value;
+    var r=os.apply(this,arguments);
+    var f=$('sbProductForm');if(f&&f.classList.contains('show'))return r; /* no se guardó: se quedó abierta */
+    try{
+      var ps=getProducts(),p=null,i;
+      if(id)p=ps.filter(function(x){return String(x.id)===String(id)})[0];
+      else for(i=ps.length-1;i>=0;i--){if(ps[i].nombre===nm){p=ps[i];break}}
+      if(p){var c=cv===''?NaN:Number(cv);if(isFinite(c)&&c>=0)p.precioCosto=Number(c.toFixed(2));else delete p.precioCosto;saveProducts()}
+    }catch(e){console.error('SHEIBIS costo',e)}
+    return r;
+  };
+  return true;
+}
+function boot(){var t=0,iv=setInterval(function(){var a=watch(),b=wrapSave();if((a&&b)||++t>40)clearInterval(iv)},250)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
