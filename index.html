@@ -4109,7 +4109,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzM8OZ_ikVOGysYyZQWahdxcgPT7TxCBbNPQiFhHar69XE8fqPeKo7P8D2zu0iyvDyU/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzZfQYfDa2vA-UPDD1fGwl0jQHh93ZT7QROSGwICtzqBoV9w7jLNXYIZJmrcmGaBpni/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5806,7 +5806,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzM8OZ_ikVOGysYyZQWahdxcgPT7TxCBbNPQiFhHar69XE8fqPeKo7P8D2zu0iyvDyU/exec
+     https://script.google.com/macros/s/AKfycbzZfQYfDa2vA-UPDD1fGwl0jQHh93ZT7QROSGwICtzqBoV9w7jLNXYIZJmrcmGaBpni/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -8477,7 +8477,7 @@ body.sbw-worker-session #sbAdminPanel .sb-worker-admin-only{display:none!importa
 (function(){
 'use strict';
 
-const PASS='Qwe220##';
+const PASS='QWE220##';
 const STORAGE_KEY='sheibis_products_final_v10';
 const CATEGORY_KEY='sheibis_catalogs_final_v1';
 const INVENTORY_KEY='sheibis_inventory_master_v1';
@@ -14969,14 +14969,14 @@ async function drawAdmin(){
   var cats=(window.CATALOGOS||[]);
   el.innerHTML='<h4 style="margin:0 0 10px">VERIFICACIÓN +18</h4><p style="font-size:.76rem;color:#6B645C">Marca los catálogos que requieren identificación:</p><div id="agCats">'+cats.map(function(c){return '<label><input type="checkbox" value="'+esc(c.id)+'" '+(isAdult(c.id)?'checked':'')+'> '+esc(c.nombre)+'</label>'}).join('')+'</div><button class="pri" id="agSave" style="margin-top:8px">Guardar catálogos +18</button><h4 style="margin:18px 0 8px">SOLICITUDES</h4><div id="agList">Cargando…</div>';
   el.querySelector('#agSave').onclick=async function(){var ids=[].map.call(el.querySelectorAll('#agCats input:checked'),function(i){return i.value});
-    var r=await api('ageSetConfig',{adminKey:key(),catalogs:ids});if(r.ok){adult=ids;try{localStorage.setItem(LS,JSON.stringify(ids))}catch(e){}say('Catálogos +18 guardados.')}else{sessionStorage.removeItem('sb_age_key');say(r.error)}};
+    try{await api('ageSetConfig',{adminKey:key(),catalogs:ids});adult=ids;try{localStorage.setItem(LS,JSON.stringify(ids))}catch(e){}say('Catálogos +18 guardados.')}catch(e){say('No se pudo guardar: '+(e.message||e))}};
   var L=el.querySelector('#agList');
   try{var r=await api('ageList',{adminKey:key()});if(!r.ok)throw new Error(r.error);
     L.innerHTML=r.items.length?'<table><thead><tr><th>Usuario</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+r.items.map(function(i){return '<tr data-id="'+esc(i.id)+'"><td>'+esc(i.nombre||i.userId)+'</td><td>'+esc(i.email)+'</td><td>'+esc(i.estado)+'</td><td>'+(i.estado==='pendiente'?'<button data-a="ver">Ver ID</button> <button class="pri" data-a="aprobado">Aprobar</button> <button data-a="rechazado">Rechazar</button><div class="ph"></div>':'—')+'</td></tr>'}).join('')+'</tbody></table>':'<p style="font-size:.78rem">No hay solicitudes todavía.</p>';
     L.onclick=async function(ev){var b=ev.target.closest('button[data-a]');if(!b)return;var tr=b.closest('tr'),id=tr.dataset.id,a=b.dataset.a;
-      if(a==='ver'){var p=await api('ageGetPhoto',{adminKey:key(),id:id});tr.querySelector('.ph').innerHTML=p.ok?'<img src="'+p.image+'">':esc(p.error);return}
+      if(a==='ver'){try{var p=await api('ageGetPhoto',{adminKey:key(),id:id});tr.querySelector('.ph').innerHTML='<img src="'+p.image+'">'}catch(e){tr.querySelector('.ph').textContent=e.message||e}return}
       var nota=a==='rechazado'?(prompt('Motivo (opcional):')||''):'';
-      var r2=await api('ageReview',{adminKey:key(),id:id,decision:a,nota:nota});if(r2.ok){say('Solicitud '+a+'.');drawAdmin()}else say(r2.error)}
+      try{await api('ageReview',{adminKey:key(),id:id,decision:a,nota:nota});say('Solicitud '+a+'.');drawAdmin()}catch(e){say('No se pudo guardar: '+(e.message||e))}}
   }catch(e){if(/autorizado/i.test(String(e.message||e)))sessionStorage.removeItem('sb_age_key');L.innerHTML='No se pudo cargar: '+esc(e.message||e)+' <button id="agRetry">Reintentar con otra clave</button>';var rb=L.querySelector('#agRetry');if(rb)rb.onclick=drawAdmin}}
 /* ---------- Opción "Autorización" del menú lateral (pide contraseña) ---------- */
 function main(){return document.querySelector('#sbAdminPanel .sb-ultra-main')}
@@ -15003,7 +15003,7 @@ function ask(err){
     try{var r=await api('ageList',{adminKey:pw.value});
       if(r&&r.ok){sessionStorage.setItem('sb_age_key',pw.value);close();openSection()}
       else{ask('Contraseña incorrecta.')}}
-    catch(e){ask('No se pudo verificar. Revisa tu conexión.')}}
+    catch(e){var mm=String(e&&e.message||e);ask(/autorizado/i.test(mm)?'Contraseña incorrecta.':/no reconocida/i.test(mm)?'Tu Apps Script aún no tiene el código nuevo: pega apps-script-mejorado.gs y publica una nueva versión.':'No se pudo verificar: '+mm)}}
   go.onclick=submit;pw.onkeydown=function(e){if(e.key==='Enter')submit()}}
 function inject(){var sb=document.getElementById('sbUltraSidebar');if(!sb||sb.querySelector('[data-sb-auth]'))return;
   var u=sb.querySelector('[data-ultra-action="users"]');if(!u)return;
