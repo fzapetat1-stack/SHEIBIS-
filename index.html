@@ -14940,7 +14940,7 @@ function step2(){photo='';show('<h3>Verifica tu identidad</h3><p>Toma una foto c
   var f=box.querySelector('#agFile'),pv=box.querySelector('#agPv'),send=box.querySelector('#agSend');
   box.querySelector('#agPick').onclick=function(){f.click()};box.querySelector('#agBack').onclick=close;
   f.onchange=function(){var file=f.files&&f.files[0];if(!file)return;var img=new Image(),u=URL.createObjectURL(file);
-    img.onload=function(){var k=Math.min(1,1100/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);photo=c.toDataURL('image/jpeg',.7);URL.revokeObjectURL(u);pv.src=photo;pv.style.display='block';send.disabled=false};
+    img.onload=function(){var k=Math.min(1,900/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);photo=c.toDataURL('image/jpeg',.6);URL.revokeObjectURL(u);pv.src=photo;pv.style.display='block';send.disabled=false};
     img.onerror=function(){say('No se pudo leer la imagen.')};img.src=u};
   send.onclick=async function(){send.disabled=true;send.textContent='Enviando…';
     try{var r=await api('ageSubmit',{userId:uid(),nombre:(currentUser||{}).nombre||'',email:(currentUser||{}).email||'',image:photo});
@@ -15011,6 +15011,45 @@ function inject(){var sb=document.getElementById('sbUltraSidebar');if(!sb||sb.qu
   b.innerHTML='<i class="fas fa-user-shield"></i><span><b>Autorización</b><small style="display:block;color:#555555;font-size:9px">Verificación +18</small></span>';
   b.onclick=function(){ask()};u.parentNode.insertBefore(b,u.nextSibling)}
 setInterval(inject,800);inject();
+})();
+</script>
+
+<style id="sb-notif-css">
+/* Notificaciones SHEIBIS · estilo aviso del navegador */
+#toastNotification.sb-premium-notice{align-items:flex-start!important;justify-content:center!important;padding:14px!important}
+#toastNotification .sb-premium-notice-backdrop{background:rgba(43,43,43,.28)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#toastNotification .sb-premium-notice-card{width:min(420px,100%)!important;max-width:100%!important;margin:0!important;padding:0!important;background:#fff!important;border:1px solid rgba(43,43,43,.12)!important;border-radius:10px!important;box-shadow:0 10px 36px rgba(0,0,0,.28)!important;overflow:hidden!important;display:grid!important;grid-template-columns:72px 1fr;grid-template-areas:"ic ti" "ic ms" "ic st" "bar bar";text-align:left!important;color:#2B2B2B!important;transform:none!important;filter:none!important;animation:none!important}
+#toastNotification .sb-premium-notice-card::before,#toastNotification .sb-premium-notice-card::after{display:none!important}
+#toastNotification :is(.sb-premium-notice-shine,.sb-premium-notice-glow,.sb-premium-notice-top,.sb-premium-notice-kicker,.sb-premium-notice-divider,.sb-premium-notice-footer,.sb-premium-notice-confirmed span,.sb-premium-notice-confirmed i,.sb-premium-notice-continue i){display:none!important}
+#toastNotification .sb-premium-notice-icon{grid-area:ic;align-self:start;justify-self:center;width:44px!important;height:44px!important;margin:18px 0 0!important;border-radius:10px!important;background:#4A4A50!important;border:0!important;box-shadow:none!important;display:grid!important;place-items:center;color:#fff!important}
+#toastNotification .sb-premium-notice-icon i{font-size:1.15rem!important;color:#fff!important;background:none!important;-webkit-text-fill-color:#fff!important}
+#toastNotification .sb-premium-notice-card:has(.sb-premium-notice-confirmed.error) .sb-premium-notice-icon{background:#B3402F!important}
+#toastNotification .sb-premium-notice-title{grid-area:ti;margin:16px 16px 4px 0!important;font:700 1rem Inter,system-ui,sans-serif!important;color:#2B2B2B!important;-webkit-text-fill-color:#2B2B2B!important;background:none!important;letter-spacing:0!important;text-align:left!important;text-shadow:none!important}
+#toastNotification .sb-premium-notice-message{grid-area:ms;margin:0 16px 0 0!important;font:400 .9rem/1.45 Inter,system-ui,sans-serif!important;color:#4A4640!important;text-align:left!important;word-break:break-word}
+#toastNotification .sb-premium-notice-confirmed{grid-area:st;margin:8px 16px 16px 0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;display:block!important}
+#toastNotification .sb-premium-notice-confirmed div{display:block!important}
+#toastNotification .sb-premium-notice-confirmed strong{font:600 .8rem Inter,system-ui,sans-serif!important;color:#A94E2A!important}
+#toastNotification .sb-premium-notice-confirmed.error strong{color:#B3402F!important}
+#toastNotification .sbn-bar{grid-area:bar;display:flex;border-top:1px solid rgba(43,43,43,.1);background:#F1F0EE}
+#toastNotification .sbn-bar button{border:0!important;border-radius:0!important;margin:0!important;height:48px;cursor:pointer;font:600 .9rem Inter,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;box-shadow:none!important;transition:filter .15s}
+#toastNotification .sbn-bar .sb-premium-notice-continue{flex:1.4;width:auto!important;min-width:0;background:#C8643C!important;color:#fff!important;display:flex!important;align-items:center;justify-content:center}
+#toastNotification .sbn-bar .sb-premium-notice-continue span{color:#fff!important;letter-spacing:0!important}
+#toastNotification .sbn-bar .sbn-later{flex:1;background:#F1F0EE!important;color:#2B2B2B!important}
+#toastNotification .sbn-bar button:hover{filter:brightness(.94)}
+@media(max-width:480px){#toastNotification.sb-premium-notice{padding:10px!important}}
+</style>
+<script id="sb-notif-js">
+(function(){
+function init(){
+  var n=document.getElementById('toastNotification');if(!n||n.querySelector('.sbn-bar'))return;
+  var card=n.querySelector('.sb-premium-notice-card'),btn=document.getElementById('toastContinueBtn');if(!card||!btn)return;
+  var sp=btn.querySelector('span');if(sp)sp.textContent='Aceptar';
+  var bar=document.createElement('div');bar.className='sbn-bar';
+  var later=document.createElement('button');later.type='button';later.className='sbn-later';later.textContent='Cerrar';
+  later.onclick=function(){if(typeof closeToast==='function')closeToast();else n.classList.remove('show')};
+  card.appendChild(bar);bar.appendChild(btn);bar.appendChild(later);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 
