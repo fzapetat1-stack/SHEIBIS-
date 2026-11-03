@@ -14332,3 +14332,227 @@ function watch(){var h=document.getElementById('productList');if(!h||!window.Mut
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch);else watch();
 })();
 </script>
+
+<!-- ======================================================================
+     SHEIBIS · AGREGAR / EDITAR PRODUCTO EN VENTANA POR PASOS (solo HTML)
+     Misma estética que la ventana "Nuevo catálogo".
+     Paso 1 Datos · Paso 2 Precio · Paso 3 Fotos · Paso 4 Detalles
+     ====================================================================== -->
+<style id="sbProductWizardCss">
+#sbProdBackdrop{position:fixed;inset:0;z-index:2147483100;display:none;background:rgba(3,5,10,.74);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+body.sbp-open #sbProdBackdrop{display:block}
+body.sbp-open{overflow:hidden}
+
+html body #sbProductForm.show{
+  position:fixed!important;z-index:2147483200;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex!important;flex-direction:column;
+  width:min(560px,calc(100vw - 24px));max-height:calc(100vh - 24px);margin:0!important;padding:0!important;overflow:hidden;
+  border-radius:22px;border:1px solid rgba(17,17,17,.315);background:linear-gradient(180deg,#f4f4f4,#ffffff);
+  box-shadow:0 34px 100px rgba(0,0,0,.413);color:#111;animation:sbpPop .22s ease both}
+@keyframes sbpPop{from{opacity:0;transform:translate(-50%,-47%) scale(.97)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+#sbProductForm .sbp-head{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;background:#f4f4f4;border-bottom:1px solid rgba(0,0,0,.1)}
+#sbProductForm .sbp-head strong{font:800 1.05rem 'Inter',sans-serif;color:#111}
+#sbProductForm .sbp-x{width:34px;height:34px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:rgba(0,0,0,.05);color:#111;cursor:pointer;flex:none}
+#sbProductForm .sbp-x:hover{background:#e24a4a;border-color:#e24a4a;color:#fff}
+
+#sbProductForm .sbp-steps{flex:none;display:flex;gap:8px;padding:14px 18px 0}
+#sbProductForm .sbp-step{flex:1 1 0;display:flex;flex-direction:column;align-items:flex-start;gap:6px;border:0;background:none;padding:0;cursor:pointer;font:700 .68rem 'Inter',sans-serif;color:rgba(17,17,17,.42);text-align:left;transition:color .2s}
+#sbProductForm .sbp-step i{display:block;width:100%;height:4px;border-radius:4px;background:rgba(17,17,17,.12);transition:background .25s}
+#sbProductForm .sbp-step.done i,#sbProductForm .sbp-step.on i{background:#111}
+#sbProductForm .sbp-step.on,#sbProductForm .sbp-step.done{color:#111}
+#sbProductForm .sbp-intro{flex:none;padding:14px 18px 2px}
+#sbProductForm .sbp-intro b{display:block;font:800 1.02rem 'Inter',sans-serif;color:#111}
+#sbProductForm .sbp-intro span{display:block;margin-top:2px;font:500 .78rem 'Inter',sans-serif;color:rgba(17,17,17,.58)}
+
+html body #sbProductForm>.sb-grid{flex:1 1 auto;min-height:0;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 18px 18px;margin:0}
+#sbProductForm .sb-grid>[data-sbp-step]{display:none;grid-column:1/-1;min-width:0}
+#sbProductForm[data-sbp-cur="1"] .sb-grid>[data-sbp-step="1"],
+#sbProductForm[data-sbp-cur="2"] .sb-grid>[data-sbp-step="2"],
+#sbProductForm[data-sbp-cur="3"] .sb-grid>[data-sbp-step="3"],
+#sbProductForm[data-sbp-cur="4"] .sb-grid>[data-sbp-step="4"]{display:block;animation:sbpIn .22s ease both}
+#sbProductForm .sb-grid>[data-sbp-half="1"]{grid-column:auto}
+@keyframes sbpIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#sbProductForm .sb-grid>.sb-actions-form{display:none!important}
+
+#sbProductForm .sb-label{display:block;margin:0 0 6px;font:700 .72rem 'Inter',sans-serif;letter-spacing:.3px;color:rgba(17,17,17,.62)}
+#sbProductForm .sb-input,#sbProductForm .sb-select,#sbProductForm .sb-textarea{
+  width:100%;box-sizing:border-box;min-height:46px;padding:11px 14px;border-radius:12px;color:#111;font:inherit;font-size:.9rem;
+  background:rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.15);outline:0;transition:border-color .15s,box-shadow .15s}
+#sbProductForm .sb-textarea{min-height:92px;resize:vertical}
+#sbProductForm .sb-input:focus,#sbProductForm .sb-select:focus,#sbProductForm .sb-textarea:focus{border-color:#111;box-shadow:0 0 0 3px rgba(40,220,170,.55)}
+#sbProductForm .sb-select option{background:#f4f4f4;color:#111}
+#sbProductForm small{font-size:.72rem}
+#sbProductForm .sb-discount{padding:0;border:0;background:none}
+#sbProductForm .sb-discount>.sb-label{margin-top:12px}
+#sbProductForm .sbp-bad{border-color:#e24a4a!important;box-shadow:0 0 0 3px rgba(226,74,74,.25)!important}
+
+#sbProductForm .sbp-foot{flex:none;padding:12px 18px 16px;border-top:1px solid rgba(0,0,0,.1);background:#f4f4f4}
+#sbProductForm .sbp-foot #sbStatus{min-height:18px;margin:0 0 8px;font:600 .78rem 'Inter',sans-serif;color:rgba(17,17,17,.7)}
+#sbProductForm .sbp-btns{display:flex;justify-content:flex-end;gap:10px}
+#sbProductForm .sbp-btn{min-height:44px;padding:0 20px;border-radius:12px;font:800 .84rem 'Inter',sans-serif;border:1px solid rgba(0,0,0,.175);background:rgba(0,0,0,.06);color:#111;cursor:pointer;transition:transform .15s}
+#sbProductForm .sbp-btn:hover{transform:translateY(-1px)}
+#sbProductForm .sbp-btn.main{color:#fff;border:0;background:linear-gradient(180deg,#282828,#111);box-shadow:0 8px 22px rgba(0,0,0,.18)}
+#sbProductForm .sbp-note{margin:10px 0 0;font:500 .72rem 'Inter',sans-serif;color:rgba(17,17,17,.55)}
+
+@media(max-width:560px){
+  html body #sbProductForm.show{width:calc(100vw - 16px);max-height:calc(100vh - 16px);border-radius:20px}
+  html body #sbProductForm>.sb-grid{grid-template-columns:1fr}
+  #sbProductForm .sb-grid>[data-sbp-half="1"]{grid-column:1/-1}
+  #sbProductForm .sbp-step{font-size:.62rem}
+  #sbProductForm .sbp-btn{flex:1}
+}
+@media(prefers-reduced-motion:reduce){html body #sbProductForm.show,#sbProductForm .sb-grid>[data-sbp-step]{animation:none}}
+</style>
+<script id="sbProductWizardJs">
+(function(){
+'use strict';
+var STEPS=[
+ {n:'Datos',t:'¿Cómo se llama el producto?',s:'Escribe el nombre y elige a qué catálogo pertenece.'},
+ {n:'Precio',t:'¿Cuánto cuesta?',s:'El descuento se calcula solo con el precio antes y el precio actual.'},
+ {n:'Fotos',t:'Agrega las imágenes',s:'Pega las URLs. La primera imagen es la principal.'},
+ {n:'Detalles',t:'Últimos detalles',s:'Variantes opcionales y una descripción para tus clientes.'}
+];
+var cur=1,form,grid,built=false;
+function $(i){return document.getElementById(i)}
+
+function tagFields(){
+  if(!grid)return;
+  [['sbName',1],['sbCategory',1],['sbPrice',2,1],['sbPriceBefore',2,1],['sbDiscountPreview',2],['sbAgotado',2],['sbImage',3],['sbImages',3],['sbVariants',4],['sbDesc',4]].forEach(function(m){
+    var el=$(m[0]);if(!el)return;var c=el;
+    while(c&&c.parentNode!==grid)c=c.parentNode;
+    if(!c)return;
+    c.setAttribute('data-sbp-step',m[1]);if(m[2])c.setAttribute('data-sbp-half','1');
+  });
+}
+
+function build(){
+  form=$('sbProductForm');if(!form||built)return !!form;
+  grid=form.querySelector(':scope > .sb-grid');if(!grid)return false;
+  built=true;
+  document.body.appendChild(form); /* vive en <body>: nunca queda recortada por el panel */
+  var bd=$('sbProdBackdrop');
+  if(!bd){bd=document.createElement('div');bd.id='sbProdBackdrop';bd.addEventListener('click',closeForm);document.body.appendChild(bd)}
+
+  var head=document.createElement('div');head.className='sbp-head';
+  head.innerHTML='<strong id="sbpTitle">Nuevo producto</strong><button type="button" class="sbp-x" aria-label="Cerrar"><i class="fas fa-times"></i></button>';
+  head.querySelector('.sbp-x').addEventListener('click',closeForm);
+
+  var steps=document.createElement('div');steps.className='sbp-steps';
+  STEPS.forEach(function(st,i){
+    var b=document.createElement('button');b.type='button';b.className='sbp-step';b.setAttribute('data-go',i+1);
+    b.innerHTML='<i></i><span>'+(i+1)+' · '+st.n+'</span>';
+    b.addEventListener('click',function(){var t=i+1;if(t>cur){for(var k=cur;k<t;k++){if(!validate(k)){go(k);return}}}go(t)});
+    steps.appendChild(b);
+  });
+
+  var intro=document.createElement('div');intro.className='sbp-intro';intro.innerHTML='<b id="sbpIntroT"></b><span id="sbpIntroS"></span>';
+
+  var foot=document.createElement('div');foot.className='sbp-foot';
+  var st=$('sbStatus');
+  if(st)foot.appendChild(st);else{st=document.createElement('div');st.id='sbStatus';st.className='sb-status';foot.appendChild(st)}
+  var btns=document.createElement('div');btns.className='sbp-btns';
+  btns.innerHTML='<button type="button" class="sbp-btn" id="sbpBack">Cancelar</button><button type="button" class="sbp-btn main" id="sbpNext">Siguiente →</button>';
+  foot.appendChild(btns);
+  var note=document.createElement('p');note.className='sbp-note';note.textContent='Completa los 4 pasos rápidos. Todo se puede editar después.';
+  foot.appendChild(note);
+
+  form.insertBefore(head,form.firstChild);
+  head.parentNode.insertBefore(steps,grid);
+  head.parentNode.insertBefore(intro,grid);
+  form.appendChild(foot);
+
+  $('sbpBack').addEventListener('click',function(){if(cur===1)closeForm();else go(cur-1)});
+  $('sbpNext').addEventListener('click',next);
+  form.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&e.target&&e.target.tagName==='INPUT'&&e.target.type!=='checkbox'){e.preventDefault();next()}
+    else if(e.key==='Escape'){closeForm()}
+  });
+
+  /* etiquetas más claras */
+  var n=$('sbName'),c=$('sbCategory');
+  var ln=n&&n.parentNode.querySelector('.sb-label'),lc=c&&c.parentNode.querySelector('.sb-label');
+  if(ln)ln.textContent='Nombre del producto';
+  if(lc)lc.textContent='Pertenece a (catálogo / subcatálogo)';
+  var im=$('sbImage'),lim=im&&im.parentNode.querySelector('.sb-label');if(lim)lim.textContent='Imagen principal (URL)';
+  tagFields();
+  return true;
+}
+
+function setStatus(t){var s=$('sbStatus');if(s)s.textContent=t||''}
+function mark(el,bad){if(el)el.classList.toggle('sbp-bad',!!bad)}
+
+function validate(step){
+  var n=$('sbName'),c=$('sbCategory'),p=$('sbPrice'),b=$('sbPriceBefore');
+  [n,c,p,b,$('sbDesc')].forEach(function(x){mark(x,false)});
+  if(step===1){
+    if(!n||!n.value.trim()){mark(n,true);setStatus('⚠️ Escribe el nombre del producto.');n&&n.focus();return false}
+    if(!c||!c.value){mark(c,true);setStatus('⚠️ Elige a qué catálogo pertenece.');return false}
+  }
+  if(step===2){
+    var pv=p&&p.value!==''?Number(p.value):NaN,bv=b&&b.value!==''?Number(b.value):NaN;
+    if(!(pv>=0)){mark(p,true);setStatus('⚠️ Escribe el precio actual.');p&&p.focus();return false}
+    if(!(bv>0)){mark(b,true);setStatus('⚠️ Escribe el precio antes (si no hay descuento, usa el mismo precio).');b&&b.focus();return false}
+    if(bv<pv){mark(b,true);setStatus('⚠️ El precio antes debe ser mayor o igual al precio actual.');b&&b.focus();return false}
+  }
+  setStatus('');return true;
+}
+
+function go(n){
+  cur=Math.max(1,Math.min(STEPS.length,n));
+  form.setAttribute('data-sbp-cur',cur);
+  tagFields();
+  Array.prototype.forEach.call(form.querySelectorAll('.sbp-step'),function(b,i){
+    b.classList.toggle('on',i+1===cur);b.classList.toggle('done',i+1<cur);
+  });
+  var s=STEPS[cur-1];
+  $('sbpIntroT').textContent=s.t;
+  var sub=s.s;
+  if(cur===4){var nm=($('sbName')||{}).value||'',pr=($('sbPrice')||{}).value;if(nm)sub=nm+(pr!==''&&pr!=null?' · Q '+Number(pr).toFixed(2):'')+' — '+s.s}
+  $('sbpIntroS').textContent=sub;
+  $('sbpBack').textContent=cur===1?'Cancelar':'← Atrás';
+  var editing=!!($('sbId')&&$('sbId').value);
+  $('sbpNext').textContent=cur===STEPS.length?(editing?'💾 Guardar cambios':'💾 Guardar producto'):'Siguiente →';
+  setStatus('');
+  var first=grid.querySelector('[data-sbp-step="'+cur+'"] input:not([type=checkbox]),[data-sbp-step="'+cur+'"] textarea,[data-sbp-step="'+cur+'"] select');
+  if(first&&arguments[1]!=='init'){try{first.focus({preventScroll:true})}catch(e){}}
+  grid.scrollTop=0;
+}
+
+function next(){
+  if(!validate(cur))return;
+  if(cur<STEPS.length){go(cur+1);return}
+  if(window.SB_ADMIN&&SB_ADMIN.save)SB_ADMIN.save();
+}
+
+function openUI(){
+  if(!build())return;
+  var editing=!!($('sbId')&&$('sbId').value);
+  $('sbpTitle').textContent=editing?'Editar producto':'Nuevo producto';
+  document.body.classList.add('sbp-open');
+  setStatus('');
+  go(1,'init');
+  setTimeout(tagFields,1700); /* por si las variantes se inyectan un poco después */
+  var n=$('sbName');if(n)setTimeout(function(){try{n.focus({preventScroll:true})}catch(e){}},60);
+}
+function closeUI(){document.body.classList.remove('sbp-open');[$('sbName'),$('sbCategory'),$('sbPrice'),$('sbPriceBefore'),$('sbDesc')].forEach(function(x){mark(x,false)})}
+function closeForm(){if(window.SB_ADMIN&&SB_ADMIN.cancelForm)SB_ADMIN.cancelForm();else if(form){form.classList.remove('show');closeUI()}}
+
+function watch(){
+  var f=$('sbProductForm');if(!f||f.__sbpWatch)return !!f;
+  f.__sbpWatch=1;
+  build();
+  var was=f.classList.contains('show');
+  new MutationObserver(function(){
+    var now=f.classList.contains('show');
+    if(now&&!was)openUI();
+    if(!now&&was)closeUI();
+    was=now;
+  }).observe(f,{attributes:true,attributeFilter:['class']});
+  if(was)openUI();
+  return true;
+}
+function boot(){var t=0,iv=setInterval(function(){if(watch()||++t>40)clearInterval(iv)},250)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
