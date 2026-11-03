@@ -4109,7 +4109,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzeMzZRoTi5_7iHJvX2KLLkjHZk_apuk_zi_1B5XMEJNipgN0MMfg92CjCoXlTexfE/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzM8OZ_ikVOGysYyZQWahdxcgPT7TxCBbNPQiFhHar69XE8fqPeKo7P8D2zu0iyvDyU/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5806,7 +5806,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzeMzZRoTi5_7iHJvX2KLLkjHZk_apuk_zi_1B5XMEJNipgN0MMfg92CjCoXlTexfE/exec
+     https://script.google.com/macros/s/AKfycbzM8OZ_ikVOGysYyZQWahdxcgPT7TxCBbNPQiFhHar69XE8fqPeKo7P8D2zu0iyvDyU/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -14885,6 +14885,100 @@ function watchDash(){
 }
 function init(){buildTools();watchDash()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+<style id="sb-fix-toolbar-css">
+/* Arreglo: la clase .sbx-bar se usaba también para las barras de estrellas (grid de 3 columnas) y rompía la barra de búsqueda/Excel de las tablas */
+.sbx-bar:has(> input[type="search"]),.sbx-bar:has(> .sbx-btn){display:flex!important;grid-template-columns:none!important;flex-wrap:wrap;align-items:center;gap:10px;margin:12px 0!important;font:inherit;position:static!important}
+.sbx-bar:has(> input[type="search"]) input{flex:1 1 220px;min-width:180px;height:40px;padding:0 14px;border-radius:10px;background:#fff!important;border:1px solid var(--line,rgba(43,43,43,.12))!important;color:var(--ink,#2B2B2B)!important}
+.sbx-bar:has(> input[type="search"]) .cnt{flex:0 0 auto;font-size:.72rem;color:var(--ink-2,#6B645C);white-space:nowrap;position:static!important}
+.sbx-bar>.sbx-btn{flex:0 0 auto;height:40px;padding:0 16px;white-space:nowrap;writing-mode:horizontal-tb;display:inline-flex;align-items:center;gap:6px;border-radius:10px;border:1px solid var(--terra,#C8643C);background:#fff;color:var(--terra-d,#A94E2A);font:700 .76rem Inter,sans-serif;position:static!important;width:auto!important}
+.sbx-bar>.sbx-btn:hover{background:#FBEFE8}
+.sbx-bar>.sbx-btn.gold{background:var(--terra,#C8643C)!important;color:#fff!important;border-color:var(--terra,#C8643C)!important}
+.sbx-bar>.sbx-btn.gold:hover{background:var(--terra-d,#A94E2A)!important}
+table[data-sbx] tr.sbx-f th{background:#FCFAF6!important}
+table[data-sbx] tr.sbx-f input{height:30px}
+</style>
+
+<style id="sb-age-css">
+#sbAgeModal{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;background:rgba(43,43,43,.72);padding:16px;backdrop-filter:blur(6px)}
+#sbAgeModal.on{display:flex}
+#sbAgeModal .ag{width:min(440px,100%);background:#FAF7F2;border-radius:22px;padding:28px;color:#2B2B2B;font-family:Inter,system-ui,sans-serif;box-shadow:0 30px 90px rgba(0,0,0,.45);max-height:92vh;overflow:auto;border-top:5px solid #C8643C}
+#sbAgeModal h3{margin:0 0 8px;font-size:1.25rem}
+#sbAgeModal p{font-size:.86rem;line-height:1.55;color:#6B645C;margin:0 0 14px}
+#sbAgeModal .badge{display:inline-block;background:#C8643C;color:#fff;font-weight:800;border-radius:10px;padding:6px 12px;margin-bottom:12px}
+#sbAgeModal .row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+#sbAgeModal button,#sbAgeAdmin button{flex:1;padding:12px 16px;border-radius:12px;border:1px solid #C8643C;background:#fff;color:#A94E2A;font-weight:700;cursor:pointer}
+#sbAgeModal button.pri,#sbAgeAdmin button.pri{background:#C8643C;color:#fff}
+#sbAgeModal .pv{width:100%;max-height:220px;object-fit:contain;border-radius:12px;border:1px solid rgba(43,43,43,.12);margin-top:10px;background:#fff}
+#sbAgeModal .note{font-size:.72rem;background:#FBEFE8;border-radius:10px;padding:10px;color:#6B645C}
+#sbAgeAdmin{margin-top:14px}#sbAgeAdmin button{flex:none;padding:7px 12px;font-size:.74rem}
+#sbAgeAdmin label{display:inline-flex;gap:6px;align-items:center;margin:4px 14px 4px 0;font-size:.82rem}
+#sbAgeAdmin img{max-width:100%;max-height:300px;border-radius:10px;margin-top:8px;display:block}
+</style>
+<script id="sb-age-js">
+(function(){
+'use strict';
+var adult=[],approved=false,pendingCat=null,photo='',LS='sb_age_cats';
+try{adult=JSON.parse(localStorage.getItem(LS)||'[]')}catch(e){}
+function uid(){try{return currentUser&&currentUser.id&&currentUser.isGuest!==true?String(currentUser.id):''}catch(e){return ''}}
+function api(a,p){return apiRequest(a,p||{},{timeout:45000})}
+function say(m){try{showToast(m,{title:'SHEIBIS',icon:'fa-circle-info',duration:4500})}catch(e){alert(m)}}
+function isAdult(id){return adult.indexOf(String(id))>-1}
+api('ageGetConfig').then(function(r){if(r&&r.ok){adult=(r.catalogs||[]).map(String);try{localStorage.setItem(LS,JSON.stringify(adult))}catch(e){}}}).catch(function(){});
+
+/* ---------- Modal del cliente ---------- */
+var m=document.createElement('div');m.id='sbAgeModal';m.innerHTML='<div class="ag"></div>';document.body.appendChild(m);
+var box=m.firstChild;
+function show(h){box.innerHTML=h;m.classList.add('on')}
+function close(){m.classList.remove('on');pendingCat=null;photo=''}
+function step1(){show('<span class="badge">+18</span><h3>Contenido para mayores de edad</h3><p>Este catálogo incluye productos destinados únicamente a personas mayores de 18 años. Para entrar debes verificar tu identidad con una identificación válida.</p><div class="row"><button id="agNo">Salir</button><button class="pri" id="agYes">Soy mayor de edad</button></div>');
+  box.querySelector('#agNo').onclick=close;box.querySelector('#agYes').onclick=step2}
+function step2(){photo='';show('<h3>Verifica tu identidad</h3><p>Toma una foto clara de tu DPI, pasaporte o licencia. Debe verse completa y con buena luz.</p><input type="file" id="agFile" accept="image/*" capture="environment" style="display:none"><button id="agPick" class="pri" style="width:100%">📷 Tomar o elegir foto</button><img id="agPv" class="pv" style="display:none"><p class="note" style="margin-top:12px">🔒 Tu foto se guarda en privado, solo la revisa el administrador y se elimina al aprobar o rechazar. Solo conservamos que eres mayor de edad.</p><div class="row"><button id="agBack">Cancelar</button><button class="pri" id="agSend" disabled>Enviar para revisión</button></div>');
+  var f=box.querySelector('#agFile'),pv=box.querySelector('#agPv'),send=box.querySelector('#agSend');
+  box.querySelector('#agPick').onclick=function(){f.click()};box.querySelector('#agBack').onclick=close;
+  f.onchange=function(){var file=f.files&&f.files[0];if(!file)return;var img=new Image(),u=URL.createObjectURL(file);
+    img.onload=function(){var k=Math.min(1,1100/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);photo=c.toDataURL('image/jpeg',.7);URL.revokeObjectURL(u);pv.src=photo;pv.style.display='block';send.disabled=false};
+    img.onerror=function(){say('No se pudo leer la imagen.')};img.src=u};
+  send.onclick=async function(){send.disabled=true;send.textContent='Enviando…';
+    try{var r=await api('ageSubmit',{userId:uid(),nombre:(currentUser||{}).nombre||'',email:(currentUser||{}).email||'',image:photo});
+      if(r&&r.ok)msg('Solicitud enviada','Tu identificación está en revisión. Cuando sea aprobada podrás entrar a este catálogo.');else throw new Error(r&&r.error||'Error')}
+    catch(e){say('No se pudo enviar: '+(e.message||e));send.disabled=false;send.textContent='Enviar para revisión'}}}
+function msg(t,p,again){show('<h3>'+t+'</h3><p>'+p+'</p><div class="row"><button class="pri" id="agOk">Entendido</button>'+(again?'<button id="agRe">Intentar de nuevo</button>':'')+'</div>');
+  box.querySelector('#agOk').onclick=close;var re=box.querySelector('#agRe');if(re)re.onclick=step2}
+
+var prev=window.openCatalog;
+window.openCatalog=async function(c){
+  if(!isAdult(c)||approved)return prev.apply(this,arguments);
+  if(!uid()){say('Este catálogo es +18. Inicia sesión para continuar.');return}
+  pendingCat=c;show('<h3>Comprobando acceso…</h3><p>Un momento.</p>');
+  try{var r=await api('ageStatus',{userId:uid()});
+    if(r.estado==='aprobado'){approved=true;close();return prev.call(window,c)}
+    if(r.estado==='pendiente')return msg('Verificación en revisión','Ya recibimos tu identificación. Te avisaremos cuando sea aprobada.');
+    if(r.estado==='rechazado'){return msg('Verificación rechazada',(r.nota?r.nota+' ':'')+'Puedes enviar una nueva foto más clara.',true)}
+    step1()}catch(e){close();say('No se pudo verificar. Intenta de nuevo.')}};
+
+/* ---------- Panel admin (pestaña Usuarios) ---------- */
+function key(){var k=sessionStorage.getItem('sb_age_key');if(!k){k=prompt('Clave de administrador (ADMIN_KEY del Apps Script):')||'';if(k)sessionStorage.setItem('sb_age_key',k)}return k}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+async function drawAdmin(){
+  var host=document.getElementById('sbV11Users');if(!host)return;var el=document.getElementById('sbAgeAdmin');
+  if(!el){el=document.createElement('div');el.id='sbAgeAdmin';el.className='sb-v11-card';host.appendChild(el)}
+  var cats=(window.CATALOGOS||[]);
+  el.innerHTML='<h4 style="margin:0 0 10px">VERIFICACIÓN +18</h4><p style="font-size:.76rem;color:#6B645C">Marca los catálogos que requieren identificación:</p><div id="agCats">'+cats.map(function(c){return '<label><input type="checkbox" value="'+esc(c.id)+'" '+(isAdult(c.id)?'checked':'')+'> '+esc(c.nombre)+'</label>'}).join('')+'</div><button class="pri" id="agSave" style="margin-top:8px">Guardar catálogos +18</button><h4 style="margin:18px 0 8px">SOLICITUDES</h4><div id="agList">Cargando…</div>';
+  el.querySelector('#agSave').onclick=async function(){var ids=[].map.call(el.querySelectorAll('#agCats input:checked'),function(i){return i.value});
+    var r=await api('ageSetConfig',{adminKey:key(),catalogs:ids});if(r.ok){adult=ids;try{localStorage.setItem(LS,JSON.stringify(ids))}catch(e){}say('Catálogos +18 guardados.')}else{sessionStorage.removeItem('sb_age_key');say(r.error)}};
+  var L=el.querySelector('#agList');
+  try{var r=await api('ageList',{adminKey:key()});if(!r.ok)throw new Error(r.error);
+    L.innerHTML=r.items.length?'<table><thead><tr><th>Usuario</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+r.items.map(function(i){return '<tr data-id="'+esc(i.id)+'"><td>'+esc(i.nombre||i.userId)+'</td><td>'+esc(i.email)+'</td><td>'+esc(i.estado)+'</td><td>'+(i.estado==='pendiente'?'<button data-a="ver">Ver ID</button> <button class="pri" data-a="aprobado">Aprobar</button> <button data-a="rechazado">Rechazar</button><div class="ph"></div>':'—')+'</td></tr>'}).join('')+'</tbody></table>':'<p style="font-size:.78rem">No hay solicitudes todavía.</p>';
+    L.onclick=async function(ev){var b=ev.target.closest('button[data-a]');if(!b)return;var tr=b.closest('tr'),id=tr.dataset.id,a=b.dataset.a;
+      if(a==='ver'){var p=await api('ageGetPhoto',{adminKey:key(),id:id});tr.querySelector('.ph').innerHTML=p.ok?'<img src="'+p.image+'">':esc(p.error);return}
+      var nota=a==='rechazado'?(prompt('Motivo (opcional):')||''):'';
+      var r2=await api('ageReview',{adminKey:key(),id:id,decision:a,nota:nota});if(r2.ok){say('Solicitud '+a+'.');drawAdmin()}else say(r2.error)}
+  }catch(e){L.textContent='No se pudo cargar: '+(e.message||e)}}
+var host=document.getElementById('sbV11Users');
+if(host){var busy=false;new MutationObserver(function(){if(busy||document.getElementById('sbAgeAdmin'))return;busy=true;drawAdmin().finally(function(){setTimeout(function(){busy=false},100)})}).observe(host,{childList:true})}
 })();
 </script>
 
