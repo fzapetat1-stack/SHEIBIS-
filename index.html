@@ -3651,6 +3651,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
 .sbc-imgsum b{color:#111111}
 </style>
 <style id="sb-biz-cta-css">.sb-biz-cta{display:none;width:100%;align-items:center;gap:14px;margin:0 0 16px;padding:14px 16px;border:0;border-radius:20px;background:#111;color:#fff;text-align:left;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.18)}.sb-biz-cta .ic{width:46px;height:46px;border-radius:14px;background:#fff;color:#111;display:grid;place-items:center;font-size:1.2rem;flex:0 0 auto}.sb-biz-cta .tx{flex:1;min-width:0}.sb-biz-cta b{display:block;font-size:1rem}.sb-biz-cta small{display:block;opacity:.75;font-size:.76rem;margin-top:2px}@media(max-width:1100px){.sb-biz-cta{display:flex}}</style>
+<style id="sb-bizp-css">#sbBizP{margin:26px 0 10px}#sbBizP h2{font:800 1.35rem Inter,sans-serif;margin:0 0 4px;color:#111}#sbBizP .sub{color:#666;font:400 .85rem Inter,sans-serif;margin:0 0 14px}.sbbp-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}.sbbp-c{background:#fff;border:1px solid #e5e5e5;border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 18px rgba(0,0,0,.05)}.sbbp-c img,.sbbp-ph{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#f1f1f1}.sbbp-c b{font:700 .9rem Inter,sans-serif;color:#111}.sbbp-t{font:600 .68rem Inter,sans-serif;color:#666;letter-spacing:.5px;text-transform:uppercase}.sbbp-p{font:800 1rem Inter,sans-serif;color:#111}.sbbp-p s{font-weight:400;color:#888;font-size:.75rem;margin-left:4px}.sbbp-q{display:flex;align-items:center;justify-content:space-between;margin-top:auto}.sbbp-q button{width:38px;height:38px;border-radius:50%;border:1px solid #ddd;background:#fff;font:700 1.1rem Inter;cursor:pointer}.sbbp-q button.pl{background:#111;color:#fff;border-color:#111}.sbbp-bar{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:9000;display:flex;justify-content:center}.sbbp-bar button{border:0;background:#111;color:#fff;border-radius:99px;padding:14px 22px;font:700 .95rem Inter,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.3);cursor:pointer}.sbbp-m{position:fixed;inset:0;z-index:2147481000;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}.sbbp-m.on{display:flex}.sbbp-box{background:#fff;color:#111;width:min(460px,100%);max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px;font-family:Inter,sans-serif}.sbbp-box label{display:block;font-size:.78rem;color:#555;margin:12px 0 4px}.sbbp-box input{width:100%;min-height:46px;padding:10px 12px;border:1px solid #ddd;border-radius:12px;font:inherit}.sbbp-box .go{width:100%;margin-top:14px;min-height:48px;border:0;border-radius:99px;background:#111;color:#fff;font:700 .95rem Inter;cursor:pointer}.sbbp-box .x{width:100%;margin-top:8px;min-height:44px;border:1px solid #ddd;border-radius:99px;background:#fff;cursor:pointer;font:600 .9rem Inter}.sbbp-err{color:#c0392b;font-size:.82rem;min-height:18px;margin-top:8px}@media(min-width:700px){.sbbp-m{align-items:center}.sbbp-box{border-radius:22px}}</style>
 </head>
 <body>
 
@@ -4114,7 +4115,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzw5JV_p8-58_Tb8dtk7i9S9oY1hjP09r90sc6CL_Z_NoCrV7WKA-c7pZkdvPWBwRdD/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycby5nlMJdH50CCTXDQLMH276U6d-Mf8fjdWY9-8ZQPpt9HaCcRgmf_Mlm_xAnHlsM4oq/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5811,7 +5812,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbzw5JV_p8-58_Tb8dtk7i9S9oY1hjP09r90sc6CL_Z_NoCrV7WKA-c7pZkdvPWBwRdD/exec
+     https://script.google.com/macros/s/AKfycby5nlMJdH50CCTXDQLMH276U6d-Mf8fjdWY9-8ZQPpt9HaCcRgmf_Mlm_xAnHlsM4oq/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -13180,7 +13181,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbxC7shh83c0BelXtNaTPLGii5-a1vKWXlwNTy0MbDr9xRYm-gTZrf3GNH1rADQSOJWnzg/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycby5nlMJdH50CCTXDQLMH276U6d-Mf8fjdWY9-8ZQPpt9HaCcRgmf_Mlm_xAnHlsM4oq/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15159,7 +15160,7 @@ footer a{color:var(--mu);cursor:pointer;text-decoration:underline}
 <script>
 (function(){
 'use strict';
-var URL_API='https://script.google.com/macros/s/AKfycbzw5JV_p8-58_Tb8dtk7i9S9oY1hjP09r90sc6CL_Z_NoCrV7WKA-c7pZkdvPWBwRdD/exec';
+var URL_API='https://script.google.com/macros/s/AKfycby5nlMJdH50CCTXDQLMH276U6d-Mf8fjdWY9-8ZQPpt9HaCcRgmf_Mlm_xAnHlsM4oq/exec';
 var DATOS_PAGO='Banco: ________ · Cuenta: ________ · A nombre de: ________'; /* EDITA con tus datos de pago */
 var PLANES={basico:{n:'Básico',q:49,d:'30 productos y funciones esenciales.'},profesional:{n:'Profesional',q:89,d:'150 productos y estadísticas.',pop:1},empresarial:{n:'Empresarial',q:149,d:'Productos ilimitados y herramientas avanzadas.'}};
 var $=function(i){return document.getElementById(i)},me=null,mode='reg',adminKey='';
@@ -15308,5 +15309,30 @@ window.addEventListener("message",function(e){var d=e.data;if(!d||d.sbRole!=="NE
 })();
 </script>
 
+<script id="sb-bizp-js">
+(function(){
+var API='https://script.google.com/macros/s/AKfycby5nlMJdH50CCTXDQLMH276U6d-Mf8fjdWY9-8ZQPpt9HaCcRgmf_Mlm_xAnHlsM4oq/exec',L=[],C={};
+function $(i){return document.getElementById(i)}
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function money(n){return 'Q'+(Number(n)||0).toFixed(2)}
+function api(a,p){return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:a},p||{}))}).then(function(r){return r.json()}).then(function(d){if(!d||d.ok===false)throw new Error((d&&d.error)||'Error del servidor');return d})}
+function tot(){var t=0,n=0;L.forEach(function(p){var c=C[p.id]||0;t+=c*p.final;n+=c});return{t:t,n:n}}
+function bar(){var x=tot();$('sbbpBar').style.display=x.n?'flex':'none';$('sbbpGo').textContent='Ver pedido ('+x.n+') · '+money(x.t)}
+function draw(){var S=$('sbBizP');if(!L.length){S.style.display='none';bar();return}S.style.display='block';
+ $('sbbpGrid').innerHTML=L.map(function(p){var c=C[p.id]||0;return '<div class="sbbp-c" data-id="'+esc(p.id)+'">'+(p.foto?'<img loading="lazy" alt="" src="'+esc(p.foto)+'">':'<div class="sbbp-ph"></div>')+'<span class="sbbp-t">'+esc(p.tienda)+'</span><b>'+esc(p.nombre)+(p.destacado?' ★':'')+'</b><div class="sbbp-p">'+money(p.final)+(p.descuento?'<s>'+money(p.precio)+'</s>':'')+'</div><div class="sbbp-q"><button type="button" data-q="-1">−</button><span>'+c+'</span><button type="button" class="pl" data-q="1">+</button></div></div>'}).join('');bar()}
+function load(){api('saasAllProducts').then(function(r){L=r.items||[];Object.keys(C).forEach(function(k){if(!L.some(function(p){return p.id===k}))delete C[k]});draw()}).catch(function(){})}
+document.addEventListener('click',function(e){var b=e.target.closest('#sbbpGrid [data-q]');if(!b)return;var id=b.closest('.sbbp-c').dataset.id,p=L.filter(function(x){return x.id===id})[0];if(!p)return;C[id]=Math.max(0,Math.min((C[id]||0)+Number(b.dataset.q),p.stock));var c=b.closest('.sbbp-c').querySelector('.sbbp-q span');c.textContent=C[id];bar()});
+$('sbbpGo').onclick=function(){$('sbbpE').textContent='';$('sbbpSum').innerHTML=L.filter(function(p){return C[p.id]}).map(function(p){return C[p.id]+'× '+esc(p.nombre)+' <small style="color:#777">('+esc(p.tienda)+')</small> — '+money(C[p.id]*p.final)}).join('<br>')+'<br><b>Total: '+money(tot().t)+'</b>';
+ try{if(!$('sbbpN').value&&typeof currentUser!=='undefined'&&currentUser&&currentUser.nombre)$('sbbpN').value=currentUser.nombre}catch(_){}$('sbbpM').classList.add('on')};
+$('sbbpX').onclick=function(){$('sbbpM').classList.remove('on')};
+$('sbbpSend').onclick=function(){var b=$('sbbpSend');b.disabled=true;$('sbbpE').textContent='';var g={};L.forEach(function(p){if(C[p.id]){(g[p.slug]=g[p.slug]||[]).push({id:p.id,cant:C[p.id]})}});
+ var ids=[];Promise.all(Object.keys(g).map(function(sl){return api('saasOrderCreate',{slug:sl,cliente:$('sbbpN').value,telefono:$('sbbpT').value,direccion:$('sbbpD').value,items:g[sl]}).then(function(r){ids.push(r.id)})}))
+ .then(function(){C={};$('sbbpM').classList.remove('on');load();alert('¡Pedido enviado! Número(s): '+ids.join(', ')+'. Cada negocio se pondrá en contacto contigo.')})
+ .catch(function(e){$('sbbpE').textContent=e.message}).then(function(){b.disabled=false})};
+function mount(){var t=$('tabCatalogs');if(!t||$('sbBizP'))return;t.insertAdjacentHTML('beforeend',window.__sbbpHTML);load();setInterval(function(){if(!document.hidden&&!$('sbbpM').classList.contains('on'))load()},60000)}
+window.__sbbpHTML="<section id=\"sbBizP\" style=\"display:none\"><h2>Productos de nuestros negocios</h2><p class=\"sub\">Compra directo a emprendedores de SHEIBIS.</p><div class=\"sbbp-g\" id=\"sbbpGrid\"></div></section><div class=\"sbbp-bar\" id=\"sbbpBar\" style=\"display:none\"><button type=\"button\" id=\"sbbpGo\"></button></div><div class=\"sbbp-m\" id=\"sbbpM\"><div class=\"sbbp-box\"><h3 style=\"margin:0 0 6px\">Tu pedido</h3><div id=\"sbbpSum\" style=\"font-size:.9rem;line-height:1.6\"></div><label>Tu nombre</label><input id=\"sbbpN\" autocomplete=\"name\"><label>Tel\u00e9fono / WhatsApp</label><input id=\"sbbpT\" type=\"tel\" autocomplete=\"tel\"><label>Direcci\u00f3n de entrega</label><input id=\"sbbpD\" autocomplete=\"street-address\"><div class=\"sbbp-err\" id=\"sbbpE\"></div><button class=\"go\" id=\"sbbpSend\" type=\"button\">Enviar pedido</button><button class=\"x\" id=\"sbbpX\" type=\"button\">Seguir comprando</button></div></div>\n";
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
+</script>
 </body>
 </html>
