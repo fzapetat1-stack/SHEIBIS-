@@ -3797,6 +3797,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         </div>
         <div class="top-bar-center">
             <a href="#" class="top-nav-link active" onclick="goHome(); return false;">EXPLORAR</a>
+            <a href="#" class="top-nav-link" onclick="sbOpenNegocios(); return false;">INICIA TU NEGOCIO</a>
         </div>
         <div class="top-bar-right">
             <div class="profile-badge" onclick="showUserProfile()">
@@ -4109,7 +4110,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxW3QdZFMCJmjBTpjwSxTgMRc5GdVvSK__J30OJArR8wUFUn0bluCdGSnbjM50rsZkO/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzw5JV_p8-58_Tb8dtk7i9S9oY1hjP09r90sc6CL_Z_NoCrV7WKA-c7pZkdvPWBwRdD/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5806,7 +5807,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbxW3QdZFMCJmjBTpjwSxTgMRc5GdVvSK__J30OJArR8wUFUn0bluCdGSnbjM50rsZkO/exec
+     https://script.google.com/macros/s/AKfycbzw5JV_p8-58_Tb8dtk7i9S9oY1hjP09r90sc6CL_Z_NoCrV7WKA-c7pZkdvPWBwRdD/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -14921,7 +14922,7 @@ table[data-sbx] tr.sbx-f input{height:30px}
 <script id="sb-age-js">
 (function(){
 'use strict';
-var adult=[],approved=false,pendingCat=null,photo='',LS='sb_age_cats';
+var adult=[],approvedAt=0,pendingCat=null,photo='',LS='sb_age_cats';
 try{adult=JSON.parse(localStorage.getItem(LS)||'[]')}catch(e){}
 function uid(){try{return currentUser&&currentUser.id&&currentUser.isGuest!==true?String(currentUser.id):''}catch(e){return ''}}
 function api(a,p){return apiRequest(a,p||{},{timeout:45000})}
@@ -14951,11 +14952,11 @@ function msg(t,p,again){show('<h3>'+t+'</h3><p>'+p+'</p><div class="row"><button
 
 var prev=window.openCatalog;
 window.openCatalog=async function(c){
-  if(!isAdult(c)||approved)return prev.apply(this,arguments);
+  if(!isAdult(c)||(Date.now()-approvedAt<120000))return prev.apply(this,arguments);
   if(!uid()){say('Este catálogo es +18. Inicia sesión para continuar.');return}
   pendingCat=c;show('<h3>Comprobando acceso…</h3><p>Un momento.</p>');
   try{var r=await api('ageStatus',{userId:uid()});
-    if(r.estado==='aprobado'){approved=true;close();return prev.call(window,c)}
+    if(r.estado==='aprobado'){approvedAt=Date.now();close();return prev.call(window,c)}
     if(r.estado==='pendiente')return msg('Verificación en revisión','Ya recibimos tu identificación. Te avisaremos cuando sea aprobada.');
     if(r.estado==='rechazado'){return msg('Verificación rechazada',(r.nota?r.nota+' ':'')+'Puedes enviar una nueva foto más clara.',true)}
     step1()}catch(e){close();say('No se pudo verificar. Intenta de nuevo.')}};
@@ -14972,10 +14973,10 @@ async function drawAdmin(){
     try{await api('ageSetConfig',{adminKey:key(),catalogs:ids});adult=ids;try{localStorage.setItem(LS,JSON.stringify(ids))}catch(e){}say('Catálogos +18 guardados.')}catch(e){say('No se pudo guardar: '+(e.message||e))}};
   var L=el.querySelector('#agList');
   try{var r=await api('ageList',{adminKey:key()});if(!r.ok)throw new Error(r.error);
-    L.innerHTML=r.items.length?'<table><thead><tr><th>Usuario</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+r.items.map(function(i){return '<tr data-id="'+esc(i.id)+'"><td>'+esc(i.nombre||i.userId)+'</td><td>'+esc(i.email)+'</td><td>'+esc(i.estado)+'</td><td>'+(i.estado==='pendiente'?'<button data-a="ver">Ver ID</button> <button class="pri" data-a="aprobado">Aprobar</button> <button data-a="rechazado">Rechazar</button><div class="ph"></div>':'—')+'</td></tr>'}).join('')+'</tbody></table>':'<p style="font-size:.78rem">No hay solicitudes todavía.</p>';
+    L.innerHTML=r.items.length?'<table><thead><tr><th>Usuario</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+r.items.map(function(i){return '<tr data-id="'+esc(i.id)+'"><td>'+esc(i.nombre||i.userId)+'</td><td>'+esc(i.email)+'</td><td>'+esc(i.estado)+'</td><td>'+(i.estado==='pendiente'?'<button data-a="ver">Ver ID</button> <button class="pri" data-a="aprobado">Aprobar</button> <button data-a="rechazado">Rechazar</button><div class="ph"></div>':i.estado==='aprobado'?'<button data-a="revocar">Restringir de nuevo</button>':'—')+'</td></tr>'}).join('')+'</tbody></table>':'<p style="font-size:.78rem">No hay solicitudes todavía.</p>';
     L.onclick=async function(ev){var b=ev.target.closest('button[data-a]');if(!b)return;var tr=b.closest('tr'),id=tr.dataset.id,a=b.dataset.a;
       if(a==='ver'){try{var p=await api('ageGetPhoto',{adminKey:key(),id:id});tr.querySelector('.ph').innerHTML='<img src="'+p.image+'">'}catch(e){tr.querySelector('.ph').textContent=e.message||e}return}
-      var nota=a==='rechazado'?(prompt('Motivo (opcional):')||''):'';
+      var nota='';if(a==='revocar'){if(!confirm('¿Restringir de nuevo a este usuario? Tendrá que verificar su identidad otra vez.'))return;nota=prompt('Mensaje para el usuario (opcional):')||'Tu acceso fue restringido por el administrador.';a='rechazado'}else if(a==='rechazado'){nota=prompt('Motivo (opcional):')||''}
       try{await api('ageReview',{adminKey:key(),id:id,decision:a,nota:nota});say('Solicitud '+a+'.');drawAdmin()}catch(e){say('No se pudo guardar: '+(e.message||e))}}
   }catch(e){if(/autorizado/i.test(String(e.message||e)))sessionStorage.removeItem('sb_age_key');L.innerHTML='No se pudo cargar: '+esc(e.message||e)+' <button id="agRetry">Reintentar con otra clave</button>';var rb=L.querySelector('#agRetry');if(rb)rb.onclick=drawAdmin}}
 /* ---------- Opción "Autorización" del menú lateral (pide contraseña) ---------- */
@@ -15050,6 +15051,240 @@ function init(){
   card.appendChild(bar);bar.appendChild(btn);bar.appendChild(later);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+
+<!-- ===== PLATAFORMA DE NEGOCIOS (integrada en esta misma página) ===== -->
+<div id="sbNegOverlay" style="position:fixed;inset:0;z-index:2147482000;display:none;flex-direction:column;background:#050b0a">
+  <div style="flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:#050b0a;border-bottom:1px solid rgba(255,255,255,.08)">
+    <span style="color:#93a39f;font:600 .7rem Inter,system-ui,sans-serif;letter-spacing:2px">SHEIBIS · NEGOCIOS</span>
+    <button type="button" id="sbNegClose" style="border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;padding:8px 14px;font:600 .78rem Inter,system-ui,sans-serif;cursor:pointer">✕ Volver a la tienda</button>
+  </div>
+  <iframe id="sbNegFrame" title="SHEIBIS negocios" style="flex:1 1 auto;width:100%;min-height:0;border:0;background:#050b0a"></iframe>
+</div>
+<script type="text/plain" id="sbNegSrc"><!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SHEIBIS · Crea tu tienda en línea</title>
+<style>
+:root{--bg:#050b0a;--card:#0d1715;--line:rgba(255,255,255,.09);--em:#10b981;--em2:#34d399;--tx:#f1f5f4;--mu:#93a39f;--bad:#f87171;--warn:#fbbf24}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 500px at 80% -10%,rgba(16,185,129,.18),transparent) fixed,var(--bg) fixed;min-height:100vh;color:var(--tx);font:15px/1.5 Inter,system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;max-width:1100px;margin:auto}
+.logo{font:800 1.3rem Georgia,serif;letter-spacing:3px}.logo small{display:block;font:500 .5rem Inter;letter-spacing:3px;color:var(--mu)}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);padding:11px 18px;border-radius:999px;font:600 .88rem Inter,sans-serif;cursor:pointer}
+.btn.pri{background:linear-gradient(135deg,#0f9f6e,var(--em2));color:#031510;border:0;box-shadow:0 8px 26px rgba(16,185,129,.35)}
+.btn.sm{padding:7px 12px;font-size:.76rem}.btn.bad{color:var(--bad)}
+main{max-width:1100px;margin:auto;padding:0 18px 60px}
+.hero{padding:40px 0 20px}.hero small{color:var(--em2);letter-spacing:3px;font-weight:700;font-size:.72rem}
+.hero h1{font-size:clamp(2.2rem,7vw,4rem);line-height:1.05;margin:10px 0 14px}.hero h1 span{background:linear-gradient(90deg,var(--em),#a7f3d0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mu);max-width:520px}.free{margin-top:10px;color:var(--mu);font-size:.82rem}
+.perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:34px 0}
+.perks div{background:var(--card);padding:18px;text-align:center}.perks b{display:block;color:var(--em2)}.perks span{color:var(--mu);font-size:.78rem}
+h2{font-size:1.5rem;margin:34px 0 14px}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.plan.pop{border-color:var(--em);box-shadow:0 0 0 1px var(--em),0 14px 40px rgba(16,185,129,.2)}
+.price{font-size:2rem;font-weight:800}.price small{font-size:.8rem;color:var(--mu);font-weight:500}
+.tag{display:inline-block;background:var(--em);color:#031510;font-size:.65rem;font-weight:800;border-radius:999px;padding:3px 10px;margin-bottom:8px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:50;backdrop-filter:blur(6px)}.modal.on{display:flex}
+.box{width:min(420px,100%);max-height:92vh;overflow:auto}
+label{display:block;font-size:.76rem;color:var(--mu);margin:12px 0 4px}
+input,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#07100e;color:var(--tx);font:inherit}
+input:focus,select:focus{outline:2px solid rgba(52,211,153,.5)}
+.err{color:var(--bad);font-size:.82rem;min-height:20px;margin-top:8px}
+.tabs{display:flex;gap:6px;background:#07100e;border-radius:999px;padding:4px}.tabs button{flex:1;border:0;background:none;color:var(--mu);padding:9px;border-radius:999px;font:600 .85rem Inter;cursor:pointer}.tabs .on{background:var(--em);color:#031510}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.badge{display:inline-block;border-radius:999px;padding:3px 12px;font-size:.72rem;font-weight:800}
+.b-prueba,.b-pendiente{background:rgba(251,191,36,.15);color:var(--warn)}.b-activa,.b-aprobado{background:rgba(16,185,129,.18);color:var(--em2)}.b-vencida,.b-suspendida,.b-rechazado{background:rgba(248,113,113,.15);color:var(--bad)}
+.bar{height:8px;border-radius:8px;background:#0a1512;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--em),var(--em2))}
+.alert{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);color:var(--warn);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.84rem}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.82rem}th{color:var(--mu);text-align:left;font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.8px}th,td{padding:10px 8px;border-bottom:1px solid var(--line)}
+.hide{display:none!important}.mono{font-family:ui-monospace,monospace;color:var(--em2);word-break:break-all}
+th.x{}.th{width:44px;height:44px;border-radius:10px;object-fit:cover;background:#07100e}.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding-bottom:90px}.pc{padding:12px;display:flex;flex-direction:column;gap:6px}.pc img,.ph0{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#07100e}.qty{display:flex;align-items:center;justify-content:space-between;margin-top:auto}.cartbar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 40%);display:flex;justify-content:center;z-index:20}select{width:auto}
+footer{text-align:center;color:var(--mu);font-size:.76rem;padding:30px}footer a{color:var(--mu);cursor:pointer;text-decoration:underline}
+</style></head><body>
+<header><div class="logo">SHEIBIS<small>SHOP &amp; BUSINESS</small></div>
+<div style="display:flex;gap:8px"><button class="btn sm" id="hdrAuth">Ingresar</button><button class="btn pri sm" id="hdrCta">Inicia tu negocio</button></div></header>
+
+<main id="landing">
+<section class="hero"><small>PLATAFORMA SHEIBIS</small>
+<h1>Crea tu propia<br><span>tienda en línea</span></h1>
+<p>Vende tus productos, impulsa tu negocio y llega a más clientes.</p>
+<p><button class="btn pri" data-cta>Inicia tu negocio ahora →</button></p>
+<div class="free">✔ 15 días totalmente GRATIS · Sin cobro al registrarte</div></section>
+<section class="perks"><div><b>Compra segura</b><span>Tus datos protegidos</span></div><div><b>Tiendas propias</b><span>Una dirección para cada negocio</span></div><div><b>Control total</b><span>Productos, pedidos y clientes</span></div><div><b>Soporte</b><span>Siempre contigo</span></div></section>
+<h2>Planes diseñados para ti</h2>
+<div class="plans" id="plansList"></div>
+</main>
+
+<main id="dash" class="hide"></main>
+<main id="master" class="hide"></main>
+<main id="front" class="hide"></main>
+
+<footer>© SHEIBIS · <a id="goMaster">Administración</a> · <a id="goHome">Inicio</a> · <a id="logout" class="hide">Cerrar sesión</a></footer>
+
+<div class="modal" id="mAuth"><div class="card box">
+<div class="tabs"><button id="tReg" class="on">Crear cuenta</button><button id="tLog">Ingresar</button></div>
+<h3 id="aTitle" style="margin:16px 0 0">Comienza tu negocio con 15 días gratuitos</h3>
+<div id="fReg"><label>Nombre completo</label><input id="rNom" autocomplete="name"><label>Nombre de tu negocio</label><input id="rNeg" placeholder="Mi tienda"></div>
+<label>Correo electrónico</label><input id="aMail" type="email" autocomplete="email" placeholder="correo@ejemplo.com">
+<label>Contraseña</label><input id="aPass" type="password" autocomplete="current-password" placeholder="••••••••">
+<div class="err" id="aErr"></div>
+<button class="btn pri" id="aGo" style="width:100%;margin-top:6px">Crear mi negocio</button>
+<button class="btn" id="aX" style="width:100%;margin-top:8px">Cancelar</button></div></div>
+
+<div class="modal" id="mCart"><div class="card box"><h3 style="margin:0 0 8px">Tu pedido</h3><div id="cSum" style="margin-bottom:6px"></div><label>Tu nombre</label><input id="cNom"><label>Teléfono / WhatsApp</label><input id="cTel" type="tel"><label>Dirección de entrega</label><input id="cDir"><div class="err" id="cErr"></div><button class="btn pri" id="cSend" style="width:100%">Enviar pedido</button><button class="btn" id="cX" style="width:100%;margin-top:8px">Seguir comprando</button></div></div>
+
+<div class="modal" id="mKey"><div class="card box"><h3 style="margin:0 0 6px">Administración</h3><label>Contraseña de administrador</label><input id="kPass" type="password"><div class="err" id="kErr"></div>
+<button class="btn pri" id="kGo" style="width:100%">Entrar</button><button class="btn" id="kX" style="width:100%;margin-top:8px">Cancelar</button></div></div>
+
+<script>
+(function(){
+'use strict';
+var URL_API='https://script.google.com/macros/s/AKfycbzw5JV_p8-58_Tb8dtk7i9S9oY1hjP09r90sc6CL_Z_NoCrV7WKA-c7pZkdvPWBwRdD/exec';
+var DATOS_PAGO='Banco: ________ · Cuenta: ________ · A nombre de: ________'; /* EDITA con tus datos de pago */
+var PLANES={basico:{n:'Básico',q:49,d:'30 productos y funciones esenciales.'},profesional:{n:'Profesional',q:89,d:'150 productos y estadísticas.',pop:1},empresarial:{n:'Empresarial',q:149,d:'Productos ilimitados y herramientas avanzadas.'}};
+var $=function(i){return document.getElementById(i)},me=null,mode='reg',adminKey='';
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+async function api(a,p){var r=await fetch(URL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:a},p||{}))});
+  var d=await r.json();if(!d||d.ok===false)throw new Error((d&&d.error)||'Error del servidor');return d}
+function view(v){['landing','dash','master','front'].forEach(function(x){$(x).classList.toggle('hide',x!==v)});window.scrollTo(0,0)}
+function fmt(d){try{return new Date(d).toLocaleDateString('es-GT')}catch(e){return ''}}
+
+$('plansList').innerHTML=Object.keys(PLANES).map(function(k){var p=PLANES[k];return '<div class="card plan'+(p.pop?' pop':'')+'">'+(p.pop?'<span class="tag">POPULAR</span>':'')+'<h3 style="margin:0">'+p.n+'</h3><div class="price">Q'+p.q+'<small>/mes</small></div><p style="color:var(--mu)">'+p.d+'</p><button class="btn '+(p.pop?'pri':'')+'" data-cta style="width:100%">Empezar gratis</button></div>'}).join('');
+
+/* ----- Acceso ----- */
+function openAuth(m){mode=m;$('aErr').textContent='';$('fReg').classList.toggle('hide',m!=='reg');$('tReg').classList.toggle('on',m==='reg');$('tLog').classList.toggle('on',m!=='reg');
+  $('aGo').textContent=m==='reg'?'Crear mi negocio':'Ingresar';$('aTitle').textContent=m==='reg'?'Comienza tu negocio con 15 días gratuitos':'Bienvenido de nuevo';$('mAuth').classList.add('on')}
+document.addEventListener('click',function(e){if(e.target.closest('[data-cta]'))openAuth(me?'log':'reg');if(me&&e.target.closest('[data-cta]')){$('mAuth').classList.remove('on');loadDash()}});
+$('hdrCta').onclick=function(){if(me)loadDash();else openAuth('reg')};$('hdrAuth').onclick=function(){if(me)loadDash();else openAuth('log')};
+$('tReg').onclick=function(){openAuth('reg')};$('tLog').onclick=function(){openAuth('log')};$('aX').onclick=function(){$('mAuth').classList.remove('on')};
+$('aGo').onclick=async function(){var b=$('aGo');$('aErr').textContent='';b.disabled=true;
+  try{var mail=$('aMail').value.trim(),pw=$('aPass').value;if(!mail||pw.length<6)throw new Error('Escribe tu correo y una contraseña de al menos 6 caracteres.');
+    if(mode==='reg'){if(!$('rNom').value.trim()||!$('rNeg').value.trim())throw new Error('Completa tu nombre y el de tu negocio.');
+      var r=await api('saasCreate',{nombre:$('rNom').value.trim(),negocio:$('rNeg').value.trim(),email:mail,password:pw});me=r.user}
+    else{var l=await api('login',{email:mail,password:pw});me=l.user}
+    localStorage.setItem('sb_saas_user',JSON.stringify({id:me.id,nombre:me.nombre||'',email:me.email||mail}));
+    $('mAuth').classList.remove('on');await loadDash()}
+  catch(e){$('aErr').textContent=e.message}finally{b.disabled=false}};
+$('logout').onclick=function(){me=null;localStorage.removeItem('sb_saas_user');$('logout').classList.add('hide');$('hdrAuth').textContent='Ingresar';view('landing')};
+$('goHome').onclick=function(){view('landing')};
+
+/* ----- Panel del emprendedor ----- */
+async function loadDash(){
+  if(!me)return openAuth('log');
+  $('logout').classList.remove('hide');$('hdrAuth').textContent='Mi panel';
+  var D=$('dash');D.innerHTML='<p>Cargando…</p>';view('dash');
+  try{var r=await api('saasMine',{userId:me.id}),s=r.store;
+    if(!s){D.innerHTML='<div class="card"><h3>Aún no tienes tienda</h3><p style="color:var(--mu)">Esta cuenta no tiene un negocio creado. Crea una cuenta nueva con «Inicia tu negocio».</p></div>';return}
+    var pct=s.estado==='prueba'?Math.round(s.dias/15*100):s.estado==='activa'?Math.min(100,Math.round(s.dias/30*100)):0;
+    D.innerHTML='<h2 style="margin-top:20px">Hola, '+esc((me.nombre||'').split(' ')[0]||'emprendedor')+' 👋</h2>'+(s.aviso?'<div class="alert">'+esc(s.aviso)+'</div>':'')+
+    (s.estado==='vencida'||s.estado==='suspendida'?'<div class="alert" style="color:var(--bad);border-color:rgba(248,113,113,.4)">Tu tienda está '+(s.estado==='vencida'?'vencida: realiza un pago para reactivarla':'suspendida: contacta al administrador')+'.</div>':'')+
+    '<div class="grid"><div class="card"><small style="color:var(--mu)">MI TIENDA</small><h3 style="margin:4px 0">'+esc(s.nombre)+'</h3><span class="badge b-'+s.estado+'">'+s.estado.toUpperCase()+'</span>'+
+    '<p style="color:var(--mu);margin:12px 0 4px">Dirección:</p><div class="mono">'+esc(s.slug)+'.sheibis.com</div><small style="color:var(--mu)">(Se activa al configurar el dominio.)</small></div>'+
+    '<div class="card"><small style="color:var(--mu)">SUSCRIPCIÓN</small><h3 style="margin:4px 0">'+esc(s.planNombre)+'</h3><div class="bar"><i style="width:'+pct+'%"></i></div><b>'+s.dias+'</b> día(s) restantes<br><small style="color:var(--mu)">Productos permitidos: '+(s.maxProductos||'ilimitados')+'</small></div></div>'+
+    '<h2>Contratar o renovar plan</h2><div class="card">'+(r.pagoPendiente?'<div class="alert">Tu pago está en revisión. Te activaremos el plan cuando sea aprobado.</div>':
+    '<p style="color:var(--mu);margin-top:0">1) Haz tu transferencia o depósito. 2) Escribe la referencia y adjunta el comprobante. 3) Revisamos y activamos tu plan.</p><div class="mono" style="margin-bottom:8px">'+esc(DATOS_PAGO)+'</div>'+
+    '<label>Plan</label><select id="pPlan">'+Object.keys(PLANES).map(function(k){return '<option value="'+k+'">'+PLANES[k].n+' · Q'+PLANES[k].q+'/mes</option>'}).join('')+'</select><label>Referencia del pago</label><input id="pRef"><label>Comprobante (foto, opcional)</label><input id="pImg" type="file" accept="image/*"><div class="err" id="pErr"></div><button class="btn pri" id="pGo" style="margin-top:6px">Enviar pago</button>')+'</div>';
+    setupTabs(s);var go=$('pGo');if(go)go.onclick=async function(){go.disabled=true;$('pErr').textContent='';
+      try{var img='',f=$('pImg').files[0];if(f)img=await shrink(f);await api('saasPay',{userId:me.id,plan:$('pPlan').value,referencia:$('pRef').value,image:img});loadDash()}
+      catch(e){$('pErr').textContent=e.message;go.disabled=false}}
+  }catch(e){D.innerHTML='<div class="card">No se pudo cargar: '+esc(e.message)+'</div>'}}
+function shrink(file,mx,q){mx=mx||900;q=q||.6;return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(file);im.onload=function(){var k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',q))};im.onerror=function(){rej(new Error('No se pudo leer la imagen.'))};im.src=u})}
+
+/* ----- Panel maestro ----- */
+$('goMaster').onclick=function(){$('kErr').textContent='';$('kPass').value='';$('mKey').classList.add('on');setTimeout(function(){$('kPass').focus()},50)};
+$('kX').onclick=function(){$('mKey').classList.remove('on')};$('kPass').onkeydown=function(e){if(e.key==='Enter')$('kGo').click()};
+$('kGo').onclick=async function(){adminKey=$('kPass').value;try{await api('saasAdminList',{adminKey:adminKey});$('mKey').classList.remove('on');loadMaster()}
+  catch(e){$('kErr').textContent=/autorizado/i.test(e.message)?'Contraseña incorrecta.':e.message}};
+async function loadMaster(){var M=$('master');view('master');
+  try{var r=await api('saasAdminList',{adminKey:adminKey});
+    var by={};r.stores.forEach(function(s){by[s.id]=s});
+    var c={prueba:0,activa:0,vencida:0,suspendida:0};r.stores.forEach(function(s){c[s.estado]=(c[s.estado]||0)+1});
+    M.innerHTML='<h2 style="margin-top:20px">Panel maestro</h2><div class="grid"><div class="card"><small style="color:var(--mu)">TIENDAS</small><div class="price">'+r.stores.length+'</div></div><div class="card"><small style="color:var(--mu)">EN PRUEBA</small><div class="price">'+c.prueba+'</div></div><div class="card"><small style="color:var(--mu)">PAGANDO</small><div class="price">'+c.activa+'</div></div><div class="card"><small style="color:var(--mu)">VENCIDAS / SUSP.</small><div class="price">'+(c.vencida+c.suspendida)+'</div></div></div>'+
+    '<h2>Pagos por revisar</h2><div class="card scroll"><table><thead><tr><th>Tienda</th><th>Plan</th><th>Monto</th><th>Referencia</th><th>Estado</th><th></th></tr></thead><tbody>'+
+    (r.pays.length?r.pays.map(function(p){var s=by[p.storeId];return '<tr data-id="'+esc(p.id)+'"><td>'+esc(s?s.nombre:p.storeId)+'</td><td>'+esc(p.plan)+'</td><td>Q'+esc(p.monto)+'</td><td>'+esc(p.referencia)+'</td><td><span class="badge b-'+p.estado+'">'+esc(p.estado)+'</span></td><td>'+(p.estado==='pendiente'?(p.foto?'<button class="btn sm" data-a="foto">Ver</button> ':'')+'<button class="btn pri sm" data-a="aprobado">Aprobar</button> <button class="btn sm bad" data-a="rechazado">Rechazar</button><div class="ph"></div>':'')+'</td></tr>'}).join(''):'<tr><td colspan="6" style="color:var(--mu)">Sin pagos todavía.</td></tr>')+'</tbody></table></div>'+
+    '<h2>Tiendas</h2><div class="card scroll"><table><thead><tr><th>Negocio</th><th>Dirección</th><th>Plan</th><th>Estado</th><th>Días</th><th></th></tr></thead><tbody>'+
+    (r.stores.length?r.stores.map(function(s){return '<tr data-s="'+esc(s.id)+'"><td>'+esc(s.nombre)+'</td><td class="mono">'+esc(s.slug)+'</td><td>'+esc(s.planNombre)+'</td><td><span class="badge b-'+s.estado+'">'+s.estado+'</span></td><td>'+s.dias+'</td><td><button class="btn sm '+(s.estado==='suspendida'?'':'bad')+'" data-st="'+(s.estado==='suspendida'?'activa':'suspendida')+'">'+(s.estado==='suspendida'?'Reactivar':'Suspender')+'</button></td></tr>'}).join(''):'<tr><td colspan="6" style="color:var(--mu)">Aún no hay tiendas.</td></tr>')+'</tbody></table></div>';
+    M.onclick=async function(e){var b=e.target.closest('button');if(!b)return;var tr=b.closest('tr');
+      try{if(b.dataset.a==='foto'){var p=await api('saasAdminPhoto',{adminKey:adminKey,id:tr.dataset.id});tr.querySelector('.ph').innerHTML='<img src="'+p.image+'" style="max-width:100%;max-height:260px;border-radius:10px;margin-top:8px">';return}
+        if(b.dataset.a){await api('saasPayReview',{adminKey:adminKey,id:tr.dataset.id,decision:b.dataset.a});loadMaster()}
+        else if(b.dataset.st){await api('saasStoreState',{adminKey:adminKey,storeId:tr.dataset.s,estado:b.dataset.st});loadMaster()}}
+      catch(err){alert(err.message)}}
+  }catch(e){M.innerHTML='<div class="card">'+esc(e.message)+'</div>'}}
+
+/* ----- Pestañas del panel: Productos y Pedidos ----- */
+function money(n){return 'Q'+(Number(n)||0).toFixed(2)}
+function setupTabs(s){
+  var res=$('dash').innerHTML;
+  $('dash').innerHTML='<div class="tabs" id="dTabs" style="margin-top:18px"><button data-t="Res" class="on">Resumen</button><button data-t="Prod">Productos</button><button data-t="Ped">Pedidos</button></div><div id="dRes">'+res+'</div><div id="dProd" class="hide"></div><div id="dPed" class="hide"></div>';
+  var link='__BASE__?tienda='+s.slug;
+  $('dRes').insertAdjacentHTML('beforeend','<div class="card" style="margin-top:14px"><small style="color:var(--mu)">ENLACE DE TU TIENDA PARA CLIENTES</small><div class="mono"><a style="color:inherit" href="'+esc(link)+'" target="_blank">'+esc(link)+'</a></div></div>');
+  $('dTabs').onclick=function(e){var b=e.target.closest('button');if(!b)return;
+    [].forEach.call($('dTabs').children,function(x){x.classList.toggle('on',x===b)});
+    ['Res','Prod','Ped'].forEach(function(t){$('d'+t).classList.toggle('hide',t!==b.dataset.t)});
+    if(b.dataset.t==='Prod')drawProd();if(b.dataset.t==='Ped')drawPed()}}
+var editing=null;
+async function drawProd(){var P=$('dProd');P.innerHTML='<p>Cargando…</p>';
+  try{var r=await api('saasProdList',{userId:me.id}),L=r.items;
+    P.innerHTML='<div class="card" style="margin-top:14px"><h3 style="margin:0" id="fT">Nuevo producto</h3><div class="grid"><div><label>Nombre</label><input id="fN"></div><div><label>Categoría</label><input id="fC"></div><div><label>Precio (Q)</label><input id="fP" type="number" min="0" step="0.01"></div><div><label>Descuento %</label><input id="fD" type="number" min="0" max="90"></div><div><label>Existencias</label><input id="fS" type="number" min="0"></div><div><label>Foto</label><input id="fF" type="file" accept="image/*"></div></div><label>Descripción</label><input id="fDe"><label style="display:flex;gap:8px;align-items:center"><input id="fDs" type="checkbox" style="width:auto" checked> Disponible</label><label style="display:flex;gap:8px;align-items:center"><input id="fH" type="checkbox" style="width:auto"> Destacado en mi tienda</label><div class="err" id="fE"></div><button class="btn pri" id="fG">Guardar producto</button> <button class="btn hide" id="fX">Cancelar edición</button></div>'+
+    '<div class="card scroll" style="margin-top:14px"><table><thead><tr><th></th><th>Producto</th><th>Precio</th><th>Stock</th><th>Estado</th><th></th></tr></thead><tbody>'+(L.length?L.map(function(p){return '<tr data-id="'+esc(p.id)+'"><td>'+(p.foto?'<img class="th" src="'+esc(p.foto)+'">':'')+'</td><td>'+esc(p.nombre)+(p.destacado===true?' ★':'')+'<br><small style="color:var(--mu)">'+esc(p.categoria)+'</small></td><td>'+money(p.precio)+(Number(p.descuento)?' <small>(-'+Number(p.descuento)+'%)</small>':'')+'</td><td>'+Number(p.stock)+'</td><td><span class="badge '+(p.disponible===false||Number(p.stock)<=0?'b-rechazado':'b-activa')+'">'+(p.disponible===false?'oculto':Number(p.stock)<=0?'agotado':'disponible')+'</span></td><td><button class="btn sm" data-e="1">Editar</button> <button class="btn sm bad" data-d="1">Eliminar</button></td></tr>'}).join(''):'<tr><td colspan="6" style="color:var(--mu)">Aún no tienes productos.</td></tr>')+'</tbody></table></div>';
+    function fill(p){editing=p;$('fT').textContent=p?'Editar producto':'Nuevo producto';$('fN').value=p?p.nombre:'';$('fC').value=p?p.categoria:'';$('fP').value=p?p.precio:'';$('fD').value=p?p.descuento:'';$('fS').value=p?p.stock:'';$('fDe').value=p?p.descripcion:'';$('fDs').checked=p?p.disponible!==false:true;$('fH').checked=p?p.destacado===true:false;$('fF').value='';$('fX').classList.toggle('hide',!p)}
+    $('fX').onclick=function(){fill(null)};
+    $('fG').onclick=async function(){var b=$('fG');b.disabled=true;$('fE').textContent='';
+      try{var f=$('fF').files[0],pr={id:editing?editing.id:undefined,nombre:$('fN').value,categoria:$('fC').value,precio:$('fP').value,descuento:$('fD').value,stock:$('fS').value,descripcion:$('fDe').value,disponible:$('fDs').checked,destacado:$('fH').checked};
+        if(f)pr.foto=await shrink(f,420,.55);await api('saasProdSave',{userId:me.id,product:pr});drawProd()}
+      catch(e){$('fE').textContent=e.message;b.disabled=false}};
+    P.onclick=async function(e){var b=e.target.closest('button');if(!b||!b.closest('tr'))return;var id=b.closest('tr').dataset.id;
+      if(b.dataset.e){fill(L.filter(function(x){return x.id===id})[0]);window.scrollTo(0,0)}
+      else if(b.dataset.d&&confirm('¿Eliminar este producto?')){try{await api('saasProdDelete',{userId:me.id,id:id});drawProd()}catch(er){alert(er.message)}}}
+  }catch(e){P.innerHTML='<div class="card">'+esc(e.message)+'</div>'}}
+async function drawPed(){var O=$('dPed');O.innerHTML='<p>Cargando…</p>';
+  try{var r=await api('saasOrderList',{userId:me.id}),s=r.stats;
+    O.innerHTML='<div class="grid" style="margin-top:14px"><div class="card"><small style="color:var(--mu)">VENTAS</small><div class="price">'+money(s.ventas)+'</div></div><div class="card"><small style="color:var(--mu)">PEDIDOS</small><div class="price">'+s.pedidos+'</div></div><div class="card"><small style="color:var(--mu)">PENDIENTES</small><div class="price">'+s.pendientes+'</div></div><div class="card"><small style="color:var(--mu)">PRODUCTOS</small><div class="price">'+s.productos+'</div></div></div>'+
+    '<div class="card scroll" style="margin-top:14px"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Pedido</th><th>Total</th><th>Estado</th></tr></thead><tbody>'+(r.orders.length?r.orders.map(function(o){return '<tr data-id="'+esc(o.id)+'"><td>'+fmt(o.fecha)+'</td><td>'+esc(o.cliente)+'<br><small style="color:var(--mu)">'+esc(o.telefono)+(o.direccion?' · '+esc(o.direccion):'')+'</small></td><td>'+o.items.map(function(i){return i.cant+'× '+esc(i.nombre)}).join('<br>')+'</td><td>'+money(o.total)+'</td><td><select>'+r.estados.map(function(x){return '<option'+(x===o.estado?' selected':'')+'>'+x+'</option>'}).join('')+'</select></td></tr>'}).join(''):'<tr><td colspan="5" style="color:var(--mu)">Aún no tienes pedidos.</td></tr>')+'</tbody></table></div>';
+    O.onchange=async function(e){var sel=e.target.closest('select');if(!sel)return;try{await api('saasOrderState',{userId:me.id,id:sel.closest('tr').dataset.id,estado:sel.value});drawPed()}catch(er){alert(er.message)}}
+  }catch(e){O.innerHTML='<div class="card">'+esc(e.message)+'</div>'}}
+
+/* ----- Tienda pública: ?tienda=nombre  (o nombre.sheibis.com) ----- */
+var cart={},FR=null;
+async function loadFront(slug){var F=$('front');view('front');F.innerHTML='<p>Cargando tienda…</p>';
+  try{FR=await api('saasStoreFront',{slug:slug});FR.slug=slug;drawFront()}
+  catch(e){F.innerHTML='<div class="card" style="margin-top:30px"><h3>Tienda no disponible</h3><p style="color:var(--mu)">'+esc(e.message)+'</p></div>'}}
+function cartTotal(){var t=0,n=0;FR.items.forEach(function(p){var c=cart[p.id]||0;t+=c*p.final;n+=c});return{t:t,n:n}}
+function drawFront(){var F=$('front'),ct=cartTotal();
+  F.innerHTML='<h1 style="margin:24px 0 4px">'+esc(FR.store.nombre)+'</h1><p style="color:var(--mu);margin-top:0">Elige tus productos y envía tu pedido.</p><div class="pg">'+
+  (FR.items.length?FR.items.map(function(p){var c=cart[p.id]||0;return '<div class="card pc" data-id="'+esc(p.id)+'">'+(p.foto?'<img src="'+esc(p.foto)+'">':'<div class="ph0"></div>')+'<b>'+esc(p.nombre)+(p.destacado?' ★':'')+'</b><div><span class="mono">'+money(p.final)+'</span>'+(p.descuento?' <small style="color:var(--mu);text-decoration:line-through">'+money(p.precio)+'</small>':'')+'</div><div class="qty"><button class="btn sm" data-q="-1">−</button><span>'+c+'</span><button class="btn sm" data-q="1">+</button></div></div>'}).join(''):'<p style="color:var(--mu)">Esta tienda aún no tiene productos.</p>')+'</div>'+
+  (ct.n?'<div class="cartbar"><button class="btn pri" id="cGo">Ver pedido ('+ct.n+') · '+money(ct.t)+'</button></div>':'');
+  F.onclick=function(e){var b=e.target.closest('[data-q]');if(b){var id=b.closest('.pc').dataset.id,p=FR.items.filter(function(x){return x.id===id})[0],n=(cart[id]||0)+Number(b.dataset.q);cart[id]=Math.max(0,Math.min(n,p.stock));drawFront();return}
+    if(e.target.id==='cGo'){$('cErr').textContent='';$('cSum').innerHTML=FR.items.filter(function(p){return cart[p.id]}).map(function(p){return cart[p.id]+'× '+esc(p.nombre)+' — '+money(cart[p.id]*p.final)}).join('<br>')+'<br><b>Total: '+money(cartTotal().t)+'</b>';$('mCart').classList.add('on')}}}
+$('cX').onclick=function(){$('mCart').classList.remove('on')};
+$('cSend').onclick=async function(){var b=$('cSend');b.disabled=true;$('cErr').textContent='';
+  try{var items=Object.keys(cart).filter(function(k){return cart[k]>0}).map(function(k){return{id:k,cant:cart[k]}});
+    var r=await api('saasOrderCreate',{slug:FR.slug,cliente:$('cNom').value,telefono:$('cTel').value,direccion:$('cDir').value,items:items});
+    cart={};$('mCart').classList.remove('on');loadFront(FR.slug);alert('¡Pedido enviado! Tu número es '+r.id+'. El negocio se pondrá en contacto contigo.')}
+  catch(e){$('cErr').textContent=e.message}finally{b.disabled=false}};
+var q0='__SLUG__';
+if(q0)loadFront(q0);
+
+try{var u=JSON.parse(localStorage.getItem('sb_saas_user')||'null');if(u&&u.id){me=u;$('logout').classList.remove('hide');$('hdrAuth').textContent='Mi panel'}}catch(e){}
+})();
+<\/script></body></html>
+</script>
+<script id="sb-negocios-launcher">
+(function(){
+  var ov=document.getElementById('sbNegOverlay'),fr=document.getElementById('sbNegFrame');
+  function slugFromUrl(){var q=(new URLSearchParams(location.search).get('tienda')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
+    var h=location.hostname.match(/^([a-z0-9-]+)\.sheibis\.com$/);if(!q&&h&&['www','app'].indexOf(h[1])<0)q=h[1];return q}
+  window.sbOpenNegocios=function(slug){
+    var base=location.href.split('#')[0].split('?')[0].replace(/'/g,'%27');
+    var html=document.getElementById('sbNegSrc').textContent.split('<\\/script>').join('<'+'/script>').replace('__SLUG__',String(slug||'').replace(/[^a-z0-9-]/g,'')).replace('__BASE__',base);
+    fr.srcdoc=html;ov.style.display='flex';document.body.style.overflow='hidden'};
+  document.getElementById('sbNegClose').onclick=function(){ov.style.display='none';fr.srcdoc='';document.body.style.overflow=''};
+  function auto(){var sl=slugFromUrl();if(sl)window.sbOpenNegocios(sl);else if(/[?&]negocios\b/.test(location.search)||location.hash==='#negocios')window.sbOpenNegocios('')}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',auto);else auto();
 })();
 </script>
 
