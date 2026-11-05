@@ -4115,7 +4115,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyIfMQNVCqpOP4qkd5jjK2yzO74rcbWs_g7pZhAVdyy1x-gDfgWWdHW6jhJGAR5I_YE/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxLPfaN6ct3QcpK5kFJq77Q7wC4R90dthOvS8BwLZNMR6KBv2oHSqHTuy0iXAFkhpjd/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5812,7 +5812,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbyIfMQNVCqpOP4qkd5jjK2yzO74rcbWs_g7pZhAVdyy1x-gDfgWWdHW6jhJGAR5I_YE/exec
+     https://script.google.com/macros/s/AKfycbxLPfaN6ct3QcpK5kFJq77Q7wC4R90dthOvS8BwLZNMR6KBv2oHSqHTuy0iXAFkhpjd/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -8718,7 +8718,7 @@ function loadCategories(){
       if(Array.isArray(saved)&&saved.length){
         cats.length=0;
         saved.forEach(c=>{
-          if(c&&c.id&&c.nombre) cats.push({
+          if(c&&c.id&&c.nombre&&String(c.id).indexOf('neg-')!==0&&String(c.id)!=='tiendas-sheibis') cats.push({
             id:String(c.id),nombre:String(c.nombre),
             icono:c.icono||'fa-folder-open',imagen:c.imagen||'',
             descripcion:c.descripcion||'',proximamente:c.proximamente!==false,padre:c.padre?String(c.padre):''
@@ -8728,7 +8728,7 @@ function loadCategories(){
     }
   }catch(e){console.error('SHEIBIS load categories',e);}
 }
-window.sbStorableCats_=function(list){return (Array.isArray(list)?list:[]).filter(function(c){return !(c&&String(c.id).indexOf('neg-')===0);});};
+window.sbStorableCats_=function(list){return (Array.isArray(list)?list:[]).filter(function(c){return !(c&&(String(c.id).indexOf('neg-')===0||String(c.id)==='tiendas-sheibis'));});};
 window.sbStorableProducts_=function(list){return (Array.isArray(list)?list:[]).filter(function(p){return !(p&&Number(p.id)>=1e15);});};
 function nextId(){return getProducts().reduce((m,p)=>{const n=Number(p.id)||0;return n>=1e15?m:Math.max(m,n);},0)+1;}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
@@ -13184,7 +13184,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbyIfMQNVCqpOP4qkd5jjK2yzO74rcbWs_g7pZhAVdyy1x-gDfgWWdHW6jhJGAR5I_YE/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbxLPfaN6ct3QcpK5kFJq77Q7wC4R90dthOvS8BwLZNMR6KBv2oHSqHTuy0iXAFkhpjd/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15189,7 +15189,7 @@ footer a{color:var(--mu);cursor:pointer;text-decoration:underline}
 <script>
 (function(){
 'use strict';
-var URL_API='https://script.google.com/macros/s/AKfycbyIfMQNVCqpOP4qkd5jjK2yzO74rcbWs_g7pZhAVdyy1x-gDfgWWdHW6jhJGAR5I_YE/exec';
+var URL_API='https://script.google.com/macros/s/AKfycbxLPfaN6ct3QcpK5kFJq77Q7wC4R90dthOvS8BwLZNMR6KBv2oHSqHTuy0iXAFkhpjd/exec';
 var DATOS_PAGO='Banco: ________ · Cuenta: ________ · A nombre de: ________'; /* EDITA con tus datos de pago */
 var PLANES={basico:{n:'Básico',q:49,d:'30 productos y funciones esenciales.'},profesional:{n:'Profesional',q:89,d:'150 productos y estadísticas.',pop:1},empresarial:{n:'Empresarial',q:149,d:'Productos ilimitados y herramientas avanzadas.'}};
 var $=function(i){return document.getElementById(i)},me=null,mode='reg',adminKey='';
