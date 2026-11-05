@@ -4115,7 +4115,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyT7YGCY9ouOi5quAsgrzn6q5PWuFslIk5SkRpfLyXctQVO-elX4CdKLJUjwYQ-7Lo9/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyIfMQNVCqpOP4qkd5jjK2yzO74rcbWs_g7pZhAVdyy1x-gDfgWWdHW6jhJGAR5I_YE/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5812,7 +5812,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbyT7YGCY9ouOi5quAsgrzn6q5PWuFslIk5SkRpfLyXctQVO-elX4CdKLJUjwYQ-7Lo9/exec
+     https://script.google.com/macros/s/AKfycbyIfMQNVCqpOP4qkd5jjK2yzO74rcbWs_g7pZhAVdyy1x-gDfgWWdHW6jhJGAR5I_YE/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -8567,6 +8567,7 @@ async function syncGlobalInventory_(force=false){
 }
 
 window.__sbSyncInventoryNow=function(){return syncGlobalInventory_(true);};
+window.__sbSyncCatalogNow=function(){return syncGlobalCatalog_(true);};
 async function saveInventoryGlobal_(id, stock, name){
   const inv=ensureInventory(), key=String(id), previous=inv[key]?{...inv[key]}:null;
   const safeStock=Math.max(0,Math.floor(Number(stock)||0));
@@ -8595,7 +8596,7 @@ function queueGlobalCatalogSave_(){
     globalCatalogSaveInFlight++;
     const snapshot={
       categories:JSON.parse(JSON.stringify(getCategories())),
-      products:JSON.parse(JSON.stringify(getProducts()))
+      products:JSON.parse(JSON.stringify(window.sbStorableProducts_(getProducts())))
     };
     try{
       const result=await apiRequest('saveCatalog',snapshot,{timeout:30000});
@@ -8614,7 +8615,7 @@ function queueGlobalCatalogSave_(){
         result.categories.forEach(c=>window.CATALOGOS.push(c));
       }
       try{
-        localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(window.sbStorableProducts_(getProducts())));
         localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
       }catch(_){}
       refreshStore();
@@ -8636,7 +8637,7 @@ function queueGlobalCatalogSave_(){
 }
 function saveProducts(){
   try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(window.sbStorableProducts_(getProducts())));
     queueGlobalCatalogSave_();
     return true;
   }catch(e){console.error('SHEIBIS productos',e);return false;}
@@ -8665,7 +8666,7 @@ async function syncGlobalCatalog_(force=false){
     // Primera instalación: subimos el catálogo base que ya existe en este HTML.
     if(data.initialized===false){
       if(!getCategories().length&&!getProducts().length) return;
-      await apiRequest('saveCatalog',{categories:getCategories(),products:getProducts()});
+      await apiRequest('saveCatalog',{categories:getCategories(),products:window.sbStorableProducts_(getProducts())});
       globalCatalogLastServerUpdate=new Date().toISOString();
       return;
     }
@@ -8689,7 +8690,7 @@ async function syncGlobalCatalog_(force=false){
     }
 
     try{
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(getProducts()));
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(window.sbStorableProducts_(getProducts())));
       localStorage.setItem(CATEGORY_KEY,JSON.stringify(getCategories()));
     }catch(_){}
 
@@ -8727,7 +8728,8 @@ function loadCategories(){
     }
   }catch(e){console.error('SHEIBIS load categories',e);}
 }
-function nextId(){return getProducts().reduce((m,p)=>Math.max(m,Number(p.id)||0),0)+1;}
+window.sbStorableProducts_=function(list){return (Array.isArray(list)?list:[]).filter(function(p){return !(p&&Number(p.id)>=1e15);});};
+function nextId(){return getProducts().reduce((m,p)=>{const n=Number(p.id)||0;return n>=1e15?m:Math.max(m,n);},0)+1;}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 
 /* ===== SUBCATÁLOGOS (un solo nivel) ===== */
@@ -9079,7 +9081,7 @@ window.SB_ADMIN={
       if(!confirm(`Se restaurarán ${data.products.length} productos y ${data.categories.length} categorías. Los datos actuales serán reemplazados. ¿Continuar?`))return;
       window.PRODUCTOS.length=0;data.products.forEach(x=>window.PRODUCTOS.push(x));
       window.CATALOGOS.length=0;data.categories.forEach(x=>window.CATALOGOS.push(x));
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(window.PRODUCTOS));localStorage.setItem(CATEGORY_KEY,JSON.stringify(window.CATALOGOS));localStorage.setItem(INVENTORY_KEY,JSON.stringify(data.inventory));localStorage.setItem(INVENTORY_MOVES_KEY,JSON.stringify(Array.isArray(data.inventoryMovements)?data.inventoryMovements:[]));
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(window.sbStorableProducts_(window.PRODUCTOS)));localStorage.setItem(CATEGORY_KEY,JSON.stringify(window.CATALOGOS));localStorage.setItem(INVENTORY_KEY,JSON.stringify(data.inventory));localStorage.setItem(INVENTORY_MOVES_KEY,JSON.stringify(Array.isArray(data.inventoryMovements)?data.inventoryMovements:[]));
       if(data.settings?.lowStockThreshold!==undefined)localStorage.setItem('sheibis_low_stock_threshold',String(data.settings.lowStockThreshold));
       refreshStore();this.render();this.renderCategories();this.log('restore','Respaldo restaurado correctamente');this.showTab('dashboard');showToast('Respaldo restaurado correctamente.',{title:'Respaldo restaurado',kicker:'SHEIBIS · ADMIN',icon:'fa-database'});
     }catch(e){alert('No se pudo restaurar: '+e.message);}
@@ -9767,7 +9769,7 @@ function renderCatalogosPro(){
 }
 function filterProducts(products){var min=sbpState.min,max=sbpState.max,mode=sbpState.mode;var list=products.filter(function(p){var price=num(p.precio);if((min>10&&price<min)||price>max)return false;if(mode==='recommended')return p.recomendado===true||p.destacado===true||productScore(p)>0;if(mode==='offers')return productDiscount(p)>0;if(mode==='new')return productIsNew(p);if(mode==='bestsellers')return num(p.ventas)>0;return true;});
  list.sort(function(a,b){if(sbpState.sort==='priceAsc')return num(a.precio)-num(b.precio);if(sbpState.sort==='priceDesc')return num(b.precio)-num(a.precio);if(sbpState.sort==='new')return (productIsNew(b)?1:0)-(productIsNew(a)?1:0)||num(b.id)-num(a.id);if(sbpState.sort==='sales')return num(b.ventas)-num(a.ventas)||productScore(b)-productScore(a);if(sbpState.sort==='discount')return productDiscount(b)-productDiscount(a);return productScore(b)-productScore(a)||num(b.id)-num(a.id);});return list;}
-function productMarkup(p){var qty=quantities[p.id]||1,main=(Array.isArray(p.imagenes)&&p.imagenes.length?p.imagenes[0]:p.imagen),has=!!main,before=num(p.precioAntes),current=num(p.precio),disc=productDiscount(p),stars=num(p.valoracion);var badges='';if(p.recomendado||p.destacado)badges+='<span class="sbp-product-badge recommended">★ Recomendado</span>';if(num(p.ventas)>0)badges+='<span class="sbp-product-badge hot">🔥 Más vendido</span>';if(productIsNew(p))badges+='<span class="sbp-product-badge new">✦ Nuevo</span>';if(disc>0)badges+='<span class="sbp-product-badge offer">-'+disc.toFixed(0)+'%</span>';var rating=stars>0?'<span class="sbp-rating">'+('★'.repeat(Math.round(stars)))+' '+stars.toFixed(1)+'</span>':'';return '<div class="product-detail-item '+(p.agotado?'sheibis-out':'')+'" data-id="'+safe(p.id)+'"><div class="product-detail-image sheibis-product-clickable" data-product-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="Ampliar imagen de '+safe(p.nombre)+'" onclick="sheibisOpenProductImage('+Number(p.id)+',0)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();sheibisOpenProductImage('+Number(p.id)+',0)}">'+(disc>0?'<span class="product-discount-badge">-'+disc.toFixed(0)+'%</span>':'')+(has?'<img src="'+safe(main)+'" alt="'+safe(p.nombre)+'" loading="lazy" referrerpolicy="no-referrer">':'<span class="icon-placeholder"><i class="fas '+safe(p.icono||'fa-star')+'"></i></span>')+'</div><div class="product-detail-info"><div class="sbp-product-topline"><div class="sbp-badges">'+badges+'</div>'+rating+'</div><div class="product-detail-name">'+safe(p.nombre)+'</div><div class="product-detail-desc">'+safe(p.desc||'')+'</div>'+(disc>0?'<div class="product-price-row"><span class="product-price-before">Q '+before.toFixed(2)+'</span><span class="product-price-current">Q '+current.toFixed(2)+'</span><span class="product-discount-text">Ahorras '+disc.toFixed(0)+'%</span></div>':'<div class="product-price-row"><span class="product-price-current">Q '+current.toFixed(2)+'</span></div>')+(p.agotado?'<div class="sheibis-out-badge">🚫 AGOTADO</div>':'<div class="product-detail-actions"><div class="qty-control-detail"><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',-1)"><i class="fas fa-minus"></i></button><span class="qty-display-detail" id="qty-detail-'+Number(p.id)+'">'+qty+'</span><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',1)"><i class="fas fa-plus"></i></button></div><button class="btn-add-detail" onclick="addToCartDetail('+Number(p.id)+')"><i class="fas fa-plus"></i> Agregar</button></div>')+'</div></div>';}
+function productMarkup(p){var qty=quantities[p.id]||1,main=(Array.isArray(p.imagenes)&&p.imagenes.length?p.imagenes[0]:p.imagen),has=!!main,before=num(p.precioAntes),current=num(p.precio),disc=productDiscount(p),stars=num(p.valoracion);var badges='';if(p.recomendado||p.destacado)badges+='<span class="sbp-product-badge recommended">★ Recomendado</span>';if(num(p.ventas)>0)badges+='<span class="sbp-product-badge hot">🔥 Más vendido</span>';if(productIsNew(p))badges+='<span class="sbp-product-badge new">✦ Nuevo</span>';if(disc>0)badges+='<span class="sbp-product-badge offer">-'+disc.toFixed(0)+'%</span>';var rating=stars>0?'<span class="sbp-rating">'+('★'.repeat(Math.round(stars)))+' '+stars.toFixed(1)+'</span>':'';return '<div class="product-detail-item '+(p.agotado?'sheibis-out':'')+'" data-id="'+safe(p.id)+'"><div class="product-detail-image sheibis-product-clickable" data-product-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="Ampliar imagen de '+safe(p.nombre)+'" onclick="sheibisOpenProductImage('+Number(p.id)+',0)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();sheibisOpenProductImage('+Number(p.id)+',0)}">'+(disc>0?'<span class="product-discount-badge">-'+disc.toFixed(0)+'%</span>':'')+(has?'<img src="'+safe(main)+'" alt="'+safe(p.nombre)+'" loading="lazy" referrerpolicy="no-referrer">':'<span class="icon-placeholder"><i class="fas '+safe(p.icono||'fa-star')+'"></i></span>')+'</div><div class="product-detail-info"><div class="sbp-product-topline"><div class="sbp-badges">'+badges+'</div>'+rating+'</div>'+(p.tienda?'<div style="display:inline-flex;align-items:center;gap:5px;margin:0 0 4px;padding:2px 8px;border-radius:999px;background:#E7F6EE;color:#0B6B3A;font:700 .68rem Inter,system-ui,sans-serif">✓ Tienda verificada · '+safe(p.tienda)+'</div>':'')+'<div class="product-detail-name">'+safe(p.nombre)+'</div><div class="product-detail-desc">'+safe(p.desc||'')+'</div>'+(disc>0?'<div class="product-price-row"><span class="product-price-before">Q '+before.toFixed(2)+'</span><span class="product-price-current">Q '+current.toFixed(2)+'</span><span class="product-discount-text">Ahorras '+disc.toFixed(0)+'%</span></div>':'<div class="product-price-row"><span class="product-price-current">Q '+current.toFixed(2)+'</span></div>')+(p.agotado?'<div class="sheibis-out-badge">🚫 AGOTADO</div>':'<div class="product-detail-actions"><div class="qty-control-detail"><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',-1)"><i class="fas fa-minus"></i></button><span class="qty-display-detail" id="qty-detail-'+Number(p.id)+'">'+qty+'</span><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',1)"><i class="fas fa-plus"></i></button></div><button class="btn-add-detail" onclick="addToCartDetail('+Number(p.id)+')"><i class="fas fa-plus"></i> Agregar</button></div>')+'</div></div>';}
 function renderCategoryProducts(){var cat=getCategories().find(function(c){return String(c.id)===String(sbpState.category)});if(!cat)return;var all=getProducts().filter(function(p){return String(p.categoria)===String(cat.id)}),bounds=priceBounds(all);if(!isFinite(sbpState.max)||sbpState.max>bounds.max)sbpState.max=bounds.max;if(sbpState.min<10)sbpState.min=10;if(sbpState.min>sbpState.max)sbpState.min=10;var list=filterProducts(all);var host=document.getElementById('productList');if(!host)return;var kids=childCats(cat.id),subs=kids.length?subsMarkup(cat,kids):'';if(kids.length&&!all.length){host.innerHTML=subs;return;}var head=''+(cat.descripcion?'<p class="sbp-desc-only">'+safe(cat.descripcion)+'</p>':'')+'<div class="sbp-results">'+(list.length?list.map(productMarkup).join(''):'<div class="sbp-empty"><i class="fas fa-filter"></i><br><strong>Aún no hay productos en este catálogo.</strong></div>')+'</div>';
 host.innerHTML=subs+head;}
 window.SBP={setMode:function(mode){sbpState.mode=mode;renderCategoryProducts()},setSort:function(sort){sbpState.sort=sort;renderCategoryProducts()},setPrice:function(value,which){sbpState.min=10;sbpState.max=Math.max(10,num(value,10));var m=document.getElementById('sbpMaxValue'),all=getProducts().filter(function(p){return String(p.categoria)===String(sbpState.category)}),bd=priceBounds(all);if(m)m.textContent='Q '+sbpState.max.toFixed(0)+(sbpState.max>=bd.max?'+':'');if(window.__sbpRaf)return;window.__sbpRaf=requestAnimationFrame(function(){window.__sbpRaf=0;var list=filterProducts(all),r=document.querySelector('#productList .sbp-results'),c=document.querySelector('.sbp-toolbar-count');if(c)c.innerHTML='Mostrando <b>'+list.length+'</b> de '+all.length;if(r)r.innerHTML=list.length?list.map(productMarkup).join(''):'<div class="sbp-empty"><i class="fas fa-filter"></i><br><strong>No encontramos productos con esos filtros.</strong><br>Prueba ampliando el precio máximo o seleccionando Todos.</div>'})}};
@@ -13181,7 +13183,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbyT7YGCY9ouOi5quAsgrzn6q5PWuFslIk5SkRpfLyXctQVO-elX4CdKLJUjwYQ-7Lo9/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbyIfMQNVCqpOP4qkd5jjK2yzO74rcbWs_g7pZhAVdyy1x-gDfgWWdHW6jhJGAR5I_YE/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15186,7 +15188,7 @@ footer a{color:var(--mu);cursor:pointer;text-decoration:underline}
 <script>
 (function(){
 'use strict';
-var URL_API='https://script.google.com/macros/s/AKfycbyT7YGCY9ouOi5quAsgrzn6q5PWuFslIk5SkRpfLyXctQVO-elX4CdKLJUjwYQ-7Lo9/exec';
+var URL_API='https://script.google.com/macros/s/AKfycbyIfMQNVCqpOP4qkd5jjK2yzO74rcbWs_g7pZhAVdyy1x-gDfgWWdHW6jhJGAR5I_YE/exec';
 var DATOS_PAGO='Banco: ________ · Cuenta: ________ · A nombre de: ________'; /* EDITA con tus datos de pago */
 var PLANES={basico:{n:'Básico',q:49,d:'30 productos y funciones esenciales.'},profesional:{n:'Profesional',q:89,d:'150 productos y estadísticas.',pop:1},empresarial:{n:'Empresarial',q:149,d:'Productos ilimitados y herramientas avanzadas.'}};
 var $=function(i){return document.getElementById(i)},me=null,mode='reg',adminKey='';
@@ -15341,28 +15343,19 @@ window.addEventListener("message",function(e){var d=e.data;if(!d||d.sbRole!=="NE
 </script>
 
 <script id="sb-bizp-js">
+/* Los productos de los negocios ya viven DENTRO del catálogo principal (mismo carrito y pedido).
+   Este bloque solo fuerza una sincronización inmediata cuando el dueño del negocio guarda,
+   edita o elimina un producto, o cierra su panel. */
 (function(){
-var API='https://script.google.com/macros/s/AKfycbyT7YGCY9ouOi5quAsgrzn6q5PWuFslIk5SkRpfLyXctQVO-elX4CdKLJUjwYQ-7Lo9/exec',L=[],C={};
-function $(i){return document.getElementById(i)}
-function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-function money(n){return 'Q'+(Number(n)||0).toFixed(2)}
-function api(a,p){return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:a},p||{}))}).then(function(r){return r.json()}).then(function(d){if(!d||d.ok===false)throw new Error((d&&d.error)||'Error del servidor');return d})}
-function tot(){var t=0,n=0;L.forEach(function(p){var c=C[p.id]||0;t+=c*p.final;n+=c});return{t:t,n:n}}
-function bar(){var x=tot();$('sbbpBar').style.display=x.n?'flex':'none';$('sbbpGo').textContent='Ver pedido ('+x.n+') · '+money(x.t)}
-function draw(){var S=$('sbBizP');if(!L.length){S.style.display='none';bar();return}S.style.display='block';
- $('sbbpGrid').innerHTML=L.map(function(p){var c=C[p.id]||0;return '<div class="sbbp-c" data-id="'+esc(p.id)+'">'+(p.foto?'<img loading="lazy" alt="" src="'+esc(p.foto)+'">':'<div class="sbbp-ph"></div>')+'<span class="sbbp-t">'+esc(p.tienda)+' <span class="sbbp-v">✓ Verificado</span></span><b>'+esc(p.nombre)+(p.destacado?' ★':'')+'</b><div class="sbbp-p">'+money(p.final)+(p.descuento?'<s>'+money(p.precio)+'</s>':'')+'</div><div class="sbbp-q"><button type="button" data-q="-1">−</button><span>'+c+'</span><button type="button" class="pl" data-q="1">+</button></div></div>'}).join('');bar()}
-function load(){api('saasAllProducts').then(function(r){L=r.items||[];Object.keys(C).forEach(function(k){if(!L.some(function(p){return p.id===k}))delete C[k]});draw()}).catch(function(){})}
-document.addEventListener('click',function(e){var b=e.target.closest('#sbbpGrid [data-q]');if(!b)return;var id=b.closest('.sbbp-c').dataset.id,p=L.filter(function(x){return x.id===id})[0];if(!p)return;C[id]=Math.max(0,Math.min((C[id]||0)+Number(b.dataset.q),p.stock));var c=b.closest('.sbbp-c').querySelector('.sbbp-q span');c.textContent=C[id];bar()});
-$('sbbpGo').onclick=function(){$('sbbpE').textContent='';$('sbbpSum').innerHTML=L.filter(function(p){return C[p.id]}).map(function(p){return C[p.id]+'× '+esc(p.nombre)+' <small style="color:#777">('+esc(p.tienda)+')</small> — '+money(C[p.id]*p.final)}).join('<br>')+'<br><b>Total: '+money(tot().t)+'</b>';
- try{if(!$('sbbpN').value&&typeof currentUser!=='undefined'&&currentUser&&currentUser.nombre)$('sbbpN').value=currentUser.nombre}catch(_){}$('sbbpM').classList.add('on')};
-$('sbbpX').onclick=function(){$('sbbpM').classList.remove('on')};
-$('sbbpSend').onclick=function(){var b=$('sbbpSend');b.disabled=true;$('sbbpE').textContent='';var g={};L.forEach(function(p){if(C[p.id]){(g[p.slug]=g[p.slug]||[]).push({id:p.id,cant:C[p.id]})}});
- var ids=[];Promise.all(Object.keys(g).map(function(sl){return api('saasOrderCreate',{slug:sl,cliente:$('sbbpN').value,telefono:$('sbbpT').value,direccion:$('sbbpD').value,items:g[sl]}).then(function(r){ids.push(r.id)})}))
- .then(function(){C={};$('sbbpM').classList.remove('on');load();alert('¡Pedido enviado! Número(s): '+ids.join(', ')+'. Cada negocio se pondrá en contacto contigo.')})
- .catch(function(e){$('sbbpE').textContent=e.message}).then(function(){b.disabled=false})};
-function mount(){var t=$('tabCatalogs');if(!t||$('sbBizP'))return;var g=$('catalogGrid');if(g)g.insertAdjacentHTML('afterend',window.__sbbpHTML);else t.insertAdjacentHTML('beforeend',window.__sbbpHTML);load();setInterval(function(){if(!document.hidden&&!$('sbbpM').classList.contains('on'))load()},60000)}
-window.sbBizReload=load;window.addEventListener('message',function(e){if(e.data&&e.data.sbProdSaved)load()});window.__sbbpHTML="<section id=\"sbBizP\" style=\"display:none\"><h2>Productos de nuestros negocios</h2><p class=\"sub\">Negocios verificados de SHEIBIS. Compra directo a emprendedores.</p><div class=\"sbbp-g\" id=\"sbbpGrid\"></div></section><div class=\"sbbp-bar\" id=\"sbbpBar\" style=\"display:none\"><button type=\"button\" id=\"sbbpGo\"></button></div><div class=\"sbbp-m\" id=\"sbbpM\"><div class=\"sbbp-box\"><h3 style=\"margin:0 0 6px\">Tu pedido</h3><div id=\"sbbpSum\" style=\"font-size:.9rem;line-height:1.6\"></div><label>Tu nombre</label><input id=\"sbbpN\" autocomplete=\"name\"><label>Tel\u00e9fono / WhatsApp</label><input id=\"sbbpT\" type=\"tel\" autocomplete=\"tel\"><label>Direcci\u00f3n de entrega</label><input id=\"sbbpD\" autocomplete=\"street-address\"><div class=\"sbbp-err\" id=\"sbbpE\"></div><button class=\"go\" id=\"sbbpSend\" type=\"button\">Enviar pedido</button><button class=\"x\" id=\"sbbpX\" type=\"button\">Seguir comprando</button></div></div>\n";
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+  function refresh(){
+    try{if(window.__sbSyncCatalogNow)window.__sbSyncCatalogNow()}catch(_){}
+    try{if(window.__sbSyncInventoryNow)window.__sbSyncInventoryNow()}catch(_){}
+  }
+  window.sbBizReload=refresh;
+  window.addEventListener('message',function(e){
+    var d=e&&e.data;
+    if(d&&(d.sbProdSaved||d.sbRole==='NEGOCIO')){refresh();setTimeout(refresh,2500);}
+  });
 })();
 </script>
 </body>
