@@ -3650,6 +3650,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
 .sbc-imgsum{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;padding:10px 12px;border-radius:14px;background:rgba(0,0,0,0.04);border:1px solid rgba(17,17,17,0.225);font:600 .74rem Inter,system-ui,sans-serif;color:#111111}
 .sbc-imgsum b{color:#111111}
 </style>
+<style id="sb-biz-cta-css">.sb-biz-cta{display:none;width:100%;align-items:center;gap:14px;margin:0 0 16px;padding:14px 16px;border:0;border-radius:20px;background:#111;color:#fff;text-align:left;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.18)}.sb-biz-cta .ic{width:46px;height:46px;border-radius:14px;background:#fff;color:#111;display:grid;place-items:center;font-size:1.2rem;flex:0 0 auto}.sb-biz-cta .tx{flex:1;min-width:0}.sb-biz-cta b{display:block;font-size:1rem}.sb-biz-cta small{display:block;opacity:.75;font-size:.76rem;margin-top:2px}@media(max-width:1100px){.sb-biz-cta{display:flex}}</style>
 </head>
 <body>
 
@@ -3842,6 +3843,10 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
 
         <div class="menu-section">
             <div class="menu-section-title">Cuenta</div>
+            <div class="menu-item" onclick="toggleMenu();sbOpenNegocios()">
+                <i class="fas fa-store"></i>
+                <span>Inicia tu negocio</span>
+            </div>
             <div class="menu-item" onclick="menuAction('orders')">
                 <i class="fas fa-box"></i>
                 <span>Historial de Pedidos</span>
@@ -3894,6 +3899,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
 
         <!-- TAB 1: CATÁLOGOS -->
         <div class="tab-content active" id="tabCatalogs">
+            <button type="button" class="sb-biz-cta" onclick="sbOpenNegocios()"><span class="ic"><i class="fas fa-store"></i></span><span class="tx"><b>Inicia tu negocio</b><small>Crea tu tienda y vende · 15 días gratis</small></span><i class="fas fa-arrow-right"></i></button>
             
             <div class="catalog-stats">
                 <div class="catalog-stat">
