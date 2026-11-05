@@ -15061,17 +15061,17 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <!-- ===== PLATAFORMA DE NEGOCIOS (integrada en esta misma página) ===== -->
-<div id="sbNegOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100vh;height:100dvh;z-index:2147482000;display:none;flex-direction:column;background:#050b0a;overflow:hidden">
-  <div style="flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:#050b0a;border-bottom:1px solid rgba(255,255,255,.08)">
-    <span style="color:#93a39f;font:600 .7rem Inter,system-ui,sans-serif;letter-spacing:2px">SHEIBIS · NEGOCIOS</span>
-    <button type="button" id="sbNegClose" style="border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;padding:8px 14px;font:600 .78rem Inter,system-ui,sans-serif;cursor:pointer">✕ Volver a la tienda</button>
+<div id="sbNegOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100vh;height:100dvh;z-index:2147482000;display:none;flex-direction:column;background:#F3F5F4;overflow:hidden">
+  <div style="flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:#F3F5F4;border-bottom:1px solid #DDE3E0;background:#fff">
+    <span style="color:#6B7873;font:600 .7rem Inter,system-ui,sans-serif;letter-spacing:2px">SHEIBIS · NEGOCIOS</span>
+    <button type="button" id="sbNegClose" style="border:1px solid #DDE3E0;background:#fff;color:#111;border-radius:999px;padding:8px 14px;font:600 .78rem Inter,system-ui,sans-serif;cursor:pointer">✕ Volver a la tienda</button>
   </div>
-  <iframe id="sbNegFrame" title="SHEIBIS negocios" style="display:block;flex:1 1 0;width:100%;height:100%;min-height:300px;border:0;background:#050b0a"></iframe>
+  <iframe id="sbNegFrame" title="SHEIBIS negocios" style="display:block;flex:1 1 0;width:100%;height:100%;min-height:300px;border:0;background:#F3F5F4"></iframe>
 </div>
 <script type="text/plain" id="sbNegSrc"><!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>SHEIBIS · Crea tu tienda en línea</title>
+<title>SHEIBIS · Crea tu tienda en línea</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
 :root{--bg:#050b0a;--card:#0d1715;--line:rgba(255,255,255,.09);--em:#10b981;--em2:#34d399;--tx:#f1f5f4;--mu:#93a39f;--bad:#f87171;--warn:#fbbf24}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -15120,6 +15120,28 @@ header{position:sticky;top:0;z-index:30;background:rgba(5,11,10,.92);backdrop-fi
 .fsec{margin-top:16px;padding-top:12px;border-top:1px dashed var(--line);font-weight:800;font-size:.78rem;letter-spacing:1px;color:var(--em2)}
 input,select,.btn{min-height:44px}input[type=checkbox]{min-height:0;width:20px!important;height:20px}
 @media(max-width:640px){main{padding:0 12px 60px}header{padding:10px 12px}.hero{padding:22px 0 8px}.btn.pri,.hero .btn{width:100%}.box{width:100%}.modal{align-items:flex-end;padding:0}.modal .box{border-radius:22px 22px 0 0;max-height:94vh}.grid{grid-template-columns:1fr}.plans{grid-template-columns:1fr}.logo{font-size:1.1rem}.ddl{min-width:min(260px,86vw)}table{font-size:.76rem}}
+:root{--bg:#F3F5F4;--card:#fff;--line:#DDE3E0;--em:#111;--em2:#0B1210;--tx:#0B1210;--mu:#6B7873;--bad:#E5484D;--warn:#9A6A00}
+body{background:var(--bg)!important}header{background:rgba(255,255,255,.96)!important;border-bottom:1px solid var(--line)}
+.btn{background:#fff;color:#111;border:1px solid var(--line)}.btn.pri{background:#111!important;color:#fff!important;box-shadow:none!important;border:0}.btn.bad{color:var(--bad)}
+.hero h1 span{background:none!important;-webkit-text-fill-color:#111;color:#111}.hero small{color:#111}
+.card{box-shadow:0 6px 18px rgba(0,0,0,.05)}.plan.pop{border-color:#111;box-shadow:0 0 0 1px #111}.tag{background:#111;color:#fff}
+input,select{background:#fff!important;color:#111!important}input:focus,select:focus{outline:2px solid rgba(17,17,17,.35)}
+.tabs{background:#eceeed}.tabs .on{background:#111;color:#fff}
+.b-prueba,.b-pendiente{background:#FFF4DC;color:#9A6A00}.b-activa,.b-aprobado{background:#E3F6EE;color:#0E8F6A}.b-vencida,.b-suspendida,.b-rechazado{background:#FDE8E9;color:#C0343A}
+.bar{background:#e9eceb}.bar i{background:#111}.alert{background:#FFF4DC;border-color:#F0D58A;color:#8A5B00}.mono{color:#0E8F6A}
+.th,.pc img,.ph0{background:#eee}.perks{background:var(--line)}.perks div{background:#fff}.perks b{color:#111}
+.ddl{background:#fff}.ddl button{color:#111}.ddl button:hover,.ddl button.on{background:#f0f2f1;color:#111}.dbar{display:none}
+.ult{display:flex;gap:16px;align-items:flex-start;margin-top:14px}.ultm{flex:1;min-width:0;order:1}
+.ults{order:2;width:270px;flex:0 0 270px;position:sticky;top:76px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 12px;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+.ultb{padding:8px 10px 14px;border-bottom:1px solid var(--line);margin-bottom:8px}.ultb b{display:block;font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;word-break:break-word}.ultb span{display:block;color:var(--mu);font-size:.66rem;margin-top:4px}
+.ulti{width:100%;display:flex;gap:10px;align-items:center;border:1px solid transparent;background:none;color:#555;border-radius:11px;padding:10px;margin:3px 0;cursor:pointer;text-align:left;font:600 .8rem Inter,sans-serif}
+.ulti i{width:18px;text-align:center;color:#111}.ulti small{display:block;color:#777;font-weight:400;font-size:.66rem;margin-top:2px}.ulti:hover{background:#f0f2f1;color:#111}
+.ulti.active{background:linear-gradient(90deg,rgba(17,17,17,.12),rgba(17,17,17,.04));border-color:rgba(17,17,17,.2);color:#111}.ulti.out{color:var(--bad)}.ulti.out i{color:var(--bad)}
+.ulth{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.ulth small{color:var(--mu);font-size:.62rem;letter-spacing:2px}.ulth b{display:block;font-size:1.35rem}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.04)}.kpi small{color:var(--mu);font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase}.kpi strong{display:block;font-size:1.5rem;margin-top:4px}
+.ddm{display:none}
+@media(max-width:820px){.ult{display:block}.ults{display:none}.ddm{display:block}.kpis{grid-template-columns:1fr 1fr}}
+
 footer a{color:var(--mu);cursor:pointer;text-decoration:underline}
 </style></head><body>
 <header><div class="logo">SHEIBIS<small>SHOP &amp; BUSINESS</small></div>
@@ -15235,17 +15257,22 @@ async function loadMaster(){var M=$('master');view('master');
 /* ----- Pestañas del panel: Productos y Pedidos ----- */
 function money(n){return 'Q'+(Number(n)||0).toFixed(2)}
 function setupTabs(s){
-  var res=$('dash').innerHTML,T={Res:'Resumen',Prod:'Mis productos',Ped:'Pedidos'},cur='Res';
-  $('dash').innerHTML='<div class="dbar"><div><small>PANEL DE NEGOCIO</small><b id="dTit">Resumen</b></div><div class="dd"><button class="btn sm" id="ddBtn" aria-haspopup="true" aria-expanded="false">☰ Menú</button><div class="ddl hide" id="ddList"><button data-t="Res" class="on">🏠 Resumen</button><button data-t="Prod">📦 Mis productos</button><button data-t="Ped">🧾 Pedidos</button><button data-t="Plan">💳 Plan y pagos</button><button data-t="Link">🔗 Enlace de mi tienda</button><hr><button data-t="Out">🚪 Cerrar sesión</button></div></div></div><div id="dRes">'+res+'</div><div id="dProd" class="hide"></div><div id="dPed" class="hide"></div>';
+  var res=$('dash').innerHTML,T={Res:'Resumen',Prod:'Mis productos',Ped:'Pedidos'};
+  var IT=[['Res','fa-gauge','Resumen','Estado de tu tienda'],['Prod','fa-boxes-stacked','Mis productos','Agrega y edita'],['Ped','fa-receipt','Pedidos','Ventas y estados'],['Plan','fa-credit-card','Plan y pagos','Tu suscripción'],['Link','fa-link','Mi tienda','Enlace para clientes'],['Out','fa-right-from-bracket','Cerrar sesión','Salir']];
+  function items(c){return IT.map(function(x){return '<button type="button" class="'+c+(x[0]==='Out'?' out':'')+(x[0]==='Res'?' active on':'')+'" data-t="'+x[0]+'"><i class="fas '+x[1]+'"></i><span>'+x[2]+(c==='ulti'?'<small>'+x[3]+'</small>':'')+'</span></button>'}).join('')}
+  $('dash').innerHTML='<div class="ult"><div class="ultm"><div class="ulth"><div><small>PANEL DE NEGOCIO</small><b id="dTit">Resumen</b></div><div class="dd ddm"><button class="btn sm" id="ddBtn" aria-haspopup="true" aria-expanded="false">☰ Menú</button><div class="ddl hide" id="ddList">'+items('dd1')+'</div></div></div><div class="kpis" id="dKpi"></div><div id="dRes">'+res+'</div><div id="dProd" class="hide"></div><div id="dPed" class="hide"></div></div><aside class="ults" id="dSide"><div class="ultb"><b>'+esc(s.nombre)+'</b><span>Panel profesional SHEIBIS</span></div>'+items('ulti')+'</aside></div>';
   var link='__BASE__?tienda='+s.slug;
   $('dRes').insertAdjacentHTML('beforeend','<div class="card" id="dLink" style="margin-top:14px"><small style="color:var(--mu)">ENLACE DE TU TIENDA PARA CLIENTES</small><div class="mono"><a style="color:inherit" href="'+esc(link)+'" target="_blank">'+esc(link)+'</a></div></div>');
-  function show(t){cur=t;['Res','Prod','Ped'].forEach(function(x){$('d'+x).classList.toggle('hide',x!==t)});$('dTit').textContent=T[t];[].forEach.call($('ddList').querySelectorAll('button'),function(x){x.classList.toggle('on',x.dataset.t===t)});window.scrollTo(0,0);if(t==='Prod')drawProd();if(t==='Ped')drawPed()}
-  $('ddBtn').onclick=function(e){e.stopPropagation();var h=$('ddList').classList.toggle('hide');$('ddBtn').setAttribute('aria-expanded',!h)};
-  document.addEventListener('click',function(e){var l=$('ddList');if(l&&!e.target.closest('.dd'))l.classList.add('hide')});
-  $('ddList').onclick=function(e){var b=e.target.closest('button');if(!b)return;$('ddList').classList.add('hide');var t=b.dataset.t;
+  function kpis(){api('saasOrderList',{userId:me.id}).then(function(r){var k=r.stats;$('dKpi').innerHTML=[['Ventas',money(k.ventas)],['Pedidos',k.pedidos],['Pendientes',k.pendientes],['Productos',k.productos]].map(function(x){return '<div class="kpi"><small>'+x[0]+'</small><strong>'+x[1]+'</strong></div>'}).join('')}).catch(function(){})}
+  kpis();
+  function show(t){['Res','Prod','Ped'].forEach(function(x){$('d'+x).classList.toggle('hide',x!==t)});$('dKpi').classList.toggle('hide',t!=='Res');$('dTit').textContent=T[t];[].forEach.call($('dash').querySelectorAll('[data-t]'),function(x){x.classList.toggle('active',x.dataset.t===t);x.classList.toggle('on',x.dataset.t===t)});window.scrollTo(0,0);if(t==='Res')kpis();if(t==='Prod')drawProd();if(t==='Ped')drawPed()}
+  function go(t){$('ddList').classList.add('hide');
     if(t==='Out'){$('logout').click();return}
     if(t==='Plan'){show('Res');var h=$('dRes').querySelectorAll('h2');if(h.length)h[h.length-1].scrollIntoView({behavior:'smooth'});return}
-    if(t==='Link'){show('Res');$('dLink').scrollIntoView({behavior:'smooth'});return}show(t)}}
+    if(t==='Link'){show('Res');$('dLink').scrollIntoView({behavior:'smooth'});return}show(t)}
+  $('ddBtn').onclick=function(e){e.stopPropagation();var h=$('ddList').classList.toggle('hide');$('ddBtn').setAttribute('aria-expanded',!h)};
+  document.addEventListener('click',function(e){var l=$('ddList');if(l&&!e.target.closest('.dd'))l.classList.add('hide')});
+  $('dash').onclick=function(e){var b=e.target.closest('.ulti,.ddl button');if(b)go(b.dataset.t)}}
 var editing=null;
 async function drawProd(){var P=$('dProd');P.innerHTML='<p>Cargando…</p>';
   try{var r=await api('saasProdList',{userId:me.id}),L=r.items;
