@@ -15199,5 +15199,20 @@ window.addEventListener("message",function(e){var d=e.data;if(!d||d.sbRole!=="NE
   });
 })();
 </script>
+<script id="sb-biz-admin-menu">
+/* Agrega «Solicitudes Business» al menú lateral del administrador (la barra de pestañas antigua está oculta). */
+(function(){
+  function put(){
+    var side=document.getElementById('sbUltraSidebar');
+    if(!side||side.querySelector('[data-sb-biz]'))return;
+    var b=document.createElement('button');b.type='button';b.className='sb-ultra-item';b.setAttribute('data-sb-biz','1');
+    b.innerHTML='<i class="fas fa-store"></i><span><b>Solicitudes Business</b><small style="display:block;color:#555555;font-size:8px;margin-top:2px">Aceptar o rechazar negocios</small></span>';
+    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();window.sbOpenNegocios('','admin')});
+    var ref=side.querySelector('[data-ultra-action="users"]');
+    if(ref&&ref.parentNode)ref.parentNode.insertBefore(b,ref.nextSibling);else side.appendChild(b);
+  }
+  setInterval(put,1000);put();
+})();
+</script>
 </body>
 </html>
