@@ -15108,7 +15108,13 @@ function sync(){try{parent.postMessage({sbProdSaved:1},'*')}catch(_){}}
 function wrap(h){$('v').innerHTML=h}
 /* ---------- 1. Entrar con la cuenta SHEIBIS ---------- */
 function login(){wrap('<div class="card" style="max-width:460px;margin:24px auto"><h2>Cambiar a SHEIBIS Business</h2><p>Ingresa los datos originales de tu cuenta SHEIBIS. El correo y la contraseña deben coincidir con los de tu cuenta.</p><label>Correo de tu cuenta SHEIBIS</label><input id="em" type="email" autocomplete="username"><label>Contraseña</label><input id="pw" type="password" autocomplete="current-password"><div style="margin-top:14px"><button class="btn" id="go" style="width:100%">Continuar</button></div></div>');
-$('go').onclick=async function(){this.disabled=true;try{var r=await api('bizAuth',{email:$('em').value.trim(),password:$('pw').value});S.token=r.token;S.estado=r.estado;S.store=r.store;$('who').textContent=r.email;$('out').style.display='';route()}catch(e){say(e.message);this.disabled=false}}}
+$('go').onclick=async function(){var bt=this;bt.disabled=true;bt.textContent='Verificando…';try{var r=await api('bizAuth',{email:$('em').value.trim(),password:$('pw').value});S.token=r.token;S.estado=r.estado;S.store=r.store;$('who').textContent=r.email;$('out').style.display='';route()}catch(e){bt.disabled=false;bt.textContent='Continuar';diag(e)}}}
+async function diag(e){var m=e.message||String(e),x='';
+try{var r=await fetch(URL_API+'?ping=1'),j=await r.json();
+if(!j.negocios)x='El Apps Script publicado en esta URL es una versión vieja y no tiene SHEIBIS Business. Pega APPS_SCRIPT.txt completo y publica una NUEVA versión.';
+else if(/incorrectos/i.test(m))x='Este servidor lee la hoja de cálculo «'+j.hoja+'» y encontró '+j.usuarios+' usuario(s). Si tu cuenta se creó en otra hoja de cálculo, aquí no existe.';
+}catch(_){x='No se pudo conectar con el servidor. Revisa que la implementación tenga acceso para «Cualquier persona».'}
+var o=$('lerr');if(o)o.remove();var d=document.createElement('div');d.className='err';d.id='lerr';d.innerHTML='<b>'+esc(m)+'</b>'+(x?'<br>'+esc(x):'');var c=$('v').firstChild;c.appendChild(d)}
 function route(){var e=S.estado;if(e==='aprobada')return dash();if(e==='none'||e==='rechazada'&&S.retry)return terms();
 var m={pendiente:['Solicitud en revisión','Recibimos tu solicitud. El administrador la revisará y, cuando la acepte, entra de nuevo con tu cuenta para abrir tu panel de negocio.'],rechazada:['Solicitud no aprobada','Tu solicitud no fue aprobada. Puedes volver a intentarlo con otro nombre de negocio.'],suspendida:['Negocio suspendido','Tu negocio está suspendido por ahora. Contacta al administrador de SHEIBIS.']}[e]||['Estado','—'];
 wrap('<div class="card" style="max-width:520px;margin:24px auto;text-align:center"><h2>'+m[0]+'</h2><p>'+m[1]+'</p>'+(e==='rechazada'?'<button class="btn" id="rt">Solicitar de nuevo</button>':'')+'</div>');if($('rt'))$('rt').onclick=function(){S.retry=1;terms()}}
