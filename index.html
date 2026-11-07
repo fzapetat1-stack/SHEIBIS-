@@ -3846,7 +3846,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
             <div class="menu-section-title">Cuenta</div>
             <div class="menu-item" onclick="toggleMenu();sbOpenNegocios()">
                 <i class="fas fa-store"></i>
-                <span>Inicia tu negocio</span>
+                <span>Cambiar a SHEIBIS Business</span>
             </div>
             <div class="menu-item" onclick="menuAction('orders')">
                 <i class="fas fa-box"></i>
@@ -3900,7 +3900,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
 
         <!-- TAB 1: CATÁLOGOS -->
         <div class="tab-content active" id="tabCatalogs">
-            <button type="button" class="sb-biz-cta" onclick="sbOpenNegocios()"><span class="ic"><i class="fas fa-store"></i></span><span class="tx"><b>Inicia tu negocio</b><small>Crea tu tienda y vende · 15 días gratis</small></span><i class="fas fa-arrow-right"></i></button>
+            <button type="button" class="sb-biz-cta" onclick="sbOpenNegocios()"><span class="ic"><i class="fas fa-store"></i></span><span class="tx"><b>Cambiar a SHEIBIS Business</b><small>Crea tu tienda y vende · 15 días gratis</small></span><i class="fas fa-arrow-right"></i></button>
             
             <div class="catalog-stats">
                 <div class="catalog-stat">
@@ -4115,7 +4115,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxLPfaN6ct3QcpK5kFJq77Q7wC4R90dthOvS8BwLZNMR6KBv2oHSqHTuy0iXAFkhpjd/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyu4o-vvkPx8b_1wHzlr5p-_sfOSIx_-uAHl9Jm-cp-s5YRlgjIxqrxZCgN4cLAeriI/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5812,7 +5812,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbxLPfaN6ct3QcpK5kFJq77Q7wC4R90dthOvS8BwLZNMR6KBv2oHSqHTuy0iXAFkhpjd/exec
+     https://script.google.com/macros/s/AKfycbyu4o-vvkPx8b_1wHzlr5p-_sfOSIx_-uAHl9Jm-cp-s5YRlgjIxqrxZCgN4cLAeriI/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -8241,6 +8241,7 @@ body.sbw-worker-session #sbAdminPanel .sb-worker-admin-only{display:none!importa
       <button class="sb-v11-tab" data-v11-tab="activity" onclick="SB_ADMIN.showTab('activity')">◷ Actividad</button>
       <button class="sb-v11-tab" data-v11-tab="users" onclick="SB_ADMIN.showTab('users')">♙ Usuarios</button>
       <button class="sb-v11-tab" data-v11-tab="tools" onclick="SB_ADMIN.showTab('tools')">⚡ Herramientas</button>
+<button class="sb-v11-tab" onclick="window.sbOpenNegocios('','admin')">🏪 Solicitudes Business</button>
     </div>
 
     <section id="sbV11Dashboard" class="sb-v11-section active"></section>
@@ -13184,7 +13185,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbxLPfaN6ct3QcpK5kFJq77Q7wC4R90dthOvS8BwLZNMR6KBv2oHSqHTuy0iXAFkhpjd/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbyu4o-vvkPx8b_1wHzlr5p-_sfOSIx_-uAHl9Jm-cp-s5YRlgjIxqrxZCgN4cLAeriI/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15071,260 +15072,99 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   </div>
   <iframe id="sbNegFrame" title="SHEIBIS negocios" style="display:block;flex:1 1 0;width:100%;height:100%;min-height:300px;border:0;background:#F3F5F4"></iframe>
 </div>
-<script type="text/plain" id="sbNegSrc"><!DOCTYPE html>
-<html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>SHEIBIS · Crea tu tienda en línea</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script type="text/plain" id="sbNegSrc"><!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHEIBIS Business</title>
 <style>
-:root{--bg:#050b0a;--card:#0d1715;--line:rgba(255,255,255,.09);--em:#10b981;--em2:#34d399;--tx:#f1f5f4;--mu:#93a39f;--bad:#f87171;--warn:#fbbf24}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(900px 500px at 80% -10%,rgba(16,185,129,.18),transparent) fixed,var(--bg) fixed;min-height:100vh;color:var(--tx);font:15px/1.5 Inter,system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;max-width:1100px;margin:auto}
-.logo{font:800 1.3rem Georgia,serif;letter-spacing:3px}.logo small{display:block;font:500 .5rem Inter;letter-spacing:3px;color:var(--mu)}
-.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);padding:11px 18px;border-radius:999px;font:600 .88rem Inter,sans-serif;cursor:pointer}
-.btn.pri{background:linear-gradient(135deg,#0f9f6e,var(--em2));color:#031510;border:0;box-shadow:0 8px 26px rgba(16,185,129,.35)}
-.btn.sm{padding:7px 12px;font-size:.76rem}.btn.bad{color:var(--bad)}
-main{max-width:1100px;margin:auto;padding:0 18px 60px}
-.hero{padding:40px 0 20px}.hero small{color:var(--em2);letter-spacing:3px;font-weight:700;font-size:.72rem}
-.hero h1{font-size:clamp(2.2rem,7vw,4rem);line-height:1.05;margin:10px 0 14px}.hero h1 span{background:linear-gradient(90deg,var(--em),#a7f3d0);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{color:var(--mu);max-width:520px}.free{margin-top:10px;color:var(--mu);font-size:.82rem}
-.perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:34px 0}
-.perks div{background:var(--card);padding:18px;text-align:center}.perks b{display:block;color:var(--em2)}.perks span{color:var(--mu);font-size:.78rem}
-h2{font-size:1.5rem;margin:34px 0 14px}
-.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
-.plan.pop{border-color:var(--em);box-shadow:0 0 0 1px var(--em),0 14px 40px rgba(16,185,129,.2)}
-.price{font-size:2rem;font-weight:800}.price small{font-size:.8rem;color:var(--mu);font-weight:500}
-.tag{display:inline-block;background:var(--em);color:#031510;font-size:.65rem;font-weight:800;border-radius:999px;padding:3px 10px;margin-bottom:8px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:50;backdrop-filter:blur(6px)}.modal.on{display:flex}
-.box{width:min(420px,100%);max-height:92vh;overflow:auto}
-label{display:block;font-size:.76rem;color:var(--mu);margin:12px 0 4px}
-input,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#07100e;color:var(--tx);font:inherit}
-input:focus,select:focus{outline:2px solid rgba(52,211,153,.5)}
-.err{color:var(--bad);font-size:.82rem;min-height:20px;margin-top:8px}
-.tabs{display:flex;gap:6px;background:#07100e;border-radius:999px;padding:4px}.tabs button{flex:1;border:0;background:none;color:var(--mu);padding:9px;border-radius:999px;font:600 .85rem Inter;cursor:pointer}.tabs .on{background:var(--em);color:#031510}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.badge{display:inline-block;border-radius:999px;padding:3px 12px;font-size:.72rem;font-weight:800}
-.b-prueba,.b-pendiente{background:rgba(251,191,36,.15);color:var(--warn)}.b-activa,.b-aprobado{background:rgba(16,185,129,.18);color:var(--em2)}.b-vencida,.b-suspendida,.b-rechazado{background:rgba(248,113,113,.15);color:var(--bad)}
-.bar{height:8px;border-radius:8px;background:#0a1512;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--em),var(--em2))}
-.alert{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);color:var(--warn);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.84rem}
-.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.82rem}th{color:var(--mu);text-align:left;font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.8px}th,td{padding:10px 8px;border-bottom:1px solid var(--line)}
-.hide{display:none!important}.mono{font-family:ui-monospace,monospace;color:var(--em2);word-break:break-all}
-th.x{}.th{width:44px;height:44px;border-radius:10px;object-fit:cover;background:#07100e}.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding-bottom:90px}.pc{padding:12px;display:flex;flex-direction:column;gap:6px}.pc img,.ph0{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#07100e}.qty{display:flex;align-items:center;justify-content:space-between;margin-top:auto}.cartbar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 40%);display:flex;justify-content:center;z-index:20}select{width:auto}
-footer{text-align:center;color:var(--mu);font-size:.76rem;padding:30px}
-header{position:sticky;top:0;z-index:30;background:rgba(5,11,10,.92);backdrop-filter:blur(8px)}
-.note{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35);color:var(--em2);border-radius:12px;padding:10px 12px;margin:12px 0 0;font-size:.8rem}
-.hint{color:var(--mu);font-size:.8rem;margin:6px 0 0}
-.dbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:16px}
-.dbar small{color:var(--mu);font-size:.62rem;letter-spacing:2px}.dbar b{display:block;font-size:1rem;word-break:break-word}
-.dd{position:relative;flex:0 0 auto}.ddl{position:absolute;right:0;top:calc(100% + 8px);min-width:230px;background:#0d1715;border:1px solid var(--line);border-radius:14px;padding:6px;box-shadow:0 18px 40px rgba(0,0,0,.6);z-index:40}
-.ddl button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;background:none;color:var(--tx);padding:12px;border-radius:10px;font:600 .88rem Inter,sans-serif;cursor:pointer}
-.ddl button:hover,.ddl button.on{background:rgba(16,185,129,.15);color:var(--em2)}.ddl hr{border:0;border-top:1px solid var(--line);margin:4px 0}
-.fsec{margin-top:16px;padding-top:12px;border-top:1px dashed var(--line);font-weight:800;font-size:.78rem;letter-spacing:1px;color:var(--em2)}
-input,select,.btn{min-height:44px}input[type=checkbox]{min-height:0;width:20px!important;height:20px}
-@media(max-width:640px){main{padding:0 12px 60px}header{padding:10px 12px}.hero{padding:22px 0 8px}.btn.pri,.hero .btn{width:100%}.box{width:100%}.modal{align-items:flex-end;padding:0}.modal .box{border-radius:22px 22px 0 0;max-height:94vh}.grid{grid-template-columns:1fr}.plans{grid-template-columns:1fr}.logo{font-size:1.1rem}.ddl{min-width:min(260px,86vw)}table{font-size:.76rem}}
-:root{--bg:#F3F5F4;--card:#fff;--line:#DDE3E0;--em:#111;--em2:#0B1210;--tx:#0B1210;--mu:#6B7873;--bad:#E5484D;--warn:#9A6A00}
-body{background:var(--bg)!important}header{background:rgba(255,255,255,.96)!important;border-bottom:1px solid var(--line)}
-.btn{background:#fff;color:#111;border:1px solid var(--line)}.btn.pri{background:#111!important;color:#fff!important;box-shadow:none!important;border:0}.btn.bad{color:var(--bad)}
-.hero h1 span{background:none!important;-webkit-text-fill-color:#111;color:#111}.hero small{color:#111}
-.card{box-shadow:0 6px 18px rgba(0,0,0,.05)}.plan.pop{border-color:#111;box-shadow:0 0 0 1px #111}.tag{background:#111;color:#fff}
-input,select{background:#fff!important;color:#111!important}input:focus,select:focus{outline:2px solid rgba(17,17,17,.35)}
-.tabs{background:#eceeed}.tabs .on{background:#111;color:#fff}
-.b-prueba,.b-pendiente{background:#FFF4DC;color:#9A6A00}.b-activa,.b-aprobado{background:#E3F6EE;color:#0E8F6A}.b-vencida,.b-suspendida,.b-rechazado{background:#FDE8E9;color:#C0343A}
-.bar{background:#e9eceb}.bar i{background:#111}.alert{background:#FFF4DC;border-color:#F0D58A;color:#8A5B00}.mono{color:#0E8F6A}
-.th,.pc img,.ph0{background:#eee}.perks{background:var(--line)}.perks div{background:#fff}.perks b{color:#111}
-.ddl{background:#fff}.ddl button{color:#111}.ddl button:hover,.ddl button.on{background:#f0f2f1;color:#111}.dbar{display:none}
-.ult{display:flex;gap:16px;align-items:flex-start;margin-top:14px}.ultm{flex:1;min-width:0;order:1}
-.ults{order:2;width:270px;flex:0 0 270px;position:sticky;top:76px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 12px;box-shadow:0 6px 18px rgba(0,0,0,.05)}
-.ultb{padding:8px 10px 14px;border-bottom:1px solid var(--line);margin-bottom:8px}.ultb b{display:block;font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;word-break:break-word}.ultb span{display:block;color:var(--mu);font-size:.66rem;margin-top:4px}
-.ulti{width:100%;display:flex;gap:10px;align-items:center;border:1px solid transparent;background:none;color:#555;border-radius:11px;padding:10px;margin:3px 0;cursor:pointer;text-align:left;font:600 .8rem Inter,sans-serif}
-.ulti i{width:18px;text-align:center;color:#111}.ulti small{display:block;color:#777;font-weight:400;font-size:.66rem;margin-top:2px}.ulti:hover{background:#f0f2f1;color:#111}
-.ulti.active{background:linear-gradient(90deg,rgba(17,17,17,.12),rgba(17,17,17,.04));border-color:rgba(17,17,17,.2);color:#111}.ulti.out{color:var(--bad)}.ulti.out i{color:var(--bad)}
-.ulth{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.ulth small{color:var(--mu);font-size:.62rem;letter-spacing:2px}.ulth b{display:block;font-size:1.35rem}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.04)}.kpi small{color:var(--mu);font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase}.kpi strong{display:block;font-size:1.5rem;margin-top:4px}
-.vpill{display:inline-block;font-style:normal;margin-top:8px;background:#E8F1FF;color:#1D6FE0;border-radius:99px;padding:4px 10px;font-size:.68rem;font-weight:800}
-.ulti,.kpi,.card,.btn{transition:transform .15s,box-shadow .15s,background .15s}.kpi:hover,.card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(0,0,0,.08)}
-.ultb{background:linear-gradient(135deg,#111,#2a2a2a);border:0;border-radius:14px;padding:14px;margin-bottom:10px}.ultb b{color:#fff}.ultb span{color:#bbb}
-@media(max-width:640px){#dProd table,#dProd tbody,#dProd tr,#dProd td{display:block;width:100%}#dProd thead{display:none}#dProd tr{padding:12px 0;border-bottom:1px solid var(--line)}#dProd td{border:0;padding:3px 0}}
-.ddm{display:none}
-@media(max-width:820px){.ult{display:block}.ults{display:none}.ddm{display:block}.kpis{grid-template-columns:1fr 1fr}}
-
-footer a{color:var(--mu);cursor:pointer;text-decoration:underline}
+:root{--g:#0B6B3A;--g2:#E7F6EE;--mu:#66736C;--bd:#DDE3E0;--bg:#F3F5F4}*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 Inter,system-ui,sans-serif;background:var(--bg);color:#111}
+.top{background:var(--g);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}.top b{font-size:1.05rem}.top small{opacity:.85}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}.card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:14px}
+.app{display:grid;grid-template-columns:1fr 240px;gap:14px;align-items:start}.menu{position:sticky;top:10px;order:2}.main{order:1;min-width:0}
+.menu button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:12px 14px;border-radius:12px;margin-bottom:8px;font:600 .9rem inherit;cursor:pointer;border:1px solid var(--bd)}
+.menu button.on{background:var(--g);color:#fff;border-color:var(--g)}
+h2{margin:0 0 10px;font-size:1.15rem}h3{margin:0 0 8px;font-size:1rem}p{margin:0 0 10px;color:var(--mu)}
+label{display:block;font:600 .78rem inherit;color:var(--mu);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--bd);border-radius:12px;font:inherit;background:#fff}input[type=checkbox]{width:auto}
+.btn{border:0;background:var(--g);color:#fff;padding:11px 16px;border-radius:12px;font:700 .9rem inherit;cursor:pointer}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.s{background:#fff;color:#111;border:1px solid var(--bd);padding:7px 10px;font-size:.78rem}.btn.r{background:#C0392B}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.chip{border:1px solid var(--bd);background:#fff;border-radius:999px;padding:5px 11px;font:600 .75rem inherit;cursor:pointer}
+.terms{height:300px;overflow:auto;border:1px solid var(--bd);border-radius:12px;padding:14px;background:#FBFCFB;font-size:.84rem}.terms h4{margin:12px 0 4px}
+.row{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid #EEF1EF}.row:first-child{border-top:0}.row img{width:46px;height:46px;border-radius:10px;object-fit:cover;background:#EEF1EF}.grow{flex:1;min-width:0}
+.sub{margin-left:22px;border-left:3px solid var(--g2);padding-left:10px}.tag{display:inline-block;background:var(--g2);color:var(--g);border-radius:999px;padding:2px 9px;font:700 .7rem inherit}
+.err{background:#FDECEA;color:#9B2C20;padding:10px 12px;border-radius:12px;margin:10px 0}.ok{background:var(--g2);color:#0B6B3A;padding:10px 12px;border-radius:12px;margin:10px 0}
+.fin{font:800 1.1rem inherit;color:var(--g)}table{width:100%;border-collapse:collapse}td,th{padding:9px 6px;border-top:1px solid #EEF1EF;text-align:left;font-size:.84rem}
+@media(max-width:760px){.app{grid-template-columns:1fr}.menu{position:static;order:0;display:flex;gap:6px;overflow:auto}.menu button{white-space:nowrap;width:auto}.grid{grid-template-columns:1fr}}
 </style></head><body>
-<header><div class="logo">SHEIBIS<small>SHOP &amp; BUSINESS</small></div>
-<div style="display:flex;gap:8px"><button class="btn sm" id="hdrAuth">Ingresar</button><button class="btn pri sm" id="hdrCta">Inicia tu negocio</button></div></header>
-
-<main id="landing">
-<section class="hero"><small>PLATAFORMA SHEIBIS</small>
-<h1>Crea tu propia<br><span>tienda en línea</span></h1>
-<p>Vende tus productos, impulsa tu negocio y llega a más clientes.</p>
-<p><button class="btn pri" data-cta>Inicia tu negocio ahora →</button></p>
-<div class="free">✔ 15 días totalmente GRATIS · Sin cobro al registrarte</div></section>
-<section class="perks"><div><b>Compra segura</b><span>Tus datos protegidos</span></div><div><b>Tiendas propias</b><span>Una dirección para cada negocio</span></div><div><b>Control total</b><span>Productos, pedidos y clientes</span></div><div><b>Soporte</b><span>Siempre contigo</span></div></section>
-<h2>Planes diseñados para ti</h2>
-<div class="plans" id="plansList"></div>
-</main>
-
-<main id="dash" class="hide"></main>
-<main id="master" class="hide"></main>
-<main id="front" class="hide"></main>
-
-<footer>© SHEIBIS · <a id="goMaster">Administración</a> · <a id="goHome">Inicio</a> · <a id="logout" class="hide">Cerrar sesión</a></footer>
-
-<div class="modal" id="mAuth"><div class="card box">
-<div class="tabs"><button id="tReg" class="on">Crear cuenta</button><button id="tLog">Ingresar</button></div>
-<h3 id="aTitle" style="margin:16px 0 0">Comienza tu negocio con 15 días gratuitos</h3>
-<div class="note" id="roleNote">Al crear tu negocio, tu cuenta pasa de <b>Cliente</b> a <b>Negocio</b>.</div><div id="fReg"><label>Nombre completo</label><input id="rNom" autocomplete="name"><label>Nombre de tu negocio</label><input id="rNeg" placeholder="Mi tienda"></div>
-<label>Correo electrónico</label><input id="aMail" type="email" autocomplete="email" placeholder="correo@ejemplo.com">
-<label>Contraseña</label><input id="aPass" type="password" autocomplete="current-password" placeholder="••••••••">
-<div class="err" id="aErr"></div>
-<button class="btn pri" id="aGo" style="width:100%;margin-top:6px">Crear mi negocio</button>
-<button class="btn" id="aX" style="width:100%;margin-top:8px">Cancelar</button></div></div>
-
-<div class="modal" id="mCart"><div class="card box"><h3 style="margin:0 0 8px">Tu pedido</h3><div id="cSum" style="margin-bottom:6px"></div><label>Tu nombre</label><input id="cNom"><label>Teléfono / WhatsApp</label><input id="cTel" type="tel"><label>Dirección de entrega</label><input id="cDir"><div class="err" id="cErr"></div><button class="btn pri" id="cSend" style="width:100%">Enviar pedido</button><button class="btn" id="cX" style="width:100%;margin-top:8px">Seguir comprando</button></div></div>
-
-<div class="modal" id="mKey"><div class="card box"><h3 style="margin:0 0 6px">Administración</h3><label>Contraseña de administrador</label><input id="kPass" type="password"><div class="err" id="kErr"></div>
-<button class="btn pri" id="kGo" style="width:100%">Entrar</button><button class="btn" id="kX" style="width:100%;margin-top:8px">Cancelar</button></div></div>
-
+<div class="top"><div><b>SHEIBIS Business</b><br><small id="who">Cambia tu cuenta a negocio</small></div><button class="btn s" id="out" style="display:none">Salir</button></div>
+<div class="wrap" id="v"></div>
 <script>
-(function(){
-'use strict';
-var URL_API='https://script.google.com/macros/s/AKfycbxLPfaN6ct3QcpK5kFJq77Q7wC4R90dthOvS8BwLZNMR6KBv2oHSqHTuy0iXAFkhpjd/exec';
-var DATOS_PAGO='Banco: ________ · Cuenta: ________ · A nombre de: ________'; /* EDITA con tus datos de pago */
-var PLANES={basico:{n:'Básico',q:49,d:'30 productos y funciones esenciales.'},profesional:{n:'Profesional',q:89,d:'150 productos y estadísticas.',pop:1},empresarial:{n:'Empresarial',q:149,d:'Productos ilimitados y herramientas avanzadas.'}};
-var $=function(i){return document.getElementById(i)},me=null,mode='reg',adminKey='';
-function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-async function api(a,p){var r=await fetch(URL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:a},p||{}))});
-  var d=await r.json();if(!d||d.ok===false)throw new Error((d&&d.error)||'Error del servidor');return d}
-function view(v){['landing','dash','master','front'].forEach(function(x){$(x).classList.toggle('hide',x!==v)});window.scrollTo(0,0)}
-function fmt(d){try{return new Date(d).toLocaleDateString('es-GT')}catch(e){return ''}}
-
-$('plansList').innerHTML=Object.keys(PLANES).map(function(k){var p=PLANES[k];return '<div class="card plan'+(p.pop?' pop':'')+'">'+(p.pop?'<span class="tag">POPULAR</span>':'')+'<h3 style="margin:0">'+p.n+'</h3><div class="price">Q'+p.q+'<small>/mes</small></div><p style="color:var(--mu)">'+p.d+'</p><button class="btn '+(p.pop?'pri':'')+'" data-cta style="width:100%">Empezar gratis</button></div>'}).join('');
-
-/* ----- Acceso ----- */
-function openAuth(m){mode=m;$('aErr').textContent='';$('fReg').classList.toggle('hide',m!=='reg');$('roleNote').classList.toggle('hide',m!=='reg');$('tReg').classList.toggle('on',m==='reg');$('tLog').classList.toggle('on',m!=='reg');
-  $('aGo').textContent=m==='reg'?'Crear mi negocio':'Ingresar';$('aTitle').textContent=m==='reg'?'Comienza tu negocio con 15 días gratuitos':'Bienvenido de nuevo';$('mAuth').classList.add('on')}
-document.addEventListener('click',function(e){if(e.target.closest('[data-cta]'))openAuth(me?'log':'reg');if(me&&e.target.closest('[data-cta]')){$('mAuth').classList.remove('on');loadDash()}});
-$('hdrCta').onclick=function(){if(me)loadDash();else openAuth('reg')};$('hdrAuth').onclick=function(){if(me)loadDash();else openAuth('log')};
-$('tReg').onclick=function(){openAuth('reg')};$('tLog').onclick=function(){openAuth('log')};$('aX').onclick=function(){$('mAuth').classList.remove('on')};
-$('aGo').onclick=async function(){var b=$('aGo');$('aErr').textContent='';b.disabled=true;
-  try{var mail=$('aMail').value.trim(),pw=$('aPass').value;if(!mail||pw.length<6)throw new Error('Escribe tu correo y una contraseña de al menos 6 caracteres.');
-    if(mode==='reg'){if(!$('rNom').value.trim()||!$('rNeg').value.trim())throw new Error('Completa tu nombre y el de tu negocio.');
-      var r=await api('saasCreate',{nombre:$('rNom').value.trim(),negocio:$('rNeg').value.trim(),email:mail,password:pw});me=r.user}
-    else{var l=await api('login',{email:mail,password:pw});me=l.user}
-    localStorage.setItem('sb_saas_user',JSON.stringify({id:me.id,nombre:me.nombre||'',email:me.email||mail}));try{parent.postMessage({sbRole:'NEGOCIO',id:me.id,nombre:me.nombre||''},'*')}catch(_){};
-    $('mAuth').classList.remove('on');await loadDash()}
-  catch(e){$('aErr').textContent=e.message}finally{b.disabled=false}};
-$('logout').onclick=function(){me=null;localStorage.removeItem('sb_saas_user');$('logout').classList.add('hide');$('hdrAuth').textContent='Ingresar';view('landing')};
-$('goHome').onclick=function(){view('landing')};
-
-/* ----- Panel del emprendedor ----- */
-async function loadDash(){
-  if(!me)return openAuth('log');
-  $('logout').classList.remove('hide');$('hdrAuth').textContent='Mi panel';
-  var D=$('dash');D.innerHTML='<p>Cargando…</p>';view('dash');
-  try{var r=await api('saasMine',{userId:me.id}),s=r.store;
-    if(!s){D.innerHTML='<div class="card"><h3>Aún no tienes tienda</h3><p style="color:var(--mu)">Esta cuenta no tiene un negocio creado. Crea una cuenta nueva con «Inicia tu negocio».</p></div>';return}
-    var pct=s.estado==='prueba'?Math.round(s.dias/15*100):s.estado==='activa'?Math.min(100,Math.round(s.dias/30*100)):0;
-    D.innerHTML='<h2 style="margin-top:20px">Hola, '+esc((me.nombre||'').split(' ')[0]||'emprendedor')+' 👋</h2>'+(s.aviso?'<div class="alert">'+esc(s.aviso)+'</div>':'')+
-    (s.estado==='vencida'||s.estado==='suspendida'?'<div class="alert" style="color:var(--bad);border-color:rgba(248,113,113,.4)">Tu tienda está '+(s.estado==='vencida'?'vencida: realiza un pago para reactivarla':'suspendida: contacta al administrador')+'.</div>':'')+
-    '<div class="grid"><div class="card"><small style="color:var(--mu)">MI TIENDA</small><h3 style="margin:4px 0">'+esc(s.nombre)+'</h3><span class="badge b-'+s.estado+'">'+s.estado.toUpperCase()+'</span>'+
-    '<p style="color:var(--mu);margin:12px 0 4px">Dirección:</p><div class="mono">'+esc(s.slug)+'.sheibis.com</div><small style="color:var(--mu)">(Se activa al configurar el dominio.)</small></div>'+
-    '<div class="card"><small style="color:var(--mu)">SUSCRIPCIÓN</small><h3 style="margin:4px 0">'+esc(s.planNombre)+'</h3><div class="bar"><i style="width:'+pct+'%"></i></div><b>'+s.dias+'</b> día(s) restantes<br><small style="color:var(--mu)">Productos permitidos: '+(s.maxProductos||'ilimitados')+'</small></div></div>'+
-    '<h2>Contratar o renovar plan</h2><div class="card">'+(r.pagoPendiente?'<div class="alert">Tu pago está en revisión. Te activaremos el plan cuando sea aprobado.</div>':
-    '<p style="color:var(--mu);margin-top:0">1) Haz tu transferencia o depósito. 2) Escribe la referencia y adjunta el comprobante. 3) Revisamos y activamos tu plan.</p><div class="mono" style="margin-bottom:8px">'+esc(DATOS_PAGO)+'</div>'+
-    '<label>Plan</label><select id="pPlan">'+Object.keys(PLANES).map(function(k){return '<option value="'+k+'">'+PLANES[k].n+' · Q'+PLANES[k].q+'/mes</option>'}).join('')+'</select><label>Referencia del pago</label><input id="pRef"><label>Comprobante (foto, opcional)</label><input id="pImg" type="file" accept="image/*"><div class="err" id="pErr"></div><button class="btn pri" id="pGo" style="margin-top:6px">Enviar pago</button>')+'</div>';
-    setupTabs(s);var go=$('pGo');if(go)go.onclick=async function(){go.disabled=true;$('pErr').textContent='';
-      try{var img='',f=$('pImg').files[0];if(f)img=await shrink(f);await api('saasPay',{userId:me.id,plan:$('pPlan').value,referencia:$('pRef').value,image:img});loadDash()}
-      catch(e){$('pErr').textContent=e.message;go.disabled=false}}
-  }catch(e){D.innerHTML='<div class="card">No se pudo cargar: '+esc(e.message)+'</div>'}}
-function shrink(file,mx,q){mx=mx||900;q=q||.6;return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(file);im.onload=function(){var k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',q))};im.onerror=function(){rej(new Error('No se pudo leer la imagen.'))};im.src=u})}
-
-/* ----- Panel maestro ----- */
-$('goMaster').onclick=function(){$('kErr').textContent='';$('kPass').value='';$('mKey').classList.add('on');setTimeout(function(){$('kPass').focus()},50)};
-$('kX').onclick=function(){$('mKey').classList.remove('on')};$('kPass').onkeydown=function(e){if(e.key==='Enter')$('kGo').click()};
-$('kGo').onclick=async function(){adminKey=$('kPass').value;try{await api('saasAdminList',{adminKey:adminKey});$('mKey').classList.remove('on');loadMaster()}
-  catch(e){$('kErr').textContent=/autorizado/i.test(e.message)?'Contraseña incorrecta.':e.message}};
-async function loadMaster(){var M=$('master');view('master');
-  try{var r=await api('saasAdminList',{adminKey:adminKey});
-    var by={};r.stores.forEach(function(s){by[s.id]=s});
-    var c={prueba:0,activa:0,vencida:0,suspendida:0};r.stores.forEach(function(s){c[s.estado]=(c[s.estado]||0)+1});
-    M.innerHTML='<h2 style="margin-top:20px">Panel maestro</h2><div class="grid"><div class="card"><small style="color:var(--mu)">TIENDAS</small><div class="price">'+r.stores.length+'</div></div><div class="card"><small style="color:var(--mu)">EN PRUEBA</small><div class="price">'+c.prueba+'</div></div><div class="card"><small style="color:var(--mu)">PAGANDO</small><div class="price">'+c.activa+'</div></div><div class="card"><small style="color:var(--mu)">VENCIDAS / SUSP.</small><div class="price">'+(c.vencida+c.suspendida)+'</div></div></div>'+
-    '<h2>Pagos por revisar</h2><div class="card scroll"><table><thead><tr><th>Tienda</th><th>Plan</th><th>Monto</th><th>Referencia</th><th>Estado</th><th></th></tr></thead><tbody>'+
-    (r.pays.length?r.pays.map(function(p){var s=by[p.storeId];return '<tr data-id="'+esc(p.id)+'"><td>'+esc(s?s.nombre:p.storeId)+'</td><td>'+esc(p.plan)+'</td><td>Q'+esc(p.monto)+'</td><td>'+esc(p.referencia)+'</td><td><span class="badge b-'+p.estado+'">'+esc(p.estado)+'</span></td><td>'+(p.estado==='pendiente'?(p.foto?'<button class="btn sm" data-a="foto">Ver</button> ':'')+'<button class="btn pri sm" data-a="aprobado">Aprobar</button> <button class="btn sm bad" data-a="rechazado">Rechazar</button><div class="ph"></div>':'')+'</td></tr>'}).join(''):'<tr><td colspan="6" style="color:var(--mu)">Sin pagos todavía.</td></tr>')+'</tbody></table></div>'+
-    '<h2>Tiendas</h2><div class="card scroll"><table><thead><tr><th>Negocio</th><th>Dirección</th><th>Plan</th><th>Estado</th><th>Días</th><th></th></tr></thead><tbody>'+
-    (r.stores.length?r.stores.map(function(s){return '<tr data-s="'+esc(s.id)+'"><td>'+esc(s.nombre)+'</td><td class="mono">'+esc(s.slug)+'</td><td>'+esc(s.planNombre)+'</td><td><span class="badge b-'+s.estado+'">'+s.estado+'</span></td><td>'+s.dias+'</td><td><button class="btn sm '+(s.estado==='suspendida'?'':'bad')+'" data-st="'+(s.estado==='suspendida'?'activa':'suspendida')+'">'+(s.estado==='suspendida'?'Reactivar':'Suspender')+'</button></td></tr>'}).join(''):'<tr><td colspan="6" style="color:var(--mu)">Aún no hay tiendas.</td></tr>')+'</tbody></table></div>';
-    M.onclick=async function(e){var b=e.target.closest('button');if(!b)return;var tr=b.closest('tr');
-      try{if(b.dataset.a==='foto'){var p=await api('saasAdminPhoto',{adminKey:adminKey,id:tr.dataset.id});tr.querySelector('.ph').innerHTML='<img src="'+p.image+'" style="max-width:100%;max-height:260px;border-radius:10px;margin-top:8px">';return}
-        if(b.dataset.a){await api('saasPayReview',{adminKey:adminKey,id:tr.dataset.id,decision:b.dataset.a});loadMaster()}
-        else if(b.dataset.st){await api('saasStoreState',{adminKey:adminKey,storeId:tr.dataset.s,estado:b.dataset.st});loadMaster()}}
-      catch(err){alert(err.message)}}
-  }catch(e){M.innerHTML='<div class="card">'+esc(e.message)+'</div>'}}
-
-/* ----- Pestañas del panel: Productos y Pedidos ----- */
-function money(n){return 'Q'+(Number(n)||0).toFixed(2)}
-function setupTabs(s){
-  var res=$('dash').innerHTML,T={Res:'Resumen',Prod:'Mis productos',Ped:'Pedidos'};
-  var IT=[['Res','fa-gauge','Resumen','Estado de tu tienda'],['Prod','fa-boxes-stacked','Mis productos','Agrega y edita'],['Ped','fa-receipt','Pedidos','Ventas y estados'],['Plan','fa-credit-card','Plan y pagos','Tu suscripción'],['Link','fa-link','Mi tienda','Enlace para clientes'],['Out','fa-right-from-bracket','Cerrar sesión','Salir']];
-  function items(c){return IT.map(function(x){return '<button type="button" class="'+c+(x[0]==='Out'?' out':'')+(x[0]==='Res'?' active on':'')+'" data-t="'+x[0]+'"><i class="fas '+x[1]+'"></i><span>'+x[2]+(c==='ulti'?'<small>'+x[3]+'</small>':'')+'</span></button>'}).join('')}
-  $('dash').innerHTML='<div class="ult"><div class="ultm"><div class="ulth"><div><small>PANEL DE NEGOCIO</small><b id="dTit">Resumen</b></div><div class="dd ddm"><button class="btn sm" id="ddBtn" aria-haspopup="true" aria-expanded="false">☰ Menú</button><div class="ddl hide" id="ddList">'+items('dd1')+'</div></div></div><div class="kpis" id="dKpi"></div><div id="dRes">'+res+'</div><div id="dProd" class="hide"></div><div id="dPed" class="hide"></div></div><aside class="ults" id="dSide"><div class="ultb"><b>'+esc(s.nombre)+'</b><span>Panel profesional SHEIBIS</span><em class="vpill">✓ Negocio verificado</em></div>'+items('ulti')+'</aside></div>';
-  var link='__BASE__?tienda='+s.slug;
-  $('dRes').insertAdjacentHTML('beforeend','<div class="card" id="dLink" style="margin-top:14px"><small style="color:var(--mu)">ENLACE DE TU TIENDA PARA CLIENTES</small><div class="mono"><a style="color:inherit" href="'+esc(link)+'" target="_blank">'+esc(link)+'</a></div></div>');
-  function kpis(){api('saasOrderList',{userId:me.id}).then(function(r){var k=r.stats;$('dKpi').innerHTML=[['Ventas',money(k.ventas)],['Pedidos',k.pedidos],['Pendientes',k.pendientes],['Productos',k.productos]].map(function(x){return '<div class="kpi"><small>'+x[0]+'</small><strong>'+x[1]+'</strong></div>'}).join('')}).catch(function(){})}
-  kpis();
-  function show(t){['Res','Prod','Ped'].forEach(function(x){$('d'+x).classList.toggle('hide',x!==t)});$('dKpi').classList.toggle('hide',t!=='Res');$('dTit').textContent=T[t];[].forEach.call($('dash').querySelectorAll('[data-t]'),function(x){x.classList.toggle('active',x.dataset.t===t);x.classList.toggle('on',x.dataset.t===t)});window.scrollTo(0,0);if(t==='Res')kpis();if(t==='Prod')drawProd();if(t==='Ped')drawPed()}
-  function go(t){$('ddList').classList.add('hide');
-    if(t==='Out'){$('logout').click();return}
-    if(t==='Plan'){show('Res');var h=$('dRes').querySelectorAll('h2');if(h.length)h[h.length-1].scrollIntoView({behavior:'smooth'});return}
-    if(t==='Link'){show('Res');$('dLink').scrollIntoView({behavior:'smooth'});return}show(t)}
-  $('ddBtn').onclick=function(e){e.stopPropagation();var h=$('ddList').classList.toggle('hide');$('ddBtn').setAttribute('aria-expanded',!h)};
-  document.addEventListener('click',function(e){var l=$('ddList');if(l&&!e.target.closest('.dd'))l.classList.add('hide')});
-  $('dash').onclick=function(e){var b=e.target.closest('.ulti,.ddl button');if(b)go(b.dataset.t)}}
-var editing=null;
-async function drawProd(){var P=$('dProd');P.innerHTML='<p>Cargando…</p>';
-  try{var r=await api('saasProdList',{userId:me.id}),L=r.items;
-    P.innerHTML='<div class="card" style="margin-top:14px"><h3 style="margin:0" id="fT">Nuevo producto</h3><p class="hint">Llena los campos con * y pulsa «Guardar producto». Tus clientes lo verán en tu tienda al instante.</p><div class="fsec">1 · DATOS BÁSICOS</div><div class="grid"><div><label>Nombre del producto *</label><input id="fN" placeholder="Ej: Camisa blanca talla M"></div><div><label>Categoría</label><input id="fC" placeholder="Ej: Ropa"></div></div><div class="fsec">2 · PRECIO Y EXISTENCIAS</div><div class="grid"><div><label>Precio en quetzales (Q) *</label><input id="fP" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></div><div><label>Descuento % (opcional)</label><input id="fD" type="number" min="0" max="90" inputmode="numeric" placeholder="0"></div><div><label>Cantidad disponible *</label><input id="fS" type="number" min="0" inputmode="numeric" placeholder="0"></div></div><div class="fsec">3 · FOTO Y DESCRIPCIÓN</div><div class="grid"><div><label>Foto del producto</label><input id="fF" type="file" accept="image/*"></div></div><label>Descripción</label><input id="fDe" placeholder="Cuenta en una línea qué es y para qué sirve"><label style="display:flex;gap:8px;align-items:center"><input id="fDs" type="checkbox" style="width:auto" checked> Mostrar en mi tienda (disponible)</label><label style="display:flex;gap:8px;align-items:center"><input id="fH" type="checkbox" style="width:auto"> Destacar con ★ en mi tienda</label><div class="err" id="fE"></div><button class="btn pri" id="fG">Guardar producto</button> <button class="btn hide" id="fX">Cancelar edición</button></div>'+
-    '<div class="card scroll" style="margin-top:14px"><table><thead><tr><th></th><th>Producto</th><th>Precio</th><th>Stock</th><th>Estado</th><th></th></tr></thead><tbody>'+(L.length?L.map(function(p){return '<tr data-id="'+esc(p.id)+'"><td>'+(p.foto?'<img class="th" src="'+esc(p.foto)+'">':'')+'</td><td>'+esc(p.nombre)+(p.destacado===true?' ★':'')+'<br><small style="color:var(--mu)">'+esc(p.categoria)+'</small></td><td>'+money(p.precio)+(Number(p.descuento)?' <small>(-'+Number(p.descuento)+'%)</small>':'')+'</td><td>'+Number(p.stock)+'</td><td><span class="badge '+(p.disponible===false||Number(p.stock)<=0?'b-rechazado':'b-activa')+'">'+(p.disponible===false?'oculto':Number(p.stock)<=0?'agotado':'en SHEIBIS ✓')+'</span></td><td><button class="btn sm" data-e="1">Editar</button> <button class="btn sm bad" data-d="1">Eliminar</button></td></tr>'}).join(''):'<tr><td colspan="6" style="color:var(--mu)">Aún no tienes productos.</td></tr>')+'</tbody></table></div>';
-    function fill(p){editing=p;$('fT').textContent=p?'Editar producto':'Nuevo producto';$('fN').value=p?p.nombre:'';$('fC').value=p?p.categoria:'';$('fP').value=p?p.precio:'';$('fD').value=p?p.descuento:'';$('fS').value=p?p.stock:'';$('fDe').value=p?p.descripcion:'';$('fDs').checked=p?p.disponible!==false:true;$('fH').checked=p?p.destacado===true:false;$('fF').value='';$('fX').classList.toggle('hide',!p)}
-    $('fX').onclick=function(){fill(null)};
-    $('fG').onclick=async function(){var b=$('fG');b.disabled=true;$('fE').textContent='';
-      try{var f=$('fF').files[0],pr={id:editing?editing.id:undefined,nombre:$('fN').value,categoria:$('fC').value,precio:$('fP').value,descuento:$('fD').value,stock:$('fS').value,descripcion:$('fDe').value,disponible:$('fDs').checked,destacado:$('fH').checked};
-        if(f)pr.foto=await shrink(f,420,.55);await api('saasProdSave',{userId:me.id,product:pr});try{parent.postMessage({sbProdSaved:1},'*')}catch(_){}await drawProd();$('dProd').insertAdjacentHTML('afterbegin','<div class="alert" style="background:#E3F6EE;border-color:#9ad8bf;color:#0E8F6A">✓ Producto guardado. Si está disponible y con existencias, ya aparece en la página principal de SHEIBIS.</div>')}
-      catch(e){$('fE').textContent=e.message;b.disabled=false}};
-    P.onclick=async function(e){var b=e.target.closest('button');if(!b||!b.closest('tr'))return;var id=b.closest('tr').dataset.id;
-      if(b.dataset.e){fill(L.filter(function(x){return x.id===id})[0]);window.scrollTo(0,0)}
-      else if(b.dataset.d&&confirm('¿Eliminar este producto?')){try{await api('saasProdDelete',{userId:me.id,id:id});try{parent.postMessage({sbProdSaved:1},'*')}catch(_){}drawProd()}catch(er){alert(er.message)}}}
-  }catch(e){P.innerHTML='<div class="card">'+esc(e.message)+'</div>'}}
-async function drawPed(){var O=$('dPed');O.innerHTML='<p>Cargando…</p>';
-  try{var r=await api('saasOrderList',{userId:me.id}),s=r.stats;
-    O.innerHTML='<div class="grid" style="margin-top:14px"><div class="card"><small style="color:var(--mu)">VENTAS</small><div class="price">'+money(s.ventas)+'</div></div><div class="card"><small style="color:var(--mu)">PEDIDOS</small><div class="price">'+s.pedidos+'</div></div><div class="card"><small style="color:var(--mu)">PENDIENTES</small><div class="price">'+s.pendientes+'</div></div><div class="card"><small style="color:var(--mu)">PRODUCTOS</small><div class="price">'+s.productos+'</div></div></div>'+
-    '<div class="card scroll" style="margin-top:14px"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Pedido</th><th>Total</th><th>Estado</th></tr></thead><tbody>'+(r.orders.length?r.orders.map(function(o){return '<tr data-id="'+esc(o.id)+'"><td>'+fmt(o.fecha)+'</td><td>'+esc(o.cliente)+'<br><small style="color:var(--mu)">'+esc(o.telefono)+(o.direccion?' · '+esc(o.direccion):'')+'</small></td><td>'+o.items.map(function(i){return i.cant+'× '+esc(i.nombre)}).join('<br>')+'</td><td>'+money(o.total)+'</td><td><select>'+r.estados.map(function(x){return '<option'+(x===o.estado?' selected':'')+'>'+x+'</option>'}).join('')+'</select></td></tr>'}).join(''):'<tr><td colspan="5" style="color:var(--mu)">Aún no tienes pedidos.</td></tr>')+'</tbody></table></div>';
-    O.onchange=async function(e){var sel=e.target.closest('select');if(!sel)return;try{await api('saasOrderState',{userId:me.id,id:sel.closest('tr').dataset.id,estado:sel.value});drawPed()}catch(er){alert(er.message)}}
-  }catch(e){O.innerHTML='<div class="card">'+esc(e.message)+'</div>'}}
-
-/* ----- Tienda pública: ?tienda=nombre  (o nombre.sheibis.com) ----- */
-var cart={},FR=null;
-async function loadFront(slug){var F=$('front');view('front');F.innerHTML='<p>Cargando tienda…</p>';
-  try{FR=await api('saasStoreFront',{slug:slug});FR.slug=slug;drawFront()}
-  catch(e){F.innerHTML='<div class="card" style="margin-top:30px"><h3>Tienda no disponible</h3><p style="color:var(--mu)">'+esc(e.message)+'</p></div>'}}
-function cartTotal(){var t=0,n=0;FR.items.forEach(function(p){var c=cart[p.id]||0;t+=c*p.final;n+=c});return{t:t,n:n}}
-function drawFront(){var F=$('front'),ct=cartTotal();
-  F.innerHTML='<h1 style="margin:24px 0 4px">'+esc(FR.store.nombre)+'</h1><p style="color:var(--mu);margin-top:0">Elige tus productos y envía tu pedido.</p><div class="pg">'+
-  (FR.items.length?FR.items.map(function(p){var c=cart[p.id]||0;return '<div class="card pc" data-id="'+esc(p.id)+'">'+(p.foto?'<img src="'+esc(p.foto)+'">':'<div class="ph0"></div>')+'<b>'+esc(p.nombre)+(p.destacado?' ★':'')+'</b><div><span class="mono">'+money(p.final)+'</span>'+(p.descuento?' <small style="color:var(--mu);text-decoration:line-through">'+money(p.precio)+'</small>':'')+'</div><div class="qty"><button class="btn sm" data-q="-1">−</button><span>'+c+'</span><button class="btn sm" data-q="1">+</button></div></div>'}).join(''):'<p style="color:var(--mu)">Esta tienda aún no tiene productos.</p>')+'</div>'+
-  (ct.n?'<div class="cartbar"><button class="btn pri" id="cGo">Ver pedido ('+ct.n+') · '+money(ct.t)+'</button></div>':'');
-  F.onclick=function(e){var b=e.target.closest('[data-q]');if(b){var id=b.closest('.pc').dataset.id,p=FR.items.filter(function(x){return x.id===id})[0],n=(cart[id]||0)+Number(b.dataset.q);cart[id]=Math.max(0,Math.min(n,p.stock));drawFront();return}
-    if(e.target.id==='cGo'){$('cErr').textContent='';$('cSum').innerHTML=FR.items.filter(function(p){return cart[p.id]}).map(function(p){return cart[p.id]+'× '+esc(p.nombre)+' — '+money(cart[p.id]*p.final)}).join('<br>')+'<br><b>Total: '+money(cartTotal().t)+'</b>';$('mCart').classList.add('on')}}}
-$('cX').onclick=function(){$('mCart').classList.remove('on')};
-$('cSend').onclick=async function(){var b=$('cSend');b.disabled=true;$('cErr').textContent='';
-  try{var items=Object.keys(cart).filter(function(k){return cart[k]>0}).map(function(k){return{id:k,cant:cart[k]}});
-    var r=await api('saasOrderCreate',{slug:FR.slug,cliente:$('cNom').value,telefono:$('cTel').value,direccion:$('cDir').value,items:items});
-    cart={};$('mCart').classList.remove('on');loadFront(FR.slug);alert('¡Pedido enviado! Tu número es '+r.id+'. El negocio se pondrá en contacto contigo.')}
-  catch(e){$('cErr').textContent=e.message}finally{b.disabled=false}};
-var q0='__SLUG__';
-if(q0)loadFront(q0);
-
-try{var u=JSON.parse(localStorage.getItem('sb_saas_user')||'null');if(u&&u.id){me=u;$('logout').classList.remove('hide');$('hdrAuth').textContent='Mi panel'}}catch(e){}
-})();
+var URL_API='https://script.google.com/macros/s/AKfycbyu4o-vvkPx8b_1wHzlr5p-_sfOSIx_-uAHl9Jm-cp-s5YRlgjIxqrxZCgN4cLAeriI/exec',MODE='__MODE__';
+var S={token:'',estado:'',store:null,cats:[],prods:[],tab:'prod',edit:null,adminKey:''};
+function $(i){return document.getElementById(i)}
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function q(n){return Math.round(n*100)/100}
+async function api(a,p){var r=await fetch(URL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:a,token:S.token},p||{}))});var j=await r.json();if(!j.ok)throw new Error(j.error||'Error');return j}
+function say(m,ok){var e=document.createElement('div');e.className=ok?'ok':'err';e.textContent=m;var c=$('v').firstChild;$('v').insertBefore(e,c);setTimeout(function(){e.remove()},4500)}
+function sync(){try{parent.postMessage({sbProdSaved:1},'*')}catch(_){}}
+function wrap(h){$('v').innerHTML=h}
+/* ---------- 1. Entrar con la cuenta SHEIBIS ---------- */
+function login(){wrap('<div class="card" style="max-width:460px;margin:24px auto"><h2>Cambiar a SHEIBIS Business</h2><p>Ingresa los datos originales de tu cuenta SHEIBIS. El correo y la contraseña deben coincidir con los de tu cuenta.</p><label>Correo de tu cuenta SHEIBIS</label><input id="em" type="email" autocomplete="username"><label>Contraseña</label><input id="pw" type="password" autocomplete="current-password"><div style="margin-top:14px"><button class="btn" id="go" style="width:100%">Continuar</button></div></div>');
+$('go').onclick=async function(){this.disabled=true;try{var r=await api('bizAuth',{email:$('em').value.trim(),password:$('pw').value});S.token=r.token;S.estado=r.estado;S.store=r.store;$('who').textContent=r.email;$('out').style.display='';route()}catch(e){say(e.message);this.disabled=false}}}
+function route(){var e=S.estado;if(e==='aprobada')return dash();if(e==='none'||e==='rechazada'&&S.retry)return terms();
+var m={pendiente:['Solicitud en revisión','Recibimos tu solicitud. El administrador la revisará y, cuando la acepte, entra de nuevo con tu cuenta para abrir tu panel de negocio.'],rechazada:['Solicitud no aprobada','Tu solicitud no fue aprobada. Puedes volver a intentarlo con otro nombre de negocio.'],suspendida:['Negocio suspendido','Tu negocio está suspendido por ahora. Contacta al administrador de SHEIBIS.']}[e]||['Estado','—'];
+wrap('<div class="card" style="max-width:520px;margin:24px auto;text-align:center"><h2>'+m[0]+'</h2><p>'+m[1]+'</p>'+(e==='rechazada'?'<button class="btn" id="rt">Solicitar de nuevo</button>':'')+'</div>');if($('rt'))$('rt').onclick=function(){S.retry=1;terms()}}
+/* ---------- 2. Términos y condiciones + solicitud ---------- */
+var TERMS=[['Aceptación','Al solicitar SHEIBIS Business declaras que eres mayor de edad, que la cuenta con la que ingresaste es tuya y que aceptas estos términos completos.'],['Veracidad de la información','Te comprometes a que los datos de tu negocio, tus catálogos, precios, descuentos, fotos y descripciones sean verdaderos, vigentes y no engañosos.'],['Productos permitidos','Solo puedes publicar productos legales y de los que tengas derecho a vender. Están prohibidos los productos falsificados, robados, ilegales, peligrosos o que infrinjan derechos de terceros.'],['Marcas y suplantación','No puedes usar el nombre, logotipo o imagen de otra marca o persona para hacerte pasar por ella, ni sugerir una relación oficial con SHEIBIS que no exista.'],['Precios y descuentos','Eres responsable de los precios y descuentos que configures. El precio publicado es el que debes respetar al vender. Los descuentos deben ser reales.'],['Inventario','Debes mantener tu inventario actualizado. Si un producto se agota, el sistema lo marcará como agotado; no debes aceptar pedidos que no puedas cumplir.'],['Pedidos y entregas','Los pedidos de tus productos llegarán a tu panel. Tú eres responsable de confirmarlos, prepararlos, entregarlos y atender reclamos de tus clientes.'],['Pagos y comisiones','Los pagos entre tú y tus clientes se acuerdan directamente, salvo que SHEIBIS indique lo contrario por escrito. SHEIBIS puede establecer planes o comisiones con aviso previo.'],['Visibilidad pública','Tus catálogos, subcatálogos, productos, fotos y el nombre de tu negocio serán visibles para todo el público dentro de la tienda de SHEIBIS.'],['Contenido de las fotos','Solo puedes subir imágenes propias o con permiso. No se permiten imágenes ofensivas, violentas, sexuales o que muestren datos personales de terceros.'],['Datos personales','SHEIBIS usará el correo y nombre de tu cuenta para gestionar tu negocio y mostrarte tus pedidos. Los datos de tus clientes solo pueden usarse para atender sus compras.'],['Revisión y aprobación','Tu solicitud será revisada por el administrador. SHEIBIS puede aprobar, rechazar o pedir más información sin obligación de explicar la decisión.'],['Suspensión','SHEIBIS puede ocultar productos o suspender tu negocio si incumples estos términos, recibes reclamos fundados o se detecta fraude o abuso del sistema.'],['Responsabilidad','Eres el único responsable de lo que vendes. SHEIBIS es una plataforma que muestra tus productos y no garantiza ventas ni resultados.'],['Cambios a los términos','SHEIBIS puede actualizar estos términos. Seguir usando el panel de negocio después de un cambio significa que lo aceptas.'],['Seguridad de tu cuenta','Eres responsable de proteger tu contraseña. Toda acción hecha desde tu cuenta se considera hecha por ti.'],['Aceptación final','Al marcar la casilla y enviar tu solicitud confirmas que leíste todo lo anterior y que aceptas cumplirlo.']];
+function terms(){var h='<div class="card" style="max-width:720px;margin:12px auto"><h2>Términos y condiciones de SHEIBIS Business</h2><p>Lee hasta el final para poder aceptar.</p><div class="terms" id="tb">';
+TERMS.forEach(function(t,i){h+='<h4>'+(i+1)+'. '+t[0]+'</h4><div>'+t[1]+'</div>'});
+h+='<p style="margin-top:14px">— Fin de los términos —</p></div><label>Nombre de tu negocio</label><input id="nn" maxlength="40" placeholder="Ej: Dulces de la abuela"><label style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="ac" disabled> Leí y acepto los términos y condiciones</label><div style="margin-top:14px"><button class="btn" id="sd" disabled>Enviar solicitud</button></div></div>';wrap(h);
+function chk(){$('sd').disabled=!($('ac').checked&&$('nn').value.trim().length>=3)}
+$('tb').onscroll=function(){if(this.scrollTop+this.clientHeight>=this.scrollHeight-6)$('ac').disabled=false};$('ac').onchange=chk;$('nn').oninput=chk;
+$('sd').onclick=async function(){this.disabled=true;try{await api('bizRequest',{negocio:$('nn').value.trim(),acepto:true});S.estado='pendiente';S.retry=0;route()}catch(e){say(e.message);this.disabled=false}}}
+/* ---------- 3. Panel del negocio ---------- */
+async function dash(){try{try{parent.postMessage({sbRole:'NEGOCIO'},'*')}catch(_){}var a=await api('bizCatList'),b=await api('saasProdList');S.cats=a.items;S.prods=b.items;S.edit=null;draw()}catch(e){wrap('<div class="err">'+esc(e.message)+'</div>')}}
+function draw(){var T=[['prod','🛍️ Productos'],['cat','📚 Catálogos y subcatálogos'],['ped','📦 Pedidos']];
+wrap('<div class="card"><b>'+esc(S.store.nombre)+'</b> <span class="tag">'+esc(S.store.estado)+'</span><p style="margin:4px 0 0">Todo lo que agregues se ve al instante en la tienda de SHEIBIS.</p></div><div class="app"><div class="main" id="mn"></div><div class="menu">'+T.map(function(t){return'<button data-t="'+t[0]+'" class="'+(S.tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div></div>');
+document.querySelectorAll('.menu button').forEach(function(b){b.onclick=function(){S.tab=b.dataset.t;S.edit=null;draw()}});
+({prod:drawProd,cat:drawCat,ped:drawPed})[S.tab]()}
+function tops(){return S.cats.filter(function(c){return!c.padreId})}function subs(id){return S.cats.filter(function(c){return c.padreId===id})}
+function path(id){var c=S.cats.filter(function(x){return x.id===id})[0];if(!c)return id?'(sin catálogo)':'—';var p=c.padreId?S.cats.filter(function(x){return x.id===c.padreId})[0]:null;return(p?p.nombre+' › ':'')+c.nombre}
+/* Catálogos y subcatálogos */
+function drawCat(){var o='<option value="">— Catálogo principal —</option>'+tops().map(function(c){return'<option value="'+c.id+'">Subcatálogo de: '+esc(c.nombre)+'</option>'}).join('');
+var l=tops().map(function(c){return'<div class="row"><div class="grow"><b>'+esc(c.nombre)+'</b></div><button class="btn s" data-r="'+c.id+'">Renombrar</button><button class="btn s r" data-d="'+c.id+'">Eliminar</button></div>'+subs(c.id).map(function(s){return'<div class="row sub"><div class="grow">↳ '+esc(s.nombre)+'</div><button class="btn s" data-r="'+s.id+'">Renombrar</button><button class="btn s r" data-d="'+s.id+'">Eliminar</button></div>'}).join('')}).join('')||'<p>Aún no tienes catálogos. Crea el primero arriba.</p>';
+$('mn').innerHTML='<div class="card"><h3>Agregar catálogo o subcatálogo</h3><div class="grid"><div><label>Nombre</label><input id="cn" maxlength="40" placeholder="Ej: Postres"></div><div><label>¿Dónde va?</label><select id="cp">'+o+'</select></div></div><div style="margin-top:12px"><button class="btn" id="ca">Agregar</button></div></div><div class="card"><h3>Tus catálogos</h3>'+l+'</div>';
+$('ca').onclick=async function(){try{await api('bizCatSave',{cat:{nombre:$('cn').value,padreId:$('cp').value}});sync();dash()}catch(e){say(e.message)}};
+document.querySelectorAll('[data-r]').forEach(function(b){b.onclick=async function(){var c=S.cats.filter(function(x){return x.id===b.dataset.r})[0],n=prompt('Nuevo nombre',c.nombre);if(!n)return;try{await api('bizCatSave',{cat:{id:c.id,nombre:n}});sync();dash()}catch(e){say(e.message)}}});
+document.querySelectorAll('[data-d]').forEach(function(b){b.onclick=async function(){if(!confirm('¿Eliminar?'))return;try{await api('bizCatDelete',{id:b.dataset.d});sync();dash()}catch(e){say(e.message)}}})}
+/* Productos */
+function catOpts(sel){return'<option value="">— Elige un catálogo —</option>'+tops().map(function(c){return'<option value="'+c.id+'"'+(sel===c.id?' selected':'')+'>'+esc(c.nombre)+'</option>'+subs(c.id).map(function(s){return'<option value="'+s.id+'"'+(sel===s.id?' selected':'')+'>&nbsp;&nbsp;↳ '+esc(s.nombre)+'</option>'}).join('')}).join('')}
+function drawProd(){var p=S.edit||{descuento:0,stock:1,disponible:true},fin=q((p.precio||0)*(1-(p.descuento||0)/100));
+var h='<div class="card"><h3>'+(S.edit?'Editar producto':'Agregar producto')+'</h3>'+(tops().length?'':'<div class="err">Primero crea un catálogo en «Catálogos y subcatálogos».</div>')+'<label>Nombre</label><input id="pn" maxlength="80" value="'+esc(p.nombre||'')+'"><label>Descripción</label><textarea id="pd" rows="2" maxlength="300">'+esc(p.descripcion||'')+'</textarea><label>Catálogo / subcatálogo</label><select id="pc">'+catOpts(p.categoria)+'</select>'
++'<div class="grid"><div><label>Precio normal (Q)</label><input id="pp" type="number" min="0" step="0.01" value="'+(p.precio||'')+'"></div><div><label>Descuento (%)</label><input id="pds" type="number" min="0" max="90" value="'+(p.descuento||0)+'"><div class="chips">'+[0,10,20,30,50].map(function(d){return'<button type="button" class="chip" data-ds="'+d+'">'+(d?d+'%':'Sin desc.')+'</button>'}).join('')+'</div></div></div>'
++'<div class="grid"><div><label>Precio final automático (Q) — también puedes escribirlo</label><input id="pf" type="number" min="0" step="0.01" value="'+(fin||'')+'"></div><div><label>Stock</label><input id="ps" type="number" min="0" value="'+(p.stock||0)+'"></div></div>'
++'<label>Foto</label><input id="pg" type="file" accept="image/*">'+(p.foto?'<img src="'+esc(p.foto)+'" style="width:70px;height:70px;object-fit:cover;border-radius:10px;margin-top:8px">':'')+'<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="pe"'+(p.destacado?' checked':'')+'> Producto destacado</label><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="pa"'+(p.disponible!==false?' checked':'')+'> Disponible para la venta</label><div style="margin-top:12px;display:flex;gap:8px"><button class="btn" id="psv">'+(S.edit?'Guardar cambios':'Publicar producto')+'</button>'+(S.edit?'<button class="btn s" id="pcx">Cancelar</button>':'')+'</div></div>';
+h+='<div class="card"><h3>Tus productos ('+S.prods.length+')</h3>'+(S.prods.map(function(x){var f=q(x.precio*(1-(x.descuento||0)/100));return'<div class="row"><img src="'+esc(x.foto||'')+'" alt=""><div class="grow"><b>'+esc(x.nombre)+'</b><br><small style="color:var(--mu)">'+esc(path(x.categoria))+' · stock '+x.stock+(x.disponible===false?' · oculto':'')+'</small></div><div class="fin">Q'+f+(x.descuento?' <small style="color:var(--mu);text-decoration:line-through">Q'+x.precio+'</small>':'')+'</div><button class="btn s" data-e="'+x.id+'">Editar</button><button class="btn s r" data-x="'+x.id+'">Eliminar</button></div>'}).join('')||'<p>Todavía no has agregado productos.</p>')+'</div>';$('mn').innerHTML=h;
+function fromPrice(){var pr=+$('pp').value||0,d=Math.min(90,Math.max(0,+$('pds').value||0));$('pf').value=pr?q(pr*(1-d/100)):''}
+$('pp').oninput=fromPrice;$('pds').oninput=fromPrice;$('pf').oninput=function(){var pr=+$('pp').value||0,f=+$('pf').value||0;if(pr>0&&f>=0&&f<=pr)$('pds').value=Math.min(90,Math.round((1-f/pr)*100))};
+document.querySelectorAll('[data-ds]').forEach(function(b){b.onclick=function(){$('pds').value=b.dataset.ds;fromPrice()}});
+$('psv').onclick=async function(){var pr={id:S.edit?S.edit.id:undefined,nombre:$('pn').value,descripcion:$('pd').value,categoria:$('pc').value,precio:+$('pp').value||0,descuento:+$('pds').value||0,stock:+$('ps').value||0,destacado:$('pe').checked,disponible:$('pa').checked};
+if(!pr.categoria)return say('Elige el catálogo donde va el producto.');if(!(pr.precio>0))return say('Escribe el precio.');this.disabled=true;try{var f=$('pg').files[0];if(f)pr.foto=await shrink(f);await api('saasProdSave',{product:pr});sync();S.edit=null;await dash();say('Producto publicado: ya se ve en la tienda.',1)}catch(e){say(e.message);this.disabled=false}};
+if($('pcx'))$('pcx').onclick=function(){S.edit=null;drawProd()};
+document.querySelectorAll('[data-e]').forEach(function(b){b.onclick=function(){S.edit=S.prods.filter(function(x){return x.id===b.dataset.e})[0];drawProd();scrollTo(0,0)}});
+document.querySelectorAll('[data-x]').forEach(function(b){b.onclick=async function(){if(!confirm('¿Eliminar este producto?'))return;try{await api('saasProdDelete',{id:b.dataset.x});sync();dash()}catch(e){say(e.message)}}})}
+function shrink(f){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,420/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var qq=.6,d=c.toDataURL('image/jpeg',qq);while(d.length>44000&&qq>.2){qq-=.1;d=c.toDataURL('image/jpeg',qq)}d.length>44000?no(new Error('La foto es muy grande.')):ok(d)};im.onerror=function(){no(new Error('Imagen no válida.'))};im.src=r.result};r.readAsDataURL(f)})}
+/* Pedidos */
+async function drawPed(){$('mn').innerHTML='<div class="card"><p>Cargando…</p></div>';try{var r=await api('saasOrderList');
+$('mn').innerHTML='<div class="card"><h3>Resumen</h3><p>Ventas: <b>Q'+r.stats.ventas+'</b> · Pedidos: <b>'+r.stats.pedidos+'</b> · Pendientes: <b>'+r.stats.pendientes+'</b></p></div><div class="card"><h3>Pedidos</h3>'+(r.orders.length?'<div style="overflow:auto"><table><tr><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th></tr>'+r.orders.map(function(o){return'<tr><td>'+esc(o.cliente)+'<br><small>'+esc(o.direccion||'')+'</small></td><td>'+o.items.map(function(i){return esc(i.nombre)+' ×'+i.cant}).join('<br>')+'</td><td>Q'+o.total+'</td><td><select data-o="'+o.id+'">'+r.estados.map(function(e){return'<option'+(e===o.estado?' selected':'')+'>'+e+'</option>'}).join('')+'</select></td></tr>'}).join('')+'</table></div>':'<p>Aún no tienes pedidos.</p>')+'</div>';
+document.querySelectorAll('[data-o]').forEach(function(s){s.onchange=async function(){try{await api('saasOrderState',{id:s.dataset.o,estado:s.value});say('Estado actualizado.',1)}catch(e){say(e.message)}}})}catch(e){$('mn').innerHTML='<div class="err">'+esc(e.message)+'</div>'}}
+/* ---------- Administrador: solicitudes ---------- */
+function adminLogin(){$('who').textContent='Administrador · Solicitudes de negocio';wrap('<div class="card" style="max-width:420px;margin:24px auto"><h2>Solicitudes SHEIBIS Business</h2><label>Clave de administrador</label><input id="ak" type="password"><div style="margin-top:14px"><button class="btn" id="ag" style="width:100%">Entrar</button></div></div>');
+$('ag').onclick=function(){S.adminKey=$('ak').value;adminList()}}
+async function adminList(){try{var r=await api('bizReqList',{adminKey:S.adminKey});
+wrap('<div class="card"><h2>Solicitudes de cuenta de negocio</h2><p>Se guardan también en la hoja «SolicitudesNegocio» de tu Excel.</p><div style="overflow:auto"><table><tr><th>Negocio</th><th>Cuenta</th><th>Fecha</th><th>Estado</th><th></th></tr>'+(r.items.map(function(x){return'<tr><td><b>'+esc(x.negocio)+'</b></td><td>'+esc(x.email)+'<br><small>'+esc(x.nombre)+'</small></td><td>'+esc(String(x.fecha).slice(0,10))+'</td><td><span class="tag">'+esc(x.estado)+'</span></td><td>'+(x.estado==='pendiente'?'<button class="btn s" data-a="'+x.id+'">✓ Aceptar</button> <button class="btn s r" data-n="'+x.id+'">Rechazar</button>':'')+'</td></tr>'}).join('')||'<tr><td colspan="5">No hay solicitudes todavía.</td></tr>')+'</table></div></div>');
+async function dec(id,d){try{await api('bizReqDecide',{adminKey:S.adminKey,id:id,decision:d});adminList()}catch(e){say(e.message)}}
+document.querySelectorAll('[data-a]').forEach(function(b){b.onclick=function(){dec(b.dataset.a,'aprobar')}});document.querySelectorAll('[data-n]').forEach(function(b){b.onclick=function(){dec(b.dataset.n,'rechazar')}})}catch(e){say(e.message);adminLogin()}}
+$('out').onclick=function(){S={token:'',estado:'',store:null,cats:[],prods:[],tab:'prod',edit:null,adminKey:''};this.style.display='none';$('who').textContent='Cambia tu cuenta a negocio';login()};
+if(MODE==='admin')adminLogin();else login();
 <\/script></body></html>
 </script>
 <script id="sb-negocios-launcher">
@@ -15333,9 +15173,9 @@ window.addEventListener("message",function(e){var d=e.data;if(!d||d.sbRole!=="NE
   var ov=document.getElementById('sbNegOverlay'),fr=document.getElementById('sbNegFrame');
   function slugFromUrl(){var q=(new URLSearchParams(location.search).get('tienda')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
     var h=location.hostname.match(/^([a-z0-9-]+)\.sheibis\.com$/);if(!q&&h&&['www','app'].indexOf(h[1])<0)q=h[1];return q}
-  window.sbOpenNegocios=function(slug){
+  window.sbOpenNegocios=function(slug,mode){
     var base=location.href.split('#')[0].split('?')[0].replace(/'/g,'%27');
-    var html=document.getElementById('sbNegSrc').textContent.split('<\\/script>').join('<'+'/script>').replace('__SLUG__',String(slug||'').replace(/[^a-z0-9-]/g,'')).replace('__BASE__',base);
+    var html=document.getElementById('sbNegSrc').textContent.split('<\\/script>').join('<'+'/script>').replace('__SLUG__',String(slug||'').replace(/[^a-z0-9-]/g,'')).replace('__BASE__',base).replace('__MODE__',mode==='admin'?'admin':'negocio');
     fr.srcdoc=html;ov.style.display='flex';document.body.style.overflow='hidden'};
   document.getElementById('sbNegClose').onclick=function(){try{window.sbBizReload&&window.sbBizReload()}catch(_){}ov.style.display='none';fr.srcdoc='';document.body.style.overflow=''};
   function auto(){var sl=slugFromUrl();if(sl)window.sbOpenNegocios(sl);else if(/[?&]negocios\b/.test(location.search)||location.hash==='#negocios')window.sbOpenNegocios('')}
