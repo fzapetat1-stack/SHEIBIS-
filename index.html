@@ -15207,7 +15207,10 @@ w.textContent=S.email||'';o.style.display='';
 if(S.estado==='aprobada'&&st){var live=st.estado==='activa'||st.estado==='prueba';b.style.display='';b.className='pill '+(live?'on':'warn');b.innerHTML='<i></i>'+(live?'Cuenta Business activa':(st.origen==='plan'?'Suscripción vencida':'Plan gratuito expirado'))}
 else if(S.estado==='suspendida'){b.style.display='';b.className='pill bad';b.innerHTML='<i></i>Negocio suspendido'}
 else b.style.display='none'}
-function applyAuth(r){S.estado=r.estado;S.store=r.store||null;S.planes=r.planes||S.planes;S.pago=!!r.pagoPendiente;S.ultimo=r.ultimoPago||null;S.nueva=r.nueva||false;S.negocio=r.negocio||'';if(r.email)S.email=r.email;if(r.trialDias)S.trialDias=r.trialDias;setTop();tell()}
+function fixStore(st){if(!st||st.estado!=='prueba')return st;var cr=st.creado?new Date(st.creado).getTime():0,tf=st.trialFin?new Date(st.trialFin).getTime():0,cap=cr?cr+S.trialDias*864e5:0;
+if(cap&&(!tf||tf>cap)){tf=cap;st.trialFin=new Date(cap).toISOString()}
+if(tf){var d=Math.ceil((tf-Date.now())/864e5);st.dias=Math.max(0,Math.min(d,S.trialDias));if(d<=0){st.estado='vencida';st.origen='prueba'}}return st}
+function applyAuth(r){S.estado=r.estado;if(r.trialDias)S.trialDias=r.trialDias;S.store=fixStore(r.store||null);S.planes=r.planes||S.planes;S.pago=!!r.pagoPendiente;S.ultimo=r.ultimoPago||null;S.nueva=r.nueva||false;S.negocio=r.negocio||'';if(r.email)S.email=r.email;if(r.trialDias)S.trialDias=r.trialDias;setTop();tell()}
 async function reloadMe(){var r=await api('bizMe');applyAuth(r);return r}
 function endSession(msg){var em=S.email;lsDel(SK);S.token='';S.estado='';S.store=null;S.nueva=false;S.pago=false;S.ultimo=null;S.goPlan=false;S.tab='prod';stopPoll();setTop();login(msg,em)}
 /* ---------- 0. Arranque: si ya hay sesión guardada NO se piden credenciales ---------- */
@@ -15464,6 +15467,9 @@ if(window.__SB_BIZ_STATUS__)return;window.__SB_BIZ_STATUS__=true;
 var cur=null,lastId='',lastAt=0,busy=false,shown={};
 function user(){try{return(typeof currentUser!=='undefined'&&currentUser&&!currentUser.isGuest&&currentUser.id)?currentUser:null}catch(_){return null}}
 function call(a,p){if(typeof apiRequest!=='function')return Promise.reject(new Error('api'));return apiRequest(a,p||{},{timeout:30000})}
+function fix(st){if(!st||st.estado!=='prueba')return st;var cr=st.creado?new Date(st.creado).getTime():0,tf=st.trialFin?new Date(st.trialFin).getTime():0,cap=cr?cr+5*864e5:0;
+if(cap&&(!tf||tf>cap))tf=cap;
+if(tf){var d=Math.ceil((tf-Date.now())/864e5);st.dias=Math.max(0,Math.min(d,5));if(d<=0){st.estado='vencida';st.origen='prueba'}}return st}
 function liveSt(st){return!!st&&(st.estado==='activa'||st.estado==='prueba')}
 function plural(n){return n+' día'+(n===1?'':'s')}
 function bizLine(s){var st=s&&s.store;if(!st)return'';if(liveSt(st))return st.estado==='prueba'?'Prueba gratis · quedan '+plural(st.dias):'Plan '+st.planNombre+' · '+plural(st.dias);return st.origen==='plan'?'Suscripción vencida · renueva tu plan':'Plan gratuito expirado · elige un plan'}
@@ -15514,7 +15520,7 @@ notice({emoji:'🔒',title:r.store.origen==='plan'?'Tu suscripción venció':'Tu
 async function check(){
 var u=user();if(!u){cur=null;paint();return}
 if(busy)return;busy=true;
-try{var r=await call('bizStatus',{userId:u.id,email:u.email});if(!user()||String(user().id)!==String(u.id))return;cur=r;paint();notify(r,u)}catch(e){}
+try{var r=await call('bizStatus',{userId:u.id,email:u.email});if(!user()||String(user().id)!==String(u.id))return;if(r&&r.store)r.store=fix(r.store);cur=r;paint();notify(r,u)}catch(e){}
 finally{busy=false}}
 setInterval(function(){
 var u=user(),id=u?String(u.id):'';
@@ -15524,7 +15530,7 @@ var gap=cur&&cur.estado==='pendiente'?45000:(cur&&cur.estado==='aprobada'?300000
 if(Date.now()-lastAt>=gap&&document.visibilityState!=='hidden'){lastAt=Date.now();check()}},3000);
 window.addEventListener('message',function(e){
 var d=e.data;if(!d||!d.sbBiz||!user())return;var b=d.sbBiz;
-cur=Object.assign({},cur||{},{estado:b.estado,store:b.store||(cur&&cur.store)||null,negocio:b.negocio||'',nueva:false});paint()});
+cur=Object.assign({},cur||{},{estado:b.estado,store:fix(b.store)||(cur&&cur.store)||null,negocio:b.negocio||'',nueva:false});paint()});
 document.addEventListener('click',function(e){if(e.target&&(e.target.id==='sbNegClose'))lastAt=0});
 })();
 </script>
