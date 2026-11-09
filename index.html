@@ -4115,7 +4115,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbx7GVkx2paGQk9Xpp3KoxUVVKwwT7rQzNzgFExz0owA5KpVb9NiXR5rPw-6dHWv9TJW/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyOSIDfj5jFofZfpNOgRqdE-Ku4yAEXmhh_iaKaQYZ3D_wasr3N_mZ385WbxnDyRnt1/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5812,7 +5812,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbx7GVkx2paGQk9Xpp3KoxUVVKwwT7rQzNzgFExz0owA5KpVb9NiXR5rPw-6dHWv9TJW/exec
+     https://script.google.com/macros/s/AKfycbyOSIDfj5jFofZfpNOgRqdE-Ku4yAEXmhh_iaKaQYZ3D_wasr3N_mZ385WbxnDyRnt1/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -13185,7 +13185,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbx7GVkx2paGQk9Xpp3KoxUVVKwwT7rQzNzgFExz0owA5KpVb9NiXR5rPw-6dHWv9TJW/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbyOSIDfj5jFofZfpNOgRqdE-Ku4yAEXmhh_iaKaQYZ3D_wasr3N_mZ385WbxnDyRnt1/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15166,23 +15166,116 @@ table{width:100%;border-collapse:collapse}th{font:800 .66rem Inter,sans-serif;le
 @media(max-width:900px){.plans{grid-template-columns:1fr}}
 @media(max-width:820px){.split{grid-template-columns:1fr}.brandp{padding:24px}.biglogo{max-width:220px}.app{grid-template-columns:1fr}.menu{position:static;order:0;display:flex;gap:6px;overflow:auto;padding:8px}.menu:before{display:none}.menu button{white-space:nowrap;width:auto;margin:0}.grid{grid-template-columns:1fr}.top{padding:8px 12px;gap:8px}.lg{height:42px;width:62px}.form{padding:24px 20px}.hero{flex-direction:column;align-items:flex-start;padding:20px}.hr{text-align:left;width:100%}.tt small{max-width:30vw}.pill{font-size:.58rem;padding:6px 9px}.note .btn{margin-left:0}}
 @media(max-width:520px){.pill{letter-spacing:.04em}.top .btn.s{padding:0 9px}}
+/* ===== v2: panel guiado ===== */
+.pill .ps{display:none}
+.menu button{position:relative}.menu .lbs,.menu .ic{display:inline}.menu .lbs{display:none}.menu .ic{font-size:1.1rem}
+.bd{position:absolute;top:6px;right:8px;background:#E11D48;color:#fff;border-radius:999px;font:800 .62rem Inter,sans-serif;padding:2px 6px;font-style:normal}
+.hi{font-size:1.5rem;margin:6px 0 2px;letter-spacing:-.02em}.sb{margin:0 0 14px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 14px}.kpis.three{grid-template-columns:repeat(3,1fr)}
+.kpi{display:block;text-align:left;border:1px solid var(--bd);background:#fff;border-radius:18px;padding:14px 16px;box-shadow:var(--sh);font:inherit;color:inherit;cursor:pointer;transition:.16s}
+div.kpi{cursor:default}button.kpi:hover{transform:translateY(-2px);border-color:var(--jade)}
+.kpi span{font-size:1.3rem}.kpi b{display:block;font:900 1.55rem/1.1 Inter,sans-serif;margin:4px 0 2px;letter-spacing:-.02em}.kpi b small{font:700 .8rem Inter,sans-serif;color:var(--mu)}.kpi em{font:700 .72rem Inter,sans-serif;color:var(--mu);font-style:normal;text-transform:uppercase;letter-spacing:.05em}
+.kpi.alert{border-color:#F3B3AB;background:linear-gradient(180deg,#FFF6F4,#fff)}.kpi.alert b{color:#B3261E}
+.mt{height:7px;border-radius:9px;background:#E6EEEA;margin:8px 0 0;overflow:hidden;flex:1}.mt span{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--jade),#7DF5CA)}.mt span.hot{background:linear-gradient(90deg,#F59E0B,#DC2626)}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}.ch h3{margin:0}
+.ck{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #EAF0ED}.ck:first-of-type{border-top:0}.ck .cb{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#EEF3F0;color:var(--mu);font-weight:800}
+.ck.on .cb{background:linear-gradient(135deg,var(--jade),var(--jd));color:#fff}.ck.on b{color:var(--mu);text-decoration:line-through}.ck b{display:block}.ck small{color:var(--mu)}
+.btn.pri{background:linear-gradient(135deg,var(--jade),var(--jd));color:#fff;border:0}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}.qb{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;border-radius:18px;border:1.5px dashed #BFD5CA;background:#fff;cursor:pointer;font:inherit;transition:.16s}
+.qb:hover{border-color:var(--jade);background:var(--jl);transform:translateY(-2px)}.qb span{font-size:1.5rem}.qb b{font-size:.82rem;text-align:center}
+.sr input{min-height:46px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:16px}
+.pc{background:#fff;border:1px solid var(--bd);border-radius:20px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column}
+.pimg{position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#EAF7F1,#F7F1DC);display:grid;place-items:center;font-size:2rem}.pimg img{width:100%;height:100%;object-fit:cover;display:block}
+.pimg em{position:absolute;font-style:normal;font:800 .7rem Inter,sans-serif;padding:4px 9px;border-radius:999px}.pimg .star{top:8px;left:8px;background:#fff;box-shadow:var(--sh)}.pimg .off{top:8px;right:8px;background:#E11D48;color:#fff}
+.pbody{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}.pbody b{font-size:.95rem;line-height:1.25}.pbody small{color:var(--mu)}.pprice{font:900 1.15rem Inter,sans-serif;color:var(--jd)}.pprice s{font:600 .8rem Inter,sans-serif;color:var(--mu)}.pmeta{display:flex;align-items:center;gap:8px}
+.pact{display:flex;gap:6px;margin-top:8px}.pact .btn.s{flex:1;padding:0 8px}.pact .btn.ic{flex:none;width:38px;padding:0;font-size:1rem}.btn.ic{padding:0;min-width:40px}
+.pg.locked .pact{display:none}
+.empty{padding:34px 18px}.empty .em{font-size:2.6rem}
+.how{background:#F1F8F5;border:1px solid #CFE6DC;border-radius:14px;padding:12px 14px;color:#2D4A3E;margin-top:10px;font-size:.88rem}
+.drawer{max-width:940px;text-align:left;max-height:92vh;overflow:auto;padding:22px}.drawer:before{display:none}
+.fh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}.fh h2{margin:0}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.drop{border:2px dashed #BFD5CA;border-radius:18px;background:#F6FAF8;min-height:190px;display:grid;place-items:center;cursor:pointer;overflow:hidden;transition:.16s}.drop:hover{border-color:var(--jade);background:var(--jl)}.drop img{width:100%;max-height:260px;object-fit:cover;display:block}
+.dph{text-align:center;color:var(--mu);padding:24px}.dph span{font-size:2.2rem;display:block}.dph b{display:block;color:var(--ink)}
+.fin2{display:flex;flex-direction:column;gap:2px;background:linear-gradient(135deg,#EAFBF4,#F7F1DC);border:1px solid #CFE6DC;border-radius:14px;padding:12px 14px;margin-top:12px}.fin2 span{font-size:.78rem;color:var(--mu)}.fin2 b{font:900 1.5rem Inter,sans-serif;color:var(--jd)}.fin2 small{color:#8A6100;font-weight:700}
+.stp{display:flex;gap:8px;align-items:center}.stp input{text-align:center;font-weight:800}.stp .btn{min-height:48px;width:52px;font-size:1.3rem}
+.hint{display:block;color:var(--mu);margin-top:6px;font-size:.78rem}
+.sw{display:flex;align-items:center;gap:12px;text-transform:none;letter-spacing:0;font:600 .9rem Inter,sans-serif;color:var(--ink);cursor:pointer;margin:14px 0 0}.sw input{position:absolute;opacity:0;width:1px;height:1px}
+.sw .sl{flex:none;width:46px;height:26px;border-radius:999px;background:#CBD5D0;position:relative;transition:.18s}.sw .sl:after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:.18s}
+.sw input:checked+.sl{background:linear-gradient(135deg,var(--jade),var(--jd))}.sw input:checked+.sl:after{left:23px}.sw input:disabled+.sl{opacity:.5}.sw small{color:var(--mu);font-weight:500}
+.pvw{margin-top:14px;max-width:230px}.pvw .pc{box-shadow:var(--sh)}
+.fb{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;position:sticky;bottom:-22px;background:#fff;padding:12px 0}
+.two{display:flex;gap:10px;margin-top:14px}.two .btn{flex:1}.btn.red{background:linear-gradient(135deg,#E5484D,#B3261E);box-shadow:0 8px 20px rgba(179,38,30,.3)}
+.mbox h3{margin:0 0 8px}
+.oc{background:#fff;border:1px solid var(--bd);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
+.oh{display:flex;align-items:center;justify-content:space-between;gap:10px}.oh small{display:block;color:var(--mu)}
+.oi{margin:12px 0 8px;background:#F6FAF8;border-radius:14px;padding:10px 12px}.oi>div{display:flex;justify-content:space-between;gap:10px;padding:3px 0}.oi .ot{border-top:1px dashed #CBD9D1;margin-top:6px;padding-top:8px}
+.oa{margin:4px 0;color:var(--mu);font-size:.86rem}.oact{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}.oact select{width:auto;min-height:40px;padding:6px 10px;font-size:.82rem}.oact .btn{min-height:42px;text-decoration:none}
+.tag.i{background:#EAF0FF;color:#2C4A9A}
+.bars{display:flex;align-items:flex-end;gap:8px;height:180px;padding-top:10px}.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.bar i{display:block;width:100%;max-width:46px;border-radius:10px 10px 4px 4px;background:linear-gradient(180deg,var(--jade),var(--jd))}.bar small{color:var(--mu);margin-top:6px;font-size:.7rem}.bar b{font-size:.62rem;color:var(--jd);margin-bottom:3px;white-space:nowrap}
+.bars.thin{gap:3px}.bars.thin .bar i{border-radius:5px 5px 2px 2px}
+.two2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tl{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #EAF0ED}.tl:first-of-type{border-top:0}.tl .n{width:24px;height:24px;border-radius:50%;background:var(--jl);color:var(--jd);font:800 .72rem Inter,sans-serif;display:grid;place-items:center}
+.hb{display:flex;align-items:center;gap:10px;padding:5px 0}.hb span:first-child{width:104px;font-size:.8rem;color:var(--mu);text-transform:capitalize}.hb b{width:28px;text-align:right}
+.plan li.no{color:#9AA8A1;text-decoration:line-through}.plan li.no:before{content:"✕";color:#C0392B}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.qa{grid-template-columns:repeat(2,1fr)}.fgrid{grid-template-columns:1fr}.two2{grid-template-columns:1fr}}
+@media(max-width:820px){
+.wrap{padding-bottom:96px}
+.menu{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:30;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;overflow:visible;border-radius:20px 20px 0 0;border:0;border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(7,18,14,.14)}
+.menu button{flex-direction:column;gap:2px;padding:7px 2px;margin:0;font-size:.62rem;text-align:center;justify-content:center;white-space:nowrap}.menu button .ic{font-size:1.25rem}.menu .lbl{display:none}.menu .lbs{display:block}
+.menu button.on{box-shadow:inset 0 3px 0 var(--gold)}.bd{top:2px;right:10px}
+.pill .pl{display:none}.pill .ps{display:inline}.kpi b{font-size:1.3rem}.pg{grid-template-columns:repeat(2,1fr);gap:10px}.pact{flex-wrap:wrap}.drawer{padding:16px;max-height:94vh}.fh h2{font-size:1.05rem}.mbox{padding:22px 18px}
+}
+@media(max-width:420px){.pg{grid-template-columns:1fr 1fr}.pbody{padding:10px}.pact .btn.s:first-child{flex-basis:100%}.bar b{display:none}}
+
+/* ===== v3: planes ===== */
+.phead{text-align:center;margin:8px 0 18px}.phead h2{font-size:1.5rem;letter-spacing:-.02em;margin:0 0 4px}.phead p{margin:0}
+.plans{align-items:stretch;gap:16px;margin:8px 0 18px}
+.plan{padding:0 0 20px;overflow:visible;border-radius:24px;border:1.5px solid var(--bd);background:#fff;position:relative}
+.plan .ph{display:flex;gap:12px;align-items:center;padding:22px 20px 16px;border-radius:22px 22px 0 0}.plan .ph h4{margin:0;font-size:1.12rem}.plan .ph p{margin:2px 0 0;font-size:.8rem}
+.plan .pi{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;background:#fff;box-shadow:0 6px 16px rgba(7,18,14,.14)}
+.plan.p1 .ph{background:linear-gradient(135deg,#EAF7F1,#DDF1E8)}
+.plan.p2 .ph{background:linear-gradient(135deg,#FFF4D2,#FBE5A0)}.plan.p2 .ph p{color:#7A5600}
+.plan.p3 .ph{background:linear-gradient(135deg,#06150F,#173B2E);color:#fff}.plan.p3 .ph h4{color:#fff}.plan.p3 .ph p{color:#BFE5D6}
+.plan.rec{border:2px solid var(--gold);box-shadow:0 22px 50px rgba(201,146,24,.28);transform:translateY(-6px)}.plan.rec:hover{transform:translateY(-9px)}
+.plan.p3{border-color:#173B2E;box-shadow:0 18px 44px rgba(7,18,14,.2)}
+.plan.mine{outline:3px solid rgba(16,178,127,.35)}
+.plan .rib.cur{background:linear-gradient(135deg,var(--jade),var(--jd));color:#fff;top:-13px}
+.plan .price{margin:16px 20px 0}.plan .pday{margin:0 20px 14px;color:var(--mu);font-size:.78rem}
+.plan ul.pl{list-style:none;margin:0 14px 16px;padding:0;flex:1}.plan ul.pl li{display:flex;gap:11px;align-items:center;padding:9px 6px;border-top:1px solid #EEF3F0}.plan ul.pl li:first-child{border-top:0}
+.plan ul.pl li:before{display:none}.plan ul.pl .li{flex:none;width:34px;height:34px;border-radius:11px;background:#F1F7F4;display:grid;place-items:center;font-size:1rem}
+.plan ul.pl b{display:block;font-size:.9rem;line-height:1.25}.plan ul.pl small{color:var(--mu);font-size:.74rem}
+.plan ul.pl li.no{opacity:.5}.plan ul.pl li.no b{font-weight:600}
+.plan>.btn{margin:0 16px;width:calc(100% - 32px)}.pnote{margin:12px 16px 0;text-align:center;font-size:.76rem;color:var(--mu)}
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:6px 0 16px}.trust>div{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:14px;text-align:center;box-shadow:var(--sh)}.trust b{display:block;margin-top:4px}.trust small{color:var(--mu)}
+.psum{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#EAFBF4,#F7F1DC);border:1px solid #CFE6DC;border-radius:16px;padding:12px 14px;margin-bottom:14px}.psum .pi{flex:none;width:44px;height:44px;border-radius:13px;background:#fff;display:grid;place-items:center;font-size:1.4rem;box-shadow:var(--sh)}.psum div{flex:1;min-width:0}.psum b{display:block}.psum small{color:var(--mu)}.psum strong{font:900 1.4rem Inter,sans-serif;color:var(--jd)}
+.cmpw{overflow:auto}.cmp{min-width:620px}.cmp th{text-align:center;font:800 .84rem Inter,sans-serif;letter-spacing:0;text-transform:none;color:var(--ink);padding:12px 8px}.cmp th small{display:block;color:var(--mu);font-weight:600}
+.cmp td{text-align:center;font-size:.85rem}.cmp td.rl{text-align:left;color:#2D3C35;font-weight:600}.cmp td.rl span{margin-right:6px}.cmp .rc{background:linear-gradient(180deg,#FFF9E6,#FFF4D2)}.cmp th.rc{border-radius:14px 14px 0 0}
+.cmp .x{color:#C0392B;font-weight:800}.cmp .ck2{color:var(--jd);font-weight:900;font-size:1.05rem}
+.fq{border:1px solid var(--bd);border-radius:14px;padding:0 14px;margin-top:8px;background:#FBFDFC}.fq summary{cursor:pointer;font-weight:700;padding:13px 0;list-style:none}.fq summary::-webkit-details-marker{display:none}.fq summary:after{content:"+";float:right;font-weight:900;color:var(--jd)}.fq[open] summary:after{content:"−"}.fq p{margin:0 0 14px}
+@media(max-width:900px){.plan.rec{transform:none}.plan.rec:hover{transform:none}.trust{grid-template-columns:1fr}}
 </style></head><body>
 <div class="top"><img class="lg" id="lg" alt="SHEIBIS"><div class="tt"><b>SHEIBIS Business</b><small id="who">Cambia tu cuenta a negocio</small></div><span class="pill on" id="bp" style="display:none"></span><button class="btn s" id="out" style="display:none">Cerrar sesión</button></div>
 <div class="wrap" id="v"></div>
 <script>
-var URL_API='https://script.google.com/macros/s/AKfycbx7GVkx2paGQk9Xpp3KoxUVVKwwT7rQzNzgFExz0owA5KpVb9NiXR5rPw-6dHWv9TJW/exec',MODE='__MODE__';
+var URL_API='https://script.google.com/macros/s/AKfycbyOSIDfj5jFofZfpNOgRqdE-Ku4yAEXmhh_iaKaQYZ3D_wasr3N_mZ385WbxnDyRnt1/exec',MODE='__MODE__';
 var LOGO='';try{var LE=parent.document.getElementById('sbLogoMaster');LOGO=(LE&&LE.src)||parent.SB_LOGO_SRC||''}catch(_){}
 var WA='49968121';
 var PAY_BANKS=['BI','Banrural','Zigi','Fri'];
 var PAY_ACCOUNTS={};/* Opcional: {BI:'Cuenta BI 000-000000-0 · SHEIBIS'}. Si un banco queda vacío, el panel pide los datos por WhatsApp. */
-var SK='sbBizSession.v1',AK='sbBizAdminKey.v1';
-var S={token:'',estado:'',store:null,cats:[],prods:[],tab:'prod',edit:null,adminKey:'',planes:null,pago:false,ultimo:null,nueva:false,negocio:'',email:'',retry:0,trialDias:5,goPlan:false,at:'req'};
+var ESTADOS=['pendiente','confirmado','en preparacion','enviado','entregado','cancelado'];
+var SK='sbBizSession.v1',AK='sbBizAdminKey.v1',SH='sbBizShared.v1';
+var S={token:'',estado:'',store:null,cats:[],prods:[],orders:[],ostats:{},tab:'home',adminKey:'',planes:null,pago:false,ultimo:null,nueva:false,negocio:'',email:'',nombre:'',retry:0,trialDias:5,goPlan:false,at:'req',pf:'all',pq:'',of:'all'};
 var POLL=0;
 function $(i){return document.getElementById(i)}
 function steps(n){var N=['Tu cuenta','Términos','Revisión'];return'<div class="stl">Paso '+n+' de 3 · '+N[n-1]+'</div><div class="steps">'+[1,2,3].map(function(i){return'<div class="st'+(i<=n?' on':'')+'"></div>'}).join('')+'</div>'}
 function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function q(n){return Math.round(n*100)/100}
+function mq(n){return'Q'+Number(q(Number(n)||0)).toLocaleString('es-GT',{maximumFractionDigits:2})}
 function fdate(v){if(!v)return'—';var d=new Date(v);return isNaN(d.getTime())?'—':d.toLocaleDateString('es-GT',{day:'2-digit',month:'short',year:'numeric'})}
+function fdt(v){var d=new Date(v);return isNaN(d.getTime())?'':d.toLocaleDateString('es-GT',{day:'2-digit',month:'short'})+' · '+d.toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'})}
 function lsGet(k,s){try{return JSON.parse((s?sessionStorage:localStorage).getItem(k)||'null')}catch(_){return null}}
 function lsSet(k,v,s){try{(s?sessionStorage:localStorage).setItem(k,JSON.stringify(v))}catch(_){}}
 function lsDel(k,s){try{(s?sessionStorage:localStorage).removeItem(k)}catch(_){}}
@@ -15192,27 +15285,36 @@ catch(_){var ne=new Error('No hay conexión con SHEIBIS. Revisa tu internet e in
 try{j=await r.json()}catch(_){var pe=new Error('El servidor no respondió correctamente. Inténtalo de nuevo.');pe.net=1;throw pe}
 if(!j.ok){var e=new Error(j.error||'Error');if(/sesión venció/i.test(e.message))e.expired=1;throw e}
 return j}
-function say(m,ok){var e=document.createElement('div');e.className='toast '+(ok?'ok':'err');e.textContent=m;document.body.appendChild(e);setTimeout(function(){e.classList.add('out')},3800);setTimeout(function(){e.remove()},4300);
+function say(m,ok){document.querySelectorAll('.toast').forEach(function(t){t.remove()});var e=document.createElement('div');e.className='toast '+(ok?'ok':'err');e.textContent=m;document.body.appendChild(e);setTimeout(function(){e.classList.add('out')},3800);setTimeout(function(){e.remove()},4300);
 if(/sesión venció/i.test(m)&&S.token&&MODE!=='admin')setTimeout(function(){endSession('Tu sesión venció. Inicia sesión de nuevo.')},900)}
 function sync(){try{parent.postMessage({sbProdSaved:1},'*')}catch(_){}}
-function tell(){try{var st=S.store;parent.postMessage({sbBiz:{estado:S.estado,negocio:S.negocio,store:st?{nombre:st.nombre,estado:st.estado,dias:st.dias,plan:st.plan,planNombre:st.planNombre,origen:st.origen}:null}},'*')}catch(_){}}
+function tell(){try{var st=S.store;parent.postMessage({sbBiz:{estado:S.estado,negocio:S.negocio,store:st?{nombre:st.nombre,estado:st.estado,dias:st.dias,plan:st.plan,planNombre:st.planNombre,origen:st.origen,trialFin:st.trialFin,creado:st.creado}:null}},'*')}catch(_){}}
 function wrap(h){$('v').innerHTML=h}
 function bootCard(m){return'<div class="card center boot"><div class="spin"></div><p>'+m+'</p></div>'}
 function stopPoll(){if(POLL){clearInterval(POLL);POLL=0}}
+/* ---------- Ventanas propias (más claras que los avisos del navegador) ---------- */
+function modal(html,cls){var d=document.createElement('div');d.className='modal';d.innerHTML='<div class="mbox '+(cls||'')+'">'+html+'</div>';document.body.appendChild(d);return d}
+function askConfirm(msg,ok,danger){return new Promise(function(res){var d=modal('<div class="em">'+(danger?'🗑️':'❓')+'</div><h3>'+esc(msg)+'</h3><div class="two"><button class="btn s" id="c0">Cancelar</button><button class="btn'+(danger?' red':'')+'" id="c1">'+esc(ok||'Sí, continuar')+'</button></div>');
+d.onclick=function(e){if(e.target===d){d.remove();res(false)}};d.querySelector('#c0').onclick=function(){d.remove();res(false)};d.querySelector('#c1').onclick=function(){d.remove();res(true)}})}
+function askText(title,val,hint,type){return new Promise(function(res){var d=modal('<h3>'+esc(title)+'</h3>'+(hint?'<p>'+esc(hint)+'</p>':'')+'<input id="at" type="'+(type||'text')+'" value="'+esc(val||'')+'" style="margin:6px 0 16px"><div class="two"><button class="btn s" id="c0">Cancelar</button><button class="btn" id="c1">Guardar</button></div>');
+var inp=d.querySelector('#at');inp.focus();inp.onkeydown=function(e){if(e.key==='Enter')d.querySelector('#c1').click()};
+d.onclick=function(e){if(e.target===d){d.remove();res(null)}};d.querySelector('#c0').onclick=function(){d.remove();res(null)};d.querySelector('#c1').onclick=function(){var v=inp.value;d.remove();res(v)}})}
+function upsell(msg,plan){var d=modal('<div class="em">🔒</div><h3>Función del plan '+esc(plan||'Profesional')+'</h3><p>'+esc(msg)+'</p><div class="two"><button class="btn s" id="c0">Ahora no</button><button class="btn gold" id="c1">Ver planes</button></div>');
+d.querySelector('#c0').onclick=function(){d.remove()};d.querySelector('#c1').onclick=function(){d.remove();S.tab='plan';draw();scrollTo(0,0)}}
 /* ---------- Barra superior: estado y cerrar sesión ---------- */
 function setTop(){var o=$('out'),b=$('bp'),w=$('who'),st=S.store;
 if(MODE==='admin'){w.textContent='Administrador · SHEIBIS Business';b.style.display='none';o.style.display=S.adminKey?'':'none';return}
 if(!S.token){w.textContent='Cambia tu cuenta a negocio';b.style.display='none';o.style.display='none';return}
 w.textContent=S.email||'';o.style.display='';
-if(S.estado==='aprobada'&&st){var live=st.estado==='activa'||st.estado==='prueba';b.style.display='';b.className='pill '+(live?'on':'warn');b.innerHTML='<i></i>'+(live?'Cuenta Business activa':(st.origen==='plan'?'Suscripción vencida':'Plan gratuito expirado'))}
+if(S.estado==='aprobada'&&st){var live=st.estado==='activa'||st.estado==='prueba';b.style.display='';b.className='pill '+(live?'on':'warn');b.innerHTML='<i></i><span class="pl">'+(live?'Cuenta Business activa':(st.origen==='plan'?'Suscripción vencida':'Plan gratuito expirado'))+'</span><span class="ps">'+(live?'Activa':'Vencida')+'</span>'}
 else if(S.estado==='suspendida'){b.style.display='';b.className='pill bad';b.innerHTML='<i></i>Negocio suspendido'}
 else b.style.display='none'}
 function fixStore(st){if(!st||st.estado!=='prueba')return st;var cr=st.creado?new Date(st.creado).getTime():0,tf=st.trialFin?new Date(st.trialFin).getTime():0,cap=cr?cr+S.trialDias*864e5:0;
 if(cap&&(!tf||tf>cap)){tf=cap;st.trialFin=new Date(cap).toISOString()}
 if(tf){var d=Math.ceil((tf-Date.now())/864e5);st.dias=Math.max(0,Math.min(d,S.trialDias));if(d<=0){st.estado='vencida';st.origen='prueba'}}return st}
-function applyAuth(r){S.estado=r.estado;if(r.trialDias)S.trialDias=r.trialDias;S.store=fixStore(r.store||null);S.planes=r.planes||S.planes;S.pago=!!r.pagoPendiente;S.ultimo=r.ultimoPago||null;S.nueva=r.nueva||false;S.negocio=r.negocio||'';if(r.email)S.email=r.email;if(r.trialDias)S.trialDias=r.trialDias;setTop();tell()}
+function applyAuth(r){S.estado=r.estado;if(r.trialDias)S.trialDias=r.trialDias;S.store=fixStore(r.store||null);S.planes=r.planes||S.planes;S.pago=!!r.pagoPendiente;S.ultimo=r.ultimoPago||null;S.nueva=r.nueva||false;S.negocio=r.negocio||'';if(r.email)S.email=r.email;if(r.nombre)S.nombre=r.nombre;setTop();tell()}
 async function reloadMe(){var r=await api('bizMe');applyAuth(r);return r}
-function endSession(msg){var em=S.email;lsDel(SK);S.token='';S.estado='';S.store=null;S.nueva=false;S.pago=false;S.ultimo=null;S.goPlan=false;S.tab='prod';stopPoll();setTop();login(msg,em)}
+function endSession(msg){var em=S.email;lsDel(SK);S.token='';S.estado='';S.store=null;S.nueva=false;S.pago=false;S.ultimo=null;S.goPlan=false;S.tab='home';S.nombre='';stopPoll();setTop();login(msg,em)}
 /* ---------- 0. Arranque: si ya hay sesión guardada NO se piden credenciales ---------- */
 async function boot(){
 if(MODE==='admin')return adminBoot();
@@ -15226,7 +15328,7 @@ login(null,s&&s.email)}
 /* ---------- 1. Entrar con la cuenta SHEIBIS (solo la primera vez) ---------- */
 function login(msg,em){
 if(!em){var ss=lsGet('sheibis_session');em=(ss&&ss.user&&ss.user.email)||''}
-wrap('<div class="split"><aside class="brandp">'+(LOGO?'<img class="biglogo" src="'+LOGO+'" alt="SHEIBIS">':'')+'<h1>Vende en SHEIBIS</h1><p>Abre tu negocio dentro de la tienda y llega a todos nuestros clientes.</p><ul><li class="g">5 días de prueba gratis, sin pagar nada</li><li>Tus catálogos y subcatálogos, publicados al instante</li><li>Precios y descuentos automáticos</li><li>Pedidos y ventas en un solo panel</li></ul></aside><div class="card form">'+steps(1)+'<h2>Cambiar a SHEIBIS Business</h2><p>Ingresa los datos de tu cuenta SHEIBIS. <b>Solo lo haces una vez:</b> tu sesión queda guardada en este dispositivo y puedes cerrarla cuando quieras.</p>'+(msg?'<div class="err" id="lerr">'+esc(msg)+'</div>':'')+'<label>Correo de tu cuenta SHEIBIS</label><input id="em" type="email" autocomplete="username" value="'+esc(em||'')+'"><label>Contraseña</label><div class="pw"><input id="pw" type="password" autocomplete="current-password"><button type="button" id="eye" title="Mostrar u ocultar">👁</button></div><div style="margin-top:18px"><button class="btn" id="go" style="width:100%">Continuar</button></div></div></div>');
+wrap('<div class="split"><aside class="brandp">'+(LOGO?'<img class="biglogo" src="'+LOGO+'" alt="SHEIBIS">':'')+'<h1>Vende en SHEIBIS</h1><p>Abre tu negocio dentro de la tienda y llega a todos nuestros clientes.</p><ul><li class="g">5 días de prueba gratis, sin pagar nada</li><li>Tus catálogos y subcatálogos, publicados al instante</li><li>Precios y descuentos automáticos</li><li>Pedidos, ventas y estadísticas en un solo panel</li></ul></aside><div class="card form">'+steps(1)+'<h2>Cambiar a SHEIBIS Business</h2><p>Ingresa los datos de tu cuenta SHEIBIS. <b>Solo lo haces una vez:</b> tu sesión queda guardada en este dispositivo y puedes cerrarla cuando quieras.</p>'+(msg?'<div class="err" id="lerr">'+esc(msg)+'</div>':'')+'<label>Correo de tu cuenta SHEIBIS</label><input id="em" type="email" autocomplete="username" value="'+esc(em||'')+'"><label>Contraseña</label><div class="pw"><input id="pw" type="password" autocomplete="current-password"><button type="button" id="eye" title="Mostrar u ocultar">👁</button></div><div style="margin-top:18px"><button class="btn" id="go" style="width:100%">Continuar</button></div></div></div>');
 $('eye').onclick=function(){var p=$('pw');p.type=p.type==='password'?'text':'password'};
 function enter(ev){if(ev.key==='Enter')$('go').click()}$('em').onkeydown=enter;$('pw').onkeydown=enter;
 if(em)$('pw').focus();
@@ -15259,11 +15361,17 @@ $('tb').onscroll=function(){if(this.scrollTop+this.clientHeight>=this.scrollHeig
 $('sd').onclick=async function(){this.disabled=true;try{await api('bizRequest',{negocio:$('nn').value.trim(),acepto:true});S.negocio=$('nn').value.trim();S.estado='pendiente';S.retry=0;S.nueva=false;tell();route()}catch(e){say(e.message);this.disabled=false}}}
 /* ---------- 3. Panel del negocio ---------- */
 function locked(){var st=S.store;return!!st&&st.estado!=='activa'&&st.estado!=='prueba'}
+function lim(){var l=S.store&&S.store.limites;return l||{prod:25,cats:6,dest:3,stats:0,exp:0,key:'basico'}}
+function pendCount(){return S.orders.filter(function(o){return o.estado==='pendiente'}).length}
+function validOrders(){return S.orders.filter(function(o){return o.estado!=='cancelado'})}
+function totalVentas(){return validOrders().reduce(function(a,o){return a+(Number(o.total)||0)},0)}
+async function loadData(){var r=await Promise.all([api('bizCatList'),api('saasProdList'),api('saasOrderList').catch(function(){return{orders:[],stats:{}}})]);S.cats=r[0].items;S.prods=r[1].items;S.orders=r[2].orders||[];S.ostats=r[2].stats||{}}
+async function refresh(){await loadData();draw()}
 async function dash(){try{try{parent.postMessage({sbRole:'NEGOCIO'},'*')}catch(_){}
-var a=await api('bizCatList'),b=await api('saasProdList');S.cats=a.items;S.prods=b.items;S.edit=null;
-if(S.goPlan){S.goPlan=false;if(locked())S.tab='plan'}
+await loadData();if(S.goPlan){S.goPlan=false;S.tab=locked()?'plan':'home'}
 draw();if(S.nueva==='aprobada')welcome()}
 catch(e){wrap('<div class="err">'+esc(e.message)+'</div>')}}
+var TABS=[['home','🏠','Inicio','Inicio'],['prod','🛍️','Productos','Productos'],['cat','📚','Catálogos','Catálogos'],['ped','📦','Pedidos','Pedidos'],['stat','📊','Estadísticas','Datos'],['plan','💎','Mi plan','Plan']];
 function heroHtml(){var st=S.store,live=!locked(),total=st.estado==='prueba'?S.trialDias:30,pct=live?Math.max(5,Math.min(100,Math.round(st.dias/total*100))):0;
 var badge=live?'<span class="okb"><i></i>CUENTA BUSINESS ACTIVA</span>':'<span class="okb off"><i></i>'+(st.origen==='plan'?'SUSCRIPCIÓN VENCIDA':'PLAN GRATUITO EXPIRADO')+'</span>';
 var line=live?(st.estado==='prueba'?'Prueba gratuita · termina el '+fdate(st.trialFin):'Plan '+esc(st.planNombre)+' · renueva antes del '+fdate(st.vence)):'Elige un plan de suscripción para volver a publicar productos.';
@@ -15271,93 +15379,235 @@ return'<div class="hero"><div class="hl">'+badge+'<h2>'+esc(st.nombre)+'</h2><p>
 function bannerHtml(){var st=S.store,h='';
 if(S.pago)h+='<div class="note info">⏳ <span><b>Tu pago está en revisión.</b> Cuando el administrador lo apruebe, tu plan se activa por 30 días.</span></div>';
 else if(S.ultimo&&S.ultimo.estado==='rechazado')h+='<div class="note bad">❌ <span>Tu último pago fue rechazado. Revisa la referencia y envíalo de nuevo.</span><button class="btn s" data-go="plan">Ver planes</button></div>';
-if(st.estado==='prueba')h+='<div class="note gift">🎁 <span><b>Prueba gratuita:</b> te quedan '+st.dias+' día(s). Al terminar, elige un plan de suscripción mensual para seguir publicando.</span><button class="btn s" data-go="plan">Ver planes</button></div>';
+if(st.estado==='prueba'&&S.tab!=='home')h+='<div class="note gift">🎁 <span><b>Prueba gratuita:</b> te quedan '+st.dias+' día(s). Después elige un plan mensual para seguir publicando.</span><button class="btn s" data-go="plan">Ver planes</button></div>';
+else if(st.estado==='prueba')h+='<div class="note gift">🎁 <span>Estás en tu <b>prueba gratuita</b> con las funciones del plan Profesional. Al terminar elige un plan mensual.</span><button class="btn s" data-go="plan">Ver planes</button></div>';
 else if(st.estado==='activa'&&st.dias<=5)h+='<div class="note warn">🔔 <span>Tu suscripción vence en '+st.dias+' día(s). Renueva ahora y se suman 30 días a tu fecha de vencimiento.</span><button class="btn s gold" data-go="plan">Renovar</button></div>';
-else if(st.estado==='vencida')h+='<div class="note bad">🔒 <span><b>'+(st.origen==='plan'?'Tu suscripción venció.':'Tu plan gratuito expiró.')+'</b> No puedes agregar productos hasta elegir un plan de suscripción. Mientras tanto tus productos no se muestran en la tienda.</span><button class="btn s gold" data-go="plan">Elegir plan</button></div>';
+else if(st.estado==='vencida')h+='<div class="note bad">🔒 <span><b>'+(st.origen==='plan'?'Tu suscripción venció.':'Tu plan gratuito expiró.')+'</b> No puedes agregar productos hasta elegir un plan. Mientras tanto tus productos no se muestran en la tienda.</span><button class="btn s gold" data-go="plan">Elegir plan</button></div>';
 return h}
-function bindGo(){document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){S.tab=b.dataset.go;S.edit=null;draw();scrollTo(0,0)}})}
-function draw(){var T=[['prod','🛍️','Productos'],['cat','📚','Catálogos'],['ped','📦','Pedidos'],['plan','💎','Mi plan']];
-wrap(heroHtml()+bannerHtml()+'<div class="app"><div class="main" id="mn"></div><div class="menu">'+T.map(function(t){return'<button data-t="'+t[0]+'" class="'+(S.tab===t[0]?'on':'')+'"><span>'+t[1]+'</span>'+t[2]+'</button>'}).join('')+'</div></div>');
-document.querySelectorAll('.menu button').forEach(function(b){b.onclick=function(){S.tab=b.dataset.t;S.edit=null;draw()}});bindGo();
-({prod:drawProd,cat:drawCat,ped:drawPed,plan:drawPlan})[S.tab]();
-if(locked()&&(S.tab==='prod'||S.tab==='cat'))lockUI()}
-function lockUI(){var m=$('mn');if(!m)return;m.classList.add('locked');var c=m.querySelector('.card');
-if(c)c.outerHTML='<div class="card lockc"><div class="lk">🔒</div><h3>Agregar está bloqueado</h3><p>'+(S.store.origen==='plan'?'Tu suscripción venció.':'Tu plan gratuito expiró.')+' Elige un plan de suscripción para volver a agregar productos y catálogos.</p><button class="btn gold" data-go="plan">Elegir mi plan</button></div>';bindGo()}
-function welcome(){var st=S.store;document.body.insertAdjacentHTML('beforeend','<div class="modal" id="wm"><div class="mbox"><div class="em">🎉</div><span class="okb"><i></i>CUENTA BUSINESS ACTIVA</span><h2>¡Tu solicitud fue aprobada!</h2><p>Tu negocio <b>'+esc(st.nombre)+'</b> ya está activo en SHEIBIS. Tienes <b>'+st.dias+' días gratis</b> para publicar tus productos. Al terminar, elige un plan de suscripción mensual para seguir vendiendo.</p><button class="btn" id="wmgo" style="width:100%">Empezar a vender</button></div></div>');
-$('wmgo').onclick=function(){$('wm').remove();ack();tell()}}
+function bindGo(){document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){S.tab=b.dataset.go;draw();scrollTo(0,0)}})}
+function draw(){var pc=pendCount();
+wrap(bannerHtml()+'<div class="app"><div class="main" id="mn"></div><nav class="menu" id="nav">'+TABS.map(function(t){return'<button data-t="'+t[0]+'" class="'+(S.tab===t[0]?'on':'')+'"><span class="ic">'+t[1]+'</span><span class="lbl">'+t[2]+'</span><span class="lbs">'+t[3]+'</span>'+(t[0]==='ped'&&pc?'<em class="bd">'+pc+'</em>':'')+'</button>'}).join('')+'</nav></div>');
+document.querySelectorAll('#nav button').forEach(function(b){b.onclick=function(){S.tab=b.dataset.t;draw();scrollTo(0,0)}});bindGo();
+({home:drawHome,prod:drawProd,cat:drawCat,ped:drawPed,stat:drawStat,plan:drawPlan})[S.tab]()}
+function welcome(){var st=S.store;modal('<div class="em">🎉</div><span class="okb"><i></i>CUENTA BUSINESS ACTIVA</span><h2>¡Tu solicitud fue aprobada!</h2><p>Tu negocio <b>'+esc(st.nombre)+'</b> ya está activo en SHEIBIS. Tienes <b>'+st.dias+' días gratis</b> con las funciones del plan Profesional. Al terminar, elige un plan mensual para seguir vendiendo.</p><button class="btn" id="wmgo" style="width:100%">Empezar a vender</button>').id='wm';
+$('wmgo').onclick=function(){document.getElementById('wm')&&document.getElementById('wm').remove();ack();tell()}}
+function meter(used,max){var p=max?Math.min(100,Math.round(used/max*100)):0;return'<div class="mt"><span class="'+(p>=90?'hot':'')+'" style="width:'+p+'%"></span></div>'}
 function tops(){return S.cats.filter(function(c){return!c.padreId})}function subs(id){return S.cats.filter(function(c){return c.padreId===id})}
 function path(id){var c=S.cats.filter(function(x){return x.id===id})[0];if(!c)return id?'(sin catálogo)':'—';var p=c.padreId?S.cats.filter(function(x){return x.id===c.padreId})[0]:null;return(p?p.nombre+' › ':'')+c.nombre}
-/* Catálogos y subcatálogos */
-function drawCat(){var o='<option value="">— Catálogo principal —</option>'+tops().map(function(c){return'<option value="'+c.id+'">Subcatálogo de: '+esc(c.nombre)+'</option>'}).join('');
-var l=tops().map(function(c){return'<div class="row"><div class="grow"><b>'+esc(c.nombre)+'</b></div><button class="btn s" data-r="'+c.id+'">Renombrar</button><button class="btn s r" data-d="'+c.id+'">Eliminar</button></div>'+subs(c.id).map(function(s){return'<div class="row sub"><div class="grow">↳ '+esc(s.nombre)+'</div><button class="btn s" data-r="'+s.id+'">Renombrar</button><button class="btn s r" data-d="'+s.id+'">Eliminar</button></div>'}).join('')}).join('')||'<p>Aún no tienes catálogos. Crea el primero arriba.</p>';
-$('mn').innerHTML='<div class="card"><h3>Agregar catálogo o subcatálogo</h3><div class="grid"><div><label>Nombre</label><input id="cn" maxlength="40" placeholder="Ej: Postres"></div><div><label>¿Dónde va?</label><select id="cp">'+o+'</select></div></div><div style="margin-top:12px"><button class="btn" id="ca">Agregar</button></div></div><div class="card"><h3>Tus catálogos</h3>'+l+'</div>';
-$('ca').onclick=async function(){try{await api('bizCatSave',{cat:{nombre:$('cn').value,padreId:$('cp').value}});sync();dash()}catch(e){say(e.message)}};
-document.querySelectorAll('[data-r]').forEach(function(b){b.onclick=async function(){var c=S.cats.filter(function(x){return x.id===b.dataset.r})[0],n=prompt('Nuevo nombre',c.nombre);if(!n)return;try{await api('bizCatSave',{cat:{id:c.id,nombre:n}});sync();dash()}catch(e){say(e.message)}}});
-document.querySelectorAll('[data-d]').forEach(function(b){b.onclick=async function(){if(!confirm('¿Eliminar?'))return;try{await api('bizCatDelete',{id:b.dataset.d});sync();dash()}catch(e){say(e.message)}}})}
-/* Productos */
+function shopMsg(){var b='';try{b=parent.location.origin+parent.location.pathname}catch(_){}return'¡Ya vendo en SHEIBIS! 🛍️ Entra y mira los productos de mi negocio «'+(S.store.nombre||'')+'»: '+b}
+/* ---------- INICIO ---------- */
+function drawHome(){var st=S.store,L=lim(),pend=pendCount(),first=(S.nombre||'').split(' ')[0],low=S.prods.filter(function(p){return p.disponible!==false&&Number(p.stock)<=3});
+var shared=!!lsGet(SH),done=[true,S.cats.length>0,S.prods.length>0,shared],nd=done.filter(Boolean).length;
+var steps=[['Cuenta Business aprobada','Ya eres parte de SHEIBIS.',null],['Crea tu primer catálogo','Es como una categoría. Ej: Postres, Ropa, Bebidas.','cat'],['Publica tu primer producto','Agrega foto, nombre y precio. Se ve al instante en la tienda.','prod'],['Cuéntales a tus clientes','Comparte tu negocio por WhatsApp.','share']];
+$('mn').innerHTML=heroHtml()+'<h2 class="hi">Hola'+(first?', '+esc(first):'')+' 👋</h2><p class="sb">Este es el resumen de tu negocio. Todo lo que hagas aquí se ve en la tienda de SHEIBIS al instante.</p>'
++'<div class="kpis"><button class="kpi" data-go="prod"><span>🛍️</span><b>'+S.prods.length+'<small>/'+(L.prod||'∞')+'</small></b><em>Productos</em>'+meter(S.prods.length,L.prod)+'</button>'
++'<button class="kpi'+(pend?' alert':'')+'" data-go="ped"><span>📦</span><b>'+pend+'</b><em>Pedidos por atender</em></button>'
++'<button class="kpi" data-go="stat"><span>💰</span><b>'+mq(totalVentas())+'</b><em>Ventas</em></button>'
++'<button class="kpi" data-go="plan"><span>⏳</span><b>'+(locked()?0:st.dias)+'<small> día'+(st.dias===1?'':'s')+'</small></b><em>de cobertura</em></button></div>'
++(nd<4?'<div class="card"><div class="ch"><h3>Empieza aquí</h3><span class="tag">'+nd+' de 4</span></div>'+meter(nd,4)+steps.map(function(s,i){return'<div class="ck'+(done[i]?' on':'')+'"><span class="cb">'+(done[i]?'✓':i+1)+'</span><div class="grow"><b>'+s[0]+'</b><small>'+s[1]+'</small></div>'+(!done[i]&&s[2]?'<button class="btn s'+(i===nd?' pri':'')+'" data-ck="'+s[2]+'">'+(s[2]==='share'?'Compartir':'Ir')+'</button>':'')+'</div>'}).join('')+'</div>':'')
++(low.length?'<div class="note warn" style="align-items:flex-start">⚠️ <span><b>Poco stock:</b> '+low.slice(0,4).map(function(p){return esc(p.nombre)+' ('+(Number(p.stock)||0)+')'}).join(', ')+(low.length>4?' y '+(low.length-4)+' más':'')+'</span><button class="btn s" data-go="prod">Revisar</button></div>':'')
++'<div class="qa"><button class="qb" id="qa1"><span>➕</span><b>Agregar producto</b></button><button class="qb" data-go="cat"><span>📚</span><b>Nuevo catálogo</b></button><button class="qb" data-go="ped"><span>📦</span><b>Ver pedidos</b></button><button class="qb" id="qa2"><span>💬</span><b>Compartir mi negocio</b></button></div>';
+bindGo();
+$('qa1').onclick=function(){if(!S.cats.length){say('Primero crea un catálogo.');S.tab='cat';draw();return}S.tab='prod';draw();openForm()};
+function share(){lsSet(SH,1);var t=shopMsg();var d=modal('<div class="em">💬</div><h3>Comparte tu negocio</h3><p>Este mensaje invita a tus clientes a ver tus productos en SHEIBIS.</p><textarea id="sm" rows="4" readonly>'+esc(t)+'</textarea><div class="two" style="margin-top:12px"><button class="btn s" id="sc">📋 Copiar</button><button class="btn" id="sw">WhatsApp</button></div><button class="btn s" id="sx" style="margin-top:8px;width:100%">Cerrar</button>');
+d.querySelector('#sc').onclick=function(){var a=d.querySelector('#sm');a.select();try{document.execCommand('copy');say('Mensaje copiado.',1)}catch(_){say('Selecciona el texto y cópialo.')}};
+d.querySelector('#sw').onclick=function(){window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(t),'_blank')};d.querySelector('#sx').onclick=function(){d.remove();if(S.tab==='home')drawHome()}}
+$('qa2').onclick=share;
+document.querySelectorAll('[data-ck]').forEach(function(b){b.onclick=function(){var g=b.dataset.ck;if(g==='share')return share();S.tab=g;draw();if(g==='prod'&&S.cats.length)openForm()}})}
+/* ---------- PRODUCTOS ---------- */
+function qual(p){var t=[[p.foto,30,'Agrega una foto (+30 pts)'],[String(p.descripcion||'').trim().length>=30,20,'Escribe una descripción de 30+ letras (+20 pts)'],[Number(p.stock)>0,15,'Repón el stock (+15 pts)'],[p.disponible!==false,10,'Muéstralo en la tienda (+10 pts)'],[p.categoria,10,'Elige un catálogo (+10 pts)'],[Number(p.precio)>0,10,'Agrega el precio (+10 pts)'],[String(p.nombre||'').trim().length>=8,5,'Usa un nombre más descriptivo (+5 pts)']],s=0,tip='';t.forEach(function(x){if(x[0])s+=x[1];else if(!tip)tip=x[2]});return{s:s,tip:tip}}
+function healthHtml(){var L=lim(),lv=Number(L.ins)||0,P=S.prods,n=function(fn){return P.filter(fn).length},
+vi=n(function(p){return p.disponible!==false&&Number(p.stock)>0}),lo=n(function(p){return Number(p.stock)>0&&Number(p.stock)<=3}),ag=n(function(p){return Number(p.stock)<=0}),oc=n(function(p){return p.disponible===false}),sf=n(function(p){return!p.foto}),
+bad=P.filter(function(p){return qual(p).s<80}).sort(function(a,b){return qual(a).s-qual(b).s}),avg=P.length?Math.round(P.reduce(function(a,p){return a+qual(p).s},0)/P.length):0,agv=n(function(p){return Number(p.stock)<=0&&p.disponible!==false});
+var C=[['vis','✅ Visibles',vi],['lo','⚠️ Poco stock',lo],['ag','🚫 Agotados',ag],['oc','🙈 Ocultos',oc],['sf','📷 Sin foto',sf]];if(lv>=1)C.push(['mj','🩺 Por mejorar',bad.length]);
+var h='<div class="card"><div class="ch"><div><h3>🩺 Salud de tus productos</h3><p style="margin:0">'+(lv>=1?'Calidad promedio: <b>'+avg+'/100</b> · '+(avg>=80?'¡Excelente!':(avg>=50?'Vas bien, hay mejoras fáciles':'Hay mucho por mejorar')):'Resumen rápido de tu catálogo')+'</p></div></div>'+(lv>=1?meter(avg,100):'')+'<div class="chips">'+C.map(function(c){return'<button class="chip'+(S.pf===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+' · '+c[2]+'</button>'}).join('')+'</div>';
+if(lv>=2&&agv)h+='<div class="note warn" style="margin:12px 0 0">🚫 <span><b>'+agv+' producto(s) agotado(s) siguen visibles.</b> Ocúltalos con un clic en Acciones masivas.</span></div>';
+if(lv>=1&&bad.length)h+='<h4 style="margin:14px 0 4px">Mejoras rápidas</h4>'+bad.slice(0,3).map(function(p){return'<div class="tl"><span class="n">'+qual(p).s+'</span><span class="grow"><b>'+esc(p.nombre)+'</b><br><small>'+qual(p).tip+'</small></span><button class="btn s" data-e="'+p.id+'">Mejorar</button></div>'}).join('');
+if(lv<1)h+='<div class="note info" style="margin:12px 0 0">🔒 <span>Puntaje de calidad y consejos por producto: desde el plan <b>Profesional</b>.</span><button class="btn s gold" data-go="plan">Ver planes</button></div>';
+h+='</div>';
+if(L.bulk)h+='<div class="card"><h3>⚡ Acciones masivas · Empresarial</h3><p>Cambia todo tu catálogo con un clic.</p><label>¿A qué catálogo?</label><select id="bk">'+catOpts('').replace('— Elige un catálogo —','Todo el catálogo')+'</select><div class="chips"><button class="chip" data-bk="hideOut">🙈 Ocultar agotados</button><button class="chip" data-bk="showStock">👁 Mostrar con stock</button><button class="chip" data-bk="promo10">🏷️ Promo −10%</button><button class="chip" data-bk="promo20">🏷️ −20%</button><button class="chip" data-bk="promo30">🏷️ −30%</button><button class="chip" data-bk="promo0">Quitar promos</button></div></div>';
+else h+='<div class="card lockc"><div class="lk">🔒</div><h3>Acciones masivas y promociones relámpago</h3><p>Oculta agotados y aplica descuentos a todo tu catálogo con un clic. Disponible en el plan Empresarial.</p><button class="btn s gold" data-go="plan">Ver planes</button></div>';
+return h}
+function stockTag(p){var s=Number(p.stock)||0;return p.disponible===false?'<span class="tag g">Oculto</span>':(s<=0?'<span class="tag b">Agotado</span>':(s<=3?'<span class="tag w">Poco stock</span>':'<span class="tag">Visible</span>'))}
+function drawProd(){var L=lim(),used=S.prods.length,lk=locked(),full=!!L.prod&&used>=L.prod,nd=S.prods.filter(function(p){return p.destacado===true}).length,qs=(S.pq||'').toLowerCase();
+var list=S.prods.filter(function(p){var s=Number(p.stock)||0;
+if(S.pf==='vis'&&!(p.disponible!==false&&s>0))return false;if(S.pf==='oc'&&p.disponible!==false)return false;if(S.pf==='ag'&&s>0)return false;if(S.pf==='de'&&p.destacado!==true)return false;if(S.pf==='lo'&&!(s>0&&s<=3))return false;if(S.pf==='sf'&&p.foto)return false;if(S.pf==='mj'&&qual(p).s>=80)return false;
+return!qs||String(p.nombre).toLowerCase().indexOf(qs)>-1});
+var F=[['all','Todos'],['vis','Visibles'],['oc','Ocultos'],['ag','Agotados'],['de','⭐ Destacados']];
+var h='<div class="card"><div class="ch"><div><h3>Tus productos</h3><p style="margin:0">'+used+' de '+(L.prod||'∞')+' productos · '+nd+' de '+(L.dest||'∞')+' destacados</p></div><button class="btn" id="np"'+(lk||full||!S.cats.length?' disabled':'')+'>➕ Agregar producto</button></div>'+meter(used,L.prod)
++(!S.cats.length?'<div class="note info" style="margin:12px 0 0">📚 <span>Antes de agregar productos, crea tu primer <b>catálogo</b> (una categoría, por ejemplo «Postres»).</span><button class="btn s" data-go="cat">Crear catálogo</button></div>':'')
++(full&&!lk?'<div class="note warn" style="margin:12px 0 0">📈 <span>Llegaste al límite de tu plan. Mejora tu plan para publicar más.</span><button class="btn s gold" data-go="plan">Ver planes</button></div>':'')
++(lk?'<div class="note bad" style="margin:12px 0 0">🔒 <span>Agregar y editar está bloqueado hasta que elijas un plan.</span><button class="btn s gold" data-go="plan">Elegir plan</button></div>':'')+'</div>'
++healthHtml()+'<div class="card"><div class="sr"><input id="ps" type="search" placeholder="🔎 Buscar producto…" value="'+esc(S.pq)+'"></div><div class="chips">'+F.map(function(f){return'<button class="chip'+(S.pf===f[0]?' on':'')+'" data-f="'+f[0]+'">'+f[1]+'</button>'}).join('')+'</div></div>';
+h+=list.length?'<div class="pg'+(lk?' locked':'')+'">'+list.map(function(p){var f=q((p.precio||0)*(1-(p.descuento||0)/100));
+return'<div class="pc"><div class="pimg">'+(p.foto?'<img src="'+esc(p.foto)+'" alt="">':'<span>🖼️</span>')+(p.destacado===true?'<em class="star">⭐</em>':'')+(Number(p.descuento)?'<em class="off">-'+Number(p.descuento)+'%</em>':'')+'</div><div class="pbody"><b>'+esc(p.nombre)+'</b><small>'+esc(path(p.categoria))+'</small><div class="pprice">'+mq(f)+(Number(p.descuento)?' <s>'+mq(p.precio)+'</s>':'')+'</div><div class="pmeta">'+stockTag(p)+(p.foto?'':' <span class="tag g">Sin foto</span>')+((Number(lim().ins)||0)>=1?' <span class="tag'+(qual(p).s>=80?'':' w')+'">'+qual(p).s+'/100</span>':'')+' <small>Stock: '+(Number(p.stock)||0)+'</small></div>'
++'<div class="pact"><button class="btn s" data-e="'+p.id+'">✏️ Editar</button><button class="btn s ic" title="'+(p.destacado===true?'Quitar destacado':'Destacar')+'" data-st="'+p.id+'">'+(p.destacado===true?'★':'☆')+'</button><button class="btn s ic" title="'+(p.disponible===false?'Mostrar en la tienda':'Ocultar de la tienda')+'" data-vi="'+p.id+'">'+(p.disponible===false?'🙈':'👁')+'</button><button class="btn s r ic" title="Eliminar" data-x="'+p.id+'">🗑</button></div></div></div>'}).join('')+'</div>'
+:'<div class="card center empty"><div class="em">🛍️</div><h3>'+(S.prods.length?'No hay productos con ese filtro':'Aún no tienes productos')+'</h3><p>'+(S.prods.length?'Prueba con otra búsqueda.':'Agrega tu primer producto para que tus clientes lo vean en SHEIBIS.')+'</p></div>';
+$('mn').innerHTML=h;bindGo();
+$('np').onclick=function(){openForm()};
+$('ps').oninput=function(){S.pq=this.value;var pos=this.selectionStart;drawProd();var i=$('ps');i.focus();try{i.setSelectionRange(pos,pos)}catch(_){}};
+document.querySelectorAll('[data-f]').forEach(function(b){b.onclick=function(){S.pf=b.dataset.f;drawProd()}});
+document.querySelectorAll('[data-bk]').forEach(function(b){b.onclick=async function(){if(lk)return say('Elige un plan para poder editar.');var k=b.dataset.bk,op=k.indexOf('promo')===0?'promo':k,pct=op==='promo'?+k.slice(5):0,c=$('bk')?$('bk').value:'',w=c?'este catálogo':'todos tus productos';
+if(!await askConfirm(op==='promo'?(pct?'¿Aplicar '+pct+'% de descuento a '+w+'?':'¿Quitar los descuentos de '+w+'?'):(op==='hideOut'?'¿Ocultar los productos agotados?':'¿Mostrar los productos que ya tienen stock?'),'Sí, aplicar'))return;
+try{var r=await api('saasProdBulk',{op:op,pct:pct,cat:c});sync();await refresh();say(r.n?r.n+' producto(s) actualizados.':'No había nada que cambiar.',1)}catch(e){say(e.message)}}});
+function byId(id){return S.prods.filter(function(x){return x.id===id})[0]}
+document.querySelectorAll('[data-e]').forEach(function(b){b.onclick=function(){if(lk)return say('Elige un plan para poder editar.');openForm(byId(b.dataset.e))}});
+document.querySelectorAll('[data-st]').forEach(function(b){b.onclick=function(){var p=byId(b.dataset.st);patch(p,{destacado:p.destacado!==true},p.destacado===true?'Quitaste el destacado.':'Producto destacado ⭐')}});
+document.querySelectorAll('[data-vi]').forEach(function(b){b.onclick=function(){var p=byId(b.dataset.vi);patch(p,{disponible:p.disponible===false},p.disponible===false?'Ahora se ve en la tienda.':'Producto oculto de la tienda.')}});
+document.querySelectorAll('[data-x]').forEach(function(b){b.onclick=async function(){var p=byId(b.dataset.x);if(!await askConfirm('¿Eliminar «'+p.nombre+'»?','Sí, eliminar',1))return;try{await api('saasProdDelete',{id:p.id});sync();await refresh();say('Producto eliminado.',1)}catch(e){say(e.message)}}})}
+async function patch(p,ch,msg){if(locked())return say('Elige un plan para poder editar.');var pr={id:p.id,nombre:p.nombre,descripcion:p.descripcion,categoria:p.categoria,precio:p.precio,descuento:p.descuento,stock:p.stock,destacado:p.destacado===true,disponible:p.disponible!==false};Object.assign(pr,ch);
+try{await api('saasProdSave',{product:pr});sync();await refresh();say(msg,1)}catch(e){say(e.message)}}
 function catOpts(sel){return'<option value="">— Elige un catálogo —</option>'+tops().map(function(c){return'<option value="'+c.id+'"'+(sel===c.id?' selected':'')+'>'+esc(c.nombre)+'</option>'+subs(c.id).map(function(s){return'<option value="'+s.id+'"'+(sel===s.id?' selected':'')+'>&nbsp;&nbsp;↳ '+esc(s.nombre)+'</option>'}).join('')}).join('')}
-function drawProd(){var p=S.edit||{descuento:0,stock:1,disponible:true},fin=q((p.precio||0)*(1-(p.descuento||0)/100));
-var h='<div class="card"><h3>'+(S.edit?'Editar producto':'Agregar producto')+'</h3>'+(tops().length?'':'<div class="err">Primero crea un catálogo en «Catálogos y subcatálogos».</div>')+'<label>Nombre</label><input id="pn" maxlength="80" value="'+esc(p.nombre||'')+'"><label>Descripción</label><textarea id="pd" rows="2" maxlength="300">'+esc(p.descripcion||'')+'</textarea><label>Catálogo / subcatálogo</label><select id="pc">'+catOpts(p.categoria)+'</select>'
-+'<div class="grid"><div><label>Precio normal (Q)</label><input id="pp" type="number" min="0" step="0.01" value="'+(p.precio||'')+'"></div><div><label>Descuento (%)</label><input id="pds" type="number" min="0" max="90" value="'+(p.descuento||0)+'"><div class="chips">'+[0,10,20,30,50].map(function(d){return'<button type="button" class="chip" data-ds="'+d+'">'+(d?d+'%':'Sin desc.')+'</button>'}).join('')+'</div></div></div>'
-+'<div class="grid"><div><label>Precio final automático (Q)</label><input id="pf" type="number" min="0" step="0.01" value="'+(fin||'')+'"></div><div><label>Stock</label><input id="ps" type="number" min="0" value="'+(p.stock||0)+'"></div></div>'
-+'<label>Foto</label><input id="pg" type="file" accept="image/*">'+(p.foto?'<img src="'+esc(p.foto)+'" style="width:70px;height:70px;object-fit:cover;border-radius:10px;margin-top:8px">':'')+'<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="pe"'+(p.destacado?' checked':'')+'> Producto destacado</label><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="pa"'+(p.disponible!==false?' checked':'')+'> Disponible para la venta</label><div style="margin-top:12px;display:flex;gap:8px"><button class="btn" id="psv">'+(S.edit?'Guardar cambios':'Publicar producto')+'</button>'+(S.edit?'<button class="btn s" id="pcx">Cancelar</button>':'')+'</div></div>';
-h+='<div class="card"><h3>Tus productos ('+S.prods.length+')</h3>'+(S.prods.map(function(x){var f=q(x.precio*(1-(x.descuento||0)/100));return'<div class="row"><img src="'+esc(x.foto||'')+'" alt=""><div class="grow"><b>'+esc(x.nombre)+'</b><br><small style="color:var(--mu)">'+esc(path(x.categoria))+' · stock '+x.stock+(x.disponible===false?' · oculto':'')+'</small></div><div class="fin">Q'+f+(x.descuento?' <small style="color:var(--mu);text-decoration:line-through">Q'+x.precio+'</small>':'')+'</div><button class="btn s" data-e="'+x.id+'">Editar</button><button class="btn s r" data-x="'+x.id+'">Eliminar</button></div>'}).join('')||'<p>Todavía no has agregado productos.</p>')+'</div>';$('mn').innerHTML=h;
-function fromPrice(){var pr=+$('pp').value||0,d=Math.min(90,Math.max(0,+$('pds').value||0));$('pf').value=pr?q(pr*(1-d/100)):''}
-$('pp').oninput=fromPrice;$('pds').oninput=fromPrice;$('pf').oninput=function(){var pr=+$('pp').value||0,f=+$('pf').value||0;if(pr>0&&f>=0&&f<=pr)$('pds').value=Math.min(90,Math.round((1-f/pr)*100))};
-document.querySelectorAll('[data-ds]').forEach(function(b){b.onclick=function(){$('pds').value=b.dataset.ds;fromPrice()}});
-$('psv').onclick=async function(){var pr={id:S.edit?S.edit.id:undefined,nombre:$('pn').value,descripcion:$('pd').value,categoria:$('pc').value,precio:+$('pp').value||0,descuento:+$('pds').value||0,stock:+$('ps').value||0,destacado:$('pe').checked,disponible:$('pa').checked};
-if(!pr.categoria)return say('Elige el catálogo donde va el producto.');if(!(pr.precio>0))return say('Escribe el precio.');this.disabled=true;try{var f=$('pg').files[0];if(f)pr.foto=await shrink(f);await api('saasProdSave',{product:pr});sync();S.edit=null;await dash();say('Producto publicado: ya se ve en la tienda.',1)}catch(e){say(e.message);this.disabled=false}};
-if($('pcx'))$('pcx').onclick=function(){S.edit=null;drawProd()};
-document.querySelectorAll('[data-e]').forEach(function(b){b.onclick=function(){S.edit=S.prods.filter(function(x){return x.id===b.dataset.e})[0];drawProd();scrollTo(0,0)}});
-document.querySelectorAll('[data-x]').forEach(function(b){b.onclick=async function(){if(!confirm('¿Eliminar este producto?'))return;try{await api('saasProdDelete',{id:b.dataset.x});sync();dash()}catch(e){say(e.message)}}})}
-function shrink(f){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,420/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var qq=.6,d=c.toDataURL('image/jpeg',qq);while(d.length>44000&&qq>.2){qq-=.1;d=c.toDataURL('image/jpeg',qq)}d.length>44000?no(new Error('La foto es muy grande.')):ok(d)};im.onerror=function(){no(new Error('Imagen no válida.'))};im.src=r.result};r.readAsDataURL(f)})}
-async function drawPed(){$('mn').innerHTML='<div class="card"><p>Cargando…</p></div>';try{var r=await api('saasOrderList');
-$('mn').innerHTML='<div class="card"><h3>Resumen</h3><p>Ventas: <b>Q'+r.stats.ventas+'</b> · Pedidos: <b>'+r.stats.pedidos+'</b> · Pendientes: <b>'+r.stats.pendientes+'</b></p></div><div class="card"><h3>Pedidos</h3>'+(r.orders.length?'<div style="overflow:auto"><table><tr><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th></tr>'+r.orders.map(function(o){return'<tr><td>'+esc(o.cliente)+'<br><small>'+esc(o.direccion||'')+'</small></td><td>'+o.items.map(function(i){return esc(i.nombre)+' ×'+i.cant}).join('<br>')+'</td><td>Q'+o.total+'</td><td><select data-o="'+o.id+'">'+r.estados.map(function(e){return'<option'+(e===o.estado?' selected':'')+'>'+e+'</option>'}).join('')+'</select></td></tr>'}).join('')+'</table></div>':'<p>Aún no tienes pedidos.</p>')+'</div>';
-document.querySelectorAll('[data-o]').forEach(function(s){s.onchange=async function(){try{await api('saasOrderState',{id:s.dataset.o,estado:s.value});say('Estado actualizado.',1)}catch(e){say(e.message)}}})}catch(e){$('mn').innerHTML='<div class="err">'+esc(e.message)+'</div>'}}
-/* ---------- Mi plan: suscripción mensual ---------- */
-function drawPlan(){var st=S.store,P=S.planes||{},live=!locked();
-var rows=[['Estado',live?(st.estado==='prueba'?'Prueba gratuita':'Activa'):(st.origen==='plan'?'Suscripción vencida':'Plan gratuito expirado')],['Plan actual',st.planNombre],['Días restantes',live?st.dias:0],[st.estado==='prueba'?'Termina el':'Vence el',fdate(st.estado==='prueba'?st.trialFin:(st.vence||st.trialFin))],['Límite de productos',st.maxProductos?st.maxProductos:'Ilimitados']];
-var cur='<div class="card"><h3>Tu cobertura</h3><div class="kv">'+rows.map(function(r){return'<div><small>'+r[0]+'</small><b>'+esc(r[1])+'</b></div>'}).join('')+'</div></div>';
-var cards=['basico','profesional','empresarial'].map(function(k){var p=P[k];if(!p)return'';var mine=st.estado==='activa'&&st.plan===k;
-return'<div class="plan'+(k==='profesional'?' rec':'')+'">'+(k==='profesional'?'<span class="rib">Más elegido</span>':'')+'<h4>'+esc(p.n)+'</h4><div class="price"><sup>Q</sup>'+p.q+'<small>/mes</small></div><ul><li>'+(p.max?'Hasta <b>'+p.max+'</b> productos':'Productos <b>ilimitados</b>')+'</li><li>Catálogos y subcatálogos</li><li>Pedidos y ventas en un panel</li><li>Visible en la tienda SHEIBIS</li></ul><button class="btn'+(k==='profesional'?' gold':'')+'" data-p="'+k+'"'+(S.pago?' disabled':'')+'>'+(mine?'Renovar este plan':'Elegir '+esc(p.n))+'</button></div>'}).join('');
-$('mn').innerHTML=cur+'<div class="card"><h3>Suscripción mensual</h3><p>Cada plan dura <b>30 días</b>. Para renovar, paga tu plan de nuevo desde aquí antes de que venza: los días se suman a tu fecha de vencimiento. Si vence, no podrás agregar productos y tu tienda deja de mostrarse hasta renovar.</p>'+(S.pago?'<div class="note info" style="margin:0">⏳ <span>Ya enviaste un pago y está en revisión.</span></div>':'')+'</div><div class="plans">'+(cards||'<p>No se pudieron cargar los planes.</p>')+'</div><div id="payBox"></div>';
+function openForm(p){var isNew=!p,L=lim();p=p||{descuento:0,stock:1,disponible:true,destacado:false,precio:''};S.fotoNew=null;
+var nd=S.prods.filter(function(x){return x.destacado===true&&(!p.id||x.id!==p.id)}).length,canStar=!L.dest||nd<L.dest||p.destacado===true;
+var d=modal('<div class="fh"><h2>'+(isNew?'Agregar producto':'Editar producto')+'</h2><button class="btn s" id="fx">✕ Cerrar</button></div><div class="fgrid"><div class="fcol">'
++'<label>Foto del producto</label><div class="drop" id="drop">'+(p.foto?'<img id="pimg" src="'+esc(p.foto)+'" alt="">':'<div class="dph" id="dph"><span>📷</span><b>Toca para elegir una foto</b><small>Una buena foto vende más</small></div><img id="pimg" alt="" style="display:none">')+'</div><input id="pg" type="file" accept="image/*" hidden>'
++'<label>Nombre del producto *</label><input id="pn" maxlength="80" placeholder="Ej: Pastel de chocolate" value="'+esc(p.nombre||'')+'">'
++'<label>¿En qué catálogo va? *</label><select id="pc">'+catOpts(p.categoria)+'</select>'
++'<label>Descripción (opcional)</label><textarea id="pd" rows="3" maxlength="300" placeholder="Cuenta algo de tu producto: tamaño, sabor, material…">'+esc(p.descripcion||'')+'</textarea></div><div class="fcol">'
++'<div class="grid"><div><label>Precio normal (Q) *</label><input id="pp" type="number" inputmode="decimal" min="0" step="0.01" value="'+(p.precio||'')+'" placeholder="0.00"></div><div><label>Descuento (%)</label><input id="pds" type="number" inputmode="numeric" min="0" max="90" value="'+(p.descuento||0)+'"></div></div>'
++'<div class="chips">'+[0,10,20,30,50].map(function(x){return'<button type="button" class="chip" data-ds="'+x+'">'+(x?x+'%':'Sin descuento')+'</button>'}).join('')+'</div>'
++'<div class="fin2" id="pfin"></div>'
++'<label>Cantidad disponible (stock)</label><div class="stp"><button type="button" class="btn s ic" data-sp="-1">−</button><input id="ps2" type="number" inputmode="numeric" min="0" value="'+(p.stock||0)+'"><button type="button" class="btn s ic" data-sp="1">+</button></div><small class="hint">Cuando llega a 0, el producto aparece como agotado.</small>'
++'<label class="sw"><input type="checkbox" id="pe"'+(p.destacado===true?' checked':'')+(canStar?'':' disabled')+'><span class="sl"></span><span>⭐ Producto destacado <small>('+(nd+(p.destacado===true?1:0))+' de '+(L.dest||'∞')+' usados)'+(canStar?'':' · límite alcanzado')+'</small></span></label>'
++'<label class="sw"><input type="checkbox" id="pa"'+(p.disponible!==false?' checked':'')+'><span class="sl"></span><span>Mostrar en la tienda <small>(si lo apagas, queda oculto)</small></span></label>'
++'<div class="pvw" id="pvw"></div></div></div><div class="fb"><button class="btn s" id="fc">Cancelar</button><button class="btn" id="fs">'+(isNew?'Publicar producto':'Guardar cambios')+'</button></div>','drawer');
+function val(i){return d.querySelector('#'+i)}
+function calc(){var pr=+val('pp').value||0,ds=Math.min(90,Math.max(0,+val('pds').value||0)),f=q(pr*(1-ds/100));
+val('pfin').innerHTML=pr>0?'<span>Precio final para tus clientes</span><b>'+mq(f)+'</b>'+(ds?'<small>Ahorran '+mq(pr-f)+' ('+ds+'%)</small>':''):'<span>Escribe el precio para ver cómo queda</span>';
+var im=val('pimg'),src=im&&im.style.display!=='none'?im.src:'';
+val('pvw').innerHTML='<small class="hint">Así lo verán tus clientes</small><div class="pc"><div class="pimg">'+(src?'<img src="'+src+'" alt="">':'<span>🖼️</span>')+(ds?'<em class="off">-'+ds+'%</em>':'')+'</div><div class="pbody"><b>'+esc(val('pn').value||'Nombre del producto')+'</b><div class="pprice">'+(pr>0?mq(f):'Q0')+(ds?' <s>'+mq(pr)+'</s>':'')+'</div></div></div>'}
+['pp','pds','pn'].forEach(function(i){val(i).oninput=calc});
+d.querySelectorAll('[data-ds]').forEach(function(b){b.onclick=function(){val('pds').value=b.dataset.ds;calc()}});
+d.querySelectorAll('[data-sp]').forEach(function(b){b.onclick=function(){var i=val('ps2');i.value=Math.max(0,(+i.value||0)+(+b.dataset.sp))}});
+val('drop').onclick=function(){val('pg').click()};
+val('pg').onchange=async function(){var f=this.files[0];if(!f)return;try{var u=await shrink(f);S.fotoNew=u;var im=val('pimg');im.src=u;im.style.display='';var ph=val('dph');if(ph)ph.style.display='none';calc()}catch(e){say(e.message)}};
+function close(){d.remove()}val('fx').onclick=close;val('fc').onclick=close;
+val('fs').onclick=async function(){var pr={id:p.id,nombre:val('pn').value.trim(),descripcion:val('pd').value,categoria:val('pc').value,precio:+val('pp').value||0,descuento:+val('pds').value||0,stock:+val('ps2').value||0,destacado:val('pe').checked,disponible:val('pa').checked};
+if(pr.nombre.length<2)return say('Escribe el nombre del producto.');if(!pr.categoria)return say('Elige el catálogo donde va el producto.');if(!(pr.precio>0))return say('Escribe el precio del producto.');
+var bt=this;bt.disabled=true;bt.textContent='Guardando…';
+try{if(S.fotoNew)pr.foto=S.fotoNew;await api('saasProdSave',{product:pr});sync();close();await refresh();say(isNew?'¡Producto publicado! Ya se ve en la tienda.':'Cambios guardados.',1)}
+catch(e){say(e.message);bt.disabled=false;bt.textContent=isNew?'Publicar producto':'Guardar cambios'}};
+calc()}
+function shrink(f){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,420/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var qq=.6,d=c.toDataURL('image/jpeg',qq);while(d.length>44000&&qq>.2){qq-=.1;d=c.toDataURL('image/jpeg',qq)}d.length>44000?no(new Error('La foto es muy grande. Prueba con otra.')):ok(d)};im.onerror=function(){no(new Error('Imagen no válida.'))};im.src=r.result};r.readAsDataURL(f)})}
+/* ---------- CATÁLOGOS ---------- */
+function drawCat(){var L=lim(),lk=locked(),used=S.cats.length,full=!!L.cats&&used>=L.cats;
+var o='<option value="">— Catálogo principal —</option>'+tops().map(function(c){return'<option value="'+c.id+'">Dentro de: '+esc(c.nombre)+'</option>'}).join('');
+function cnt(id){return S.prods.filter(function(p){return p.categoria===id}).length}
+var l=tops().map(function(c){var n=cnt(c.id)+subs(c.id).reduce(function(a,s){return a+cnt(s.id)},0);return'<div class="row"><div class="grow"><b>📁 '+esc(c.nombre)+'</b><br><small style="color:var(--mu)">'+n+' producto'+(n===1?'':'s')+'</small></div><button class="btn s" data-r="'+c.id+'">Renombrar</button><button class="btn s r" data-d="'+c.id+'">Eliminar</button></div>'+subs(c.id).map(function(s){return'<div class="row sub"><div class="grow">↳ '+esc(s.nombre)+'<br><small style="color:var(--mu)">'+cnt(s.id)+' producto'+(cnt(s.id)===1?'':'s')+'</small></div><button class="btn s" data-r="'+s.id+'">Renombrar</button><button class="btn s r" data-d="'+s.id+'">Eliminar</button></div>'}).join('')}).join('')||'<div class="empty center"><div class="em">📚</div><p>Aún no tienes catálogos. Crea el primero arriba.</p></div>';
+$('mn').innerHTML='<div class="card"><div class="ch"><div><h3>Catálogos y subcatálogos</h3><p style="margin:0">'+used+' de '+(L.cats||'∞')+' usados</p></div></div>'+meter(used,L.cats)
++'<div class="how"><b>¿Cómo funciona?</b> Un <b>catálogo</b> es una categoría (ej: «Postres»). Un <b>subcatálogo</b> va dentro de un catálogo (ej: «Pasteles» dentro de «Postres»). Tus clientes los ven ordenados así en la tienda.</div>'
++(lk?'<div class="note bad" style="margin:12px 0 0">🔒 <span>Bloqueado hasta que elijas un plan.</span><button class="btn s gold" data-go="plan">Elegir plan</button></div>':(full?'<div class="note warn" style="margin:12px 0 0">📈 <span>Llegaste al límite de catálogos de tu plan.</span><button class="btn s gold" data-go="plan">Ver planes</button></div>':'<div class="grid" style="margin-top:6px"><div><label>Nombre</label><input id="cn" maxlength="40" placeholder="Ej: Postres"></div><div><label>¿Dónde va?</label><select id="cp">'+o+'</select></div></div><div style="margin-top:12px"><button class="btn" id="ca">➕ Agregar</button></div>'))+'</div>'
++'<div class="card'+(lk?' locked':'')+'"><h3>Tus catálogos</h3>'+l+'</div>';bindGo();
+if($('ca')){$('cn').onkeydown=function(e){if(e.key==='Enter')$('ca').click()};$('ca').onclick=async function(){if($('cn').value.trim().length<2)return say('Escribe el nombre del catálogo.');try{await api('bizCatSave',{cat:{nombre:$('cn').value,padreId:$('cp').value}});sync();await refresh();say('Catálogo creado.',1)}catch(e){say(e.message)}}}
+document.querySelectorAll('[data-r]').forEach(function(b){b.onclick=async function(){if(lk)return say('Elige un plan para poder editar.');var c=S.cats.filter(function(x){return x.id===b.dataset.r})[0],n=await askText('Nuevo nombre',c.nombre);if(!n||!n.trim())return;try{await api('bizCatSave',{cat:{id:c.id,nombre:n}});sync();await refresh();say('Nombre actualizado.',1)}catch(e){say(e.message)}}});
+document.querySelectorAll('[data-d]').forEach(function(b){b.onclick=async function(){if(lk)return say('Elige un plan para poder editar.');var c=S.cats.filter(function(x){return x.id===b.dataset.d})[0];if(!await askConfirm('¿Eliminar «'+c.nombre+'»?','Sí, eliminar',1))return;try{await api('bizCatDelete',{id:c.id});sync();await refresh();say('Catálogo eliminado.',1)}catch(e){say(e.message)}}})}
+/* ---------- PEDIDOS ---------- */
+var NEXT={pendiente:['confirmado','✓ Confirmar pedido'],confirmado:['en preparacion','👩‍🍳 Empezar a preparar'],'en preparacion':['enviado','🚚 Marcar enviado'],enviado:['entregado','✅ Marcar entregado']};
+function stTag(e){var c=e==='pendiente'?'w':(e==='cancelado'?'b':(e==='entregado'?'':'i'));return'<span class="tag '+c+'">'+esc(e)+'</span>'}
+function waCli(o){var t=String(o.telefono||'').replace(/\D/g,'');if(t.length===8)t='502'+t;return'https://api.whatsapp.com/send?phone='+t+'&text='+encodeURIComponent('Hola '+o.cliente+', te escribimos de «'+S.store.nombre+'». Tu pedido está: '+o.estado+'.')}
+function exportCsv(){if(!lim().exp)return upsell('Exportar tus pedidos a Excel está disponible desde el plan Profesional.');
+var rows=[['Fecha','Pedido','Cliente','Teléfono','Dirección','Productos','Total','Estado']].concat(S.orders.map(function(o){return[o.fecha?new Date(o.fecha).toLocaleString('es-GT'):'',o.id,o.cliente,o.telefono,o.direccion,(o.items||[]).map(function(i){return i.cant+'x '+i.nombre}).join(' | '),o.total,o.estado]}));
+var csv='\ufeff'+rows.map(function(r){return r.map(function(c){return'"'+String(c==null?'':c).replace(/"/g,'""')+'"'}).join(',')}).join('\r\n');
+var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='pedidos-'+(S.store.slug||'negocio')+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},500);say('Descargando tus pedidos…',1)}
+function drawPed(){var f=S.of,all=S.orders,pend=pendCount();
+var F=[['all','Todos'],['pen','Pendientes'],['pro','En proceso'],['ent','Entregados'],['can','Cancelados']];
+var list=all.filter(function(o){return f==='all'||(f==='pen'&&o.estado==='pendiente')||(f==='pro'&&['confirmado','en preparacion','enviado'].indexOf(o.estado)>-1)||(f==='ent'&&o.estado==='entregado')||(f==='can'&&o.estado==='cancelado')});
+$('mn').innerHTML='<div class="kpis three"><div class="kpi"><span>📦</span><b>'+all.length+'</b><em>Pedidos</em></div><div class="kpi'+(pend?' alert':'')+'"><span>🔔</span><b>'+pend+'</b><em>Por atender</em></div><div class="kpi"><span>💰</span><b>'+mq(totalVentas())+'</b><em>Ventas</em></div></div>'
++'<div class="card"><div class="ch"><h3>Tus pedidos</h3><button class="btn s" id="ex">⬇️ Descargar en Excel'+(lim().exp?'':' 🔒')+'</button></div><div class="chips">'+F.map(function(x){return'<button class="chip'+(f===x[0]?' on':'')+'" data-f="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div></div>'
++(list.length?list.map(function(o){var nx=NEXT[o.estado];return'<div class="oc"><div class="oh"><div><b>'+esc(o.cliente)+'</b><small>'+esc(fdt(o.fecha))+' · '+esc(String(o.id).slice(-6))+'</small></div>'+stTag(o.estado)+'</div>'
++'<div class="oi">'+(o.items||[]).map(function(i){return'<div><span>'+i.cant+' × '+esc(i.nombre)+'</span><span>'+mq(i.precio*i.cant)+'</span></div>'}).join('')+'<div class="ot"><b>Total</b><b>'+mq(o.total)+'</b></div></div>'
++(o.direccion?'<p class="oa">📍 '+esc(o.direccion)+'</p>':'')+(o.telefono?'<p class="oa">📞 '+esc(o.telefono)+'</p>':'')
++'<div class="oact">'+(nx?'<button class="btn" data-n="'+o.id+'">'+nx[1]+'</button>':'')+(o.telefono?'<a class="btn s" target="_blank" href="'+waCli(o)+'">💬 WhatsApp</a>':'')+'<select data-o="'+o.id+'" title="Cambiar estado">'+ESTADOS.map(function(e){return'<option'+(e===o.estado?' selected':'')+'>'+e+'</option>'}).join('')+'</select></div></div>'}).join(''):'<div class="card center empty"><div class="em">📭</div><h3>'+(all.length?'No hay pedidos en este filtro':'Aún no tienes pedidos')+'</h3><p>'+(all.length?'Prueba con otro filtro.':'Cuando un cliente compre tus productos, el pedido aparecerá aquí y podrás atenderlo paso a paso.')+'</p></div>');
+$('ex').onclick=exportCsv;
+document.querySelectorAll('[data-f]').forEach(function(b){b.onclick=function(){S.of=b.dataset.f;drawPed()}});
+async function setSt(id,est){if(est==='cancelado'&&!await askConfirm('¿Cancelar este pedido? Se devuelve el stock de los productos.','Sí, cancelar',1)){drawPed();return}
+try{await api('saasOrderState',{id:id,estado:est});S.orders.forEach(function(o){if(o.id===id)o.estado=est});say('Pedido actualizado.',1);draw()}catch(e){say(e.message);drawPed()}}
+document.querySelectorAll('[data-n]').forEach(function(b){b.onclick=function(){var o=S.orders.filter(function(x){return x.id===b.dataset.n})[0];setSt(o.id,NEXT[o.estado][0])}});
+document.querySelectorAll('[data-o]').forEach(function(s){s.onchange=function(){setSt(s.dataset.o,s.value)}})}
+/* ---------- ESTADÍSTICAS (el nivel depende del plan) ---------- */
+function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function bars(days){var vo=validOrders(),map={},out=[],mx=1,N=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+vo.forEach(function(o){var d=new Date(o.fecha);if(!isNaN(d.getTime())){var k=dayKey(d);map[k]=(map[k]||0)+(Number(o.total)||0)}});
+for(var i=days-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var v=map[dayKey(d)]||0;mx=Math.max(mx,v);out.push({l:days<=7?N[d.getDay()]:d.getDate(),v:v})}
+return'<div class="bars'+(days>7?' thin':'')+'">'+out.map(function(b){return'<div class="bar"><b>'+(b.v&&days<=7?mq(b.v):'')+'</b><i style="height:'+Math.max(3,Math.round(b.v/mx*100))+'%"></i><small>'+b.l+'</small></div>'}).join('')+'</div>'}
+function topList(rows,fmt){return rows.length?rows.map(function(r,i){return'<div class="tl"><span class="n">'+(i+1)+'</span><span class="grow">'+esc(r[0])+'</span><b>'+fmt(r[1])+'</b></div>'}).join(''):'<p>Aún no hay datos.</p>'}
+function drawStat(){var L=lim(),lv=Number(L.stats)||0,vo=validOrders(),ventas=totalVentas(),tk=vo.length?ventas/vo.length:0,ent=S.orders.filter(function(o){return o.estado==='entregado'}).length;
+var prodMap={},cliMap={};vo.forEach(function(o){(o.items||[]).forEach(function(i){prodMap[i.nombre]=(prodMap[i.nombre]||0)+(Number(i.cant)||0)});cliMap[o.cliente]=(cliMap[o.cliente]||0)+(Number(o.total)||0)});
+function sorted(m){return Object.keys(m).map(function(k){return[k,m[k]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,5)}
+var stM={};S.orders.forEach(function(o){stM[o.estado]=(stM[o.estado]||0)+1});
+function lockc(t,plan){return'<div class="card lockc"><div class="lk">🔒</div><h3>'+t+'</h3><p>Disponible desde el plan '+plan+'.</p><button class="btn s gold" data-go="plan">Ver planes</button></div>'}
+var h='<div class="card"><div class="ch"><div><h3>Estadísticas de tu negocio</h3><p style="margin:0">Nivel: <b>'+['Resumen','Gráficas y más vendidos','Análisis completo'][Math.min(2,lv)]+'</b> · basado en tus últimos '+Math.min(200,S.orders.length)+' pedidos</p></div></div></div>'
++'<div class="kpis"><div class="kpi"><span>💰</span><b>'+mq(ventas)+'</b><em>Ventas totales</em></div><div class="kpi"><span>📦</span><b>'+vo.length+'</b><em>Pedidos válidos</em></div><div class="kpi"><span>🧾</span><b>'+mq(tk)+'</b><em>Ticket promedio</em></div><div class="kpi"><span>✅</span><b>'+ent+'</b><em>Entregados</em></div></div>';
+if(lv>=1){h+='<div class="card"><h3>Ventas de los últimos 7 días</h3>'+bars(7)+'</div><div class="two2"><div class="card"><h3>🏆 Productos más vendidos</h3>'+topList(sorted(prodMap),function(v){return v+' u.'})+'</div><div class="card"><h3>Estado de tus pedidos</h3>'+ESTADOS.map(function(e){var n=stM[e]||0,p=S.orders.length?Math.round(n/S.orders.length*100):0;return'<div class="hb"><span>'+e+'</span><div class="mt"><span style="width:'+p+'%"></span></div><b>'+n+'</b></div>'}).join('')+'</div></div>'}
+else h+=lockc('Gráficas de ventas y productos más vendidos','Profesional');
+if(lv>=2){h+='<div class="card"><h3>Ventas de los últimos 30 días</h3>'+bars(30)+'</div><div class="two2"><div class="card"><h3>👑 Mejores clientes</h3>'+topList(sorted(cliMap),mq)+'</div><div class="card"><h3>⚠️ Stock bajo</h3>'+topList(S.prods.filter(function(p){return Number(p.stock)<=3}).map(function(p){return[p.nombre,Number(p.stock)||0]}).slice(0,5),function(v){return v+' u.'})+'</div></div>'}
+else h+=lockc('Ventas de 30 días, mejores clientes y alertas de stock','Empresarial');
+$('mn').innerHTML=h;bindGo()}
+/* ---------- MI PLAN: suscripción mensual ---------- */
+var MES=[[1,'1 mes',0],[3,'3 meses',10],[6,'6 meses',15],[12,'12 meses',20]];
+function tot(q,m){var d=(MES.filter(function(x){return x[0]===m})[0]||[0,0,0])[2];return Math.round(q*m*(1-d/100))}
+var INS=['Estado básico de cada producto','Puntaje de calidad + consejos','Centro de salud completo + alertas'];
+var PUI={basico:{ic:'🌱',c:'p1'},profesional:{ic:'🚀',c:'p2'},empresarial:{ic:'👑',c:'p3'}};
+var PRIO=['Normal','Alta · etiqueta «NUEVO» automática','Máxima · tus destacados salen primero'],STATL=['Resumen de ventas','Gráficas y más vendidos','Análisis completo'];
+function rowsFor(p){var pr=Math.min(2,Number(p.prio)||0);return[['🛍️','Productos publicados',p.max+' productos'],['📚','Catálogos y subcatálogos',String(p.cats)],['⭐','Productos destacados',String(p.dest)],['📈','Prioridad en la tienda',PRIO[pr]],['🏅','Insignia en tu perfil público',p.badge||'Negocio'],['📊','Estadísticas',STATL[Math.min(2,Number(p.stats)||0)]],['🩺','Salud de tus productos',INS[Math.min(2,Number(p.ins)||0)]],['⚡','Acciones masivas y promos',p.bulk?'Incluido':'—'],['⬇️','Pedidos en Excel',p.exp?'Incluido':'—'],['💬','Soporte',p.sop||'Estándar']]}
+function drawPlan(){var st=S.store,P=S.planes||{},live=!locked(),K=['basico','profesional','empresarial'];
+var rows=[['Estado',live?(st.estado==='prueba'?'Prueba gratuita':'Activa'):(st.origen==='plan'?'Suscripción vencida':'Plan gratuito expirado')],['Plan actual',st.planNombre],['Días restantes',live?st.dias:0],[st.estado==='prueba'?'Termina el':'Vence el',fdate(st.estado==='prueba'?st.trialFin:(st.vence||st.trialFin))]];
+var cur=heroHtml()+'<div class="card"><h3>Tu cobertura</h3><div class="kv">'+rows.map(function(r){return'<div><small>'+r[0]+'</small><b>'+esc(r[1])+'</b></div>'}).join('')+'</div></div>';
+var cards=K.map(function(k){var p=P[k];if(!p)return'';var u=PUI[k],mine=st.estado==='activa'&&st.plan===k,rec=k==='profesional',R=rowsFor(p);
+return'<div class="plan '+u.c+(rec?' rec':'')+(mine?' mine':'')+'">'+(rec?'<span class="rib">★ Más elegido</span>':'')+(mine?'<span class="rib cur">Tu plan actual</span>':'')
++'<div class="ph"><span class="pi">'+u.ic+'</span><div><h4>'+esc(p.n)+'</h4><p>'+esc(p.tag||'')+'</p></div></div>'
++'<div class="price"><sup>Q</sup>'+p.q+'<small>/mes</small></div><div class="pday">≈ Q'+(p.q/30).toFixed(2)+' por día · 30 días de cobertura · <b>paga 12 meses y ahorra 20 %</b></div>'
++'<ul class="pl">'+R.filter(function(r){return r[1]!=='Pedidos en Excel'}).slice(0,8).map(function(r){var no=r[2]==='—';return'<li'+(no?' class="no"':'')+'><span class="li">'+r[0]+'</span><div><b>'+(no?'No incluido':esc(r[2]))+'</b><small>'+r[1]+'</small></div></li>'}).join('')+'<li'+(p.exp?'':' class="no"')+'><span class="li">⬇️</span><div><b>'+(p.exp?'Incluido':'No incluido')+'</b><small>Pedidos en Excel</small></div></li></ul>'
++'<button class="btn'+(rec?' gold':'')+'" data-p="'+k+'"'+(S.pago?' disabled':'')+'>'+(mine?'Renovar este plan':'Elegir '+esc(p.n))+'</button>'
++(rec&&st.estado==='prueba'?'<div class="pnote">🎁 Tu prueba gratuita incluye este plan</div>':'<div class="pnote">'+esc(p.ideal||'')+'</div>')+'</div>'}).join('');
+var cmp='<div class="card"><h3>Compara los planes</h3><div class="cmpw"><table class="cmp"><tr><th></th>'+K.map(function(k){return P[k]?'<th class="'+(k==='profesional'?'rc':'')+'">'+PUI[k].ic+' '+esc(P[k].n)+'<small>Q'+P[k].q+'/mes</small></th>':''}).join('')+'</tr>'
++rowsFor(P.basico||{max:0,cats:0,dest:0}).map(function(r0,i){return'<tr><td class="rl"><span>'+r0[0]+'</span> '+r0[1]+'</td>'+K.map(function(k){if(!P[k])return'';var v=rowsFor(P[k])[i][2];return'<td class="'+(k==='profesional'?'rc':'')+'">'+(v==='—'?'<span class="x">✕</span>':(v==='Incluido'?'<span class="ck2">✓</span>':esc(v)))+'</td>'}).join('')+'</tr>'}).join('')+'</table></div></div>';
+var faq='<div class="card"><h3>Preguntas frecuentes</h3>'
++[['¿Cómo se renueva mi plan?','Cada plan dura 30 días. Antes de que venza, paga tu plan otra vez desde aquí: los 30 días nuevos se suman a los que te queden. Te avisamos 5 días antes.'],['¿Qué pasa si mi plan vence?','No podrás agregar productos ni catálogos y tu tienda deja de mostrarse en SHEIBIS. No pierdes nada: al renovar, todo vuelve a verse.'],['¿Puedo cambiar de plan?','Sí. Elige otro plan y paga: tu cobertura cambia al plan que pagaste cuando el administrador apruebe el pago.'],['¿Cómo pago?','Por transferencia (BI, Banrural, Zigi o Fri). Subes tu comprobante y, apenas se aprueba, tu plan se activa.']].map(function(f){return'<details class="fq"><summary>'+f[0]+'</summary><p>'+f[1]+'</p></details>'}).join('')+'</div>';
+$('mn').innerHTML=cur+'<div class="phead"><h2>Elige el plan para tu negocio</h2><p>Todos incluyen tu panel completo, pedidos y presencia en la tienda. Cambia o renueva cuando quieras.</p></div>'+(S.pago?'<div class="note info">⏳ <span>Ya enviaste un pago y está en revisión.</span></div>':'')+'<div class="plans">'+(cards||'<p>No se pudieron cargar los planes.</p>')+'</div><div class="trust"><div>🔒<b>Pago seguro</b><small>Por transferencia bancaria</small></div><div>⚡<b>Activación rápida</b><small>En cuanto se aprueba tu pago</small></div><div>🔁<b>Sin permanencia</b><small>Renuevas solo si quieres</small></div></div><div id="payBox"></div>'+cmp+faq;
 document.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){payForm(b.dataset.p)}})}
 function waLink(t){return'https://api.whatsapp.com/send?phone=502'+WA+'&text='+encodeURIComponent(t)}
 function payForm(k){var p=S.planes[k];if(!p)return;
-$('payBox').innerHTML='<div class="card"><h3>Pagar '+esc(p.n)+' · Q'+p.q+'</h3><div class="stepsp"><div><b>1</b><span>Transfiere <strong>Q'+p.q+'</strong> a una de las cuentas de SHEIBIS</span></div><div><b>2</b><span>Escribe aquí la referencia (número de boleta)</span></div><div><b>3</b><span>Sube la foto del comprobante (recomendado)</span></div><div><b>4</b><span>Revisamos tu pago y tu plan se activa por 30 días</span></div></div><label>Método de pago</label><select id="pm">'+PAY_BANKS.map(function(b){return'<option>'+b+'</option>'}).join('')+'</select><div class="pinfo" id="pinfo"></div><label>Referencia / número de boleta</label><input id="pr" maxlength="40" placeholder="Ej: 123456789"><label>Comprobante (foto)</label><input id="pi" type="file" accept="image/*"><div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn gold" id="pgo">Enviar pago para revisión</button><button class="btn s" id="pwa">💬 Pedir datos por WhatsApp</button></div></div>';
+$('payBox').innerHTML='<div class="card"><div class="psum"><span class="pi">'+(PUI[k]?PUI[k].ic:'💎')+'</span><div><b>Plan '+esc(p.n)+'</b><small>'+p.max+' productos · '+p.cats+' catálogos · '+p.dest+' destacados · 30 días por mes</small></div><strong class="pamt">Q'+p.q+'</strong></div><h3>Cómo pagar</h3><div class="stepsp"><div><b>1</b><span>Transfiere <strong class="pamt">Q'+p.q+'</strong> a una de las cuentas de SHEIBIS</span></div><div><b>2</b><span>Escribe aquí la referencia (número de boleta)</span></div><div><b>3</b><span>Sube la foto del comprobante (recomendado)</span></div><div><b>4</b><span>Revisamos tu pago y tu plan se activa por 30 días</span></div></div><label>Periodo de pago (pagas más meses, ahorras más)</label><select id="pmo">'+MES.map(function(m){return'<option value="'+m[0]+'">'+m[1]+' · Q'+tot(p.q,m[0])+(m[2]?' · ahorras '+m[2]+' %':'')+'</option>'}).join('')+'</select><label>Método de pago</label><select id="pm">'+PAY_BANKS.map(function(b){return'<option>'+b+'</option>'}).join('')+'</select><div class="pinfo" id="pinfo"></div><label>Referencia / número de boleta</label><input id="pr" maxlength="40" placeholder="Ej: 123456789"><label>Comprobante (foto)</label><input id="pi" type="file" accept="image/*"><div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn gold" id="pgo">Enviar pago para revisión</button><button class="btn s" id="pwa">💬 Pedir datos por WhatsApp</button></div></div>';
 function info(){var b=$('pm').value,a=PAY_ACCOUNTS[b];$('pinfo').innerHTML=a?'<b>'+esc(b)+':</b> '+esc(a):'Pide por WhatsApp los datos de la cuenta <b>'+esc(b)+'</b> y haz tu transferencia.'}
-$('pm').onchange=info;info();
-$('pwa').onclick=function(){window.open(waLink('Hola SHEIBIS, quiero pagar el plan '+p.n+' (Q'+p.q+') de mi negocio «'+(S.store.nombre||'')+'». ¿Me pasas los datos de '+$('pm').value+'?'),'_blank')};
+$('pm').onchange=info;info();$('pmo').onchange=function(){var t='Q'+tot(p.q,+this.value);document.querySelectorAll('.pamt').forEach(function(e){e.textContent=t})};
+$('pwa').onclick=function(){window.open(waLink('Hola SHEIBIS, quiero pagar el plan '+p.n+' (Q'+tot(p.q,+$('pmo').value)+' por '+$('pmo').value+' mes(es)) de mi negocio «'+(S.store.nombre||'')+'». ¿Me pasas los datos de '+$('pm').value+'?'),'_blank')};
 $('pgo').onclick=async function(){var ref=$('pr').value.trim();if(ref.length<3)return say('Escribe la referencia del pago.');var bt=this;bt.disabled=true;bt.textContent='Enviando…';
-try{var img='',f=$('pi').files[0];if(f)img=await shrinkProof(f);await api('saasPay',{plan:k,referencia:($('pm').value+' · '+ref).slice(0,60),image:img});await reloadMe();say('Pago enviado. Lo revisaremos muy pronto.',1);draw()}
+try{var img='',f=$('pi').files[0];if(f)img=await shrinkProof(f);await api('saasPay',{plan:k,meses:+$('pmo').value,referencia:($('pm').value+' · '+ref).slice(0,60),image:img});await reloadMe();say('Pago enviado. Lo revisaremos muy pronto.',1);draw()}
 catch(e){say(e.message);bt.disabled=false;bt.textContent='Enviar pago para revisión'}};
 $('payBox').scrollIntoView({behavior:'smooth',block:'start'})}
 function shrinkProof(f){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var qq=.72,d=c.toDataURL('image/jpeg',qq);while(d.length>380000&&qq>.25){qq-=.08;d=c.toDataURL('image/jpeg',qq)}d.length>380000?no(new Error('La foto es muy grande. Prueba con otra.')):ok(d)};im.onerror=function(){no(new Error('Imagen no válida.'))};im.src=r.result};r.readAsDataURL(f)})}
-/* ---------- Administrador: solicitudes, pagos y negocios ---------- */
+/* ---------- Administrador: solicitudes, pagos, negocios y usuarios ---------- */
 function adminBoot(){var k=lsGet(AK,1);setTop();if(k){S.adminKey=k;return adminHome()}adminLogin()}
-function adminLogin(msg){S.adminKey='';setTop();wrap('<div class="card" style="max-width:420px;margin:24px auto"><h2>SHEIBIS Business · Administrador</h2><p>Solicitudes, pagos y negocios.</p>'+(msg?'<div class="err">'+esc(msg)+'</div>':'')+'<label>Clave de administrador</label><input id="ak" type="password"><div style="margin-top:14px"><button class="btn" id="ag" style="width:100%">Entrar</button></div></div>');
+function adminLogin(msg){S.adminKey='';setTop();wrap('<div class="card" style="max-width:420px;margin:24px auto"><h2>SHEIBIS Business · Administrador</h2><p>Solicitudes, pagos, negocios y usuarios.</p>'+(msg?'<div class="err">'+esc(msg)+'</div>':'')+'<label>Clave de administrador</label><input id="ak" type="password"><div style="margin-top:14px"><button class="btn" id="ag" style="width:100%">Entrar</button></div></div>');
 $('ak').onkeydown=function(e){if(e.key==='Enter')$('ag').click()};$('ag').onclick=function(){S.adminKey=$('ak').value;lsSet(AK,S.adminKey,1);adminHome()}}
 async function adminHome(t){if(t)S.at=t;setTop();
-try{var rs=await Promise.all([api('bizReqList',{adminKey:S.adminKey}),api('saasAdminList',{adminKey:S.adminKey})]);S.areq=rs[0].items;S.astores=rs[1].stores;S.apays=rs[1].pays}
+try{var rs=await Promise.all([api('bizReqList',{adminKey:S.adminKey}),api('saasAdminList',{adminKey:S.adminKey})]);S.areq=rs[0].items;S.astores=rs[1].stores;S.apays=rs[1].pays;if(S.at==='usr')S.ausers=(await api('bizAdminUsers',{adminKey:S.adminKey})).users}
 catch(e){if(/autorizado/i.test(e.message)){lsDel(AK,1);return adminLogin('Clave incorrecta.')}return wrap('<div class="err">'+esc(e.message)+'</div>')}
 var pr=S.areq.filter(function(x){return x.estado==='pendiente'}).length,pp=S.apays.filter(function(x){return x.estado==='pendiente'}).length;
-var T=[['req','📝','Solicitudes'+(pr?' ('+pr+')':'')],['pay','💳','Pagos'+(pp?' ('+pp+')':'')],['sto','🏪','Negocios ('+S.astores.length+')']];
-wrap('<div class="app"><div class="main" id="mn"></div><div class="menu">'+T.map(function(x){return'<button data-t="'+x[0]+'" class="'+(S.at===x[0]?'on':'')+'"><span>'+x[1]+'</span>'+x[2]+'</button>'}).join('')+'</div></div>');
-document.querySelectorAll('.menu button').forEach(function(b){b.onclick=function(){adminHome(b.dataset.t)}});
-({req:aReq,pay:aPay,sto:aSto})[S.at]()}
+var T=[['req','📝','Solicitudes'+(pr?' ('+pr+')':'')],['pay','💳','Pagos'+(pp?' ('+pp+')':'')],['sto','🏪','Negocios ('+S.astores.length+')'],['usr','👥','Usuarios']];
+wrap('<div class="app"><div class="main" id="mn"></div><nav class="menu" id="nav">'+T.map(function(x){return'<button data-t="'+x[0]+'" class="'+(S.at===x[0]?'on':'')+'"><span class="ic">'+x[1]+'</span><span class="lbl">'+x[2]+'</span><span class="lbs">'+x[2].split(' ')[0]+'</span></button>'}).join('')+'</nav></div>');
+document.querySelectorAll('#nav button').forEach(function(b){b.onclick=function(){adminHome(b.dataset.t)}});
+({req:aReq,pay:aPay,sto:aSto,usr:aUsr})[S.at]()}
 function aTag(e){return'<span class="tag '+(e==='pendiente'?'w':(e==='rechazada'||e==='rechazado'||e==='suspendida'||e==='vencida'?'b':''))+'">'+esc(e)+'</span>'}
 function aReq(){$('mn').innerHTML='<div class="card"><h2>Solicitudes de cuenta de negocio</h2><p>Al aceptar, el usuario recibe una notificación y empieza su prueba gratuita de '+S.trialDias+' días.</p><div style="overflow:auto"><table><tr><th>Negocio</th><th>Cuenta</th><th>Fecha</th><th>Estado</th><th></th></tr>'+(S.areq.map(function(x){return'<tr><td><b>'+esc(x.negocio)+'</b></td><td>'+esc(x.email)+'<br><small>'+esc(x.nombre)+'</small></td><td>'+esc(String(x.fecha).slice(0,10))+'</td><td>'+aTag(x.estado)+'</td><td>'+(x.estado==='pendiente'?'<button class="btn s" data-a="'+x.id+'">✓ Aceptar</button> <button class="btn s r" data-n="'+x.id+'">Rechazar</button>':'')+'</td></tr>'}).join('')||'<tr><td colspan="5">No hay solicitudes todavía.</td></tr>')+'</table></div></div>';
 async function dec(id,d){try{await api('bizReqDecide',{adminKey:S.adminKey,id:id,decision:d});say(d==='aprobar'?'Solicitud aprobada. El usuario ya fue notificado.':'Solicitud rechazada.',1);adminHome()}catch(e){say(e.message)}}
 document.querySelectorAll('[data-a]').forEach(function(b){b.onclick=function(){dec(b.dataset.a,'aprobar')}});document.querySelectorAll('[data-n]').forEach(function(b){b.onclick=function(){dec(b.dataset.n,'rechazar')}})}
 function storeName(id){var s=S.astores.filter(function(x){return x.id===id})[0];return s?s.nombre:id}
 function aPay(){var P=S.planes||{basico:{n:'Básico'},profesional:{n:'Profesional'},empresarial:{n:'Empresarial'}};
-$('mn').innerHTML='<div class="card"><h2>Pagos de suscripción</h2><p>Al aprobar un pago, el negocio recibe 30 días más de cobertura.</p><div style="overflow:auto"><table><tr><th>Negocio</th><th>Plan</th><th>Referencia</th><th>Fecha</th><th>Estado</th><th></th></tr>'+(S.apays.map(function(p){return'<tr><td><b>'+esc(storeName(p.storeId))+'</b></td><td>'+esc((P[p.plan]&&P[p.plan].n)||p.plan)+'<br><small>Q'+esc(p.monto)+'</small></td><td>'+esc(p.referencia)+'</td><td>'+esc(String(p.fecha).slice(0,10))+'</td><td>'+aTag(p.estado)+'</td><td>'+(p.foto?'<button class="btn s" data-v="'+p.id+'">Ver comprobante</button> ':'')+(p.estado==='pendiente'?'<button class="btn s" data-ap="'+p.id+'">✓ Aprobar</button> <button class="btn s r" data-rp="'+p.id+'">Rechazar</button>':'')+'</td></tr>'}).join('')||'<tr><td colspan="6">Aún no hay pagos.</td></tr>')+'</table></div></div>';
-async function rev(id,d){try{await api('saasPayReview',{adminKey:S.adminKey,id:id,decision:d});say(d==='aprobado'?'Pago aprobado: plan activo por 30 días.':'Pago rechazado.',1);adminHome()}catch(e){say(e.message)}}
+$('mn').innerHTML='<div class="card"><h2>Pagos de suscripción</h2><p>Al aprobar un pago, el negocio recibe la cobertura pagada (30 días por cada mes).</p><div style="overflow:auto"><table><tr><th>Negocio</th><th>Plan</th><th>Referencia</th><th>Fecha</th><th>Estado</th><th></th></tr>'+(S.apays.map(function(p){return'<tr><td><b>'+esc(storeName(p.storeId))+'</b></td><td>'+esc((P[p.plan]&&P[p.plan].n)||p.plan)+'<br><small>Q'+esc(p.monto)+'</small></td><td>'+esc(p.referencia)+'</td><td>'+esc(String(p.fecha).slice(0,10))+'</td><td>'+aTag(p.estado)+'</td><td>'+(p.foto?'<button class="btn s" data-v="'+p.id+'">Ver comprobante</button> ':'')+(p.estado==='pendiente'?'<button class="btn s" data-ap="'+p.id+'">✓ Aprobar</button> <button class="btn s r" data-rp="'+p.id+'">Rechazar</button>':'')+'</td></tr>'}).join('')||'<tr><td colspan="6">Aún no hay pagos.</td></tr>')+'</table></div></div>';
+async function rev(id,d){try{await api('saasPayReview',{adminKey:S.adminKey,id:id,decision:d});say(d==='aprobado'?'Pago aprobado: plan activado por el periodo pagado.':'Pago rechazado.',1);adminHome()}catch(e){say(e.message)}}
 document.querySelectorAll('[data-ap]').forEach(function(b){b.onclick=function(){rev(b.dataset.ap,'aprobado')}});document.querySelectorAll('[data-rp]').forEach(function(b){b.onclick=function(){rev(b.dataset.rp,'rechazado')}});
-document.querySelectorAll('[data-v]').forEach(function(b){b.onclick=async function(){b.disabled=true;try{var r=await api('saasAdminPhoto',{adminKey:S.adminKey,id:b.dataset.v});document.body.insertAdjacentHTML('beforeend','<div class="modal lightbox" id="lb"><div class="mbox" style="max-width:640px"><img src="'+r.image+'" alt="Comprobante"><button class="btn" id="lbx" style="width:100%;margin-top:14px">Cerrar</button></div></div>');$('lbx').onclick=function(){$('lb').remove()}}catch(e){say(e.message)}b.disabled=false}})}
+document.querySelectorAll('[data-v]').forEach(function(b){b.onclick=async function(){b.disabled=true;try{var r=await api('saasAdminPhoto',{adminKey:S.adminKey,id:b.dataset.v});var d=modal('<img src="'+r.image+'" alt="Comprobante" style="max-width:100%;max-height:70vh;border-radius:14px"><button class="btn" id="lbx" style="width:100%;margin-top:14px">Cerrar</button>');d.querySelector('#lbx').onclick=function(){d.remove()}}catch(e){say(e.message)}b.disabled=false}})}
 function aSto(){$('mn').innerHTML='<div class="card"><h2>Negocios</h2><p>Estado de cada tienda. Suspender oculta sus productos y bloquea el panel.</p><div style="overflow:auto"><table><tr><th>Negocio</th><th>Plan</th><th>Estado</th><th>Días</th><th></th></tr>'+(S.astores.map(function(s){return'<tr><td><b>'+esc(s.nombre)+'</b><br><small>'+esc(s.email||'')+'</small></td><td>'+esc(s.planNombre)+'</td><td>'+aTag(s.estado)+'</td><td>'+esc(s.dias)+'</td><td><button class="btn s'+(s.estado==='suspendida'?'':' r')+'" data-s="'+s.id+'" data-e="'+(s.estado==='suspendida'?'activa':'suspendida')+'">'+(s.estado==='suspendida'?'Reactivar':'Suspender')+'</button></td></tr>'}).join('')||'<tr><td colspan="5">Todavía no hay negocios.</td></tr>')+'</table></div></div>';
-document.querySelectorAll('[data-s]').forEach(function(b){b.onclick=async function(){if(b.dataset.e==='suspendida'&&!confirm('¿Suspender este negocio?'))return;try{await api('saasStoreState',{adminKey:S.adminKey,storeId:b.dataset.s,estado:b.dataset.e});say('Listo.',1);adminHome()}catch(e){say(e.message)}}})}
-$('out').onclick=function(){if(MODE==='admin'){lsDel(AK,1);S.adminKey='';adminLogin();return}if(!confirm('¿Cerrar tu sesión de SHEIBIS Business en este dispositivo?'))return;endSession()};
+document.querySelectorAll('[data-s]').forEach(function(b){b.onclick=async function(){if(b.dataset.e==='suspendida'&&!await askConfirm('¿Suspender este negocio?','Sí, suspender',1))return;try{await api('saasStoreState',{adminKey:S.adminKey,storeId:b.dataset.s,estado:b.dataset.e});say('Listo.',1);adminHome()}catch(e){say(e.message)}}})}
+function aUsr(){var qs=(S.auq||'').toLowerCase(),L=S.ausers.filter(function(u){return!qs||(String(u.nombre)+' '+String(u.email)).toLowerCase().indexOf(qs)>-1});
+$('mn').innerHTML='<div class="card"><h2>Usuarios</h2><div class="how"><b>Sobre las contraseñas:</b> están guardadas cifradas (SHA-256) y por seguridad <b>no se pueden ver ni recuperar</b>, ni siquiera desde Google Sheets. Si un usuario la olvidó, pon una <b>nueva contraseña</b> aquí y compártela con él por un medio seguro.</div><div class="sr" style="margin-top:12px"><input id="auq" type="search" placeholder="🔎 Buscar por nombre o correo…" value="'+esc(S.auq||'')+'"></div><div style="overflow:auto"><table><tr><th>Nombre</th><th>Correo</th><th>Tipo</th><th></th></tr>'+(L.map(function(u){return'<tr><td><b>'+esc(u.nombre)+'</b></td><td>'+esc(u.email)+'</td><td>'+aTag(String(u.tipo).toLowerCase())+'</td><td><button class="btn s" data-u="'+esc(u.id)+'" data-nm="'+esc(u.nombre)+'">🔑 Nueva contraseña</button></td></tr>'}).join('')||'<tr><td colspan="4">Sin resultados.</td></tr>')+'</table></div></div>';
+$('auq').oninput=function(){S.auq=this.value;var p=this.selectionStart;aUsr();var i=$('auq');i.focus();try{i.setSelectionRange(p,p)}catch(_){}};
+document.querySelectorAll('[data-u]').forEach(function(b){b.onclick=async function(){var pw=await askText('Nueva contraseña para '+b.dataset.nm,'','Mínimo 6 caracteres. Al guardarla, la anterior deja de funcionar.');if(pw===null)return;if(pw.length<6)return say('Debe tener al menos 6 caracteres.');
+try{await api('bizAdminResetPass',{adminKey:S.adminKey,userId:b.dataset.u,password:pw});say('Contraseña cambiada. Compártela con el usuario.',1)}catch(e){say(e.message)}}})}
+$('out').onclick=async function(){if(MODE==='admin'){lsDel(AK,1);S.adminKey='';adminLogin();return}if(!await askConfirm('¿Cerrar tu sesión de SHEIBIS Business en este dispositivo?','Cerrar sesión'))return;endSession()};
 if(LOGO)$('lg').src=LOGO;else $('lg').style.display='none';
 boot();
 <\/script></body></html>
@@ -15532,6 +15782,80 @@ window.addEventListener('message',function(e){
 var d=e.data;if(!d||!d.sbBiz||!user())return;var b=d.sbBiz;
 cur=Object.assign({},cur||{},{estado:b.estado,store:fix(b.store)||(cur&&cur.store)||null,negocio:b.negocio||'',nueva:false});paint()});
 document.addEventListener('click',function(e){if(e.target&&(e.target.id==='sbNegClose'))lastAt=0});
+})();
+</script>
+<style id="sb-comm-style">
+/* ===== Comunidad SHEIBIS: perfiles visibles ===== */
+#sbComm{position:fixed;inset:0;z-index:2147482900;display:grid;place-items:center;padding:14px;background:rgba(3,10,7,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font-family:Inter,system-ui,sans-serif}
+#sbComm .cx{width:100%;max-width:520px;max-height:90vh;display:flex;flex-direction:column;background:#fff;border-radius:26px;box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden;position:relative}
+#sbComm .cx::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#12B886,#E3B341)}
+#sbComm .chd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:22px 22px 10px}
+#sbComm h3{margin:0;font-size:1.2rem;color:#0B1712}#sbComm .chd p{margin:2px 0 0;color:#53655C;font-size:.85rem}
+#sbComm #sbCc{border:0;background:#F1F5F3;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;color:#0B1712}
+#sbComm #sbCb{padding:0 18px 18px;overflow:auto;flex:1}
+#sbComm .csr{width:100%;min-height:46px;padding:10px 14px;border:1.5px solid #DCE6E1;border-radius:13px;font:inherit;margin:6px 0 10px}
+#sbComm .cch{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+#sbComm .cch button{border:1.5px solid #DCE6E1;background:#fff;border-radius:999px;padding:6px 13px;font:700 .75rem Inter,sans-serif;cursor:pointer}
+#sbComm .cch button.on{background:#0B1712;color:#fff;border-color:#0B1712}
+#sbComm .cu{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px;border:0;border-radius:16px;background:transparent;cursor:pointer;font:inherit;color:#0B1712;transition:.15s}
+#sbComm .cu:hover{background:#EAF7F1}
+#sbComm .cu b{display:block;font-size:.95rem}#sbComm .cu small{color:#53655C}
+#sbComm .cav{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font:800 .95rem Inter,sans-serif;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+#sbComm .cav img{width:100%;height:100%;object-fit:cover;display:block}
+#sbComm .cav.big{width:104px;height:104px;font-size:2rem;margin:6px auto 12px;box-shadow:0 0 0 4px #fff,0 0 0 7px rgba(18,184,134,.45),0 14px 30px rgba(0,0,0,.2)}
+#sbComm .on-d{display:inline-block;width:9px;height:9px;border-radius:50%;background:#12B886;margin-right:5px}
+#sbComm .cb2{display:inline-block;font:800 .62rem Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:#E5F8F0;color:#066149;margin-left:6px}
+#sbComm .cb2.gold{background:#FFF1C9;color:#7A5600}
+#sbComm .cpf{text-align:center;padding:4px 6px 10px}#sbComm .cpf h3{font-size:1.4rem}
+#sbComm .cpf .rw{display:flex;justify-content:space-between;padding:12px 4px;border-top:1px solid #EAF0ED;font-size:.9rem;color:#53655C}#sbComm .cpf .rw b{color:#0B1712}
+#sbComm .cbk{border:0;background:#F1F5F3;border-radius:999px;padding:8px 14px;font:700 .8rem Inter,sans-serif;cursor:pointer;margin:2px 0 8px}
+#sbComm .cem{text-align:center;color:#53655C;padding:26px 8px}
+</style>
+<script id="sb-community">
+/* Muestra el nombre real de cada usuario (ya no «ANÓNIMO») y permite ver los perfiles de la comunidad. Nunca muestra correo, teléfono ni contraseña. */
+(function(){
+'use strict';
+if(window.__SB_COMM__)return;window.__SB_COMM__=true;
+function user(){try{return(typeof currentUser!=='undefined'&&currentUser&&!currentUser.isGuest&&currentUser.id)?currentUser:null}catch(_){return null}}
+function call(a,p){if(typeof apiRequest!=='function')return Promise.reject(new Error('api'));return apiRequest(a,p||{},{timeout:30000})}
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+/* ----- Nombre real ----- */
+var IDS=['userNameDisplay','menuUserName','sbAccountName'];
+function applyNames(){var u=user();if(!u)return;var n=String(u.nombre||u.name||'').trim();if(!n)return;IDS.forEach(function(id){var e=document.getElementById(id);if(e&&e.textContent!==n)e.textContent=n})}
+try{var mo=new MutationObserver(applyNames);IDS.forEach(function(id){var e=document.getElementById(id);if(e)mo.observe(e,{childList:true,characterData:true,subtree:true})})}catch(_){}
+setInterval(applyNames,1200);applyNames();
+/* ----- Comunidad ----- */
+var PROF=null,PROFAT=0,F='all',QS='';
+function ini(n){var p=String(n).trim().split(/\s+/);return((p[0]||'?').charAt(0)+((p[1]||'').charAt(0)||'')).toUpperCase()}
+function hue(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h}
+function av(u,big){var h=hue(u.nombre);return'<span class="cav'+(big?' big':'')+'" style="background:linear-gradient(135deg,hsl('+h+' 62% 40%),hsl('+((h+40)%360)+' 70% 52%))">'+(u.avatar?'<img src="'+esc(u.avatar)+'" alt="">':esc(ini(u.nombre)))+'</span>'}
+function badge(u){return u.plan==='empresarial'?'★ Negocio Premium':(u.plan==='basico'?'Negocio':'Negocio Pro')}
+function close(){var d=document.getElementById('sbComm');if(d)d.remove()}
+function fdate(v){if(!v)return'—';var d=new Date(v);return isNaN(d.getTime())?'—':d.toLocaleDateString('es-GT',{day:'2-digit',month:'long',year:'numeric'})}
+async function load(force){if(!force&&PROF&&Date.now()-PROFAT<60000)return PROF;var r=await call('getPublicProfiles');PROF=r.users||[];PROFAT=Date.now();return PROF}
+function openCommunity(){
+close();var d=document.createElement('div');d.id='sbComm';
+d.innerHTML='<div class="cx"><div class="chd"><div><h3>Comunidad SHEIBIS</h3><p id="sbCn">Cargando…</p></div><button id="sbCc" type="button" aria-label="Cerrar">✕</button></div><div id="sbCb"><div class="cem">Cargando perfiles…</div></div></div>';
+document.body.appendChild(d);d.onclick=function(e){if(e.target===d)close()};d.querySelector('#sbCc').onclick=close;
+load(true).then(renderList).catch(function(){var b=document.getElementById('sbCb');if(b)b.innerHTML='<div class="cem">No se pudo cargar la comunidad. Revisa tu internet e inténtalo de nuevo.</div>'})}
+function renderList(){
+var b=document.getElementById('sbCb');if(!b)return;var me=user();
+var on=PROF.filter(function(u){return u.online}).length,ng=PROF.filter(function(u){return u.tipo==='NEGOCIO'}).length;
+document.getElementById('sbCn').textContent=PROF.length+' personas · '+on+' en línea';
+b.innerHTML='<input class="csr" id="sbCq" type="search" placeholder="🔎 Buscar por nombre…" value="'+esc(QS)+'"><div class="cch">'+[['all','Todos ('+PROF.length+')'],['on','En línea ('+on+')'],['neg','Negocios ('+ng+')']].map(function(x){return'<button type="button" data-f="'+x[0]+'" class="'+(F===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div><div id="sbCl"></div>';
+function paint(){var q=QS.toLowerCase(),L=PROF.filter(function(u){return(F==='all'||(F==='on'&&u.online)||(F==='neg'&&u.tipo==='NEGOCIO'))&&(!q||u.nombre.toLowerCase().indexOf(q)>-1)});
+document.getElementById('sbCl').innerHTML=L.length?L.map(function(u){return'<button type="button" class="cu" data-id="'+esc(u.id)+'">'+av(u)+'<span><b>'+esc(u.nombre)+(me&&String(me.id)===String(u.id)?'<span class="cb2">Tú</span>':'')+'</b><small>'+(u.online?'<span class="on-d"></span>En línea':'Desconectado')+(u.tipo==='NEGOCIO'?'<span class="cb2 gold">'+esc(badge(u))+'</span>':'')+'</small></span></button>'}).join(''):'<div class="cem">No hay personas con ese filtro.</div>';
+document.querySelectorAll('#sbCl .cu').forEach(function(x){x.onclick=function(){profile(PROF.filter(function(u){return String(u.id)===x.dataset.id})[0])}})}
+document.getElementById('sbCq').oninput=function(){QS=this.value;paint()};
+document.querySelectorAll('#sbComm .cch button').forEach(function(x){x.onclick=function(){F=x.dataset.f;renderList()}});paint()}
+function profile(u){
+if(!u)return;var b=document.getElementById('sbCb'),me=user();
+function view(p){b.innerHTML='<button class="cbk" type="button" id="sbBk">← Volver</button><div class="cpf">'+av(p,1)+'<h3>'+esc(p.nombre)+'</h3><div>'+(me&&String(me.id)===String(p.id)?'<span class="cb2">Tú</span>':'')+(p.tipo==='NEGOCIO'?'<span class="cb2 gold">'+esc(badge(p))+'</span>':'<span class="cb2">Cliente</span>')+'</div><div style="margin-top:14px"><div class="rw"><span>Estado</span><b>'+(p.online?'<span class="on-d"></span>En línea ahora':'Desconectado')+'</b></div>'+(p.tipo==='NEGOCIO'&&p.negocio?'<div class="rw"><span>Negocio</span><b>'+esc(p.negocio)+'</b></div>':'')+'<div class="rw"><span>Miembro desde</span><b>'+esc(fdate(p.desde))+'</b></div></div></div>';
+document.getElementById('sbBk').onclick=renderList}
+view(u);
+if(u.tieneFoto&&!u.avatar){call('getPublicProfile',{id:u.id}).then(function(r){if(r&&r.user&&r.user.avatar){u.avatar=r.user.avatar;if(document.getElementById('sbBk'))view(u)}}).catch(function(){})}}
+window.openOnlineUsersModal=function(){openCommunity()};
+window.openCommunityModal=openCommunity;
 })();
 </script>
 
