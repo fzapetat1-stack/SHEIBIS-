@@ -3902,7 +3902,14 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         <div class="tab-content active" id="tabCatalogs">
             <button type="button" class="sb-biz-cta" onclick="sbOpenNegocios()"><span class="ic"><i class="fas fa-store"></i></span><span class="tx"><b>Cambiar a SHEIBIS Business</b><small>Crea tu tienda y vende · 5 días gratis</small></span><i class="fas fa-arrow-right"></i></button>
             
-            <div class="catalog-stats" hidden aria-hidden="true" style="display:none!important"><span id="totalProducts">0</span><span id="totalCategories">0</span><span id="totalUsers">0</span></div>
+            <div class="catalog-stats">
+                <span id="totalProducts" hidden style="display:none!important">0</span><span id="totalCategories" hidden style="display:none!important">0</span>
+                <button type="button" class="catalog-stat sb-online-stat" id="onlineUsersStat" onclick="openOnlineUsersModal()" aria-label="Ver usuarios en línea">
+                    <div class="catalog-stat-number" id="totalUsers">0</div>
+                    <div class="catalog-stat-label">Usuarios en línea</div>
+                    <span class="sb-online-stat-hint"><i class="fas fa-eye"></i> Ver usuarios</span>
+                </button>
+            </div>
             
             <div class="catalog-grid" id="catalogGrid"></div>
 <style>
