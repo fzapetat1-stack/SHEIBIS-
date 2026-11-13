@@ -10194,7 +10194,7 @@ function renderCatalogosPro(){
  var tc=document.getElementById('totalCategories');if(tc)tc.textContent=topCats().length;
  grid.innerHTML=cats.map(catCardMarkup).join('');
 }
-function filterProducts(products){var min=sbpState.min,max=sbpState.max,mode=sbpState.mode;var list=products.filter(function(p){var price=num(p.precio);if((min>10&&price<min)||price>max)return false;if(mode==='recommended')return p.recomendado===true||p.destacado===true||productScore(p)>0;if(mode==='offers')return productDiscount(p)>0;if(mode==='new')return productIsNew(p);if(mode==='bestsellers')return num(p.ventas)>0;return true;});
+function filterProducts(products){var min=sbpState.min,max=sbpState.max,mode=sbpState.mode;var list=products.filter(function(p){var price=num(p.precio);if((min>10&&price<min)||price>max)return false;if(mode==='recommended')return p.recomendado===true||p.destacado===true||productScore(p)>0;if(mode==='offers')return productDiscount(p)>0&&!p.ofertaOculta;if(mode==='new')return productIsNew(p);if(mode==='bestsellers')return num(p.ventas)>0;return true;});
  list.sort(function(a,b){if(sbpState.sort==='priceAsc')return num(a.precio)-num(b.precio);if(sbpState.sort==='priceDesc')return num(b.precio)-num(a.precio);if(sbpState.sort==='new')return (productIsNew(b)?1:0)-(productIsNew(a)?1:0)||num(b.id)-num(a.id);if(sbpState.sort==='sales')return num(b.ventas)-num(a.ventas)||productScore(b)-productScore(a);if(sbpState.sort==='discount')return productDiscount(b)-productDiscount(a);return productScore(b)-productScore(a)||num(b.id)-num(a.id);});return list;}
 function productMarkup(p){var qty=quantities[p.id]||1,main=(Array.isArray(p.imagenes)&&p.imagenes.length?p.imagenes[0]:p.imagen),has=!!main,before=num(p.precioAntes),current=num(p.precio),disc=productDiscount(p),stars=num(p.valoracion);var badges='';if(p.recomendado||p.destacado)badges+='<span class="sbp-product-badge recommended">★ Recomendado</span>';if(num(p.ventas)>0)badges+='<span class="sbp-product-badge hot">🔥 Más vendido</span>';if(productIsNew(p))badges+='<span class="sbp-product-badge new">✦ Nuevo</span>';if(disc>0)badges+='<span class="sbp-product-badge offer">-'+disc.toFixed(0)+'%</span>';var rating=stars>0?'<span class="sbp-rating">'+('★'.repeat(Math.round(stars)))+' '+stars.toFixed(1)+'</span>':'';return '<div class="product-detail-item '+(p.agotado?'sheibis-out':'')+'" data-id="'+safe(p.id)+'"><div class="product-detail-image sheibis-product-clickable" data-product-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="Ampliar imagen de '+safe(p.nombre)+'" onclick="sheibisOpenProductImage('+Number(p.id)+',0)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();sheibisOpenProductImage('+Number(p.id)+',0)}">'+(disc>0?'<span class="product-discount-badge">-'+disc.toFixed(0)+'%</span>':'')+(has?'<img src="'+safe(main)+'" alt="'+safe(p.nombre)+'" loading="lazy" referrerpolicy="no-referrer">':'<span class="icon-placeholder"><i class="fas '+safe(p.icono||'fa-star')+'"></i></span>')+'</div><div class="product-detail-info"><div class="sbp-product-topline"><div class="sbp-badges">'+badges+'</div>'+rating+'</div>'+(p.tienda?'<div style="display:inline-flex;align-items:center;gap:5px;margin:0 0 4px;padding:2px 8px;border-radius:999px;background:#E7F6EE;color:#0B6B3A;font:700 .68rem Inter,system-ui,sans-serif">Vendido por '+safe(p.tienda)+'</div>':'')+'<div class="product-detail-name">'+safe(p.nombre)+'</div><div class="product-detail-desc">'+safe(p.desc||'')+'</div>'+(disc>0?'<div class="product-price-row"><span class="product-price-before">Q '+before.toFixed(2)+'</span><span class="product-price-current">Q '+current.toFixed(2)+'</span><span class="product-discount-text">Ahorras '+disc.toFixed(0)+'%</span></div>':'<div class="product-price-row"><span class="product-price-current">Q '+current.toFixed(2)+'</span></div>')+(p.agotado?'<div class="sheibis-out-badge">🚫 AGOTADO</div>':'<div class="product-detail-actions"><div class="qty-control-detail"><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',-1)"><i class="fas fa-minus"></i></button><span class="qty-display-detail" id="qty-detail-'+Number(p.id)+'">'+qty+'</span><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',1)"><i class="fas fa-plus"></i></button></div><button class="btn-add-detail" onclick="addToCartDetail('+Number(p.id)+')"><i class="fas fa-plus"></i> Agregar</button></div>')+'</div></div>';}
 function renderCategoryProducts(){var cat=getCategories().find(function(c){return String(c.id)===String(sbpState.category)});if(!cat)return;var all=getProducts().filter(function(p){return String(p.categoria)===String(cat.id)}),bounds=priceBounds(all);if(!isFinite(sbpState.max)||sbpState.max>bounds.max)sbpState.max=bounds.max;if(sbpState.min<10)sbpState.min=10;if(sbpState.min>sbpState.max)sbpState.min=10;var list=filterProducts(all);var host=document.getElementById('productList');if(!host)return;var kids=childCats(cat.id),subs=kids.length?subsMarkup(cat,kids):'';if(kids.length&&!all.length){host.innerHTML=subs;return;}var head=''+(cat.descripcion?'<p class="sbp-desc-only">'+safe(cat.descripcion)+'</p>':'')+'<div class="sbp-results">'+(list.length?list.map(productMarkup).join(''):'<div class="sbp-empty"><i class="fas fa-filter"></i><br><strong>Aún no hay productos en este catálogo.</strong></div>')+'</div>';
@@ -16983,10 +16983,10 @@ html body{background:radial-gradient(1100px 560px at 8% -8%,#efefef,transparent 
   }
   function strips(){
     var s=$('sbhmStrips');if(!s)return;var L=list();
-    var k=L.map(function(p){return p.id+':'+p.precio+':'+p.ventas+':'+p.precioAntes+':'+p.stock+':'+p.nuevo+':'+(p.insignias||[]).join('.')}).join('|');if(k===sig)return;sig=k;
+    var k=L.map(function(p){return p.id+':'+p.precio+':'+p.ventas+':'+p.precioAntes+':'+p.stock+':'+p.nuevo+':'+(p.ofertaOculta?1:0)+':'+(p.insignias||[]).join('.')}).join('|');if(k===sig)return;sig=k;
     var sets=[
       ['fire','Más vendidos','Lo que más aman nuestros clientes','Más vendido',L.filter(function(p){return num(p.ventas)>0||hasI(p,'masvendido')}).sort(function(a,b){return num(b.ventas)-num(a.ventas)})],
-      ['bolt','Ofertas','Aprovecha estos precios especiales','Oferta',L.filter(function(p){return num(p.precioAntes)>num(p.precio)||num(p.descuento)>0||hasI(p,'oferta')})],
+      ['bolt','Ofertas','Aprovecha estos precios especiales','Oferta',L.filter(function(p){return !p.ofertaOculta&&(num(p.precioAntes)>num(p.precio)||num(p.descuento)>0||hasI(p,'oferta'))})],
       ['star','Recomendados','Elegidos especialmente para ti','Recomendado',L.filter(function(p){return p.recomendado||p.destacado})]
     ];
     sets.push(['star','Novedades','Lo último que llegó a SHEIBIS','Nuevo',L.filter(function(p){return p.nuevo})]);
@@ -17411,6 +17411,586 @@ html.sbq-on #toastNotification,#toastNotification{display:none!important}
   wrapCart();document.addEventListener('DOMContentLoaded',wrapCart);window.addEventListener('load',function(){wrapCart();setTimeout(wrapCart,1500);setTimeout(wrapCart,4500)});
   window.sheibisCartSuccess=cartOk;window.sheibisNotify=sbShow;window.sheibisCartSuccessClose=clearAll;
 })();
+</script>
+
+
+<style id="sb-final-css">
+/* =====================================================================
+   SHEIBIS · AJUSTES FINALES
+   1) Campana de notificaciones con color propio
+   2) Aviso (modal) rediseñado: sin círculo negro, color según el tipo
+   3) Centro de notificaciones bien alineado en móvil + selector de sonido
+   4) Mensajes del administrador a todos los clientes
+   5) Botón flotante del carrito oculto en el panel de administración
+   6) Catálogo a ancho completo (sin espacios en blanco)
+   7) Botón "En ofertas" por producto (panel admin)
+   Para cambiar el color de la campana edita --sb-bell-1 y --sb-bell-2.
+   ===================================================================== */
+:root{--sb-bell-1:#FFC21A;--sb-bell-2:#FF8A00;--sb-bell-ink:#1B1303}
+
+/* ---------- 1) CAMPANA ---------- */
+html body header.top-bar #sbqBell.sbq-bell{
+  width:42px;height:42px;border:0!important;
+  background:linear-gradient(145deg,var(--sb-bell-1),var(--sb-bell-2))!important;
+  color:var(--sb-bell-ink)!important;
+  box-shadow:0 8px 18px -6px rgba(255,138,0,.65),inset 0 1px 0 rgba(255,255,255,.5)!important;
+  transition:transform .2s,box-shadow .2s,filter .2s}
+html body header.top-bar #sbqBell.sbq-bell:hover,
+html body header.top-bar #sbqBell.sbq-bell[aria-expanded="true"]{
+  background:linear-gradient(145deg,var(--sb-bell-1),var(--sb-bell-2))!important;border:0!important;
+  transform:translateY(-2px) scale(1.05);filter:saturate(1.1);
+  box-shadow:0 12px 24px -6px rgba(255,138,0,.75),inset 0 1px 0 rgba(255,255,255,.5)!important}
+html body header.top-bar #sbqBell.sbq-bell:active{transform:scale(.94)}
+#sbqBell svg{width:21px;height:21px;stroke-width:2.1;fill:rgba(27,19,3,.16)}
+#sbqBell .sbq-bc{top:-6px;right:-6px;border:2px solid #fff;background:#E11D48;box-shadow:0 3px 8px rgba(225,29,72,.45)}
+
+/* ---------- 2) AVISO (#sbNote) REDISEÑADO ---------- */
+html body #sbNote{--c1:#3B82F6;--c2:#2563EB;--soft:#DBEAFE;--cg:rgba(37,99,235,.45)}
+html body #sbNote[data-t=success]{--c1:#10B981;--c2:#059669;--soft:#D1FAE5;--cg:rgba(5,150,105,.45)}
+html body #sbNote[data-t=error]{--c1:#FB7185;--c2:#E11D48;--soft:#FFE4E6;--cg:rgba(225,29,72,.45)}
+html body #sbNote[data-t=warning]{--c1:#FBBF24;--c2:#D97706;--soft:#FEF3C7;--cg:rgba(217,119,6,.45)}
+html body #sbNote{background:rgba(15,23,42,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+html body #sbNote .sbn-crown,html body #sbNote .sbn-ringsvg{display:none!important}
+html body #sbNote .sbn-card{margin-top:0;padding:0;border-radius:30px;background:#fff;overflow:hidden;
+  box-shadow:0 40px 90px -20px rgba(15,23,42,.6),0 0 0 1px rgba(15,23,42,.06)}
+html body #sbNote .sbn-card::before{content:"";position:absolute;left:0;right:0;top:0;height:7px;z-index:6;
+  border-radius:30px 30px 0 0;background:linear-gradient(90deg,var(--c1),var(--c2))}
+html body #sbNote .sbn-in{padding:40px 28px 0;border-radius:30px;
+  background:radial-gradient(130% 75% at 50% -12%,var(--soft),rgba(255,255,255,0) 70%),#fff}
+html body #sbNote .sbn-in::before{background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%)}
+html body #sbNote .sbn-medal{width:104px;height:104px;margin:0 auto 18px}
+html body #sbNote .sbn-medal::before,html body #sbNote .sbn-medal::after{inset:4px;border:2px solid var(--c1)}
+html body #sbNote .sbn-disc{width:78px;height:78px;color:#fff;
+  background:linear-gradient(145deg,var(--c1),var(--c2));
+  box-shadow:0 0 0 9px var(--soft),0 16px 32px -8px var(--cg),inset 0 2px 0 rgba(255,255,255,.4)}
+html body #sbNote .sbn-disc svg{width:38px;height:38px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}
+/* El ícono del círculo nunca se dibujaba (quedaba vacío): ahora siempre se ve */
+html body #sbNote .sbn-disc path{stroke-dasharray:none!important;stroke-dashoffset:0!important;animation:none!important;opacity:1!important}
+html body #sbNote .sbn-disc svg{animation:sbnIconPop .5s cubic-bezier(.34,1.8,.64,1) .45s both}
+@keyframes sbnIconPop{from{opacity:0;transform:scale(.3) rotate(-20deg)}to{opacity:1;transform:none}}
+html body #sbNote .sbn-act button:focus-visible{outline:3px solid var(--soft)!important;outline-offset:2px}
+html body #sbNote h2{font-weight:900;font-size:2rem;color:#0F172A;letter-spacing:-.025em}
+html body #sbNote p{color:#475569;font-size:1.04rem}
+html body #sbNote p b{color:#0F172A}
+html body #sbNote .sbn-x{border:0;background:rgba(15,23,42,.07);color:#334155;top:14px;right:14px}
+html body #sbNote .sbn-x:hover{background:var(--c2);color:#fff}
+html body #sbNote .sbn-more{background:var(--c2);top:18px;left:16px}
+html body #sbNote .sbn-prod{background:#F8FAFC;border:1px solid #E2E8F0;box-shadow:none}
+html body #sbNote .sbn-sum{border-color:#CBD5E1;color:#475569}
+html body #sbNote .sbn-sum b{color:#0F172A}
+html body #sbNote .sbn-act{gap:12px;margin-top:24px}
+html body #sbNote .sbn-p{border:0;color:#fff;
+  background-color:var(--c2);
+  background-image:linear-gradient(135deg,var(--c1),var(--c2)),linear-gradient(115deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);
+  background-size:100% 100%,260% 100%;background-position:0 0,130% 0;background-repeat:no-repeat;
+  box-shadow:0 14px 28px -10px var(--cg)}
+html body #sbNote .sbn-p:hover{filter:brightness(1.06);transform:translateY(-2px);background-position:0 0,-40% 0}
+html body #sbNote .sbn-s{border:1.5px solid var(--c2);color:var(--c2);background:#fff}
+html body #sbNote .sbn-s:hover{background:var(--soft);color:var(--c2)}
+html body #sbNote .sbn-bar{height:6px;background:var(--soft)}
+html body #sbNote .sbn-bar span{background:linear-gradient(90deg,var(--c1),var(--c2))}
+html body #sbNote .sbn-sec b{color:var(--c2)}
+html body #sbNote .sbn-conf i:nth-child(5n+1){background:#10B981!important}
+html body #sbNote .sbn-conf i:nth-child(5n+2){background:#F59E0B!important}
+html body #sbNote .sbn-conf i:nth-child(5n+3){background:#3B82F6!important}
+html body #sbNote .sbn-conf i:nth-child(5n+4){background:#EC4899!important}
+html body #sbNote .sbn-conf i:nth-child(5n){background:#8B5CF6!important}
+@media(max-width:560px){
+  html body #sbNote .sbn-card{width:100%;border-radius:30px 30px 0 0}
+  html body #sbNote .sbn-card::before{border-radius:30px 30px 0 0}
+  html body #sbNote .sbn-card::after{content:"";position:absolute;top:12px;left:50%;width:46px;height:5px;margin-left:-23px;border-radius:5px;background:rgba(15,23,42,.16);z-index:7}
+  html body #sbNote .sbn-in{padding:44px 22px 0;border-radius:30px 30px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}
+  html body #sbNote h2{font-size:1.7rem}
+  html body #sbNote .sbn-act{gap:10px}
+  html body #sbNote .sbn-act button{padding:15px 12px;font-size:.98rem}
+  html body #sbNote .sbn-time{margin:22px -22px 0}
+  html body #sbNote .sbn-sec{padding:10px 22px 16px}
+}
+
+/* ---------- 3) CENTRO DE NOTIFICACIONES: MÓVIL + SONIDO ---------- */
+html body #sbqPanel .sbqp-acts [data-a="snd"]{display:none!important}
+html body #sbqPanel{border-radius:22px}
+@media(max-width:600px){
+  html body header.top-bar #sbqBell.sbq-bell{width:40px;height:40px}
+  html body #sbqPanel{left:10px!important;right:10px!important;width:auto!important;
+    top:calc(env(safe-area-inset-top,0px) + 68px)!important;
+    max-height:calc(100dvh - 84px - env(safe-area-inset-top,0px))!important;border-radius:22px}
+  html body #sbqPanel .sbqp-h{flex-wrap:wrap;row-gap:12px;padding:18px 16px 14px}
+  html body #sbqPanel .sbqp-acts{width:100%;gap:8px}
+  html body #sbqPanel .sbqp-acts button{flex:1;justify-content:center;padding:11px 10px;font-size:.8rem;
+    background:var(--pro-jade-l,#F3F3F3);border-radius:12px}
+  html body #sbqPanel .sbqp-list{padding:6px 10px 16px}
+  html body #sbqPanel .sbqp-it{gap:13px;padding:14px 40px 14px 18px;margin:2px 0}
+  html body #sbqPanel .sbqp-it .sbq-ti{font-size:.94rem}
+  html body #sbqPanel .sbqp-it .sbq-m{font-size:.88rem;-webkit-line-clamp:5}
+  html body #sbqPanel .sbqp-r time{font-size:.72rem}
+  html body #sbqPanel .sbqp-g{padding:14px 12px 6px}
+}
+.sbs-box{margin:0;padding:12px 16px 14px;border-bottom:1px solid var(--pro-line,#EDEDED);display:grid;gap:10px;
+  font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,rgba(255,194,26,.10),rgba(255,194,26,0))}
+.sbs-row{display:flex;align-items:center;gap:10px}
+.sbs-row>b{font:700 .78rem Inter,sans-serif;color:var(--pro-ink,#111);white-space:nowrap}
+.sbs-sw{position:relative;flex:none;width:44px;height:26px;border:0;border-radius:999px;background:#CBD5E1;cursor:pointer;transition:background .2s;padding:0}
+.sbs-sw::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:transform .2s}
+.sbs-sw[aria-checked="true"]{background:linear-gradient(135deg,var(--sb-bell-1),var(--sb-bell-2))}
+.sbs-sw[aria-checked="true"]::after{transform:translateX(18px)}
+.sbs-sel{flex:1;min-width:0;height:42px;border:1.5px solid var(--pro-line,#D8D8D8)!important;border-radius:12px!important;padding:0 10px;font:600 .86rem Inter,sans-serif;background:var(--pro-card,#fff);color:var(--pro-ink,#111)}
+.sbs-test{flex:none;height:42px;padding:0 14px;border:0;border-radius:12px;cursor:pointer;font:800 .8rem Inter,sans-serif;color:var(--sb-bell-ink);background:linear-gradient(145deg,var(--sb-bell-1),var(--sb-bell-2));box-shadow:0 6px 14px -6px rgba(255,138,0,.7)}
+.sbs-test:active{transform:scale(.96)}
+.sbs-vol{flex:1;min-width:0;accent-color:#FF8A00;height:28px}
+
+/* ---------- 4) MENSAJE DEL ADMINISTRADOR (para los clientes) ---------- */
+#sbBc{position:fixed;inset:0;z-index:2147483640;display:none;align-items:center;justify-content:center;padding:22px 18px;
+  background:rgba(15,23,42,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-family:Inter,system-ui,sans-serif}
+#sbBc.on{display:flex;animation:sbbFade .25s both}
+@keyframes sbbFade{from{opacity:0}}
+#sbBc *{box-sizing:border-box}
+#sbBc .sbb-card{--c1:#6366F1;--c2:#4338CA;--soft:#E0E7FF;--cg:rgba(67,56,202,.45);position:relative;width:min(440px,100%);max-height:calc(100dvh - 44px);overflow:auto;
+  border-radius:30px;background:#fff;text-align:center;padding:0 0 22px;box-shadow:0 40px 90px -20px rgba(15,23,42,.65);animation:sbbPop .55s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes sbbPop{from{opacity:0;transform:translateY(34px) scale(.9)}}
+#sbBc[data-t=promo] .sbb-card{--c1:#F472B6;--c2:#DB2777;--soft:#FCE7F3;--cg:rgba(219,39,119,.45)}
+#sbBc[data-t=success] .sbb-card{--c1:#10B981;--c2:#059669;--soft:#D1FAE5;--cg:rgba(5,150,105,.45)}
+#sbBc[data-t=warning] .sbb-card{--c1:#FBBF24;--c2:#D97706;--soft:#FEF3C7;--cg:rgba(217,119,6,.45)}
+#sbBc[data-t=navidad] .sbb-card{--c1:#EF4444;--c2:#15803D;--soft:#FEE2E2;--cg:rgba(21,128,61,.45)}
+#sbBc .sbb-top{position:relative;padding:38px 26px 20px;background:radial-gradient(130% 90% at 50% -10%,var(--soft),#fff 72%);border-radius:30px 30px 0 0}
+#sbBc .sbb-top::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:linear-gradient(90deg,var(--c1),var(--c2));border-radius:30px 30px 0 0}
+#sbBc .sbb-ic{width:84px;height:84px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font-size:2.3rem;
+  background:linear-gradient(145deg,var(--c1),var(--c2));box-shadow:0 0 0 9px var(--soft),0 16px 30px -8px var(--cg);animation:sbbRing 2.6s ease-in-out .6s infinite}
+@keyframes sbbRing{0%,100%{transform:rotate(0)}8%{transform:rotate(14deg)}16%{transform:rotate(-12deg)}24%{transform:rotate(8deg)}32%{transform:rotate(-5deg)}40%{transform:rotate(0)}}
+#sbBc .sbb-tag{display:inline-block;margin-bottom:10px;padding:5px 13px;border-radius:999px;font:800 .64rem Inter,sans-serif;letter-spacing:.2em;color:var(--c2);background:var(--soft)}
+#sbBc h2{margin:0;font:900 1.7rem/1.15 Inter,sans-serif;letter-spacing:-.02em;color:#0F172A;word-break:break-word}
+#sbBc .sbb-msg{margin:0;padding:6px 26px 0;font:400 1.04rem/1.6 Inter,sans-serif;color:#475569;white-space:pre-line;word-break:break-word}
+#sbBc .sbb-act{display:grid;gap:10px;padding:20px 24px 0}
+#sbBc .sbb-act button{padding:15px 18px;border-radius:999px;border:0;cursor:pointer;font:800 1rem Inter,sans-serif;transition:.2s}
+#sbBc .sbb-go{color:#fff;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 14px 28px -10px var(--cg)}
+#sbBc .sbb-go:hover{transform:translateY(-2px);filter:brightness(1.06)}
+#sbBc .sbb-ok{background:var(--soft);color:var(--c2)}
+#sbBc .sbb-ok:hover{filter:brightness(.96)}
+#sbBc .sbb-more{position:absolute;left:16px;top:20px;z-index:3;padding:4px 11px;border-radius:999px;background:var(--c2);color:#fff;font:800 .7rem Inter,sans-serif}
+#sbBc .sbb-more[hidden]{display:none}
+#sbBc .sbb-x{position:absolute;right:14px;top:18px;z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:rgba(15,23,42,.07);color:#334155;font-size:1.1rem;cursor:pointer}
+#sbBc .sbb-x:hover{background:var(--c2);color:#fff}
+@media(max-width:560px){
+  #sbBc{align-items:flex-end;padding:0}
+  #sbBc .sbb-card{width:100%;border-radius:30px 30px 0 0;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px));animation:sbbSheet .45s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes sbbSheet{from{transform:translateY(100%)}}
+  #sbBc h2{font-size:1.5rem}
+}
+
+/* Redactor de mensajes (solo administrador) */
+#sbMsgAdmin{position:fixed;inset:0;z-index:2147483645;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(15,23,42,.65);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-family:Inter,system-ui,sans-serif}
+#sbMsgAdmin.on{display:flex}
+#sbMsgAdmin *{box-sizing:border-box}
+#sbMsgAdmin .sma-box{width:min(760px,100%);max-height:calc(100dvh - 28px);overflow:auto;background:#fff;color:#0F172A;border-radius:26px;box-shadow:0 40px 90px -20px rgba(0,0,0,.6)}
+#sbMsgAdmin .sma-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;background:linear-gradient(135deg,#0F172A,#334155);color:#fff;border-radius:26px 26px 0 0}
+#sbMsgAdmin .sma-head h3{margin:0;font:900 1.2rem Inter,sans-serif}
+#sbMsgAdmin .sma-head p{margin:3px 0 0;font:500 .8rem Inter,sans-serif;color:#CBD5E1}
+#sbMsgAdmin .sma-close{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:1.1rem;cursor:pointer}
+#sbMsgAdmin .sma-body{padding:20px 22px 24px;display:grid;gap:16px}
+#sbMsgAdmin label{display:grid;gap:6px;font:700 .8rem Inter,sans-serif;color:#334155}
+#sbMsgAdmin input[type=text],#sbMsgAdmin textarea,#sbMsgAdmin select,#sbMsgAdmin input[type=number]{width:100%;padding:12px 14px;border:1.5px solid #CBD5E1!important;border-radius:14px!important;font:500 .95rem Inter,sans-serif;color:#0F172A;background:#fff}
+#sbMsgAdmin textarea{min-height:120px;resize:vertical;line-height:1.5}
+#sbMsgAdmin .sma-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#sbMsgAdmin .sma-chips{display:flex;flex-wrap:wrap;gap:8px}
+#sbMsgAdmin .sma-chip{padding:8px 14px;border-radius:999px;border:1.5px solid #CBD5E1;background:#fff;cursor:pointer;font:700 .8rem Inter,sans-serif;color:#334155}
+#sbMsgAdmin .sma-chip:hover{border-color:#0F172A}
+#sbMsgAdmin .sma-snd{display:flex;gap:10px}
+#sbMsgAdmin .sma-snd select{flex:1}
+#sbMsgAdmin .sma-play{flex:none;padding:0 16px;border:0;border-radius:14px;background:linear-gradient(145deg,#FFC21A,#FF8A00);color:#1B1303;font:800 .85rem Inter,sans-serif;cursor:pointer}
+#sbMsgAdmin .sma-send{padding:16px;border:0;border-radius:999px;cursor:pointer;font:900 1.05rem Inter,sans-serif;color:#fff;background:linear-gradient(135deg,#0F172A,#334155);box-shadow:0 14px 28px -10px rgba(15,23,42,.6)}
+#sbMsgAdmin .sma-send:disabled{opacity:.55;cursor:wait}
+#sbMsgAdmin .sma-prev{background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:18px;padding:14px 16px}
+#sbMsgAdmin .sma-prev small{display:block;margin-bottom:6px;font:800 .66rem Inter,sans-serif;letter-spacing:.16em;color:#64748B}
+#sbMsgAdmin .sma-prev b{display:block;font:800 1rem Inter,sans-serif}
+#sbMsgAdmin .sma-prev span{display:block;margin-top:3px;font:400 .9rem/1.5 Inter,sans-serif;color:#475569;white-space:pre-line}
+#sbMsgAdmin .sma-hist h4{margin:0 0 8px;font:800 .9rem Inter,sans-serif}
+#sbMsgAdmin .sma-it{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid #E2E8F0;border-radius:14px;margin-bottom:8px}
+#sbMsgAdmin .sma-it>div{flex:1;min-width:0}
+#sbMsgAdmin .sma-it b{display:block;font:800 .9rem Inter,sans-serif;word-break:break-word}
+#sbMsgAdmin .sma-it span{display:block;font:400 .82rem/1.4 Inter,sans-serif;color:#64748B;word-break:break-word}
+#sbMsgAdmin .sma-it em{display:block;margin-top:4px;font:600 .7rem Inter,sans-serif;font-style:normal;color:#94A3B8}
+#sbMsgAdmin .sma-del{flex:none;border:0;background:#FEE2E2;color:#B91C1C;border-radius:10px;padding:8px 11px;cursor:pointer;font:800 .78rem Inter,sans-serif}
+#sbMsgAdmin .sma-msg{padding:12px 14px;border-radius:12px;font:700 .86rem Inter,sans-serif}
+#sbMsgAdmin .sma-msg.ok{background:#D1FAE5;color:#065F46}
+#sbMsgAdmin .sma-msg.er{background:#FFE4E6;color:#9F1239}
+@media(max-width:560px){#sbMsgAdmin{padding:0;align-items:flex-end}#sbMsgAdmin .sma-box{border-radius:26px 26px 0 0;max-height:96dvh}#sbMsgAdmin .sma-2{grid-template-columns:1fr}#sbMsgAdmin .sma-body{padding:18px 16px 26px}}
+
+/* ---------- 5) BOTÓN FLOTANTE DEL CARRITO: oculto en el panel de administración ---------- */
+body.sb-admin-open #sbxFab,
+body:has(#sbAdminPanel.sb-show) #sbxFab,
+body:has(#sbAdminLogin.sb-show) #sbxFab{display:none!important}
+
+/* ---------- 6) CATÁLOGO A ANCHO COMPLETO (sin espacios en blanco) ---------- */
+html body .app-container{max-width:none!important;width:100%!important;margin:0!important}
+html body .tab-content{padding-left:clamp(14px,2.4vw,40px)!important;padding-right:clamp(14px,2.4vw,40px)!important;padding-bottom:28px!important}
+html body .catalog-grid{width:100%!important;max-width:none!important;margin:0!important;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))!important;
+  grid-auto-rows:1fr;gap:clamp(12px,1.6vw,22px)!important;align-items:stretch}
+html body .catalog-grid .catalog-card{width:100%!important;height:100%;min-width:0}
+html body .catalog-stats{width:100%!important;max-width:none!important}
+html body #sbAds,html body #sbAssistHome,html body #sbSearchBox,html body .sbp-toolbar,html body .sbp-category-head,
+html body #productList .sbp-toolbar,html body .sbx-wrap{max-width:none!important}
+html body #sbhmTop,html body #sbhmStrips{max-width:none!important}
+html body #productList{width:100%!important;max-width:none!important}
+html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))!important;gap:clamp(12px,1.6vw,22px)!important}
+@media(max-width:700px){
+  html body .catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  html body .sbp-results{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:380px){
+  html body .catalog-grid,html body .sbp-results{grid-template-columns:1fr!important}
+}
+
+/* ---------- 7) BOTÓN "EN OFERTAS" POR PRODUCTO ---------- */
+.sbx-ofbtn{display:inline-flex;align-items:center;gap:7px;border:1.5px solid #16A34A;background:#DCFCE7;color:#166534;border-radius:999px;
+  padding:7px 13px;font:800 .75rem Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap;transition:.18s}
+.sbx-ofbtn:hover{filter:brightness(.96);transform:translateY(-1px)}
+.sbx-ofbtn.off{border-color:#CBD5E1;background:#F1F5F9;color:#64748B}
+.sbx-ofbtn .dot{width:9px;height:9px;border-radius:50%;background:#16A34A;box-shadow:0 0 0 3px rgba(22,163,74,.2)}
+.sbx-ofbtn.off .dot{background:#94A3B8;box-shadow:none}
+.sb-item .sb-actions .sbx-ofbtn{padding:8px 11px}
+
+</style>
+<script id="sb-final-js">
+(function(){
+  'use strict';
+  function $(i){return document.getElementById(i)}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+  function callApi(a,p,o){return (typeof apiRequest==='function')?apiRequest(a,p||{},o||{}):Promise.reject(new Error('API no disponible'))}
+
+  /* =====================================================================
+     1) SONIDOS · 20 sonidos sintetizados (no necesitan archivos ni internet)
+     ===================================================================== */
+  var SK_ON='sb_snd_on_v2',SK_ID='sb_snd_id_v2',SK_VOL='sb_snd_vol_v2';
+  var ctx=null,master=null;
+  function getCtx(){
+    if(ctx)return ctx;
+    var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+    try{ctx=new AC()}catch(e){return null}
+    var comp=ctx.createDynamicsCompressor();
+    comp.threshold.value=-14;comp.knee.value=18;comp.ratio.value=6;comp.attack.value=.003;comp.release.value=.2;
+    master=ctx.createGain();master.gain.value=1.2;master.connect(comp);comp.connect(ctx.destination);
+    return ctx;
+  }
+  function unlock(){
+    var c=getCtx();if(!c)return;
+    if(c.state==='suspended'){try{c.resume()}catch(e){}}
+    try{var b=c.createBuffer(1,1,22050),s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0)}catch(e){}
+  }
+  ['pointerdown','touchstart','keydown','click'].forEach(function(ev){document.addEventListener(ev,unlock,{capture:true,passive:true})});
+
+  function tn(c,d,t,f,dur,type,g,f2,att){
+    var o=c.createOscillator(),v=c.createGain();
+    o.type=type||'sine';o.frequency.setValueAtTime(f,t);
+    if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+    var a=att||.008,pk=g==null?.5:g;
+    v.gain.setValueAtTime(.0001,t);v.gain.exponentialRampToValueAtTime(pk,t+a);v.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(v);v.connect(d);o.start(t);o.stop(t+dur+.05);
+  }
+  function bell(c,d,t,f,len,g){
+    tn(c,d,t,f,len,'sine',g);
+    tn(c,d,t,f*2.76,len*.5,'sine',g*.35);
+    tn(c,d,t,f*5.4,len*.25,'sine',g*.15);
+  }
+  function noise(c,d,t,dur,g,freq){
+    var n=Math.max(1,Math.floor(c.sampleRate*dur)),b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);
+    for(var i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);
+    var s=c.createBufferSource(),f=c.createBiquadFilter(),v=c.createGain();
+    s.buffer=b;f.type='bandpass';f.frequency.value=freq||1800;v.gain.value=g;
+    s.connect(f);f.connect(v);v.connect(d);s.start(t);
+  }
+  function seq(c,d,t,notes,type,dur,g,step){
+    notes.forEach(function(f,i){tn(c,d,t+i*step,f,dur,type,g)});
+  }
+  var SOUNDS=[
+    {id:'campanita',name:'Campanita',fn:function(c,d,t){bell(c,d,t,1319,.9,.55);bell(c,d,t+.13,1760,.9,.5)}},
+    {id:'gota',name:'Gota de agua',fn:function(c,d,t){tn(c,d,t,1100,.22,'sine',.7,420);tn(c,d,t+.15,1700,.16,'sine',.35,700)}},
+    {id:'moneda',name:'Moneda',fn:function(c,d,t){tn(c,d,t,988,.09,'square',.2);tn(c,d,t+.09,1319,.55,'square',.18);bell(c,d,t+.09,1319,.6,.25)}},
+    {id:'burbuja',name:'Burbuja',fn:function(c,d,t){tn(c,d,t,280,.14,'sine',.7,900);tn(c,d,t+.13,420,.12,'sine',.5,1200)}},
+    {id:'cristal',name:'Cristal',fn:function(c,d,t){bell(c,d,t,2093,.9,.4);bell(c,d,t+.1,2637,.8,.32);bell(c,d,t+.2,3136,.9,.3)}},
+    {id:'arpa',name:'Arpa',fn:function(c,d,t){seq(c,d,t,[523.25,659.25,783.99,1046.5,1318.5],'triangle',.7,.45,.09)}},
+    {id:'marimba',name:'Marimba',fn:function(c,d,t){[523.25,659.25,783.99].forEach(function(f,i){tn(c,d,t+i*.11,f,.38,'sine',.75);tn(c,d,t+i*.11,f*4,.08,'sine',.25)})}},
+    {id:'pop',name:'Pop',fn:function(c,d,t){tn(c,d,t,700,.1,'sine',.95,120);noise(c,d,t,.04,.6,2200)}},
+    {id:'dingdong',name:'Ding-dong',fn:function(c,d,t){bell(c,d,t,784,1.1,.6);bell(c,d,t+.45,587.33,1.3,.6)}},
+    {id:'chime',name:'Campanillas',fn:function(c,d,t){bell(c,d,t,1568,.7,.45);bell(c,d,t+.14,1318.5,.7,.45);bell(c,d,t+.28,1046.5,.95,.5)}},
+    {id:'suave',name:'Suave',fn:function(c,d,t){[440,554.37,659.25].forEach(function(f,i){tn(c,d,t+i*.18,f,1,'triangle',.42,0,.08)})}},
+    {id:'alerta',name:'Alerta',fn:function(c,d,t){for(var i=0;i<3;i++)tn(c,d,t+i*.16,880,.12,'square',.28)}},
+    {id:'sirena',name:'Sirena corta',fn:function(c,d,t){tn(c,d,t,600,.35,'sawtooth',.25,1000);tn(c,d,t+.35,1000,.35,'sawtooth',.25,600)}},
+    {id:'magia',name:'Magia',fn:function(c,d,t){seq(c,d,t,[1046.5,1174.7,1318.5,1568,1760,2093,2349,2637,3136],'triangle',.35,.3,.07);bell(c,d,t+.66,2093,.9,.35)}},
+    {id:'xilofono',name:'Xilófono',fn:function(c,d,t){[784,988,1175,1568].forEach(function(f,i){tn(c,d,t+i*.09,f,.3,'triangle',.55);tn(c,d,t+i*.09,f*3,.06,'sine',.2)})}},
+    {id:'laser',name:'Láser',fn:function(c,d,t){tn(c,d,t,2200,.28,'sawtooth',.28,180);tn(c,d,t,2200,.28,'square',.12,180)}},
+    {id:'tada',name:'¡Tadá!',fn:function(c,d,t){tn(c,d,t,523.25,.14,'triangle',.5);tn(c,d,t+.12,659.25,.14,'triangle',.5);[523.25,659.25,783.99,1046.5].forEach(function(f){tn(c,d,t+.26,f,1,'triangle',.34)})}},
+    {id:'navidad',name:'Navidad',fn:function(c,d,t){
+      var E=659.25,G=783.99,C=523.25,D=587.33,N=[[E,0,.12],[E,.15,.12],[E,.3,.3],[E,.65,.12],[E,.8,.12],[E,.95,.3],[E,1.3,.12],[G,1.45,.12],[C,1.6,.18],[D,1.82,.12],[E,1.97,.55]];
+      N.forEach(function(n){tn(c,d,t+n[1],n[0],n[2]+.25,'sine',.5);tn(c,d,t+n[1],n[0]*2.76,.12,'sine',.12)})}},
+    {id:'robot',name:'Robot',fn:function(c,d,t){[440,660,880,660,1100].forEach(function(f,i){tn(c,d,t+i*.075,f,.07,'square',.22)})}},
+    {id:'campana',name:'Campana grande',fn:function(c,d,t){bell(c,d,t,392,2,.7);bell(c,d,t,196,2,.45)}}
+  ];
+  var AUTO={success:'campanita',error:'alerta',warning:'dingdong',info:'gota',broadcast:'chime'};
+  function findSound(id){for(var i=0;i<SOUNDS.length;i++)if(SOUNDS[i].id===id)return SOUNDS[i];return null}
+  function soundOn(){return ls(SK_ON)!=='0'}
+  function userSound(){return ls(SK_ID)||'auto'}
+  function vol(){var v=parseFloat(ls(SK_VOL));return isFinite(v)?Math.max(0,Math.min(1,v)):.85}
+  function resolve(id,type){
+    if(!id||id==='user')id=userSound();
+    if(id==='auto'||!findSound(id))id=AUTO[type]||'campanita';
+    return id;
+  }
+  function play(id,type,force){
+    if(!force&&!soundOn())return;
+    var c=getCtx();if(!c)return;
+    function go(){
+      try{master.gain.value=Math.max(.05,vol()*1.6);var s=findSound(resolve(id,type));if(s)s.fn(c,master,c.currentTime+.03)}catch(e){}
+    }
+    if(c.state==='suspended'){var p;try{p=c.resume()}catch(e){}if(p&&p.then)p.then(go,function(){});else go()}else go();
+  }
+  window.SBSound={play:play,list:SOUNDS.map(function(s){return{id:s.id,name:s.name}}),enabled:soundOn};
+
+  /* ---- selector de sonido dentro del centro de notificaciones (campana) ---- */
+  function injectSoundUI(){
+    var p=$('sbqPanel');if(!p||p.querySelector('.sbs-box'))return;
+    var list=p.querySelector('.sbqp-list');if(!list)return;
+    var box=document.createElement('div');box.className='sbs-box';
+    var cur=userSound();
+    box.innerHTML='<div class="sbs-row"><b>Sonido de avisos</b><span style="flex:1"></span><button type="button" class="sbs-sw" role="switch" aria-label="Activar sonido" aria-checked="'+(soundOn()?'true':'false')+'"></button></div>'+
+      '<div class="sbs-row"><select class="sbs-sel" aria-label="Elegir sonido"><option value="auto">Automático (según el aviso)</option>'+
+      SOUNDS.map(function(s){return '<option value="'+s.id+'"'+(cur===s.id?' selected':'')+'>'+esc(s.name)+'</option>'}).join('')+
+      '</select><button type="button" class="sbs-test">Probar</button></div>'+
+      '<div class="sbs-row"><b>Volumen</b><input class="sbs-vol" type="range" min="0" max="100" step="5" value="'+Math.round(vol()*100)+'" aria-label="Volumen"></div>';
+    p.insertBefore(box,list);
+    var sw=box.querySelector('.sbs-sw'),sel=box.querySelector('.sbs-sel'),rg=box.querySelector('.sbs-vol');
+    if(cur==='auto')sel.value='auto';
+    sw.addEventListener('click',function(e){e.stopPropagation();var on=sw.getAttribute('aria-checked')!=='true';sw.setAttribute('aria-checked',on?'true':'false');ls(SK_ON,on?'1':'0');if(on)play(sel.value,'success',true)});
+    sel.addEventListener('change',function(){ls(SK_ID,sel.value);play(sel.value,'success',true)});
+    box.querySelector('.sbs-test').addEventListener('click',function(e){e.stopPropagation();play(sel.value,'success',true)});
+    rg.addEventListener('input',function(){ls(SK_VOL,String(rg.value/100))});
+    rg.addEventListener('change',function(){play(sel.value,'success',true)});
+  }
+  new MutationObserver(function(){injectSoundUI()}).observe(document.body||document.documentElement,{childList:true});
+  setInterval(injectSoundUI,1500);
+
+  /* ---- suena cuando aparece un aviso (#sbNote) ---- */
+  function hookNote(){
+    var d=$('sbNote');if(!d||d.__sbs)return;d.__sbs=1;
+    var was=d.classList.contains('on')&&!d.classList.contains('out'),sig='';
+    new MutationObserver(function(){
+      var live=d.classList.contains('on')&&!d.classList.contains('out'),t=d.getAttribute('data-t')||'info';
+      var s=t+'|'+(($('sbnT')||{}).textContent||'')+'|'+(($('sbnM')||{}).textContent||'');
+      if(live&&(!was||s!==sig))play('user',t);
+      was=live;sig=s;
+    }).observe(d,{attributes:true,attributeFilter:['class','data-t']});
+  }
+  setInterval(hookNote,700);hookNote();
+
+  /* =====================================================================
+     2) PANEL ADMIN ABIERTO → ocultar el botón flotante del carrito
+     ===================================================================== */
+  function adminOpen(){var p=$('sbAdminPanel'),l=$('sbAdminLogin');return !!((p&&p.classList.contains('sb-show'))||(l&&l.classList.contains('sb-show')))}
+  function syncAdminFlag(){if(document.body)document.body.classList.toggle('sb-admin-open',adminOpen())}
+  setInterval(syncAdminFlag,300);syncAdminFlag();
+
+  /* =====================================================================
+     3) MENSAJES DEL ADMINISTRADOR → NOTIFICACIÓN PARA TODOS LOS USUARIOS
+     ===================================================================== */
+  var BK_SEEN='sb_bc_seen_v1';
+  var TYPES={info:{ic:'📢',tag:'AVISO',lb:'Aviso'},promo:{ic:'🏷️',tag:'PROMOCIÓN',lb:'Promoción'},success:{ic:'✨',tag:'NOVEDAD',lb:'Novedad'},warning:{ic:'⚠️',tag:'IMPORTANTE',lb:'Importante'},navidad:{ic:'🎄',tag:'FELIZ NAVIDAD',lb:'Navidad'}};
+  function seenList(){try{var a=JSON.parse(ls(BK_SEEN)||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
+  function markSeen(id){var a=seenList();if(a.indexOf(id)<0){a.push(id);if(a.length>100)a=a.slice(-100);ls(BK_SEEN,JSON.stringify(a))}}
+  var bcQ=[],bcCur=null,bcBuilt=false;
+  function bcBuild(){
+    if(bcBuilt&&$('sbBc'))return;
+    var d=document.createElement('div');d.id='sbBc';d.setAttribute('role','alertdialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','sbbT');
+    d.innerHTML='<div class="sbb-card"><span class="sbb-more" id="sbbMore" hidden></span><button type="button" class="sbb-x" aria-label="Cerrar">✕</button>'+
+      '<div class="sbb-top"><div class="sbb-ic" id="sbbIc"></div><span class="sbb-tag" id="sbbTag"></span><h2 id="sbbT"></h2></div>'+
+      '<p class="sbb-msg" id="sbbM"></p><div class="sbb-act" id="sbbAct"></div></div>';
+    document.body.appendChild(d);bcBuilt=true;
+    d.addEventListener('click',function(e){if(e.target===d)bcClose()});
+    d.querySelector('.sbb-x').onclick=bcClose;
+    document.addEventListener('keydown',function(e){if(d.classList.contains('on')&&e.key==='Escape')bcClose()});
+  }
+  function bcShow(m){
+    bcBuild();bcCur=m;var d=$('sbBc'),T=TYPES[m.tipo]||TYPES.info;
+    d.setAttribute('data-t',m.tipo||'info');
+    $('sbbIc').textContent=T.ic;$('sbbTag').textContent=T.tag;
+    $('sbbT').textContent=m.titulo||T.lb;
+    var mm=$('sbbM');mm.textContent=m.mensaje||'';mm.style.display=m.mensaje?'':'none';
+    var act=$('sbbAct');act.innerHTML='';
+    if(m.enlace){var g=document.createElement('button');g.type='button';g.className='sbb-go';g.textContent=m.boton||'Ver más';
+      g.onclick=function(){try{window.open(m.enlace,'_blank','noopener')}catch(e){}bcClose()};act.appendChild(g)}
+    var ok=document.createElement('button');ok.type='button';ok.className=m.enlace?'sbb-ok':'sbb-go';ok.textContent='Entendido';ok.onclick=bcClose;act.appendChild(ok);
+    var more=$('sbbMore');more.hidden=!bcQ.length;more.textContent='+'+bcQ.length+' más';
+    d.classList.remove('on');void d.offsetWidth;d.classList.add('on');
+    var sid=(m.sonido&&m.sonido!=='user')?m.sonido:'user';
+    play(sid==='auto'?'user':sid,'broadcast');
+    try{if(navigator.vibrate)navigator.vibrate([40,60,40])}catch(e){}
+  }
+  function bcClose(){
+    var d=$('sbBc');if(bcCur){markSeen(bcCur.id);bcCur=null}
+    if(bcQ.length){bcShow(bcQ.shift());return}
+    if(d)d.classList.remove('on');
+  }
+  function appVisible(){var a=$('appContainer');return !a||a.classList.contains('show')}
+  var bcBusy=false;
+  function fetchBroadcasts(){
+    if(bcBusy||document.hidden||!appVisible())return;
+    bcBusy=true;
+    callApi('getBroadcasts',{},{timeout:20000}).then(function(d){
+      var list=(d&&Array.isArray(d.messages))?d.messages:[],seen=seenList(),fresh=[];
+      list.forEach(function(m){
+        if(!m||!m.id||seen.indexOf(m.id)>-1)return;
+        if(bcCur&&bcCur.id===m.id)return;
+        for(var i=0;i<bcQ.length;i++)if(bcQ[i].id===m.id)return;
+        fresh.push(m);
+      });
+      if(!fresh.length)return;
+      fresh.sort(function(a,b){return (b.creado||0)-(a.creado||0)});
+      fresh=fresh.slice(0,5);
+      /* también quedan guardados en la campana (centro de notificaciones) */
+      fresh.slice().reverse().forEach(function(m){
+        try{if(window.SBN&&typeof SBN.log==='function')SBN.log({type:m.tipo==='warning'?'warning':(m.tipo==='success'?'success':'info'),title:m.titulo||(TYPES[m.tipo]||TYPES.info).lb,msg:m.mensaje})}catch(e){}
+      });
+      if(bcCur){fresh.forEach(function(m){bcQ.push(m)});var mo=$('sbbMore');if(mo){mo.hidden=false;mo.textContent='+'+bcQ.length+' más'}}
+      else{var first=fresh.shift();fresh.forEach(function(m){bcQ.push(m)});bcShow(first)}
+    }).catch(function(){}).then(function(){bcBusy=false});
+  }
+  setTimeout(fetchBroadcasts,3000);
+  setInterval(fetchBroadcasts,45000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(fetchBroadcasts,600)});
+  window.addEventListener('focus',function(){setTimeout(fetchBroadcasts,600)});
+
+  /* ---- Redactor de mensajes (solo administrador) ---- */
+  var DUR=[[24,'24 horas'],[72,'3 días'],[168,'7 días'],[336,'14 días'],[720,'30 días']];
+  var TPL=[
+    {n:'Navidad',t:'navidad',s:'navidad',ti:'¡Feliz Navidad! 🎄',m:'Hoy es Navidad y en SHEIBIS lo celebramos contigo.\nTenemos novedades y ofertas especiales para ti. ¡Gracias por acompañarnos!'},
+    {n:'Novedades',t:'success',s:'magia',ti:'¡Novedades en SHEIBIS!',m:'Llegaron productos nuevos a la tienda. Entra al inicio y descúbrelos antes de que se agoten.'},
+    {n:'Actualización',t:'info',s:'chime',ti:'Actualizamos la página',m:'Mejoramos SHEIBIS para que comprar sea más fácil y rápido. Si notas algo raro, vuelve a entrar y escríbenos.'},
+    {n:'Oferta',t:'promo',s:'moneda',ti:'¡Ofertas por tiempo limitado!',m:'Aprovecha los precios especiales de hoy. Revisa la sección Ofertas en el inicio.'}
+  ];
+  function pad(n){return n<10?'0'+n:''+n}
+  function fdate(ms){if(!ms)return '—';var d=new Date(ms);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
+  var selType='info';
+  function buildComposer(){
+    var m=$('sbMsgAdmin');if(m)return m;
+    m=document.createElement('div');m.id='sbMsgAdmin';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','Enviar mensaje a los usuarios');
+    m.innerHTML='<div class="sma-box"><div class="sma-head"><div><h3>Mensaje a todos los usuarios</h3><p>Lo verán como notificación al entrar a la tienda.</p></div><button type="button" class="sma-close" aria-label="Cerrar">✕</button></div>'+
+      '<div class="sma-body">'+
+      '<div><label>Plantillas rápidas</label><div class="sma-chips" id="smaTpl">'+TPL.map(function(t,i){return '<button type="button" class="sma-chip" data-i="'+i+'">'+esc(t.n)+'</button>'}).join('')+'</div></div>'+
+      '<label>Título<input type="text" id="smaT" maxlength="90" placeholder="Ej: ¡Feliz Navidad!"></label>'+
+      '<label>Mensaje<textarea id="smaM" maxlength="600" placeholder="Escribe aquí lo que quieres decirle a tus clientes…"></textarea></label>'+
+      '<div><label>Tipo de aviso</label><div class="sma-chips" id="smaTypes">'+Object.keys(TYPES).map(function(k){return '<button type="button" class="sma-chip" data-t="'+k+'">'+TYPES[k].ic+' '+TYPES[k].lb+'</button>'}).join('')+'</div></div>'+
+      '<div class="sma-2"><label>Sonido<div class="sma-snd"><select id="smaS"><option value="user">Sonido que eligió cada usuario</option>'+SOUNDS.map(function(s){return '<option value="'+s.id+'">'+esc(s.name)+'</option>'}).join('')+'</select><button type="button" class="sma-play" id="smaPlay">Probar</button></div></label>'+
+      '<label>Visible durante<select id="smaD">'+DUR.map(function(d){return '<option value="'+d[0]+'"'+(d[0]===168?' selected':'')+'>'+d[1]+'</option>'}).join('')+'</select></label></div>'+
+      '<div class="sma-2"><label>Botón (opcional)<input type="text" id="smaB" maxlength="30" placeholder="Ej: Ver ofertas"></label>'+
+      '<label>Enlace del botón (opcional)<input type="text" id="smaL" maxlength="500" placeholder="https://…"></label></div>'+
+      '<div class="sma-prev"><small>VISTA PREVIA</small><b id="smaPT">—</b><span id="smaPM"></span></div>'+
+      '<div id="smaStatus"></div>'+
+      '<button type="button" class="sma-send" id="smaSend">Enviar a todos los usuarios</button>'+
+      '<div class="sma-hist"><h4>Mensajes enviados</h4><div id="smaHist"><span style="color:#64748B;font:500 .85rem Inter,sans-serif">Cargando…</span></div></div>'+
+      '</div></div>';
+    document.body.appendChild(m);
+    function prev(){$('smaPT').textContent=($('smaT').value||'').trim()||'(sin título)';$('smaPM').textContent=($('smaM').value||'').trim()}
+    function setType(t){selType=TYPES[t]?t:'info';[].forEach.call(m.querySelectorAll('#smaTypes .sma-chip'),function(b){var on=b.dataset.t===selType;b.style.background=on?'#0F172A':'#fff';b.style.color=on?'#fff':'#334155';b.style.borderColor=on?'#0F172A':'#CBD5E1'})}
+    setType('info');
+    m.querySelector('.sma-close').onclick=closeComposer;
+    m.addEventListener('click',function(e){if(e.target===m)closeComposer()});
+    $('smaT').addEventListener('input',prev);$('smaM').addEventListener('input',prev);
+    $('smaTypes').addEventListener('click',function(e){var b=e.target.closest('[data-t]');if(b)setType(b.dataset.t)});
+    $('smaTpl').addEventListener('click',function(e){var b=e.target.closest('[data-i]');if(!b)return;var t=TPL[+b.dataset.i];$('smaT').value=t.ti;$('smaM').value=t.m;setType(t.t);$('smaS').value=t.s;prev();play(t.s,'broadcast',true)});
+    $('smaPlay').onclick=function(){var v=$('smaS').value;play(v==='user'?'user':v,'broadcast',true)};
+    $('smaSend').onclick=sendMsg;
+    $('smaHist').addEventListener('click',function(e){var b=e.target.closest('[data-del]');if(!b)return;
+      if(!confirm('¿Borrar este mensaje? Los usuarios que no lo hayan visto ya no lo verán.'))return;
+      b.disabled=true;callApi('deleteBroadcast',{id:b.dataset.del},{timeout:25000}).then(loadHist).catch(function(er){status('No se pudo borrar: '+(er&&er.message||'error'),false)})});
+    prev();
+    return m;
+  }
+  function status(t,ok){var s=$('smaStatus');if(s)s.innerHTML=t?'<div class="sma-msg '+(ok?'ok':'er')+'">'+esc(t)+'</div>':''}
+  function loadHist(){
+    var h=$('smaHist');if(!h)return;
+    callApi('listBroadcasts',{},{timeout:25000}).then(function(d){
+      var l=(d&&d.messages)||[],now=Date.now();
+      if(!l.length){h.innerHTML='<span style="color:#64748B;font:500 .85rem Inter,sans-serif">Todavía no has enviado mensajes.</span>';return}
+      h.innerHTML=l.map(function(x){
+        var live=x.activo&&(!x.expira||x.expira>now),T=TYPES[x.tipo]||TYPES.info;
+        return '<div class="sma-it"><div><b>'+T.ic+' '+esc(x.titulo||T.lb)+'</b><span>'+esc(x.mensaje||'')+'</span><em>'+fdate(x.creado)+' · '+(live?'Activo hasta '+fdate(x.expira):'Vencido')+'</em></div><button type="button" class="sma-del" data-del="'+esc(x.id)+'">Borrar</button></div>'}).join('');
+    }).catch(function(er){h.innerHTML='<span style="color:#B91C1C;font:600 .85rem Inter,sans-serif">No se pudo cargar el historial: '+esc(er&&er.message||'error')+'</span>'});
+  }
+  function sendMsg(){
+    var ti=($('smaT').value||'').trim(),ms=($('smaM').value||'').trim();
+    if(!ti&&!ms){status('Escribe un título o un mensaje.',false);return}
+    var link=($('smaL').value||'').trim();
+    if(link&&!/^https?:\/\//i.test(link)){status('El enlace debe empezar con http:// o https://',false);return}
+    var btn=$('smaSend');btn.disabled=true;btn.textContent='Enviando…';status('',true);
+    callApi('sendBroadcast',{titulo:ti,mensaje:ms,tipo:selType,sonido:$('smaS').value,boton:($('smaB').value||'').trim(),enlace:link,horas:Number($('smaD').value)||168},{timeout:30000}).then(function(d){
+      if(d&&d.id)markSeen(d.id);
+      status('Mensaje enviado. Todos los usuarios lo verán al entrar o en menos de 1 minuto si ya están dentro.',true);
+      $('smaT').value='';$('smaM').value='';$('smaB').value='';$('smaL').value='';$('smaPT').textContent='—';$('smaPM').textContent='';
+      play('tada','success',true);loadHist();
+    }).catch(function(er){
+      var t=String(er&&er.message||'error');
+      if(/acci[oó]n|action|desconoc|inv[aá]lid/i.test(t))t+=' · Revisa que el Apps Script nuevo esté publicado (Implementar → Nueva versión).';
+      status('No se pudo enviar: '+t,false);
+    }).then(function(){btn.disabled=false;btn.textContent='Enviar a todos los usuarios'});
+  }
+  function openComposer(){var m=buildComposer();m.classList.add('on');status('',true);loadHist();setTimeout(function(){var t=$('smaT');if(t)t.focus({preventScroll:true})},80)}
+  function closeComposer(){var m=$('sbMsgAdmin');if(m)m.classList.remove('on')}
+  document.addEventListener('keydown',function(e){var m=$('sbMsgAdmin');if(m&&m.classList.contains('on')&&e.key==='Escape')closeComposer()});
+  window.sbOpenBroadcastComposer=openComposer;
+
+  /* botón "Mensajes a clientes" en el menú lateral del panel de administración */
+  function installAdminButton(){
+    var side=$('sbUltraSidebar');if(!side||side.querySelector('[data-sb-msg]'))return;
+    var ref=side.querySelector('[data-sb-ads]')||side.querySelector('[data-ultra-action="merchandising"]');
+    var b=document.createElement('button');b.type='button';b.className='sb-ultra-item sb-worker-admin-only';b.setAttribute('data-sb-msg','1');
+    b.innerHTML='<i class="fas fa-bell"></i><span><b>Mensajes a clientes</b><small style="display:block;color:#555555;font-size:8px;margin-top:2px">Notificación para todos</small></span>';
+    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openComposer()});
+    if(ref&&ref.parentNode)ref.parentNode.insertBefore(b,ref.nextSibling);else side.appendChild(b);
+  }
+  setInterval(installAdminButton,1200);
+
+  /* =====================================================================
+     4) BOTÓN "EN OFERTAS" POR PRODUCTO (panel de administración)
+        Activo  = el producto puede salir en la sección Ofertas (si tiene descuento)
+        Apagado = el producto NO sale en Ofertas, aunque tenga descuento
+     ===================================================================== */
+  function prods(){try{return typeof getProducts==='function'?getProducts():(window.PRODUCTOS||[])}catch(e){return[]}}
+  function findP(id){var a=prods();for(var i=0;i<a.length;i++)if(String(a[i].id)===String(id))return a[i];return null}
+  function ofHTML(p){
+    var off=!!p.ofertaOculta;
+    return '<button type="button" class="sbx-ofbtn'+(off?' off':'')+'" data-sbx-of="'+esc(p.id)+'" title="'+(off?'Ahora NO sale en Ofertas. Toca para mostrarlo.':'Sale en Ofertas (si tiene descuento). Toca para quitarlo.')+'"><span class="dot"></span>'+(off?'Fuera de ofertas':'En ofertas')+'</button>';
+  }
+  function decorateOffers(){
+    [].forEach.call(document.querySelectorAll('#sbAdminPanel .sbm-row[data-id]'),function(r){
+      if(r.querySelector('[data-sbx-of]'))return;var p=findP(r.getAttribute('data-id'));if(!p)return;
+      var tg=r.querySelector('.sbm-tg')||r.querySelector('.sbm-pr');if(tg)tg.insertAdjacentHTML('beforeend',ofHTML(p));
+    });
+    [].forEach.call(document.querySelectorAll('#sbProductList .sb-item[data-product-id]'),function(it){
+      if(it.querySelector('[data-sbx-of]'))return;var p=findP(it.getAttribute('data-product-id'));var ac=it.querySelector('.sb-actions');
+      if(p&&ac)ac.insertAdjacentHTML('afterbegin',ofHTML(p));
+    });
+  }
+  var dto;function schedDeco(){clearTimeout(dto);dto=setTimeout(decorateOffers,120)}
+  function watchAdmin(){var p=$('sbAdminPanel');if(!p||p.__sbxw)return;p.__sbxw=1;new MutationObserver(schedDeco).observe(p,{childList:true,subtree:true})}
+  setInterval(function(){watchAdmin();decorateOffers()},900);watchAdmin();
+  var mt;function miniToast(t){
+    var e=document.getElementById('sbxMt');
+    if(!e){e=document.createElement('div');e.id='sbxMt';e.style.cssText='position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483646;max-width:calc(100vw - 28px);padding:12px 18px;border-radius:999px;background:#0F172A;color:#fff;font:700 .85rem Inter,system-ui,sans-serif;box-shadow:0 16px 36px rgba(0,0,0,.4);text-align:center;transition:opacity .2s';document.body.appendChild(e)}
+    e.textContent=t;e.style.opacity='1';e.style.display='block';clearTimeout(mt);mt=setTimeout(function(){e.style.opacity='0';setTimeout(function(){e.style.display='none'},220)},2400);
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-sbx-of]');if(!b)return;
+    e.preventDefault();e.stopPropagation();
+    var id=b.getAttribute('data-sbx-of'),p=findP(id);if(!p)return;
+    p.ofertaOculta=!p.ofertaOculta;
+    var ok=false;try{ok=(typeof saveProducts==='function')?saveProducts():false}catch(_){}
+    try{if(typeof refreshStore==='function')refreshStore()}catch(_){}
+    [].forEach.call(document.querySelectorAll('[data-sbx-of="'+String(id).replace(/"/g,'')+'"]'),function(x){x.outerHTML=ofHTML(p)});
+    miniToast(p.ofertaOculta?'Quitado de Ofertas: '+(p.nombre||'producto'):'Visible en Ofertas: '+(p.nombre||'producto'));
+    if(ok===false)miniToast('No se pudo guardar el cambio. Intenta de nuevo.');
+  },true);
+})();
+
 </script>
 
 </body>
