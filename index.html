@@ -6548,7 +6548,7 @@ function renderCatalogos() {
                                 <div class="product-detail-name">${p.nombre}</div>
                                 <div class="product-detail-desc">${p.desc}</div>
                                 ${(() => { const before=Number(p.precioAntes)||0, current=Number(p.precio)||0, d=before>current?((before-current)/before)*100:0; return d>0 ? `<div class="product-price-row"><span class="product-price-before">Q ${before.toFixed(2)}</span><span class="product-price-current">Q ${current.toFixed(2)}</span><span class="product-discount-text">Ahorras ${d.toFixed(0)}%</span></div>` : `<div class="product-price-row"><span class="product-price-current">Q ${current.toFixed(2)}</span></div>`; })()}
-                                ${p.agotado ? `<div class="sheibis-out-badge">🚫 AGOTADO</div>` : `
+                                ${p.agotado ? `<div class="sheibis-out-badge" role="status"><span class="so-ic" aria-hidden="true"></span><span class="so-tx"><b>Agotado</b><small>Sin existencias por ahora</small></span></div>` : `
                                 <div class="product-detail-actions">
                                     <div class="qty-control-detail">
                                         <button class="qty-btn-detail" onclick="changeQtyDetail(${p.id}, -1)"><i class="fas fa-minus"></i></button>
@@ -6580,7 +6580,7 @@ function renderCatalogos() {
         window.addToCartDetail = function(id) {
             const product = PRODUCTOS.find(p => p.id === id);
             if (!product) return;
-            if (product.agotado) { alert('🚫 Este producto está agotado.'); return; }
+            if (product.agotado) { if (typeof showToast === 'function') showToast('Este producto está agotado por ahora.', { title: 'Producto agotado', icon: 'fa-box-open', duration: 4500 }); else alert('Este producto está agotado por ahora.'); return; }
             const qty = quantities[id] || 1;
 
             const existing = cart.find(p => p.id === id);
@@ -10196,7 +10196,7 @@ function renderCatalogosPro(){
 }
 function filterProducts(products){var min=sbpState.min,max=sbpState.max,mode=sbpState.mode;var list=products.filter(function(p){var price=num(p.precio);if((min>10&&price<min)||price>max)return false;if(mode==='recommended')return p.recomendado===true||p.destacado===true||productScore(p)>0;if(mode==='offers')return productDiscount(p)>0&&!p.ofertaOculta;if(mode==='new')return productIsNew(p);if(mode==='bestsellers')return num(p.ventas)>0;return true;});
  list.sort(function(a,b){if(sbpState.sort==='priceAsc')return num(a.precio)-num(b.precio);if(sbpState.sort==='priceDesc')return num(b.precio)-num(a.precio);if(sbpState.sort==='new')return (productIsNew(b)?1:0)-(productIsNew(a)?1:0)||num(b.id)-num(a.id);if(sbpState.sort==='sales')return num(b.ventas)-num(a.ventas)||productScore(b)-productScore(a);if(sbpState.sort==='discount')return productDiscount(b)-productDiscount(a);return productScore(b)-productScore(a)||num(b.id)-num(a.id);});return list;}
-function productMarkup(p){var qty=quantities[p.id]||1,main=(Array.isArray(p.imagenes)&&p.imagenes.length?p.imagenes[0]:p.imagen),has=!!main,before=num(p.precioAntes),current=num(p.precio),disc=productDiscount(p),stars=num(p.valoracion);var badges='';if(p.recomendado||p.destacado)badges+='<span class="sbp-product-badge recommended">★ Recomendado</span>';if(num(p.ventas)>0)badges+='<span class="sbp-product-badge hot">🔥 Más vendido</span>';if(productIsNew(p))badges+='<span class="sbp-product-badge new">✦ Nuevo</span>';if(disc>0)badges+='<span class="sbp-product-badge offer">-'+disc.toFixed(0)+'%</span>';var rating=stars>0?'<span class="sbp-rating">'+('★'.repeat(Math.round(stars)))+' '+stars.toFixed(1)+'</span>':'';return '<div class="product-detail-item '+(p.agotado?'sheibis-out':'')+'" data-id="'+safe(p.id)+'"><div class="product-detail-image sheibis-product-clickable" data-product-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="Ampliar imagen de '+safe(p.nombre)+'" onclick="sheibisOpenProductImage('+Number(p.id)+',0)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();sheibisOpenProductImage('+Number(p.id)+',0)}">'+(disc>0?'<span class="product-discount-badge">-'+disc.toFixed(0)+'%</span>':'')+(has?'<img src="'+safe(main)+'" alt="'+safe(p.nombre)+'" loading="lazy" referrerpolicy="no-referrer">':'<span class="icon-placeholder"><i class="fas '+safe(p.icono||'fa-star')+'"></i></span>')+'</div><div class="product-detail-info"><div class="sbp-product-topline"><div class="sbp-badges">'+badges+'</div>'+rating+'</div>'+(p.tienda?'<div style="display:inline-flex;align-items:center;gap:5px;margin:0 0 4px;padding:2px 8px;border-radius:999px;background:#E7F6EE;color:#0B6B3A;font:700 .68rem Inter,system-ui,sans-serif">Vendido por '+safe(p.tienda)+'</div>':'')+'<div class="product-detail-name">'+safe(p.nombre)+'</div><div class="product-detail-desc">'+safe(p.desc||'')+'</div>'+(disc>0?'<div class="product-price-row"><span class="product-price-before">Q '+before.toFixed(2)+'</span><span class="product-price-current">Q '+current.toFixed(2)+'</span><span class="product-discount-text">Ahorras '+disc.toFixed(0)+'%</span></div>':'<div class="product-price-row"><span class="product-price-current">Q '+current.toFixed(2)+'</span></div>')+(p.agotado?'<div class="sheibis-out-badge">🚫 AGOTADO</div>':'<div class="product-detail-actions"><div class="qty-control-detail"><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',-1)"><i class="fas fa-minus"></i></button><span class="qty-display-detail" id="qty-detail-'+Number(p.id)+'">'+qty+'</span><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',1)"><i class="fas fa-plus"></i></button></div><button class="btn-add-detail" onclick="addToCartDetail('+Number(p.id)+')"><i class="fas fa-plus"></i> Agregar</button></div>')+'</div></div>';}
+function productMarkup(p){var qty=quantities[p.id]||1,main=(Array.isArray(p.imagenes)&&p.imagenes.length?p.imagenes[0]:p.imagen),has=!!main,before=num(p.precioAntes),current=num(p.precio),disc=productDiscount(p),stars=num(p.valoracion);var badges='';if(p.recomendado||p.destacado)badges+='<span class="sbp-product-badge recommended">★ Recomendado</span>';if(num(p.ventas)>0)badges+='<span class="sbp-product-badge hot">🔥 Más vendido</span>';if(productIsNew(p))badges+='<span class="sbp-product-badge new">✦ Nuevo</span>';if(disc>0)badges+='<span class="sbp-product-badge offer">-'+disc.toFixed(0)+'%</span>';var rating=stars>0?'<span class="sbp-rating">'+('★'.repeat(Math.round(stars)))+' '+stars.toFixed(1)+'</span>':'';return '<div class="product-detail-item '+(p.agotado?'sheibis-out':'')+'" data-id="'+safe(p.id)+'"><div class="product-detail-image sheibis-product-clickable" data-product-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="Ampliar imagen de '+safe(p.nombre)+'" onclick="sheibisOpenProductImage('+Number(p.id)+',0)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();sheibisOpenProductImage('+Number(p.id)+',0)}">'+(disc>0?'<span class="product-discount-badge">-'+disc.toFixed(0)+'%</span>':'')+(has?'<img src="'+safe(main)+'" alt="'+safe(p.nombre)+'" loading="lazy" referrerpolicy="no-referrer">':'<span class="icon-placeholder"><i class="fas '+safe(p.icono||'fa-star')+'"></i></span>')+'</div><div class="product-detail-info"><div class="sbp-product-topline"><div class="sbp-badges">'+badges+'</div>'+rating+'</div>'+(p.tienda?'<div style="display:inline-flex;align-items:center;gap:5px;margin:0 0 4px;padding:2px 8px;border-radius:999px;background:#E7F6EE;color:#0B6B3A;font:700 .68rem Inter,system-ui,sans-serif">Vendido por '+safe(p.tienda)+'</div>':'')+'<div class="product-detail-name">'+safe(p.nombre)+'</div><div class="product-detail-desc">'+safe(p.desc||'')+'</div>'+(disc>0?'<div class="product-price-row"><span class="product-price-before">Q '+before.toFixed(2)+'</span><span class="product-price-current">Q '+current.toFixed(2)+'</span><span class="product-discount-text">Ahorras '+disc.toFixed(0)+'%</span></div>':'<div class="product-price-row"><span class="product-price-current">Q '+current.toFixed(2)+'</span></div>')+(p.agotado?'<div class="sheibis-out-badge" role="status"><span class="so-ic" aria-hidden="true"></span><span class="so-tx"><b>Agotado</b><small>Sin existencias por ahora</small></span></div>':'<div class="product-detail-actions"><div class="qty-control-detail"><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',-1)"><i class="fas fa-minus"></i></button><span class="qty-display-detail" id="qty-detail-'+Number(p.id)+'">'+qty+'</span><button class="qty-btn-detail" onclick="changeQtyDetail('+Number(p.id)+',1)"><i class="fas fa-plus"></i></button></div><button class="btn-add-detail" onclick="addToCartDetail('+Number(p.id)+')"><i class="fas fa-plus"></i> Agregar</button></div>')+'</div></div>';}
 function renderCategoryProducts(){var cat=getCategories().find(function(c){return String(c.id)===String(sbpState.category)});if(!cat)return;var all=getProducts().filter(function(p){return String(p.categoria)===String(cat.id)}),bounds=priceBounds(all);if(!isFinite(sbpState.max)||sbpState.max>bounds.max)sbpState.max=bounds.max;if(sbpState.min<10)sbpState.min=10;if(sbpState.min>sbpState.max)sbpState.min=10;var list=filterProducts(all);var host=document.getElementById('productList');if(!host)return;var kids=childCats(cat.id),subs=kids.length?subsMarkup(cat,kids):'';if(kids.length&&!all.length){host.innerHTML=subs;return;}var head=''+(cat.descripcion?'<p class="sbp-desc-only">'+safe(cat.descripcion)+'</p>':'')+'<div class="sbp-results">'+(list.length?list.map(productMarkup).join(''):'<div class="sbp-empty"><i class="fas fa-filter"></i><br><strong>Aún no hay productos en este catálogo.</strong></div>')+'</div>';
 host.innerHTML=subs+head;}
 window.SBP={setMode:function(mode){sbpState.mode=mode;renderCategoryProducts()},setSort:function(sort){sbpState.sort=sort;renderCategoryProducts()},setPrice:function(value,which){sbpState.min=10;sbpState.max=Math.max(10,num(value,10));var m=document.getElementById('sbpMaxValue'),all=getProducts().filter(function(p){return String(p.categoria)===String(sbpState.category)}),bd=priceBounds(all);if(m)m.textContent='Q '+sbpState.max.toFixed(0)+(sbpState.max>=bd.max?'+':'');if(window.__sbpRaf)return;window.__sbpRaf=requestAnimationFrame(function(){window.__sbpRaf=0;var list=filterProducts(all),r=document.querySelector('#productList .sbp-results'),c=document.querySelector('.sbp-toolbar-count');if(c)c.innerHTML='Mostrando <b>'+list.length+'</b> de '+all.length;if(r)r.innerHTML=list.length?list.map(productMarkup).join(''):'<div class="sbp-empty"><i class="fas fa-filter"></i><br><strong>No encontramos productos con esos filtros.</strong><br>Prueba ampliando el precio máximo o seleccionando Todos.</div>'})}};
@@ -13563,7 +13563,8 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
         return '<button type="button" class="sbx-chip'+(x.id===S.v?' on':'')+'" data-act="var" data-v="'+esc(x.id)+'"'+(out?' disabled':'')+'>'+(x.imagen?'<img src="'+esc(x.imagen)+'" alt="" referrerpolicy="no-referrer">':'<i class="ph fas fa-palette"></i>')+esc(x.nombre)+'</button>';
       }).join('')+'</div>';
     }
-    h+='<div class="sbx-lbl">Cantidad</div><div class="sbx-buy"><div class="sbx-qty"><button type="button" data-act="qm" aria-label="Menos">−</button><span>'+S.qty+'</span><button type="button" data-act="qp" aria-label="Más">+</button></div>'+
+    if(p.agotado)h+='<div class="sbx-soldout"><i aria-hidden="true"></i><div><b>Producto agotado</b><span>Por ahora no tenemos existencias. Vuelve pronto.</span></div></div>';
+    h+='<div class="sbx-lbl">Cantidad</div><div class="sbx-buy'+(p.agotado?' out':'')+'"><div class="sbx-qty"><button type="button" data-act="qm" aria-label="Menos">−</button><span>'+S.qty+'</span><button type="button" data-act="qp" aria-label="Más">+</button></div>'+
        '<button type="button" class="sbx-cta" data-act="add"'+(p.agotado?' disabled':'')+'>'+(p.agotado?'AGOTADO':'¡AGRÉGALO AHORA!')+'</button></div><div class="sbx-msg" id="sbxMsg"></div>';
     $('sbxBuy').innerHTML=h;
   }
@@ -17112,7 +17113,7 @@ html body{background:radial-gradient(1100px 560px at 8% -8%,#efefef,transparent 
   function prods(){try{return typeof getProducts==='function'?getProducts():(window.PRODUCTOS||[])}catch(_){return []}}
   function cats(){try{return typeof getCategories==='function'?getCategories():(window.CATALOGOS||[])}catch(_){return []}}
   function catName(id){var c=cats().find(function(x){return String(x.id)===String(id)});return c?c.nombre:'Sin catálogo'}
-  function thumb(p){var u=p.imagen||(Array.isArray(p.imagenes)&&p.imagenes[0])||'';var L=esc((p.nombre||'?').trim().charAt(0).toUpperCase());return u?'<img loading="lazy" src="'+esc(u)+'" alt="" onerror="this.outerHTML=\'<span class=ph>'+L+'</span>\'">':'<span class="ph">'+esc((p.nombre||'?').trim().charAt(0).toUpperCase())+'</span>'}
+  function thumb(p){var u=p.imagen||(Array.isArray(p.imagenes)&&p.imagenes[0])||'';var L=esc((p.nombre||'?').trim().charAt(0).toUpperCase());if(u&&!/^(https?:|data:|blob:|\/|\.\/|\.\.\/)/i.test(String(u).trim())&&!/\.(png|jpe?g|gif|webp|svg|avif)(\?|#|$)/i.test(String(u))){return '<span class="ph" style="font-size:22px">'+esc(Array.from(String(u).trim())[0]||'')+'</span>'}return u?'<img loading="lazy" src="'+esc(u)+'" alt="" onerror="this.outerHTML=\'<span class=ph>'+L+'</span>\'">':'<span class="ph">'+esc((p.nombre||'?').trim().charAt(0).toUpperCase())+'</span>'}
   function row(p){
     var id=esc(p.id),tags=Array.isArray(p.tags)?p.tags.join(', '):'',of=(num(p.precioAntes)>num(p.precio)||num(p.descuento)>0)?1:0;
     function chip(f,l,on){return '<label class="sbm-ch"><input type="checkbox" data-sbp-field="'+f+'" data-sbp-id="'+id+'"'+(on?' checked':'')+'><span>'+l+'</span></label>'}
@@ -17187,7 +17188,7 @@ html body{background:radial-gradient(1100px 560px at 8% -8%,#efefef,transparent 
     var m=el.closest('.sb-ultra-main');if(!m)return;
     var on=el.offsetParent!==null&&el.querySelector('.sbm');
     if(on){
-      [['display','flex'],['flex-direction','column'],['align-items','stretch'],['justify-content','flex-start']].forEach(function(x){m.style.setProperty(x[0],x[1],'important')});
+      [['display','block'],['flex-direction','column'],['align-items','stretch'],['justify-content','flex-start']].forEach(function(x){m.style.setProperty(x[0],x[1],'important')});
       var t=document.getElementById('sbWorkspaceTitle'),i=t&&t.querySelector('h1 i.fas');
       if(i)i.outerHTML=STAR;
     }else if(m.dataset.sbm){['display','flex-direction','align-items','justify-content'].forEach(function(p){m.style.removeProperty(p)})}
@@ -17835,7 +17836,7 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
   function fetchBroadcasts(){
     if(bcBusy||document.hidden||!appVisible())return;
     bcBusy=true;
-    callApi('getBroadcasts',{},{timeout:20000}).then(function(d){
+    callApi('getBroadcasts',{userId:meId()},{timeout:20000}).then(function(d){
       var list=(d&&Array.isArray(d.messages))?d.messages:[],seen=seenList(),fresh=[];
       list.forEach(function(m){
         if(!m||!m.id||seen.indexOf(m.id)>-1)return;
@@ -17870,12 +17871,57 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
   function pad(n){return n<10?'0'+n:''+n}
   function fdate(ms){if(!ms)return '—';var d=new Date(ms);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
   var selType='info';
+  /* ---- Destinatarios: todos o solo algunos ---- */
+  function meId(){try{return (typeof currentUser!=='undefined'&&currentUser&&!currentUser.isGuest&&currentUser.id)?String(currentUser.id):''}catch(e){return ''}}
+  var toMode='todos',picked={},usersCache=null,usersBusy=false;
+  function nPicked(){return Object.keys(picked).length}
+  function updateSendLabel(){var b=$('smaSend');if(!b||b.disabled)return;var n=nPicked();b.textContent=toMode==='todos'?'Enviar a todos los usuarios':(n?('Enviar a '+n+' usuario'+(n===1?'':'s')):'Elige a quién enviar')}
+  function updateCount(){var c=$('smaCnt');if(c){var n=nPicked();c.textContent=n+' seleccionado'+(n===1?'':'s')}updateSendLabel()}
+  function setTo(mode){
+    toMode=mode==='algunos'?'algunos':'todos';
+    [].forEach.call(document.querySelectorAll('#smaToChips .sma-chip'),function(b){var on=b.dataset.to===toMode;b.style.background=on?'#0F172A':'#fff';b.style.color=on?'#fff':'#334155';b.style.borderColor=on?'#0F172A':'#CBD5E1'});
+    var p=$('smaPick');if(p)p.hidden=toMode!=='algunos';
+    if(toMode==='algunos'&&!usersCache&&!usersBusy)loadUsers();
+    updateCount();
+  }
+  function loadUsers(){
+    var l=$('smaList');usersBusy=true;if(l)l.innerHTML='<div class="sma-empty">Cargando usuarios…</div>';
+    callApi('getUsers',{},{timeout:30000}).then(function(d){
+      usersCache=((d&&d.users)||[]).filter(function(u){return u&&u.id}).sort(function(a,b){return String(a.nombre||'').toLowerCase()<String(b.nombre||'').toLowerCase()?-1:1});
+      renderList();
+    }).catch(function(er){usersCache=null;if(l)l.innerHTML='<div class="sma-empty" style="color:#B91C1C">No se pudo cargar la lista de usuarios: '+esc(er&&er.message||'error')+'</div>'}).then(function(){usersBusy=false});
+  }
+  function visibleUsers(){
+    var q=(($('smaQ')&&$('smaQ').value)||'').trim().toLowerCase();
+    return (usersCache||[]).filter(function(u){return !q||(String(u.nombre||'')+' '+String(u.email||'')+' '+String(u.id||'')).toLowerCase().indexOf(q)>-1});
+  }
+  function renderList(){
+    var l=$('smaList');if(!l)return;
+    if(!usersCache){return}
+    var v=visibleUsers(),shown=v.slice(0,300);
+    if(!usersCache.length){l.innerHTML='<div class="sma-empty">Todavía no hay usuarios registrados.</div>';updateCount();return}
+    if(!v.length){l.innerHTML='<div class="sma-empty">Ningún usuario coincide con la búsqueda.</div>';updateCount();return}
+    l.innerHTML=shown.map(function(u){
+      var id=String(u.id),tp=String(u.tipoUsuario||'CLIENTE').toLowerCase();
+      return '<label class="sma-u"><input type="checkbox" data-u="'+esc(id)+'"'+(picked[id]?' checked':'')+'><span><b>'+esc(u.nombre||'Sin nombre')+'</b><small>'+esc(u.email||'sin correo')+' · '+esc(tp)+'</small></span></label>'}).join('')+(v.length>shown.length?'<div class="sma-empty">Mostrando '+shown.length+' de '+v.length+'. Usa el buscador para encontrar a los demás.</div>':'');
+    updateCount();
+  }
+  function wireTo(){
+    $('smaToChips').addEventListener('click',function(e){var b=e.target.closest('[data-to]');if(b)setTo(b.dataset.to)});
+    $('smaQ').addEventListener('input',renderList);
+    $('smaList').addEventListener('change',function(e){var c=e.target.closest('[data-u]');if(!c)return;if(c.checked)picked[c.dataset.u]=1;else delete picked[c.dataset.u];updateCount()});
+    $('smaAll').onclick=function(){visibleUsers().forEach(function(u){picked[String(u.id)]=1});renderList()};
+    $('smaNone').onclick=function(){picked={};renderList()};
+    setTo('todos');
+  }
+  function toTag(x){var n=Array.isArray(x.destinatarios)?x.destinatarios.length:0;return n?('Para '+n+' usuario'+(n===1?'':'s')):'Para todos'}
   function buildComposer(){
     var m=$('sbMsgAdmin');if(m)return m;
     m=document.createElement('div');m.id='sbMsgAdmin';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','Enviar mensaje a los usuarios');
-    m.innerHTML='<div class="sma-box"><div class="sma-head"><div><h3>Mensaje a todos los usuarios</h3><p>Lo verán como notificación al entrar a la tienda.</p></div><button type="button" class="sma-close" aria-label="Cerrar">✕</button></div>'+
+    m.innerHTML='<div class="sma-box"><div class="sma-head"><div><h3>Mensaje a tus usuarios</h3><p>Lo verán como notificación al entrar a la tienda.</p></div><button type="button" class="sma-close" aria-label="Cerrar">✕</button></div>'+
       '<div class="sma-body">'+
       '<div><label>Plantillas rápidas</label><div class="sma-chips" id="smaTpl">'+TPL.map(function(t,i){return '<button type="button" class="sma-chip" data-i="'+i+'">'+esc(t.n)+'</button>'}).join('')+'</div></div>'+
+      '<div><label>Enviar a</label><div class="sma-chips" id="smaToChips"><button type="button" class="sma-chip" data-to="todos">👥 Todos los usuarios</button><button type="button" class="sma-chip" data-to="algunos">🎯 Algunos usuarios</button></div><div class="sma-pick" id="smaPick" hidden><div class="sma-pick-bar"><input type="text" id="smaQ" placeholder="Buscar por nombre o correo…" autocomplete="off"><button type="button" class="sma-mini" id="smaAll">Marcar visibles</button><button type="button" class="sma-mini" id="smaNone">Quitar todos</button></div><div class="sma-pick-cnt" id="smaCnt">0 seleccionados</div><div class="sma-pick-list" id="smaList"></div></div></div>'+
       '<label>Título<input type="text" id="smaT" maxlength="90" placeholder="Ej: ¡Feliz Navidad!"></label>'+
       '<label>Mensaje<textarea id="smaM" maxlength="600" placeholder="Escribe aquí lo que quieres decirle a tus clientes…"></textarea></label>'+
       '<div><label>Tipo de aviso</label><div class="sma-chips" id="smaTypes">'+Object.keys(TYPES).map(function(k){return '<button type="button" class="sma-chip" data-t="'+k+'">'+TYPES[k].ic+' '+TYPES[k].lb+'</button>'}).join('')+'</div></div>'+
@@ -17898,7 +17944,7 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
     $('smaTypes').addEventListener('click',function(e){var b=e.target.closest('[data-t]');if(b)setType(b.dataset.t)});
     $('smaTpl').addEventListener('click',function(e){var b=e.target.closest('[data-i]');if(!b)return;var t=TPL[+b.dataset.i];$('smaT').value=t.ti;$('smaM').value=t.m;setType(t.t);$('smaS').value=t.s;prev();play(t.s,'broadcast',true)});
     $('smaPlay').onclick=function(){var v=$('smaS').value;play(v==='user'?'user':v,'broadcast',true)};
-    $('smaSend').onclick=sendMsg;
+    $('smaSend').onclick=sendMsg;wireTo();
     $('smaHist').addEventListener('click',function(e){var b=e.target.closest('[data-del]');if(!b)return;
       if(!confirm('¿Borrar este mensaje? Los usuarios que no lo hayan visto ya no lo verán.'))return;
       b.disabled=true;callApi('deleteBroadcast',{id:b.dataset.del},{timeout:25000}).then(loadHist).catch(function(er){status('No se pudo borrar: '+(er&&er.message||'error'),false)})});
@@ -17913,7 +17959,7 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
       if(!l.length){h.innerHTML='<span style="color:#64748B;font:500 .85rem Inter,sans-serif">Todavía no has enviado mensajes.</span>';return}
       h.innerHTML=l.map(function(x){
         var live=x.activo&&(!x.expira||x.expira>now),T=TYPES[x.tipo]||TYPES.info;
-        return '<div class="sma-it"><div><b>'+T.ic+' '+esc(x.titulo||T.lb)+'</b><span>'+esc(x.mensaje||'')+'</span><em>'+fdate(x.creado)+' · '+(live?'Activo hasta '+fdate(x.expira):'Vencido')+'</em></div><button type="button" class="sma-del" data-del="'+esc(x.id)+'">Borrar</button></div>'}).join('');
+        return '<div class="sma-it"><div><b>'+T.ic+' '+esc(x.titulo||T.lb)+'</b><span>'+esc(x.mensaje||'')+'</span><em>'+fdate(x.creado)+' · '+toTag(x)+' · '+(live?'Activo hasta '+fdate(x.expira):'Vencido')+'</em></div><button type="button" class="sma-del" data-del="'+esc(x.id)+'">Borrar</button></div>'}).join('');
     }).catch(function(er){h.innerHTML='<span style="color:#B91C1C;font:600 .85rem Inter,sans-serif">No se pudo cargar el historial: '+esc(er&&er.message||'error')+'</span>'});
   }
   function sendMsg(){
@@ -17921,17 +17967,18 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
     if(!ti&&!ms){status('Escribe un título o un mensaje.',false);return}
     var link=($('smaL').value||'').trim();
     if(link&&!/^https?:\/\//i.test(link)){status('El enlace debe empezar con http:// o https://',false);return}
+    if(toMode==='algunos'&&!nPicked()){status('Elige al menos un usuario o cambia a "Todos los usuarios".',false);return}
     var btn=$('smaSend');btn.disabled=true;btn.textContent='Enviando…';status('',true);
-    callApi('sendBroadcast',{titulo:ti,mensaje:ms,tipo:selType,sonido:$('smaS').value,boton:($('smaB').value||'').trim(),enlace:link,horas:Number($('smaD').value)||168},{timeout:30000}).then(function(d){
+    callApi('sendBroadcast',{titulo:ti,mensaje:ms,tipo:selType,sonido:$('smaS').value,boton:($('smaB').value||'').trim(),enlace:link,horas:Number($('smaD').value)||168,para:toMode,destinatarios:toMode==='algunos'?Object.keys(picked):[]},{timeout:30000}).then(function(d){
       if(d&&d.id)markSeen(d.id);
-      status('Mensaje enviado. Todos los usuarios lo verán al entrar o en menos de 1 minuto si ya están dentro.',true);
-      $('smaT').value='';$('smaM').value='';$('smaB').value='';$('smaL').value='';$('smaPT').textContent='—';$('smaPM').textContent='';
+      status(toMode==='todos'?'Mensaje enviado. Todos los usuarios lo verán al entrar o en menos de 1 minuto si ya están dentro.':('Mensaje enviado a '+nPicked()+' usuario'+(nPicked()===1?'':'s')+'. Lo verán al entrar o en menos de 1 minuto si ya están dentro.'),true);
+      $('smaT').value='';$('smaM').value='';$('smaB').value='';$('smaL').value='';$('smaPT').textContent='—';$('smaPM').textContent='';if(toMode==='algunos'){picked={};renderList()}
       play('tada','success',true);loadHist();
     }).catch(function(er){
       var t=String(er&&er.message||'error');
       if(/acci[oó]n|action|desconoc|inv[aá]lid/i.test(t))t+=' · Revisa que el Apps Script nuevo esté publicado (Implementar → Nueva versión).';
       status('No se pudo enviar: '+t,false);
-    }).then(function(){btn.disabled=false;btn.textContent='Enviar a todos los usuarios'});
+    }).then(function(){btn.disabled=false;updateSendLabel()});
   }
   function openComposer(){var m=buildComposer();m.classList.add('on');status('',true);loadHist();setTimeout(function(){var t=$('smaT');if(t)t.focus({preventScroll:true})},80)}
   function closeComposer(){var m=$('sbMsgAdmin');if(m)m.classList.remove('on')}
@@ -17991,6 +18038,307 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
   },true);
 })();
 
+</script>
+
+
+<!-- ============================================================
+     CATÁLOGO PRO · v7 — ocupa TODO el ancho (sin espacio en blanco)
+     ============================================================ -->
+<style id="sb-merch-fill-v7">
+/* El área principal vuelve a ser un bloque normal: nada puede empujar el contenido */
+#sbAdminPanel .sb-ultra-main:has(#sbV11Merchandising.active),
+#sbAdminPanel.workspace-merchandising .sb-ultra-main{
+  display:block!important;grid-template-columns:none!important;column-gap:0!important;gap:0!important;
+  padding:18px 24px 24px!important;overflow-x:hidden!important;overflow-y:auto!important;text-align:left!important}
+/* Mientras Catálogo PRO está abierto, ningún otro bloque ocupa lugar a su lado */
+#sbAdminPanel .sb-ultra-main:has(#sbV11Merchandising.active)>:not(#sbV11Merchandising):not(style):not(script),
+#sbAdminPanel.workspace-merchandising .sb-ultra-main>:not(#sbV11Merchandising):not(style):not(script){display:none!important}
+/* La sección ocupa el 100% del ancho disponible */
+#sbAdminPanel #sbV11Merchandising.active,
+#sbAdminPanel.workspace-merchandising #sbV11Merchandising{
+  display:block!important;position:static!important;float:none!important;inset:auto!important;
+  transform:none!important;translate:none!important;flex:none!important;grid-column:1/-1!important;
+  width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important}
+#sbAdminPanel #sbV11Merchandising .sbm{width:100%!important;max-width:none!important;margin:0!important}
+/* La lista de productos usa la altura real de la pantalla */
+#sbAdminPanel #sbV11Merchandising .sbm-scroll{max-height:max(280px,calc(100vh - 430px))!important;min-height:240px!important}
+/* Pantallas anchas: las dos barras de acciones van lado a lado y se aprovecha todo el ancho */
+@media(min-width:1250px){
+  #sbAdminPanel #sbV11Merchandising .sbm{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;align-items:start}
+  #sbAdminPanel #sbV11Merchandising .sbm>*{grid-column:1/-1;min-width:0}
+  #sbAdminPanel #sbV11Merchandising .sbm>.sbm-bulk{grid-column:auto}
+  #sbAdminPanel #sbV11Merchandising .sbm-scroll{max-height:max(300px,calc(100vh - 370px))!important}
+  #sbAdminPanel #sbV11Merchandising .sbm-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+@media(max-width:650px){#sbAdminPanel .sb-ultra-main:has(#sbV11Merchandising.active){padding:12px!important}}
+</style>
+<script id="sb-merch-fill-js">
+(function(){
+  'use strict';
+  /* Red de seguridad: si por cualquier otra regla la sección quedara desplazada
+     hacia la derecha, se corrige midiendo su posición real y se alinea con el menú. */
+  function fit(){
+    var el=document.getElementById('sbV11Merchandising');
+    if(!el||el.offsetParent===null||!el.querySelector('.sbm'))return;
+    var m=el.closest('.sb-ultra-main');if(!m)return;
+    if(m.scrollLeft)m.scrollLeft=0;
+    el.style.removeProperty('margin-left');el.style.removeProperty('width');
+    var cs=getComputedStyle(m),padL=parseFloat(cs.paddingLeft)||0;
+    var off=el.getBoundingClientRect().left-(m.getBoundingClientRect().left+padL);
+    if(off>6){
+      el.style.setProperty('margin-left',(-off)+'px','important');
+      el.style.setProperty('width','calc(100% + '+off+'px)','important');
+    }
+  }
+  setInterval(fit,500);
+  window.addEventListener('resize',fit);
+  document.addEventListener('click',function(){setTimeout(fit,60);setTimeout(fit,400)},true);
+})();
+</script>
+
+<style id="sb-msg-target-css">
+#sbMsgAdmin .sma-pick{margin-top:10px;padding:12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px}
+#sbMsgAdmin .sma-pick[hidden]{display:none}
+#sbMsgAdmin .sma-pick-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#sbMsgAdmin .sma-pick-bar input[type=text]{flex:1 1 200px;width:auto;padding:10px 12px}
+#sbMsgAdmin .sma-mini{flex:none;padding:9px 13px;border:1.5px solid #0F172A;border-radius:999px;background:#fff;color:#0F172A;font:800 .76rem Inter,sans-serif;cursor:pointer}
+#sbMsgAdmin .sma-mini:hover{background:#0F172A;color:#fff}
+#sbMsgAdmin .sma-pick-cnt{margin:10px 2px 6px;font:800 .76rem Inter,sans-serif;color:#475569;letter-spacing:.04em}
+#sbMsgAdmin .sma-pick-list{max-height:240px;overflow:auto;border:1px solid #E2E8F0;border-radius:12px;background:#fff}
+#sbMsgAdmin .sma-u{display:flex!important;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid #F1F5F9;cursor:pointer;font-weight:500}
+#sbMsgAdmin .sma-u:last-child{border-bottom:0}
+#sbMsgAdmin .sma-u:hover{background:#F8FAFC}
+#sbMsgAdmin .sma-u input{width:18px;height:18px;flex:none;accent-color:#0F172A}
+#sbMsgAdmin .sma-u b{display:block;font:800 .88rem Inter,sans-serif;color:#0F172A}
+#sbMsgAdmin .sma-u small{display:block;font:500 .76rem Inter,sans-serif;color:#64748B;word-break:break-all}
+#sbMsgAdmin .sma-empty{padding:16px;text-align:center;font:600 .84rem Inter,sans-serif;color:#64748B}
+</style>
+<style id="sb-soldout-v1">
+/* ===== AGOTADO · diseño premium (blanco y negro, acento rojo mínimo) ===== */
+html body .product-detail-item.sheibis-out{background:#fafafa!important;border-color:#e4e4e4!important;box-shadow:none!important}
+html body .product-detail-item.sheibis-out .product-detail-image{position:relative!important;overflow:hidden!important}
+html body .product-detail-item.sheibis-out .product-detail-image img{filter:grayscale(1) contrast(.92) brightness(1.04);opacity:.6;transition:opacity .25s ease,filter .25s ease}
+html body .product-detail-item.sheibis-out:hover .product-detail-image img{opacity:.78}
+html body .product-detail-item.sheibis-out .product-detail-image::before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,.74));pointer-events:none}
+html body .product-detail-item.sheibis-out .product-detail-image::after{content:"AGOTADO";position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-8deg);padding:9px 20px 9px 22px;border-radius:999px;background:#0b0b0b;color:#fff;font:900 .76rem/1 Inter,system-ui,sans-serif;letter-spacing:.24em;white-space:nowrap;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 14px 30px rgba(0,0,0,.34);pointer-events:none}
+html body .product-detail-item.sheibis-out .product-discount-badge,
+html body .product-detail-item.sheibis-out .sbi-stack{display:none!important}
+html body .product-detail-item.sheibis-out .product-detail-name{color:#6b6b6b!important}
+html body .product-detail-item.sheibis-out .product-price-current{color:#8c8c8c!important}
+html body .product-detail-item.sheibis-out .product-price-before,
+html body .product-detail-item.sheibis-out .product-discount-text{opacity:.55}
+html body .sheibis-out-badge{display:flex!important;align-items:center;gap:12px;width:100%;box-sizing:border-box;margin-top:10px!important;padding:10px 14px!important;border-radius:14px!important;background:#f1f1f1!important;border:1px dashed #c2c2c2!important;color:#111!important;align-self:stretch!important;font:inherit!important;letter-spacing:0!important}
+html body .sheibis-out-badge .so-ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#0b0b0b}
+html body .sheibis-out-badge .so-ic::before{content:"\2715";color:#fff;font:900 .8rem/1 Inter,system-ui,sans-serif}
+html body .sheibis-out-badge .so-tx{min-width:0}
+html body .sheibis-out-badge .so-tx b{display:block;font:800 .8rem/1.1 Inter,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#111}
+html body .sheibis-out-badge .so-tx b::before{content:"";display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:#d32f2f;vertical-align:1px;animation:sbSoPulse 2s ease-in-out infinite}
+html body .sheibis-out-badge .so-tx small{display:block;margin-top:3px;font:500 .74rem/1.3 Inter,system-ui,sans-serif;color:#6b6b6b}
+@keyframes sbSoPulse{0%,100%{opacity:1}50%{opacity:.35}}
+/* Ventana de detalle del producto */
+html body .sbx-soldout{display:flex;align-items:center;gap:13px;margin:6px 0 4px;padding:14px 16px;border-radius:16px;background:#0b0b0b;color:#fff;box-shadow:0 12px 26px rgba(0,0,0,.18)}
+html body .sbx-soldout i{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#fff;font-style:normal}
+html body .sbx-soldout i::before{content:"\2715";color:#0b0b0b;font:900 .9rem/1 Inter,system-ui,sans-serif}
+html body .sbx-soldout b{display:block;font:800 .86rem/1.1 Inter,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#fff}
+html body .sbx-soldout span{display:block;margin-top:4px;font:500 .8rem/1.35 Inter,system-ui,sans-serif;color:#d0d0d0}
+html body .sbx-buy.out .sbx-qty{opacity:.35;pointer-events:none}
+html body #sbxPD .sbx-cta[disabled]{background:#ececec!important;border:1.5px solid #d3d3d3!important;box-shadow:none!important;animation:none!important;transform:none!important;cursor:not-allowed}
+html body #sbxPD .sbx-cta[disabled],
+html body #sbxPD .sbx-cta[disabled] *:not(img){color:#6b6b6b!important}
+html body #sbxPD .sbx-cta[disabled]::before{content:"";display:inline-block;width:8px;height:8px;margin-right:10px;border-radius:50%;background:#d32f2f;vertical-align:1px}
+@media(max-width:700px){html body .product-detail-item.sheibis-out .product-detail-image::after{padding:7px 14px 7px 16px;font-size:.62rem;letter-spacing:.2em}}
+</style>
+<style id="sb-guide-css">
+#sbGuide{position:fixed;inset:0;z-index:2147483645;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(10,10,10,.62);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-family:Inter,system-ui,sans-serif}
+#sbGuide.on{display:flex}
+#sbGuide *{box-sizing:border-box}
+#sbGuide .sbg{width:min(1120px,100%);height:min(90vh,860px);display:flex;flex-direction:column;background:#fff;color:#0b0b0b;border-radius:26px;overflow:hidden;box-shadow:0 40px 90px -20px rgba(0,0,0,.6)}
+#sbGuide .sbg-head{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;background:linear-gradient(135deg,#0b0b0b,#303030);color:#fff}
+#sbGuide .sbg-head h3{margin:0;font:900 1.15rem/1.2 Inter,sans-serif;color:#fff}
+#sbGuide .sbg-head p{margin:3px 0 0;font:500 .8rem/1.3 Inter,sans-serif;color:#cfcfcf}
+#sbGuide .sbg-x{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:1.05rem;cursor:pointer}
+#sbGuide .sbg-x:hover{background:rgba(255,255,255,.28)}
+#sbGuide .sbg-body{flex:1;min-height:0;display:grid;grid-template-columns:310px minmax(0,1fr)}
+#sbGuide .sbg-nav{overflow:auto;padding:14px;background:#fafafa;border-right:1px solid #e6e6e6}
+#sbGuide .sbg-search{display:block;width:100%;height:42px;padding:0 14px;border:1.5px solid #d6d6d6;border-radius:999px;background:#fff;color:#0b0b0b;font:600 .88rem Inter,sans-serif;outline:0}
+#sbGuide .sbg-search:focus{border-color:#0b0b0b;box-shadow:0 0 0 4px rgba(0,0,0,.08)}
+#sbGuide .sbg-gt{margin:16px 6px 6px;font:800 .64rem Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#777}
+#sbGuide .sbg-it{display:flex;align-items:center;gap:10px;width:100%;margin:2px 0;padding:9px 10px;border:1px solid transparent;border-radius:14px;background:transparent;color:#0b0b0b;text-align:left;cursor:pointer;font:inherit;transition:.15s}
+#sbGuide .sbg-it:hover{background:#efefef}
+#sbGuide .sbg-it.on{background:#0b0b0b;color:#fff}
+#sbGuide .sbg-it .e{flex:none;width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#fff;border:1px solid #e3e3e3;font-size:1.05rem}
+#sbGuide .sbg-it.on .e{background:#262626;border-color:#3a3a3a}
+#sbGuide .sbg-it b{display:block;font:800 .86rem/1.15 Inter,sans-serif}
+#sbGuide .sbg-it small{display:block;margin-top:2px;font:500 .72rem/1.2 Inter,sans-serif;color:#777}
+#sbGuide .sbg-it.on small{color:#bdbdbd}
+#sbGuide .sbg-lk{margin-left:auto;flex:none;font-size:.8rem;opacity:.7}
+#sbGuide .sbg-none{padding:18px 8px;text-align:center;color:#777;font:600 .85rem Inter,sans-serif}
+#sbGuide .sbg-main{overflow:auto;padding:24px 30px 30px}
+#sbGuide .sbg-back{display:none;margin:0 0 14px;padding:9px 14px;border:1.5px solid #0b0b0b;border-radius:999px;background:#fff;color:#0b0b0b;font:800 .8rem Inter,sans-serif;cursor:pointer}
+#sbGuide .sbg-h{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#sbGuide .sbg-big{flex:none;width:56px;height:56px;border-radius:17px;background:#0b0b0b;color:#fff;display:grid;place-items:center;font-size:1.7rem}
+#sbGuide .sbg-h h2{margin:0;font:900 1.55rem/1.15 Inter,sans-serif;letter-spacing:-.02em;color:#0b0b0b}
+#sbGuide .sbg-h p{margin:3px 0 0;font:500 .86rem Inter,sans-serif;color:#666}
+#sbGuide .sbg-tag{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:#f1f1f1;border:1px solid #d9d9d9;font:800 .66rem Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#444}
+#sbGuide .sbg-sec{margin-top:24px}
+#sbGuide .sbg-sec h4{margin:0 0 9px;font:800 .7rem Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#777}
+#sbGuide .sbg-sec p{margin:0;font:500 .95rem/1.6 Inter,sans-serif;color:#222}
+#sbGuide ol.sbg-steps{counter-reset:s;list-style:none;margin:0;padding:0;display:grid;gap:8px}
+#sbGuide ol.sbg-steps li{counter-increment:s;display:flex;gap:13px;align-items:flex-start;padding:12px 14px;border:1px solid #e6e6e6;border-radius:14px;background:#fff;font:500 .92rem/1.5 Inter,sans-serif;color:#222}
+#sbGuide ol.sbg-steps li::before{content:counter(s);flex:none;width:26px;height:26px;margin-top:1px;border-radius:50%;background:#0b0b0b;color:#fff;display:grid;place-items:center;font:800 .78rem Inter,sans-serif}
+#sbGuide .sbg-fx{padding:14px 16px;border-radius:16px;background:#f4f4f4;border-left:4px solid #0b0b0b;font:500 .92rem/1.55 Inter,sans-serif;color:#222}
+#sbGuide ul.sbg-tips{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+#sbGuide ul.sbg-tips li{padding:10px 14px;border-radius:12px;background:#fffbe8;border:1px solid #f1e6b0;font:500 .88rem/1.5 Inter,sans-serif;color:#3b3200}
+#sbGuide ul.sbg-tips li::before{content:"💡 "}
+#sbGuide .sbg-act{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:26px;padding-top:18px;border-top:1px solid #ececec}
+#sbGuide .sbg-go{padding:13px 22px;border:0;border-radius:999px;background:#0b0b0b;color:#fff;font:800 .9rem Inter,sans-serif;cursor:pointer;box-shadow:0 10px 22px rgba(0,0,0,.25);transition:.2s}
+#sbGuide .sbg-go:hover{background:#2b2b2b;transform:translateY(-1px)}
+#sbGuide .sbg-go[disabled]{background:#e4e4e4;color:#777;box-shadow:none;cursor:not-allowed;transform:none}
+#sbGuide .sbg-lock{font:600 .8rem Inter,sans-serif;color:#777}
+#sbGuide .sbg-pg{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+#sbGuide .sbg-pg button{padding:10px 16px;border:1.5px solid #cfcfcf;border-radius:999px;background:#fff;color:#0b0b0b;font:700 .8rem Inter,sans-serif;cursor:pointer}
+#sbGuide .sbg-pg button:hover{border-color:#0b0b0b}
+#sbGuide .sbg-tour{display:grid;gap:10px;margin-top:8px}
+#sbGuide .sbg-tr{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #e6e6e6;border-radius:16px;background:#fff}
+#sbGuide .sbg-tr .n{flex:none;width:34px;height:34px;border-radius:50%;background:#0b0b0b;color:#fff;display:grid;place-items:center;font:900 .9rem Inter,sans-serif}
+#sbGuide .sbg-tr b{display:block;font:800 .95rem Inter,sans-serif}
+#sbGuide .sbg-tr span{display:block;margin-top:2px;font:500 .84rem/1.4 Inter,sans-serif;color:#666}
+#sbGuide .sbg-tr .go{margin-left:auto;flex:none;padding:9px 15px;border:1.5px solid #0b0b0b;border-radius:999px;background:#fff;color:#0b0b0b;font:800 .76rem Inter,sans-serif;cursor:pointer}
+#sbGuide .sbg-tr .go:hover{background:#0b0b0b;color:#fff}
+#sbGuide details.sbg-q{border:1px solid #e6e6e6;border-radius:14px;background:#fff;padding:0 16px;margin-top:8px}
+#sbGuide details.sbg-q summary{padding:14px 0;cursor:pointer;font:800 .92rem Inter,sans-serif;list-style:none}
+#sbGuide details.sbg-q summary::-webkit-details-marker{display:none}
+#sbGuide details.sbg-q[open] summary{border-bottom:1px solid #eee}
+#sbGuide details.sbg-q p{padding:12px 0 14px;font:500 .9rem/1.6 Inter,sans-serif;color:#333}
+body.sbg-open{overflow:hidden}
+#sbUltraSidebar .sb-guide-item{border:1px solid rgba(0,0,0,.35)!important;background:rgba(0,0,0,.05)!important;margin-bottom:10px!important}
+@media(max-width:760px){
+  #sbGuide{padding:0;align-items:flex-end}
+  #sbGuide .sbg{width:100%;height:96dvh;border-radius:24px 24px 0 0}
+  #sbGuide .sbg-body{grid-template-columns:1fr}
+  #sbGuide .sbg-main{display:none;padding:18px 16px 26px}
+  #sbGuide .sbg.det .sbg-nav{display:none}
+  #sbGuide .sbg.det .sbg-main{display:block}
+  #sbGuide .sbg-back{display:inline-block}
+  #sbGuide .sbg-h h2{font-size:1.25rem}
+  #sbGuide .sbg-tr{flex-wrap:wrap}
+  #sbGuide .sbg-tr .go{margin-left:48px}
+}
+</style>
+<script id="sb-guide-js">
+(function(){
+  'use strict';
+  var D={"M": [{"id": "dashboard", "e": "📊", "g": "Resumen", "t": "Dashboard", "sub": "Vista general de tu tienda", "sel": "[data-ultra-action=\"dashboard\"]", "what": "Es la pantalla de inicio del administrador (el Centro de Control SHEIBIS). Te muestra de un vistazo cómo está tu tienda: cuántos productos y categorías tienes, las unidades en stock, cuántos productos tienen stock bajo o están agotados, el valor total del inventario y cuántos productos tienen descuento.", "steps": ["Al entrar a administración se abre solo en esta pantalla.", "Lee las tarjetas de arriba: Productos, Unidades, Stock bajo, Agotados y Valor del stock.", "Usa los accesos rápidos: Nuevo producto, Crear catálogo, Analítica y Respaldos.", "Revisa la lista de Productos recientes para confirmar lo último que agregaste."], "fx": "No cambia nada en la tienda: es solo de consulta. Los números se calculan con tus productos e inventario actuales.", "tips": ["Si ves productos en Agotados o Stock bajo, ve a Inventario para corregirlo.", "Entra aquí al empezar el día para saber en qué estado está todo."]}, {"id": "news", "e": "⚡", "g": "Resumen", "t": "Novedades", "sub": "Alertas, actividad y usuarios", "sel": "[data-ultra-action=\"news\"]", "what": "Resumen en vivo de tu tienda: cuántos productos y catálogos hay, cuántos están sin stock o con stock bajo, cuántos usuarios están conectados ahora, las alertas pendientes y la actividad reciente.", "steps": ["Abre Novedades en el menú.", "Mira las alertas: si todo está bien dirá \"Todo en orden\".", "Revisa los usuarios conectados ahora y la actividad reciente.", "Usa los botones de acción rápida (por ejemplo Usuarios o Crear respaldo) para ir directo a lo que necesitas."], "fx": "Solo consulta. No modifica la tienda.", "tips": ["Es la mejor pantalla para la revisión diaria: te avisa qué necesita atención."]}, {"id": "analytics", "e": "📈", "g": "Resumen", "t": "Analítica", "sub": "Indicadores del catálogo", "sel": "[data-ultra-action=\"analytics\"]", "what": "Muestra indicadores de tu catálogo: precio promedio por producto, valor del inventario (precio por stock), cuántos productos tienen descuento y el descuento promedio, cuántas categorías tienen productos, y gráficas de la distribución por categoría y el top de categorías.", "steps": ["Abre Analítica en el menú.", "Lee las tarjetas de arriba para ver precios, valor del inventario y descuentos.", "Mira la distribución por categoría para saber dónde tienes más productos."], "fx": "Solo consulta. Los datos salen de tus productos e inventario.", "tips": ["Si una categoría tiene muy pocos productos, quizá conviene agregar más o unirla con otra."]}, {"id": "activity", "e": "🕘", "g": "Resumen", "t": "Actividad", "sub": "Historial de lo que haces", "sel": "[data-ultra-action=\"activity\"]", "what": "Registro de las acciones administrativas que se han hecho en el panel (cambios de productos, mensajes enviados, respaldos, etc.), con su hora.", "steps": ["Abre Actividad en el menú.", "Revisa la lista de acciones, de la más reciente a la más antigua.", "Si quieres empezar de cero, usa el botón \"Limpiar actividad\"."], "fx": "Solo es un historial. Limpiarlo no borra productos ni usuarios.", "tips": ["Úsalo para saber qué se cambió y cuándo si algo se ve distinto en la tienda."]}, {"id": "products", "e": "🛍️", "g": "Catálogo", "t": "Productos", "sub": "Catálogos, subcatálogos y productos", "sel": "[data-ultra-action=\"products\"]", "what": "Aquí creas y editas todo lo que se vende. Tiene tres pestañas: Catálogos (las categorías principales), Subcatálogos (secciones dentro de un catálogo) y Productos (abres un catálogo o subcatálogo para ver y editar sus productos).", "steps": ["Primero crea el catálogo: usa \"Nuevo catálogo\" (en el menú o dentro de esta sección), ponle nombre e imagen y guarda.", "Si lo necesitas, crea un subcatálogo dentro de ese catálogo desde la pestaña Subcatálogos.", "Para agregar un producto usa \"Nuevo producto\": escribe el nombre, elige el catálogo o subcatálogo y pon el precio actual.", "Si quieres mostrar un descuento, escribe un \"Precio antes\" mayor al precio actual: el porcentaje se calcula solo.", "Sube la imagen principal y las imágenes adicionales (la primera es la principal; las demás aparecen al ampliar el producto).", "Escribe la descripción y presiona Guardar / Agregar producto.", "Para cambiar o quitar algo, abre el catálogo, busca el producto y edítalo desde su tarjeta."], "fx": "Lo que guardas aquí se sube a Google Sheets y todos los usuarios lo ven en la tienda. Si Google Sheets no confirma el guardado, la página te muestra un aviso de error de sincronización: en ese caso revisa tu conexión y vuelve a guardar.", "tips": ["La casilla \"Marcar producto como AGOTADO\" muestra el producto como agotado a todos y evita que lo agreguen al carrito.", "Usa fotos claras y del mismo tamaño para que la tienda se vea ordenada.", "Para escribir rápido, usa el buscador de productos que aparece arriba de la lista."]}, {"id": "inventory", "e": "📦", "g": "Catálogo", "t": "Inventario", "sub": "Existencias y control de stock", "sel": "[data-ultra-action=\"inventory\"]", "what": "Controla cuántas unidades tienes de cada producto. El sistema usa esta fórmula: Stock esperado = Inventario inicial + Entradas − Salidas + Ajustes, y la compara con el stock real para que puedas detectar y corregir diferencias sin borrar el historial.", "steps": ["Abre Inventario: arriba verás las tarjetas con Productos, Unidades, Entradas, Salidas, Stock esperado, Diferencias, Stock bajo y Agotados.", "Usa los filtros de categoría y estado (Disponible, Stock bajo, Agotado o Descuadre) para encontrar productos.", "En la tabla, busca el producto y usa la columna Ajustar para cambiar su stock.", "Si ves diferencias, presiona \"Revisar y cuadrar inventario\" para corregirlas.", "Presiona \"Recalcular\" si quieres que el sistema vuelva a hacer las cuentas."], "fx": "El inventario se guarda automáticamente en este navegador. Cuando un producto llega a 0, se considera agotado en los reportes y alertas.", "tips": ["Cada vez que llegue mercadería, registra la entrada para que el stock siempre cuadre.", "El nivel de \"stock bajo\" se cambia en Herramientas (Umbral de stock bajo)."]}, {"id": "merch", "e": "⭐", "g": "Catálogo", "t": "Catálogo PRO", "sub": "Recomendados, novedades y anuncios", "sel": "[data-ultra-action=\"merchandising\"]", "what": "Decide qué productos aparecen como Recomendados, Destacados o Novedad, y completa cada producto con ventas, valoración, etiquetas y anuncios (insignias) como Oferta, Liquidación, Más vendido, Exclusivo, Últimas unidades, Envío gratis, Incluye regalo, Combo, Preventa o Imperdible.", "steps": ["Abre Catálogo PRO. Arriba hay contadores (Recomendados, Destacados, Novedades, Con ventas, En oferta, Con anuncios): al tocar uno, la lista se filtra.", "Busca un producto con el buscador o recórrelo en la lista.", "En cada producto marca Recomendado, Destacado y/o Novedad. También puedes escribir sus Ventas, su Valoración (0 a 5) y Etiquetas separadas por coma.", "En la fila Anuncios marca las insignias que quieres mostrar en ese producto.", "Para cambiar muchos a la vez usa Acción rápida: elige la opción y presiona \"Activar en los visibles\" o \"Quitar en los visibles\".", "Para marcar como novedad lo reciente, elige 7, 14, 30 o 60 días y presiona \"Marcar novedades\".", "Cuando termines, presiona \"Guardar cambios\" (si no, los cambios no se publican). \"Descartar\" deshace lo que no guardaste."], "fx": "Al guardar, los cambios se sincronizan con Google Sheets y la tienda muestra las etiquetas, las secciones de recomendados y novedades, y las insignias en cada producto. El botón \"En ofertas / Fuera de ofertas\" de cada producto controla si sale en la sección Ofertas.", "tips": ["Mientras veas \"Cambios sin guardar\", todavía no se ha publicado nada.", "Un producto necesita tener descuento para salir en Ofertas."]}, {"id": "ads", "e": "📣", "g": "Catálogo", "t": "Anuncios", "sub": "Imágenes y videos del inicio", "sel": "[data-sb-ads]", "admin": true, "what": "Publica imágenes, videos o avisos de solo texto en el inicio de la tienda. Se muestran en un carrusel automático.", "steps": ["Abre Anuncios y elige el Tipo: Imagen, Video o Solo texto.", "Escribe el Título y el Texto.", "Pega el enlace de la imagen o del video (acepta YouTube, Vimeo, Drive o un MP4 directo).", "Elige qué pasa al presionar el botón: sin botón, abrir un catálogo, abrir un enlace o WhatsApp Business, y escribe el texto del botón.", "Define el Orden, desde y hasta qué fecha se muestra, y si está Activo u Oculto.", "Mira la vista previa y presiona \"Publicar anuncio\".", "En la lista de anuncios creados puedes subir o bajar el orden, ocultar o activar, editar o borrar cada uno."], "fx": "El anuncio aparece en el inicio de la tienda para todos los usuarios, dentro del rango de fechas que indiques.", "tips": ["Usa fechas \"desde / hasta\" para que las promociones se apaguen solas.", "Si un anuncio no se ve, revisa que esté Activo y dentro de sus fechas."]}, {"id": "msg", "e": "🔔", "g": "Catálogo", "t": "Mensajes a clientes", "sub": "Notificaciones para todos o algunos", "sel": "[data-sb-msg]", "admin": true, "what": "Envía una notificación a tus usuarios: la ven como aviso en pantalla al entrar a la tienda y queda guardada en la campana de notificaciones.", "steps": ["Abre Mensajes a clientes.", "En \"Enviar a\" elige Todos los usuarios o Algunos usuarios. Si eliges algunos, usa el buscador y marca a quién le llega (también puedes marcar o quitar todos los visibles).", "Elige una plantilla rápida (Navidad, Novedades, Actualización, Oferta) o escribe tu propio Título y Mensaje.", "Elige el tipo de aviso, el sonido y durante cuánto tiempo estará visible.", "Si quieres, agrega un botón con su enlace (debe empezar con https://).", "Revisa la vista previa y presiona el botón de enviar (te dice a cuántos usuarios va).", "En \"Mensajes enviados\" ves el historial y puedes Borrar uno."], "fx": "Quienes ya están dentro de la tienda lo reciben en menos de 1 minuto; los demás, al entrar. Los mensajes para algunos usuarios solo los ven esas personas con la sesión iniciada. Borrar un mensaje hace que ya no se muestre a quienes no lo han visto.", "tips": ["Para avisos importantes usa el tipo Importante; para promociones, Promoción.", "Antes de enviar a todos, prueba el sonido con el botón Probar."]}, {"id": "users", "e": "👥", "g": "Personas", "t": "Usuarios", "sub": "Puntos y conexiones", "sel": "[data-ultra-action=\"users\"]", "what": "Gestiona a tus usuarios registrados: ver su correo, sus puntos y sus compras, quién está conectado ahora, y modificar los puntos de cada uno.", "steps": ["Abre Usuarios: arriba verás cuántos usuarios hay registrados y cuántos están conectados ahora.", "En la tabla busca al usuario por nombre o correo.", "Para cambiar puntos usa − / −10 / +10 / + o escribe el Total exacto.", "Presiona Guardar en esa fila para confirmar el cambio."], "fx": "Los puntos se guardan directamente en Google Sheets, así que el usuario ve el cambio en su cuenta.", "tips": ["Si te equivocas, vuelve a escribir el total exacto correcto y guarda de nuevo."]}, {"id": "biz", "e": "🏪", "g": "Personas", "t": "Solicitudes Business", "sub": "Aceptar o rechazar negocios", "sel": "[data-sb-biz]", "admin": true, "what": "Aquí llegan las solicitudes de las personas que quieren vender con SHEIBIS Business. Tú decides si las aceptas o las rechazas.", "steps": ["Abre Solicitudes Business.", "Revisa los datos de cada solicitud.", "Presiona Aceptar o Rechazar según corresponda."], "fx": "La persona recibe el resultado de su solicitud. Si la aceptas, su cuenta pasa a ser de negocio y puede publicar sus productos.", "tips": ["Revisa siempre los datos antes de aceptar un negocio nuevo."]}, {"id": "auth", "e": "🔞", "g": "Personas", "t": "Autorización", "sub": "Verificación +18", "sel": "[data-sb-auth]", "admin": true, "what": "Controla la verificación de edad (+18): eliges qué catálogos piden identificación y revisas las solicitudes de los usuarios. Esta sección te pide tu contraseña de administrador.", "steps": ["Abre Autorización e ingresa tu contraseña de administrador.", "En Verificación +18 marca los catálogos que requieren identificación y presiona \"Guardar catálogos +18\".", "Más abajo, en Solicitudes, verás usuario, correo y estado de cada solicitud.", "En las pendientes usa Ver ID para revisar el documento y luego Aprobar o Rechazar.", "Si ya aprobaste a alguien y quieres quitarle el acceso, usa \"Restringir de nuevo\"."], "fx": "Los usuarios no aprobados no pueden entrar a los catálogos marcados como +18.", "tips": ["Los documentos son privados: no los compartas con nadie."]}, {"id": "workers", "e": "🧑‍💼", "g": "Personas", "t": "Permisos de trabajadores", "sub": "Qué puede usar cada trabajador", "sel": ".sb-worker-permissions-item", "admin": true, "what": "Cada trabajador crea su propia cuenta y tú decides qué módulos puede usar. Hasta que lo autorices, todo le aparece bloqueado.", "steps": ["Pide al trabajador que cree su cuenta desde la pantalla de acceso de trabajadores.", "Abre Permisos de trabajadores: verás la lista de cuentas.", "Activa solo los módulos que quieres que use (por ejemplo ver productos, editar productos, inventario o Catálogo PRO).", "Puedes dar o quitar todos los permisos de una vez, desactivar temporalmente una cuenta y ver el historial de acciones de cada trabajador."], "fx": "El trabajador ve un panel parecido al tuyo, pero con los módulos que no tiene permiso bloqueados (con candado). Las secciones solo para el administrador no las ve.", "tips": ["Da permisos mínimos: solo lo que necesita para trabajar.", "Si alguien deja de trabajar contigo, desactiva su cuenta."]}, {"id": "tools", "e": "🧰", "g": "Operación", "t": "Herramientas", "sub": "Respaldos y mantenimiento", "sel": "[data-ultra-action=\"tools\"]", "what": "Reúne las herramientas de mantenimiento: respaldo completo, exportación a Excel, ajuste de precios en lote, umbral de stock bajo, revisión de datos, bloqueo automático y estado del sistema.", "steps": ["Respaldo completo: \"Crear respaldo\" descarga un archivo JSON con productos, categorías, inventario y configuración; \"Restaurar\" lo vuelve a cargar.", "Exportación rápida: descarga un archivo compatible con Excel con todos los productos y su inventario.", "Precios inteligentes: ajusta los precios de todos por porcentaje (el cambio se guarda solo después de confirmarlo).", "Umbral de stock bajo: define desde cuántas unidades un producto se considera con poco stock y presiona Guardar umbral.", "Mantenimiento: \"Ejecutar revisión\" detecta datos duplicados y repara inventario faltante; \"Sincronizar tienda\" actualiza la vista pública."], "fx": "Los respaldos y exportaciones no cambian la tienda. Precios inteligentes y Restaurar sí modifican datos, por eso piden confirmación.", "tips": ["Crea un respaldo antes de hacer cambios grandes (como ajustar todos los precios).", "Guarda tus respaldos en un lugar seguro, fuera de este navegador."]}, {"id": "print", "e": "📄", "g": "Operación", "t": "Documentos", "sub": "Informes y PDF", "sel": "[data-ultra-action=\"print\"]", "what": "Genera documentos listos para guardar, imprimir o compartir: un respaldo en PDF de todos los productos, un informe de inventario (los agotados salen en rojo) y un respaldo completo en JSON.", "steps": ["Abre Documentos.", "Elige el documento: Respaldo de productos (PDF), Informe de inventario (PDF) o Respaldo completo (JSON).", "Presiona el botón de descarga y guarda el archivo."], "fx": "Solo genera archivos; no cambia nada en la tienda.", "tips": ["El informe de inventario sirve para revisar con tu equipo qué hay que reponer."]}, {"id": "automation", "e": "🪄", "g": "Operación", "t": "Automatización", "sub": "Tareas automáticas", "sel": "[data-ultra-action=\"automation\"]", "what": "Tareas que el sistema hace solo: alertas de stock, autoguardado, autorreparación de inventario y bloqueo inteligente del panel por inactividad.", "steps": ["Abre Automatización.", "Activa o apaga cada tarea con su interruptor.", "En Alertas de stock define desde cuántas unidades avisar.", "En Bloqueo inteligente elige tras cuántos minutos sin actividad se bloquea el panel (5, 10, 15, 30 o 60).", "Usa \"Ejecutar ahora\", \"Respaldo\" o \"Revisar alertas\" cuando quieras hacerlo al instante."], "fx": "Las alertas aparecen en Novedades y como avisos en el panel.", "tips": ["Deja el bloqueo por inactividad activado para que nadie use tu panel si te alejas."]}, {"id": "intel", "e": "🧠", "g": "Operación", "t": "IA · Inteligencia", "sub": "Análisis automático local", "sel": "[data-ultra-action=\"intelligence\"]", "what": "SHEIBIS Intelligence: un conjunto de módulos de análisis y automatización que corren en tu navegador, sin costo, para detectar oportunidades y problemas en tu catálogo.", "steps": ["Abre IA · Inteligencia.", "Revisa los módulos y sus resultados.", "Usa las sugerencias como guía para mejorar productos, inventario y precios."], "fx": "Es solo análisis: no cambia nada por sí solo.", "tips": ["Tómalo como una ayuda para decidir, no como una orden."]}, {"id": "shortcuts", "e": "⚙️", "g": "Operación", "t": "Acciones rápidas", "sub": "Nuevo producto, catálogo, respaldo y salir", "sel": "[data-ultra-action=\"addproduct\"]", "what": "Al final del menú hay atajos: Nuevo producto, Nuevo catálogo, Crear respaldo y Cerrar administración.", "steps": ["Nuevo producto: abre directo el formulario para crear un producto.", "Nuevo catálogo: abre directo el formulario para crear un catálogo.", "Crear respaldo: descarga al instante una copia de seguridad.", "Cerrar administración: sale del panel (si eres trabajador, cierra tu sesión)."], "fx": "Son los mismos formularios de Productos y Herramientas, solo que más rápidos.", "tips": ["Siempre cierra la administración cuando termines, sobre todo en computadoras compartidas."]}], "TOUR": [["Crea tus catálogos", "Empieza por las categorías de la tienda (y subcatálogos si los necesitas).", "products"], ["Agrega tus productos", "Foto, nombre, precio y descripción. Pon \"precio antes\" si hay descuento.", "products"], ["Carga tu inventario", "Registra las existencias para que el stock y las alertas funcionen.", "inventory"], ["Destaca lo mejor en Catálogo PRO", "Marca recomendados, novedades e insignias, y presiona Guardar cambios.", "merch"], ["Publica anuncios en el inicio", "Imágenes o videos con botón a un catálogo, enlace o WhatsApp.", "ads"], ["Avisa a tus clientes", "Envía una notificación a todos o solo a algunos usuarios.", "msg"], ["Atiende personas", "Revisa Usuarios, Solicitudes Business y la verificación +18.", "users"], ["Crea un respaldo", "Descarga una copia de seguridad antes de hacer cambios grandes.", "tools"]], "DAILY": ["Entra a Novedades y revisa las alertas.", "Mira Inventario: repón lo que esté agotado o con stock bajo.", "Revisa Solicitudes Business y Mensajes pendientes.", "Una vez por semana: Herramientas → Crear respaldo."], "FAQ": [["No veo mis cambios en la tienda", "Asegúrate de haber presionado Guardar (en Catálogo PRO es \"Guardar cambios\"). Si aparece un aviso de error de sincronización, revisa tu conexión y guarda otra vez. Luego recarga la tienda."], ["¿Cómo muestro un producto como agotado?", "Edita el producto y marca \"Marcar producto como AGOTADO para todos los usuarios\". Se verá con el sello AGOTADO y no se podrá agregar al carrito."], ["¿Cómo hago una oferta?", "Edita el producto y pon un \"Precio antes\" mayor al precio actual: el descuento se calcula solo. En Catálogo PRO puedes agregar la insignia Oferta y controlar si sale en la sección Ofertas."], ["¿Cómo envío un aviso solo a algunas personas?", "Abre Mensajes a clientes, elige \"Algunos usuarios\", marca a quién va y envía."], ["¿Cómo hago un respaldo?", "Usa \"Crear respaldo\" en el menú o en Herramientas. Se descarga un archivo JSON que luego puedes restaurar."], ["¿Qué hago si un trabajador no puede entrar a un módulo?", "Abre Permisos de trabajadores y activa ese módulo para su cuenta."], ["El panel se bloqueó solo", "Es el bloqueo por inactividad. Vuelve a entrar con tu acceso de administrador. Puedes cambiar el tiempo en Automatización."]]};
+  var M=D.M,TOUR=D.TOUR,DAILY=D.DAILY,FAQ=D.FAQ;
+  var cur='tour',query='';
+  function $(id){return document.getElementById(id)}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function isWorker(){return document.body.classList.contains('sbw-worker-session')}
+  function byId(id){for(var i=0;i<M.length;i++)if(M[i].id===id)return M[i];return null}
+  function target(m){try{return m.sel?document.querySelector('#sbUltraSidebar '+m.sel)||document.querySelector(m.sel):null}catch(e){return null}}
+  function lockState(m){
+    if(m.admin&&isWorker())return 'admin';
+    var b=null;try{b=m.sel?document.querySelector('#sbUltraSidebar '+m.sel):null}catch(e){}
+    if(b&&b.classList.contains('sbw-locked'))return 'perm';
+    return '';
+  }
+  function hay(m){return (m.t+' '+m.sub+' '+m.what+' '+m.steps.join(' ')+' '+m.fx+' '+m.tips.join(' ')).toLowerCase()}
+  function match(m){return !query||hay(m).indexOf(query)>-1}
+  function build(){
+    var d=$('sbGuide');if(d)return d;
+    d=document.createElement('div');d.id='sbGuide';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-label','Guía del administrador');
+    d.innerHTML='<div class="sbg"><div class="sbg-head"><div><h3>📘 Guía del administrador</h3><p>Cómo funciona cada parte del panel, paso a paso.</p></div><button type="button" class="sbg-x" aria-label="Cerrar">✕</button></div>'+
+      '<div class="sbg-body"><div class="sbg-nav" id="sbgNav"></div><div class="sbg-main" id="sbgMain"></div></div></div>';
+    document.body.appendChild(d);
+    d.addEventListener('click',function(e){if(e.target===d)close()});
+    d.querySelector('.sbg-x').onclick=close;
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('sbGuide')&&$('sbGuide').classList.contains('on'))close()});
+    d.addEventListener('input',function(e){if(e.target.id==='sbgQ'){query=e.target.value.trim().toLowerCase();nav();var s=$('sbgQ');if(s){s.focus();try{s.setSelectionRange(s.value.length,s.value.length)}catch(x){}}}});
+    d.addEventListener('click',function(e){
+      var b=e.target.closest('[data-g]');if(b){show(b.getAttribute('data-g'),true);return}
+      var go=e.target.closest('[data-go]');if(go&&!go.disabled){goTo(go.getAttribute('data-go'));return}
+      if(e.target.closest('.sbg-back')){$('sbGuide').querySelector('.sbg').classList.remove('det')}
+    });
+    return d;
+  }
+  function item(id,e,t,sub,lock){
+    return '<button type="button" class="sbg-it'+(cur===id?' on':'')+'" data-g="'+esc(id)+'"><span class="e">'+e+'</span><span><b>'+esc(t)+'</b><small>'+esc(sub)+'</small></span>'+(lock?'<span class="sbg-lk" title="'+(lock==='admin'?'Solo administrador':'Sin permiso')+'">🔒</span>':'')+'</button>';
+  }
+  function nav(){
+    var h='<input id="sbgQ" class="sbg-search" type="search" placeholder="Buscar: inventario, ofertas, mensajes…" autocomplete="off" value="'+esc(query)+'">';
+    var showSpecial=!query||'recorrido recomendado empezar orden'.indexOf(query)>-1||'preguntas frecuentes ayuda problemas'.indexOf(query)>-1;
+    if(!query||'recorrido recomendado empezar orden rutina'.indexOf(query)>-1)h+='<div class="sbg-gt">Empieza aquí</div>'+item('tour','🧭','Recorrido recomendado','El orden para trabajar tu tienda','');
+    var groups=[],seen={};M.forEach(function(m){if(!seen[m.g]){seen[m.g]=1;groups.push(m.g)}});
+    var any=false;
+    groups.forEach(function(g){
+      var list=M.filter(function(m){return m.g===g&&match(m)});
+      if(!list.length)return;any=true;
+      h+='<div class="sbg-gt">'+esc(g)+'</div>'+list.map(function(m){return item(m.id,m.e,m.t,m.sub,lockState(m))}).join('');
+    });
+    var faqHit=!query||FAQ.some(function(f){return (f[0]+' '+f[1]).toLowerCase().indexOf(query)>-1});
+    if(faqHit)h+='<div class="sbg-gt">Ayuda</div>'+item('faq','❓','Preguntas frecuentes','Problemas comunes y respuestas','');
+    if(query&&!any&&!faqHit)h+='<div class="sbg-none">No encontré nada con esa búsqueda.</div>';
+    var n=$('sbgNav');if(n)n.innerHTML=h;
+  }
+  function order(){return ['tour'].concat(M.map(function(m){return m.id})).concat(['faq'])}
+  function pager(id){
+    var o=order(),i=o.indexOf(id),p=i>0?o[i-1]:null,n=i<o.length-1?o[i+1]:null;
+    function nm(x){return x==='tour'?'Recorrido':x==='faq'?'Preguntas frecuentes':byId(x).t}
+    return '<div class="sbg-pg"><span>'+(p?'<button type="button" data-g="'+p+'">← '+esc(nm(p))+'</button>':'')+'</span><span>'+(n?'<button type="button" data-g="'+n+'">'+esc(nm(n))+' →</button>':'')+'</span></div>';
+  }
+  function detail(id){
+    var h='<button type="button" class="sbg-back">← Volver a la lista</button>';
+    if(id==='tour'){
+      h+='<div class="sbg-h"><div class="sbg-big">🧭</div><div><h2>Recorrido recomendado</h2><p>El orden que conviene seguir para dejar tu tienda lista y mantenerla al día.</p></div></div>';
+      h+='<div class="sbg-sec"><h4>Primera vez: configura tu tienda</h4><div class="sbg-tour">'+TOUR.map(function(t,i){var m=byId(t[2]);var lk=m?lockState(m):'';return '<div class="sbg-tr"><span class="n">'+(i+1)+'</span><div><b>'+esc(t[0])+'</b><span>'+esc(t[1])+'</span></div><button type="button" class="go" data-g="'+esc(t[2])+'">Ver cómo →</button></div>'}).join('')+'</div></div>';
+      h+='<div class="sbg-sec"><h4>Rutina diaria y semanal</h4><ol class="sbg-steps">'+DAILY.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></div>';
+      h+=pager(id);return h;
+    }
+    if(id==='faq'){
+      h+='<div class="sbg-h"><div class="sbg-big">❓</div><div><h2>Preguntas frecuentes</h2><p>Respuestas rápidas a lo que más se pregunta.</p></div></div><div class="sbg-sec">'+FAQ.map(function(f){return '<details class="sbg-q"><summary>'+esc(f[0])+'</summary><p>'+esc(f[1])+'</p></details>'}).join('')+'</div>';
+      h+=pager(id);return h;
+    }
+    var m=byId(id);if(!m)return h;
+    var lk=lockState(m);
+    h+='<div class="sbg-h"><div class="sbg-big">'+m.e+'</div><div><h2>'+esc(m.t)+'</h2><p>'+esc(m.sub)+'</p>'+(m.admin?'<span class="sbg-tag">Solo administrador</span>':'')+'</div></div>';
+    h+='<div class="sbg-sec"><h4>Para qué sirve</h4><p>'+esc(m.what)+'</p></div>';
+    h+='<div class="sbg-sec"><h4>Cómo se usa</h4><ol class="sbg-steps">'+m.steps.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></div>';
+    h+='<div class="sbg-sec"><h4>Qué pasa en tu tienda</h4><div class="sbg-fx">'+esc(m.fx)+'</div></div>';
+    if(m.tips&&m.tips.length)h+='<div class="sbg-sec"><h4>Consejos</h4><ul class="sbg-tips">'+m.tips.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ul></div>';
+    h+='<div class="sbg-act"><button type="button" class="sbg-go" data-go="'+esc(m.id)+'"'+(lk?' disabled':'')+'>Ir a este apartado →</button>'+(lk==='admin'?'<span class="sbg-lock">🔒 Esta sección es solo para el administrador.</span>':lk==='perm'?'<span class="sbg-lock">🔒 No tienes permiso para este módulo.</span>':'')+'</div>';
+    h+=pager(id);return h;
+  }
+  function show(id,fromUser){
+    cur=id;nav();
+    var main=$('sbgMain');if(main){main.innerHTML=detail(id);main.scrollTop=0}
+    var box=$('sbGuide')&&$('sbGuide').querySelector('.sbg');if(box&&fromUser)box.classList.add('det');
+  }
+  function goTo(id){
+    var m=byId(id);if(!m)return;
+    var b=target(m);if(!b||lockState(m))return;
+    close();
+    setTimeout(function(){try{b.click()}catch(e){}},80);
+  }
+  function open(id){
+    var d=build();query='';
+    d.classList.add('on');document.body.classList.add('sbg-open');
+    var box=d.querySelector('.sbg');box.classList.remove('det');
+    show(id&&(id==='tour'||id==='faq'||byId(id))?id:'tour',false);
+  }
+  function close(){var d=$('sbGuide');if(d)d.classList.remove('on');document.body.classList.remove('sbg-open')}
+  window.sbOpenAdminGuide=open;
+
+  /* Botón "Guía del administrador" en el menú lateral */
+  function installBtn(){
+    var side=$('sbUltraSidebar');if(!side||side.querySelector('[data-sb-guide]'))return;
+    var b=document.createElement('button');b.type='button';b.className='sb-ultra-item sb-guide-item';b.setAttribute('data-sb-guide','1');
+    b.innerHTML='<i class="fas fa-book-open"></i><span><b>Guía del administrador</b><small style="display:block;color:#555555;font-size:8px;margin-top:2px">Cómo funciona cada parte</small></span>';
+    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();open('tour')});
+    var brand=side.querySelector('.sb-ultra-brand');
+    if(brand&&brand.parentNode===side)brand.insertAdjacentElement('afterend',b);else side.insertBefore(b,side.firstChild);
+  }
+  setInterval(installBtn,1200);installBtn();
+})();
 </script>
 
 </body>
