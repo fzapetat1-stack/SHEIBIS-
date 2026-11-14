@@ -18118,6 +18118,17 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
     if(!e){e=document.createElement('div');e.id='sbxMt';e.style.cssText='position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483646;max-width:calc(100vw - 28px);padding:12px 18px;border-radius:999px;background:#0F172A;color:#fff;font:700 .85rem Inter,system-ui,sans-serif;box-shadow:0 16px 36px rgba(0,0,0,.4);text-align:center;transition:opacity .2s';document.body.appendChild(e)}
     e.textContent=t;e.style.opacity='1';e.style.display='block';clearTimeout(mt);mt=setTimeout(function(){e.style.opacity='0';setTimeout(function(){e.style.display='none'},220)},t.length>70?7000:2600);
   }
+  /* URL del Apps Script SECUNDARIO de Ofertas (APPS_OFERTAS.txt). Pega aquí la URL /exec de esa implementación.
+     Si queda vacío, el botón funciona solo con el guardado normal del catálogo. */
+  var OFERTAS_URL='https://script.google.com/macros/s/AKfycbyCWR-8UuMRO4b3JfuwzKTjlznekjlyByOkDjBEGYzAJkkMOkKGSdDa0-RdcvTAjLVVUg/exec';
+  function ofDirectSave(pid,want){
+    if(!String(OFERTAS_URL||'').trim())return Promise.resolve(null);
+    var ctl=typeof AbortController==='function'?new AbortController():null,tm=ctl?setTimeout(function(){ctl.abort()},25000):0;
+    return fetch(OFERTAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'setOfertaOculta',productId:pid,value:want}),cache:'no-store',signal:ctl?ctl.signal:undefined})
+      .then(function(r){return r.text()})
+      .then(function(t){var d;try{d=JSON.parse(t)}catch(_){throw new Error('Respuesta inválida del script de Ofertas.')}if(!d||d.ok===false)throw new Error((d&&d.error)||'El script de Ofertas no guardó el cambio.');return d})
+      .then(function(d){clearTimeout(tm);return {ok:true,saved:d.ofertaOculta===true}},function(err){clearTimeout(tm);return {ok:false,error:String(err&&err.message||err)}});
+  }
   var ofTok={};
   function ofRedraw(pid,p){[].forEach.call(document.querySelectorAll('[data-sbx-of="'+String(pid).replace(/"/g,'')+'"]'),function(x){x.outerHTML=ofHTML(p)})}
   document.addEventListener('click',function(e){
@@ -18129,6 +18140,8 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
     var ok=false;try{ok=(typeof saveProducts==='function')?saveProducts():false}catch(_){}
     try{if(typeof refreshStore==='function')refreshStore()}catch(_){}
     ofRedraw(pid,p);
+    var directP=ofDirectSave(pid,want),direct=null;
+    directP.then(function(r){direct=r;if(r&&r.ok&&r.saved===want&&ofTok[pid]===tok)miniToast('Guardado directo en Google Sheets ✓ (Ofertas)');else if(r&&!r.ok&&ofTok[pid]===tok)miniToast('Script de Ofertas: '+r.error)});
     if(ok===false){miniToast('No se pudo guardar el cambio. Intenta de nuevo.');return}
     miniToast(want?'Quitando de Ofertas… guardando':'Mostrando en Ofertas… guardando');
     /* Espera a que termine el guardado en Google Sheets y comprueba que el servidor devolvió el valor correcto */
@@ -18146,7 +18159,7 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
         if(ofTok[pid]!==tok)return;
         var r=findP(pid);if(!r)return;
         if(r===p){miniToast('No se pudo confirmar con Google Sheets. Revisa tu conexión y vuelve a intentarlo.');return}
-        if(!!r.ofertaOculta!==want){
+        if(!!r.ofertaOculta!==want&&!(direct&&direct.ok&&direct.saved===want)){
           ofRedraw(pid,r);
           miniToast('Google Sheets NO guardó el cambio. Publica la versión nueva del Apps Script (Implementar → Nueva versión) y revisa que la hoja Productos tenga la columna ofertaOculta.');
         }else{ofRedraw(pid,r);miniToast(want?'Quitado de Ofertas y guardado ✓: '+(r.nombre||'producto'):'Visible en Ofertas y guardado ✓: '+(r.nombre||'producto'))}
