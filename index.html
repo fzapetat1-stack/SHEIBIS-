@@ -9053,7 +9053,7 @@ function queueGlobalCatalogSave_(){
     }catch(e){
       console.error('SHEIBIS catálogo global: no se confirmó el guardado',e);
       // No se oculta el error ni se reemplaza la copia local cuando la red falla.
-      showToast('El producto quedó en este navegador, pero Google Sheets no confirmó el guardado. Revisa la conexión y vuelve a intentarlo.',{
+      showToast('El producto quedó en este navegador, pero Google Sheets no confirmó el guardado. '+(window.sbSyncReason?window.sbSyncReason(e):'Revisa la conexión y vuelve a intentarlo.'),{
         title:'Error de sincronización',icon:'fa-cloud-arrow-up',duration:7000
       });
     }finally{
@@ -18103,54 +18103,55 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
      CATÁLOGO PRO · v7 — ocupa TODO el ancho (sin espacio en blanco)
      ============================================================ -->
 <style id="sb-merch-fill-v7">
-/* El área principal vuelve a ser un bloque normal: nada puede empujar el contenido */
+/* ===== CATÁLOGO PRO · v8 — el menú se queda a la izquierda y el contenido ocupa el resto, sin desbordar ===== */
+@media(min-width:651px){
+  #sbAdminPanel .sb-ultra-body{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow:hidden!important}
+  #sbAdminPanel .sb-ultra-sidebar{order:1!important;flex-shrink:0!important;position:relative!important;z-index:3!important}
+  #sbAdminPanel .sb-ultra-main{order:2!important;flex:1 1 0!important;width:0!important;min-width:0!important;max-width:100%!important;margin:0!important;position:relative!important;left:auto!important;transform:none!important}
+}
+/* Mientras Catálogo PRO está abierto: bloque normal y ningún otro elemento ocupa lugar al lado */
 #sbAdminPanel .sb-ultra-main:has(#sbV11Merchandising.active),
 #sbAdminPanel.workspace-merchandising .sb-ultra-main{
   display:block!important;grid-template-columns:none!important;column-gap:0!important;gap:0!important;
-  padding:18px 24px 24px!important;overflow-x:hidden!important;overflow-y:auto!important;text-align:left!important}
-/* Mientras Catálogo PRO está abierto, ningún otro bloque ocupa lugar a su lado */
+  padding:18px 22px 24px!important;overflow-x:hidden!important;overflow-y:auto!important;text-align:left!important}
 #sbAdminPanel .sb-ultra-main:has(#sbV11Merchandising.active)>:not(#sbV11Merchandising):not(style):not(script),
 #sbAdminPanel.workspace-merchandising .sb-ultra-main>:not(#sbV11Merchandising):not(style):not(script){display:none!important}
-/* La sección ocupa el 100% del ancho disponible */
 #sbAdminPanel #sbV11Merchandising.active,
 #sbAdminPanel.workspace-merchandising #sbV11Merchandising{
   display:block!important;position:static!important;float:none!important;inset:auto!important;
-  transform:none!important;translate:none!important;flex:none!important;grid-column:1/-1!important;
-  width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important}
-#sbAdminPanel #sbV11Merchandising .sbm{width:100%!important;max-width:none!important;margin:0!important}
-/* La lista de productos usa la altura real de la pantalla */
+  transform:none!important;translate:none!important;flex:none!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important;padding:0!important;overflow-x:hidden!important}
+#sbAdminPanel #sbV11Merchandising .sbm{width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important}
 #sbAdminPanel #sbV11Merchandising .sbm-scroll{max-height:max(280px,calc(100vh - 430px))!important;min-height:240px!important}
-/* Pantallas anchas: las dos barras de acciones van lado a lado y se aprovecha todo el ancho */
-@media(min-width:1250px){
+/* Solo en pantallas muy anchas las dos barras de acciones van lado a lado */
+@media(min-width:1750px){
   #sbAdminPanel #sbV11Merchandising .sbm{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;align-items:start}
   #sbAdminPanel #sbV11Merchandising .sbm>*{grid-column:1/-1;min-width:0}
   #sbAdminPanel #sbV11Merchandising .sbm>.sbm-bulk{grid-column:auto}
-  #sbAdminPanel #sbV11Merchandising .sbm-scroll{max-height:max(300px,calc(100vh - 370px))!important}
-  #sbAdminPanel #sbV11Merchandising .sbm-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
 }
 @media(max-width:650px){#sbAdminPanel .sb-ultra-main:has(#sbV11Merchandising.active){padding:12px!important}}
 </style>
 <script id="sb-merch-fill-js">
 (function(){
   'use strict';
-  /* Red de seguridad: si por cualquier otra regla la sección quedara desplazada
-     hacia la derecha, se corrige midiendo su posición real y se alinea con el menú. */
-  function fit(){
+  /* Evita que el panel se quede "corrido" hacia la derecha tapando el menú. */
+  function reset(){
+    var q=function(s){return document.querySelector('#sbAdminPanel '+s)};
+    [q('.sb-ultra-body'),q('.sb-ultra-main'),q('.sb-ultra-layout'),document.getElementById('sbAdminPanel')].forEach(function(x){if(x&&x.scrollLeft)x.scrollLeft=0});
     var el=document.getElementById('sbV11Merchandising');
-    if(!el||el.offsetParent===null||!el.querySelector('.sbm'))return;
-    var m=el.closest('.sb-ultra-main');if(!m)return;
-    if(m.scrollLeft)m.scrollLeft=0;
-    el.style.removeProperty('margin-left');el.style.removeProperty('width');
-    var cs=getComputedStyle(m),padL=parseFloat(cs.paddingLeft)||0;
-    var off=el.getBoundingClientRect().left-(m.getBoundingClientRect().left+padL);
-    if(off>6){
-      el.style.setProperty('margin-left',(-off)+'px','important');
-      el.style.setProperty('width','calc(100% + '+off+'px)','important');
-    }
+    if(el){el.style.removeProperty('margin-left');el.style.removeProperty('width')}
   }
-  setInterval(fit,500);
-  window.addEventListener('resize',fit);
-  document.addEventListener('click',function(){setTimeout(fit,60);setTimeout(fit,400)},true);
+  var wired=false;
+  function wire(){
+    if(wired)return;
+    var b=document.querySelector('#sbAdminPanel .sb-ultra-body'),l=document.querySelector('#sbAdminPanel .sb-ultra-layout');
+    if(!b)return;wired=true;
+    [b,l].forEach(function(x){if(x)x.addEventListener('scroll',function(){if(x.scrollLeft)x.scrollLeft=0},{passive:true})});
+  }
+  setInterval(function(){wire();reset()},400);
+  window.addEventListener('resize',reset);
+  document.addEventListener('focusin',function(){setTimeout(reset,0)},true);
+  document.addEventListener('click',function(){setTimeout(reset,60)},true);
 })();
 </script>
 
@@ -18457,5 +18458,16 @@ body.sbg-open{overflow:hidden}
   #sbBc .sbb-ring,#sbBc .sbb-ic,#sbBc .sbb-go::after{animation:none}
 }
 </style>
+<script id="sb-sync-reason">
+/* Explica con claridad por qué falló la sincronización con Google Sheets. */
+window.sbSyncReason=function(e){
+  var m=String(e&&e.message||''),c=String(e&&e.code||'');
+  if(c==='INVALID_SERVER_RESPONSE')return 'Motivo: la URL de Apps Script no devolvió datos válidos (revisa que la implementación tenga acceso "Cualquier persona" y que esté autorizada).';
+  if(c==='TIMEOUT')return 'Motivo: el servidor tardó demasiado en responder. Intenta de nuevo.';
+  if(c==='CONFIG_ERROR')return 'Motivo: falta configurar la URL de Google Apps Script.';
+  if(/failed to fetch|networkerror|load failed|network request failed/i.test(m))return 'Motivo: no se pudo conectar con Google Apps Script. Revisa que la URL sea la de tu última implementación y que tenga acceso "Cualquier persona".';
+  return 'Motivo: '+(m||'error desconocido')+'.';
+};
+</script>
 </body>
 </html>
