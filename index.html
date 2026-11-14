@@ -18931,5 +18931,31 @@ html body #sbqPanel .sbqp-h{padding-bottom:30px}
   setInterval(inject,500);inject();
 })();
 </script>
+<style id="sb-soldout-stamp">
+/* ===== AGOTADO · sello rojo (como la referencia) ===== */
+html body .product-detail-item.sheibis-out .product-detail-image::before{display:none!important}
+html body .product-detail-item.sheibis-out .product-detail-image img,
+html body #sbxPD:has(.sbx-soldout) .sbx-main img{filter:saturate(.82) brightness(.98)!important;opacity:.96!important}
+
+html body .product-detail-item.sheibis-out .product-detail-image::after,
+html body #sbxPD:has(.sbx-soldout) .sbx-main::after{
+  content:"";position:absolute;z-index:3;left:50%;top:50%;width:96%;aspect-ratio:320/110;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 110'%3E%3Crect x='1' y='1' width='318' height='108' rx='16' fill='%23fff'/%3E%3Crect x='8' y='8' width='304' height='94' rx='11' fill='%23fff' stroke='%23C8161D' stroke-width='9'/%3E%3Crect x='19' y='19' width='282' height='72' rx='6' fill='none' stroke='%23C8161D' stroke-width='1.6' opacity='.35'/%3E%3Ctext x='160' y='79' text-anchor='middle' font-family='Impact,Haettenschweiler,Arial Black,Arial,sans-serif' font-weight='900' font-style='italic' font-size='64' fill='%23C8161D' textLength='246' lengthAdjust='spacingAndGlyphs'%3EAGOTADO%3C/text%3E%3C/svg%3E") center/contain no-repeat;
+  transform:translate(-50%,-50%) rotate(-13deg);
+  filter:drop-shadow(0 10px 12px rgba(0,0,0,.32));
+  pointer-events:none;animation:sbStamp .55s cubic-bezier(.2,1.35,.4,1) both}
+@keyframes sbStamp{from{opacity:0;transform:translate(-50%,-50%) rotate(-13deg) scale(1.7)}60%{opacity:1}to{opacity:1;transform:translate(-50%,-50%) rotate(-13deg) scale(1)}}
+@media(prefers-reduced-motion:reduce){html body .product-detail-item.sheibis-out .product-detail-image::after,html body #sbxPD:has(.sbx-soldout) .sbx-main::after{animation:none}}
+
+/* barra inferior de la tarjeta y aviso del detalle, en rojo a juego */
+html body .sheibis-out-badge{background:#fff6f6!important;border:1px dashed rgba(200,22,29,.5)!important}
+html body .sheibis-out-badge .so-ic{background:#C8161D}
+html body .sheibis-out-badge .so-tx b{color:#C8161D!important}
+html body .sbx-soldout{background:#fff;border:2px solid #C8161D;box-shadow:0 12px 26px rgba(200,22,29,.14)}
+html body .sbx-soldout i{background:#C8161D}
+html body .sbx-soldout i::before{color:#fff}
+html body .sbx-soldout b{color:#C8161D}
+html body .sbx-soldout span{color:#555}
+</style>
 </body>
 </html>
