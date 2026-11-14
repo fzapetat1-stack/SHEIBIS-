@@ -4109,7 +4109,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyRUFVKWH0BhmeMhGSzYTUUuTKk0mNj9Z31xPB-0y-10a9736QKpxxws4J6LTbo8B6G/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbylCMo4ka_5FifHMC-uQmXWP5SWlQkSfKW4TgEOCcDvFTpB2vBUoACI8JaN-UuWPnWu/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5806,7 +5806,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbyRUFVKWH0BhmeMhGSzYTUUuTKk0mNj9Z31xPB-0y-10a9736QKpxxws4J6LTbo8B6G/exec
+     https://script.google.com/macros/s/AKfycbylCMo4ka_5FifHMC-uQmXWP5SWlQkSfKW4TgEOCcDvFTpB2vBUoACI8JaN-UuWPnWu/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -9012,6 +9012,22 @@ async function saveInventoryGlobal_(id, stock, name){
   }
 }
 
+/* Reintenta solo si el servidor está ocupado (candado de Google Sheets) o tarda en responder. */
+async function sbSaveCatalogRetry_(snapshot){
+  let lastErr;
+  for(let i=0;i<3;i++){
+    try{ return await apiRequest('saveCatalog',snapshot,{timeout:60000}); }
+    catch(err){
+      lastErr=err;
+      const msg=String(err&&err.message||'');
+      const transient=(err&&err.code==='TIMEOUT')||/bloqueo|lock|ocupad|tiempo de espera|demasiado/i.test(msg);
+      if(!transient||i===2)break;
+      await new Promise(function(r){setTimeout(r,2500*(i+1))});
+    }
+  }
+  throw lastErr;
+}
+
 function queueGlobalCatalogSave_(){
   // No cancelar una escritura pendiente: de lo contrario, la sincronización
   // periódica podía descartar el producto recién agregado antes de subirlo.
@@ -9025,7 +9041,7 @@ function queueGlobalCatalogSave_(){
       products:JSON.parse(JSON.stringify(window.sbStorableProducts_(getProducts())))
     };
     try{
-      const result=await apiRequest('saveCatalog',snapshot,{timeout:30000});
+      const result=await sbSaveCatalogRetry_(snapshot);
       if(!result || result.ok===false) throw new Error(result?.error||'El servidor no confirmó el catálogo.');
       globalCatalogLastServerUpdate=result.updatedAt||new Date().toISOString();
       // Si hay un guardado más reciente pendiente, no apliques esta respuesta (sería más antigua).
@@ -13611,7 +13627,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbyRUFVKWH0BhmeMhGSzYTUUuTKk0mNj9Z31xPB-0y-10a9736QKpxxws4J6LTbo8B6G/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbylCMo4ka_5FifHMC-uQmXWP5SWlQkSfKW4TgEOCcDvFTpB2vBUoACI8JaN-UuWPnWu/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15916,7 +15932,7 @@ kbd{font:600 .7rem Inter,system-ui,sans-serif;border:1px solid #DADADA;border-bo
 <div class="top"><img class="lg" id="lg" alt="SHEIBIS"><div class="tt"><b>SHEIBIS Business</b><small id="who">Cambia tu cuenta a negocio</small></div><span class="pill on" id="bp" style="display:none"></span><button class="btn s" id="out" style="display:none">Cerrar sesión</button></div>
 <div class="wrap" id="v"></div>
 <script>
-var URL_API='https://script.google.com/macros/s/AKfycbyRUFVKWH0BhmeMhGSzYTUUuTKk0mNj9Z31xPB-0y-10a9736QKpxxws4J6LTbo8B6G/exec',MODE='__MODE__';
+var URL_API='https://script.google.com/macros/s/AKfycbylCMo4ka_5FifHMC-uQmXWP5SWlQkSfKW4TgEOCcDvFTpB2vBUoACI8JaN-UuWPnWu/exec',MODE='__MODE__';
 var LOGO='';try{var LE=parent.document.getElementById('sbLogoMaster');LOGO=(LE&&LE.src)||parent.SB_LOGO_SRC||''}catch(_){}
 var WA='49968121';
 var PAY_BANKS=['BI','Banrural','Zigi','Fri'];
@@ -17129,7 +17145,7 @@ html body{background:radial-gradient(1100px 560px at 8% -8%,#efefef,transparent 
     ps.forEach(function(p){var k=String(p.categoria);(byCat[k]=byCat[k]||[]).push(num(p.precio))});
     var K=[['rec','Recomendados'],['des','Destacados'],['new','Novedades'],['hot','Con ventas'],['of','En oferta'],['ins','Con anuncios']];
     el.dataset.sbm='1';
-    el.innerHTML='<div class="sbm"><div class="sbm-head"><div><h2><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="vertical-align:-3px;margin-right:8px"><path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.8 5.6 21.5l1.7-7.2L2 9.6 9 9z"/></svg>Catálogo PRO</h2><p>Recomendados, destacados, novedades, ventas, valoraciones, etiquetas y anuncios de cada producto.</p></div><span class="sbm-live">● ÁREA ACTIVA</span></div><div class="sbm-kpis">'+K.map(function(k){return '<button type="button" class="sbm-k" data-f="'+k[0]+'"><b data-c="'+k[0]+'">0</b><span>'+k[1]+'</span></button>'}).join('')+'</div>'+
+    el.innerHTML='<div class="sbm"><div class="sbm-head"><div><h2><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="vertical-align:-3px;margin-right:8px"><path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.8 5.6 21.5l1.7-7.2L2 9.6 9 9z"/></svg>Catálogo PRO</h2><p>Recomendados, destacados, novedades, ventas, valoraciones, etiquetas y anuncios de cada producto.</p></div><div class="sbm-hact"><span class="sbm-live">● ÁREA ACTIVA</span><button type="button" class="sbm-exit" id="sbmExit">← Volver al panel</button></div></div><div class="sbm-kpis">'+K.map(function(k){return '<button type="button" class="sbm-k" data-f="'+k[0]+'"><b data-c="'+k[0]+'">0</b><span>'+k[1]+'</span></button>'}).join('')+'</div>'+
       '<div class="sbm-bar"><label class="sbm-sr"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="sbmQ" placeholder="Buscar producto o catálogo..." autocomplete="off"></label>'+
       '<span class="sbm-cnt" id="sbmCnt"></span><span class="sbm-dirty" id="sbmDirty">● Cambios sin guardar</span>'+
       '<button type="button" class="sbm-disc" id="sbmDisc">Descartar</button><button type="button" class="sbm-save" id="sbmSave"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>Guardar cambios</button></div>'+
@@ -17168,6 +17184,25 @@ html body{background:radial-gradient(1100px 560px at 8% -8%,#efefef,transparent 
     el.querySelector('#sbmBon').addEventListener('click',function(){bulk(true)});
     el.querySelector('#sbmBoff').addEventListener('click',function(){bulk(false)});
     el.querySelector('#sbmDisc').addEventListener('click',function(){render(el)});
+    /* Salir de Catálogo PRO y volver al panel principal (Dashboard) con todos los apartados */
+    el.querySelector('#sbmExit').addEventListener('click',function(){
+      function go(){
+        var side=document.getElementById('sbUltraSidebar'),b=side&&side.querySelector('[data-ultra-action="dashboard"]:not(.sbw-locked)');
+        if(!b&&side){b=[].slice.call(side.querySelectorAll('[data-ultra-action]')).filter(function(x){var a=x.dataset.ultraAction;return a!=='merchandising'&&a!=='close'&&a!=='backup'&&a!=='addproduct'&&a!=='addcategory'&&!x.classList.contains('sbw-locked')})[0]}
+        if(b){b.click();return}
+        try{SB_ADMIN.showTab('dashboard')}catch(_){}
+      }
+      if(!dirty){go();return}
+      var old=el.querySelector('.sbm-dlg');if(old)old.remove();
+      var d=document.createElement('div');d.className='sbm-dlg';
+      d.innerHTML='<div class="sbm-dlg-c" role="alertdialog" aria-modal="true"><h3>Tienes cambios sin guardar</h3><p>Si sales ahora, los cambios de Catálogo PRO que no guardaste se perderán.</p><div class="sbm-dlg-a"><button type="button" class="sbm-dlg-s">Guardar y salir</button><button type="button" class="sbm-dlg-x">Salir sin guardar</button><button type="button" class="sbm-dlg-k">Seguir editando</button></div></div>';
+      el.appendChild(d);
+      d.addEventListener('click',function(e){
+        if(e.target===d||e.target.closest('.sbm-dlg-k')){d.remove();return}
+        if(e.target.closest('.sbm-dlg-x')){d.remove();go();return}
+        if(e.target.closest('.sbm-dlg-s')){d.remove();el.querySelector('#sbmSave').click();setTimeout(go,1200)}
+      });
+    });
     el.querySelector('#sbmAN').addEventListener('click',function(){
       var days=num(el.querySelector('#sbmND').value)||30,lim=Date.now()-days*864e5,by={},n=0,sk=0;prods().forEach(function(p){by[String(p.id)]=p});
       rows.forEach(function(r){var p=by[r.dataset.id],t=Date.parse(p&&p.fechaAlta),c=r.querySelector('[data-sbp-field="nuevo"]');
@@ -18469,5 +18504,21 @@ window.sbSyncReason=function(e){
   return 'Motivo: '+(m||'error desconocido')+'.';
 };
 </script>
+<style id="sb-merch-exit-css">
+#sbV11Merchandising .sbm-hact{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+#sbV11Merchandising .sbm-exit{flex:none;padding:10px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.65);background:rgba(255,255,255,.1);color:#fff;font:800 12.5px Inter,sans-serif;cursor:pointer;transition:.18s;white-space:nowrap}
+#sbV11Merchandising .sbm-exit:hover{background:#fff;color:#0b0b0b}
+#sbV11Merchandising .sbm-exit:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#sbV11Merchandising .sbm-dlg{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(10,10,10,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#sbV11Merchandising .sbm-dlg-c{width:min(420px,100%);padding:24px 22px 20px;border-radius:24px;background:#fff;color:#0b0b0b;text-align:center;box-shadow:0 40px 90px -20px rgba(0,0,0,.6);animation:sbmPop .25s ease}
+#sbV11Merchandising .sbm-dlg-c h3{margin:0;font:900 1.2rem/1.2 Inter,sans-serif;color:#0b0b0b}
+#sbV11Merchandising .sbm-dlg-c p{margin:8px 0 0;font:500 .92rem/1.5 Inter,sans-serif;color:#555}
+#sbV11Merchandising .sbm-dlg-a{display:grid;gap:9px;margin-top:18px}
+#sbV11Merchandising .sbm-dlg-a button{padding:13px 16px;border-radius:999px;border:1.5px solid #0b0b0b;background:#fff;color:#0b0b0b;font:800 .9rem Inter,sans-serif;cursor:pointer}
+#sbV11Merchandising .sbm-dlg-a .sbm-dlg-s{background:#0b0b0b;color:#fff}
+#sbV11Merchandising .sbm-dlg-a .sbm-dlg-k{border-color:#cfcfcf;color:#555}
+#sbV11Merchandising .sbm-dlg-a button:hover{filter:brightness(.92)}
+@media(max-width:560px){#sbV11Merchandising .sbm-head{flex-wrap:wrap}#sbV11Merchandising .sbm-hact{width:100%;justify-content:flex-start}}
+</style>
 </body>
 </html>
