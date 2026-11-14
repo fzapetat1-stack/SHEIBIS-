@@ -4109,7 +4109,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbylCMo4ka_5FifHMC-uQmXWP5SWlQkSfKW4TgEOCcDvFTpB2vBUoACI8JaN-UuWPnWu/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzme7fPnpRVGYA5UK6LXlSdhhY0HyvRhRi84ewdtNggZSc1zn1Fv3NxlBmhw0hc-lfG/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5806,7 +5806,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbylCMo4ka_5FifHMC-uQmXWP5SWlQkSfKW4TgEOCcDvFTpB2vBUoACI8JaN-UuWPnWu/exec
+     https://script.google.com/macros/s/AKfycbzme7fPnpRVGYA5UK6LXlSdhhY0HyvRhRi84ewdtNggZSc1zn1Fv3NxlBmhw0hc-lfG/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -9163,7 +9163,7 @@ function loadCategories(){
           if(c&&c.id&&c.nombre&&String(c.id).indexOf('neg-')!==0&&String(c.id)!=='tiendas-sheibis') cats.push({
             id:String(c.id),nombre:String(c.nombre),
             icono:c.icono||'fa-folder-open',imagen:c.imagen||'',
-            descripcion:c.descripcion||'',proximamente:c.proximamente!==false,padre:c.padre?String(c.padre):''
+            descripcion:c.descripcion||'',proximamente:c.proximamente===true,padre:c.padre?String(c.padre):''
           });
         });
       }
@@ -13627,7 +13627,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbylCMo4ka_5FifHMC-uQmXWP5SWlQkSfKW4TgEOCcDvFTpB2vBUoACI8JaN-UuWPnWu/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbzme7fPnpRVGYA5UK6LXlSdhhY0HyvRhRi84ewdtNggZSc1zn1Fv3NxlBmhw0hc-lfG/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15932,7 +15932,7 @@ kbd{font:600 .7rem Inter,system-ui,sans-serif;border:1px solid #DADADA;border-bo
 <div class="top"><img class="lg" id="lg" alt="SHEIBIS"><div class="tt"><b>SHEIBIS Business</b><small id="who">Cambia tu cuenta a negocio</small></div><span class="pill on" id="bp" style="display:none"></span><button class="btn s" id="out" style="display:none">Cerrar sesión</button></div>
 <div class="wrap" id="v"></div>
 <script>
-var URL_API='https://script.google.com/macros/s/AKfycbylCMo4ka_5FifHMC-uQmXWP5SWlQkSfKW4TgEOCcDvFTpB2vBUoACI8JaN-UuWPnWu/exec',MODE='__MODE__';
+var URL_API='https://script.google.com/macros/s/AKfycbzme7fPnpRVGYA5UK6LXlSdhhY0HyvRhRi84ewdtNggZSc1zn1Fv3NxlBmhw0hc-lfG/exec',MODE='__MODE__';
 var LOGO='';try{var LE=parent.document.getElementById('sbLogoMaster');LOGO=(LE&&LE.src)||parent.SB_LOGO_SRC||''}catch(_){}
 var WA='49968121';
 var PAY_BANKS=['BI','Banrural','Zigi','Fri'];
@@ -18116,18 +18116,42 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
   var mt;function miniToast(t){
     var e=document.getElementById('sbxMt');
     if(!e){e=document.createElement('div');e.id='sbxMt';e.style.cssText='position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483646;max-width:calc(100vw - 28px);padding:12px 18px;border-radius:999px;background:#0F172A;color:#fff;font:700 .85rem Inter,system-ui,sans-serif;box-shadow:0 16px 36px rgba(0,0,0,.4);text-align:center;transition:opacity .2s';document.body.appendChild(e)}
-    e.textContent=t;e.style.opacity='1';e.style.display='block';clearTimeout(mt);mt=setTimeout(function(){e.style.opacity='0';setTimeout(function(){e.style.display='none'},220)},2400);
+    e.textContent=t;e.style.opacity='1';e.style.display='block';clearTimeout(mt);mt=setTimeout(function(){e.style.opacity='0';setTimeout(function(){e.style.display='none'},220)},t.length>70?7000:2600);
   }
+  var ofTok={};
+  function ofRedraw(pid,p){[].forEach.call(document.querySelectorAll('[data-sbx-of="'+String(pid).replace(/"/g,'')+'"]'),function(x){x.outerHTML=ofHTML(p)})}
   document.addEventListener('click',function(e){
     var b=e.target.closest&&e.target.closest('[data-sbx-of]');if(!b)return;
     e.preventDefault();e.stopPropagation();
-    var id=b.getAttribute('data-sbx-of'),p=findP(id);if(!p)return;
-    p.ofertaOculta=!p.ofertaOculta;
+    var id=b.getAttribute('data-sbx-of'),pid=String(id),p=findP(id);if(!p)return;
+    var want=!p.ofertaOculta,tok=(ofTok[pid]||0)+1;ofTok[pid]=tok;
+    p.ofertaOculta=want;
     var ok=false;try{ok=(typeof saveProducts==='function')?saveProducts():false}catch(_){}
     try{if(typeof refreshStore==='function')refreshStore()}catch(_){}
-    [].forEach.call(document.querySelectorAll('[data-sbx-of="'+String(id).replace(/"/g,'')+'"]'),function(x){x.outerHTML=ofHTML(p)});
-    miniToast(p.ofertaOculta?'Quitado de Ofertas: '+(p.nombre||'producto'):'Visible en Ofertas: '+(p.nombre||'producto'));
-    if(ok===false)miniToast('No se pudo guardar el cambio. Intenta de nuevo.');
+    ofRedraw(pid,p);
+    if(ok===false){miniToast('No se pudo guardar el cambio. Intenta de nuevo.');return}
+    miniToast(want?'Quitando de Ofertas… guardando':'Mostrando en Ofertas… guardando');
+    /* Espera a que termine el guardado en Google Sheets y comprueba que el servidor devolvió el valor correcto */
+    var t0=Date.now();
+    (function wait(){
+      if(ofTok[pid]!==tok)return; /* hubo otro cambio posterior en este producto */
+      var busy=window.__sbCatalogSaving&&window.__sbCatalogSaving();
+      if(busy&&Date.now()-t0<90000){setTimeout(wait,700);return}
+      var q=findP(pid);if(!q)return;
+      if(q===p&&typeof window.__sbSyncCatalogNow==='function'){
+        /* nadie reemplazó el producto con datos del servidor: se descarga la copia oficial de Sheets */
+        Promise.resolve(window.__sbSyncCatalogNow()).catch(function(){}).then(function(){finish()});
+      }else finish();
+      function finish(){
+        if(ofTok[pid]!==tok)return;
+        var r=findP(pid);if(!r)return;
+        if(r===p){miniToast('No se pudo confirmar con Google Sheets. Revisa tu conexión y vuelve a intentarlo.');return}
+        if(!!r.ofertaOculta!==want){
+          ofRedraw(pid,r);
+          miniToast('Google Sheets NO guardó el cambio. Publica la versión nueva del Apps Script (Implementar → Nueva versión) y revisa que la hoja Productos tenga la columna ofertaOculta.');
+        }else{ofRedraw(pid,r);miniToast(want?'Quitado de Ofertas y guardado ✓: '+(r.nombre||'producto'):'Visible en Ofertas y guardado ✓: '+(r.nombre||'producto'))}
+      }
+    })();
   },true);
 })();
 
