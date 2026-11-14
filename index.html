@@ -18120,7 +18120,7 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
   }
   /* URL del Apps Script SECUNDARIO de Ofertas (APPS_OFERTAS.txt). Pega aquí la URL /exec de esa implementación.
      Si queda vacío, el botón funciona solo con el guardado normal del catálogo. */
-  var OFERTAS_URL='https://script.google.com/macros/s/AKfycbxqng18v2YdlXw0t0F3ax4eEwR7f7nEE7rb66u93XjMPdqunb0l-b8ZTCv78l-Fm0tXUA/exec';
+  var OFERTAS_URL='https://script.google.com/macros/s/AKfycbxiKEnUNiZxJ6Jr0GylMJCKZakDNU85hxgpKc8tZnCWUvSEe-hDJWkbR_GqGwX5VVxr/exec';
   function ofDirectSave(pid,want){
     if(!String(OFERTAS_URL||'').trim())return Promise.resolve(null);
     var ctl=typeof AbortController==='function'?new AbortController():null,tm=ctl?setTimeout(function(){ctl.abort()},25000):0;
