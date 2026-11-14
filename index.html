@@ -18120,7 +18120,7 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
   }
   /* URL del Apps Script SECUNDARIO de Ofertas (APPS_OFERTAS.txt). Pega aquí la URL /exec de esa implementación.
      Si queda vacío, el botón funciona solo con el guardado normal del catálogo. */
-  var OFERTAS_URL='https://script.google.com/macros/s/AKfycbyCWR-8UuMRO4b3JfuwzKTjlznekjlyByOkDjBEGYzAJkkMOkKGSdDa0-RdcvTAjLVVUg/exec';
+  var OFERTAS_URL='https://script.google.com/macros/s/AKfycbxqng18v2YdlXw0t0F3ax4eEwR7f7nEE7rb66u93XjMPdqunb0l-b8ZTCv78l-Fm0tXUA/exec';
   function ofDirectSave(pid,want){
     if(!String(OFERTAS_URL||'').trim())return Promise.resolve(null);
     var ctl=typeof AbortController==='function'?new AbortController():null,tm=ctl?setTimeout(function(){ctl.abort()},25000):0;
@@ -18129,13 +18129,41 @@ html body .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,25
       .then(function(t){var d;try{d=JSON.parse(t)}catch(_){throw new Error('Respuesta inválida del script de Ofertas.')}if(!d||d.ok===false)throw new Error((d&&d.error)||'El script de Ofertas no guardó el cambio.');return d})
       .then(function(d){clearTimeout(tm);return {ok:true,saved:d.ofertaOculta===true}},function(err){clearTimeout(tm);return {ok:false,error:String(err&&err.message||err)}});
   }
+  /* ---- TODOS los usuarios: leen de la hoja qué productos están ocultos en Ofertas (cada 30 s) ---- */
+  var ofLastToggle=0;
+  function ofPull(){
+    if(!String(OFERTAS_URL||'').trim())return;
+    if(Date.now()-ofLastToggle<30000)return;
+    if(window.__sbCatalogSaving&&window.__sbCatalogSaving())return;
+    fetch(OFERTAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'getOfertasOcultas'}),cache:'no-store'})
+      .then(function(r){return r.text()})
+      .then(function(t){
+        var d;try{d=JSON.parse(t)}catch(_){return}
+        if(!d||d.ok===false||!Array.isArray(d.ids))return;
+        if(Date.now()-ofLastToggle<30000||(window.__sbCatalogSaving&&window.__sbCatalogSaving()))return;
+        var hid={},known=Array.isArray(d.todos)?{}:null;
+        d.ids.forEach(function(x){hid[String(x)]=1});
+        if(known)d.todos.forEach(function(x){known[String(x)]=1});
+        var changed=false;
+        prods().forEach(function(p){
+          var k=String(p.id);
+          if(known&&!known[k])return;           /* producto que aún no está en la hoja: no se toca */
+          var want=!!hid[k];
+          if(!known&&!want)return;              /* sin lista completa, solo se aplican ocultamientos */
+          if(!!p.ofertaOculta!==want){p.ofertaOculta=want;changed=true}
+        });
+        if(changed){try{if(typeof refreshStore==='function')refreshStore()}catch(_){}try{decorateOffers()}catch(_){}}
+      }).catch(function(){});
+  }
+  setTimeout(ofPull,3000);setInterval(ofPull,30000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)ofPull()});
   var ofTok={};
   function ofRedraw(pid,p){[].forEach.call(document.querySelectorAll('[data-sbx-of="'+String(pid).replace(/"/g,'')+'"]'),function(x){x.outerHTML=ofHTML(p)})}
   document.addEventListener('click',function(e){
     var b=e.target.closest&&e.target.closest('[data-sbx-of]');if(!b)return;
     e.preventDefault();e.stopPropagation();
     var id=b.getAttribute('data-sbx-of'),pid=String(id),p=findP(id);if(!p)return;
-    var want=!p.ofertaOculta,tok=(ofTok[pid]||0)+1;ofTok[pid]=tok;
+    var want=!p.ofertaOculta,tok=(ofTok[pid]||0)+1;ofTok[pid]=tok;ofLastToggle=Date.now();
     p.ofertaOculta=want;
     var ok=false;try{ok=(typeof saveProducts==='function')?saveProducts():false}catch(_){}
     try{if(typeof refreshStore==='function')refreshStore()}catch(_){}
