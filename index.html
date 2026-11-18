@@ -4109,7 +4109,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbyMUpcTXLAxy1n_6b6hwMKRZ1OKu9JplAqx8uRnVlkFB6vH-kxVzmCPqa68AprQjq7U/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbw0bpD7_RlsUK1eQQEe62XNQbHDCDS-6hMhjovKy7tY1-alxYJ5dbU0kZKZlguL_f6_/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5806,7 +5806,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbyMUpcTXLAxy1n_6b6hwMKRZ1OKu9JplAqx8uRnVlkFB6vH-kxVzmCPqa68AprQjq7U/exec
+     https://script.google.com/macros/s/AKfycbw0bpD7_RlsUK1eQQEe62XNQbHDCDS-6hMhjovKy7tY1-alxYJ5dbU0kZKZlguL_f6_/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -6633,6 +6633,7 @@ function renderCatalogos() {
             /* 1 unidad comprada = 1 punto. La cantidad de productos
                es la única base de los puntos; el precio no modifica los puntos. */
             const totalItems = (Array.isArray(orderItems) ? orderItems : []).reduce(function(total, item) {
+                if (item && item.gratis) return total; /* el producto canjeado no genera puntos */
                 return total + Math.max(0, Math.floor(Number(item.cantidad) || 0));
             }, 0);
             return { points: totalItems, totalItems: totalItems };
@@ -6681,17 +6682,18 @@ function renderCatalogos() {
   if(!currentUser||currentUser.isGuest===true){showToast('Como INVITADO puedes explorar y usar el carrito. Para realizar un pedido debes crear una cuenta.',{title:'Cuenta requerida',icon:'fa-user-lock',duration:5500});showAuth('login');return;}
   if(!Array.isArray(cart)||!cart.length){showToast('Tu carrito está vacío.',{title:'Carrito vacío',icon:'fa-cart-shopping',duration:3500});return;}
   const btn=document.querySelector('.btn-whatsapp');if(btn&&btn.disabled)return;
-  const orderItems=cart.map(function(i){return{id:String(i.id),nombre:String(i.nombre||''),cantidad:Math.floor(Number(i.cantidad||0)),precio:Number(i.precio||0)};}).filter(function(i){return i.id&&i.cantidad>0;});
+  const orderItems=cart.map(function(i){return{id:String(i.gratis&&i.realId!=null?i.realId:i.id),nombre:String(i.nombre||''),cantidad:Math.floor(Number(i.cantidad||0)),precio:Number(i.precio||0),gratis:!!i.gratis};}).filter(function(i){return i.id&&i.cantidad>0;});
+  const freeIds=[];orderItems.forEach(function(i){if(i.gratis)for(let n=0;n<i.cantidad;n++)freeIds.push(i.id);});const freeK=freeIds.length;
   if(!orderItems.length){showToast('La cantidad del pedido no es válida.',{title:'Carrito inválido',icon:'fa-circle-exclamation',duration:5000});return;}
   const total=orderItems.reduce(function(s,i){return s+i.precio*i.cantidad;},0), points=calculatePointsForOrder(orderItems).points, now=new Date();
   const orderId='SHE-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
-  const before=Number(userPoints)||0, after=before+points, paymentEl=document.getElementById('cartPaymentMethod'), paymentMethod=paymentEl?String(paymentEl.value||'Efectivo'):'Efectivo';
-  const details=orderItems.map(function(i,n){return `  ${n+1}. ${i.nombre} x${i.cantidad} → Q${(i.precio*i.cantidad).toFixed(2)}`;}).join('\n');
-  const message=`🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n────────────────────\n📋 *Cliente:* ${currentUser.nombre}\n🆔 *Pedido:* ${orderId}\n📅 *Fecha:* ${now.toLocaleString('es-GT')}\n────────────────────\n📦 *Detalle del Pedido*\n${details}\n────────────────────\n💰 *TOTAL: Q${total.toFixed(2)}*\n💳 *Método de Pago:* ${paymentMethod}\n⭐ *Puntos generados:* ${points} pts\n────────────────────`;
+  const before=Number(userPoints)||0, after=before-freeK*CONFIG.pointsThreshold+points, paymentEl=document.getElementById('cartPaymentMethod'), paymentMethod=paymentEl?String(paymentEl.value||'Efectivo'):'Efectivo';
+  const details=orderItems.map(function(i,n){return `  ${n+1}. ${i.nombre} x${i.cantidad} → ${i.gratis?'🎁 GRATIS (canje de puntos)':'Q'+(i.precio*i.cantidad).toFixed(2)}`;}).join('\n');
+  const message=`🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n────────────────────\n📋 *Cliente:* ${currentUser.nombre}\n🆔 *Pedido:* ${orderId}\n📅 *Fecha:* ${now.toLocaleString('es-GT')}\n────────────────────\n📦 *Detalle del Pedido*\n${details}\n────────────────────\n💰 *TOTAL: Q${total.toFixed(2)}*\n💳 *Método de Pago:* ${paymentMethod}\n⭐ *Puntos generados:* ${points} pts${freeK?`\n🎁 *Canje:* ${freeK} producto(s) gratis (-${freeK*CONFIG.pointsThreshold} pts)`:''}\n────────────────────`;
   /* WhatsApp Business: se abre al instante, sin esperas ni redirecciones intermedias */
   window.SB_WA.open(window.SB_WA.business,message);
   const original=btn?btn.innerHTML:'';if(btn){btn.disabled=true;btn.dataset.originalText=original;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Registrando pedido...';}
-  const orderData={orderId:orderId,orderNumber:orderId,userId:currentUser.id,nombre:currentUser.nombre||'',email:currentUser.email||'',date:now.toISOString(),total:total.toFixed(2),items:orderItems,itemsText:details,detalles:details,metodoPago:paymentMethod,status:'Pedido recibido',estadoPaquete:1,pointsEarned:points,pointsBefore:before,pointsAfter:after};
+  const orderData={orderId:orderId,orderNumber:orderId,userId:currentUser.id,nombre:currentUser.nombre||'',email:currentUser.email||'',date:now.toISOString(),total:total.toFixed(2),items:orderItems,itemsText:details,detalles:details,metodoPago:paymentMethod,status:'Pedido recibido',estadoPaquete:1,pointsEarned:points,pointsBefore:before,pointsAfter:after,reward:freeK?{ids:freeIds}:undefined,pointsSpent:freeK*CONFIG.pointsThreshold};
   try{
     const result=await apiRequest('createOrder',{order:orderData},{timeout:30000});
     const finalPoints=Number.isFinite(Number(result&&result.pointsAfter))?Number(result.pointsAfter):after, finalEarned=Number.isFinite(Number(result&&result.pointsEarned))?Number(result.pointsEarned):points;
@@ -6700,6 +6702,7 @@ function renderCatalogos() {
     userOrders=[...(Array.isArray(userOrders)?userOrders:[]),orderData];currentUser.orders=JSON.stringify(userOrders);currentUser.totalOrders=Number(currentUser.totalOrders||0)+1;currentUser.puntos=finalPoints;currentUser.estadoPaquete='1';userPoints=finalPoints;
     try{await apiRequest('updateUser',{id:currentUser.id,fields:{orders:JSON.stringify(userOrders),totalOrders:Number(currentUser.totalOrders||0),puntos:finalPoints,estadoPaquete:1}},{timeout:15000});}catch(e){console.warn('SHEIBIS: perfil pendiente',e);}
     saveSession();menuBadgeOrders.textContent=userOrders.length;menuUserPoints.textContent=`✦ ${userPoints} puntos`;pointsDisplay.textContent=userPoints;cart=[];updateCartUI();cartEl.classList.remove('active');showToast(`Pedido ${orderId} registrado correctamente.`,{title:'Compra confirmada',icon:'fa-circle-check',duration:6000});
+    if(freeK){setTimeout(function(){location.reload();},2800);}
   }catch(error){
     console.error('SHEIBIS · Error en Solicitar Aprobación:',error);
     if(error.code==='OUT_OF_STOCK')showToast(`El producto "${error.productName||'seleccionado'}" está agotado.`,{title:'Producto agotado',icon:'fa-box-open',duration:7500});
@@ -6730,9 +6733,9 @@ function renderCatalogos() {
                     count += item.cantidad;
                     return `
                             <div class="cart-item">
-                                <div class="item-name">${item.nombre} x${item.cantidad}</div>
+                                <div class="item-name">${item.nombre} x${item.cantidad}${item.gratis?'<span class="sbr-tag">GRATIS</span>':''}</div>
                                 <div>
-                                    <span class="item-price">Q${(item.precio * item.cantidad).toFixed(2)}</span>
+                                    <span class="item-price">${item.gratis?'GRATIS':'Q'+(item.precio * item.cantidad).toFixed(2)}</span>
                                     <button class="item-remove" onclick="removeFromCart(${item.id},'${item.varianteId||''}')"><i class="fas fa-times"></i></button>
                                 </div>
                             </div>
@@ -6740,7 +6743,8 @@ function renderCatalogos() {
                 }).join('');
                 const { points } = calculatePointsForOrder(cart);
                 pointsToEarn.textContent = points;
-                pointsTotalAfter.textContent = userPoints + points;
+                const freeK = cart.filter(function(x){return x&&x.gratis;}).length;
+                pointsTotalAfter.textContent = Math.max(0, userPoints + points - freeK * CONFIG.pointsThreshold);
                 updateProgressBar(userPoints, points);
             }
             cartTotalEl.textContent = total.toFixed(2);
@@ -13627,7 +13631,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbyMUpcTXLAxy1n_6b6hwMKRZ1OKu9JplAqx8uRnVlkFB6vH-kxVzmCPqa68AprQjq7U/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbw0bpD7_RlsUK1eQQEe62XNQbHDCDS-6hMhjovKy7tY1-alxYJ5dbU0kZKZlguL_f6_/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15975,7 +15979,7 @@ kbd{font:600 .7rem Plus Jakarta Sans,system-ui,sans-serif;border:1px solid #DADA
 <div class="top"><img class="lg" id="lg" alt="SHEIBIS"><div class="tt"><b>SHEIBIS Business</b><small id="who">Cambia tu cuenta a negocio</small></div><span class="pill on" id="bp" style="display:none"></span><button class="btn s" id="out" style="display:none">Cerrar sesión</button></div>
 <div class="wrap" id="v"></div>
 <script>
-var URL_API='https://script.google.com/macros/s/AKfycbyMUpcTXLAxy1n_6b6hwMKRZ1OKu9JplAqx8uRnVlkFB6vH-kxVzmCPqa68AprQjq7U/exec',MODE='__MODE__';
+var URL_API='https://script.google.com/macros/s/AKfycbw0bpD7_RlsUK1eQQEe62XNQbHDCDS-6hMhjovKy7tY1-alxYJ5dbU0kZKZlguL_f6_/exec',MODE='__MODE__';
 var LOGO='';try{var LE=parent.document.getElementById('sbLogoMaster');LOGO=(LE&&LE.src)||parent.SB_LOGO_SRC||''}catch(_){}
 var WA='49968121';
 var PAY_BANKS=['BI','Banrural','Zigi','Fri'];
@@ -17109,6 +17113,145 @@ window.gxIc=ic;
 
 <\/script></body></html>
 </script>
+<script id="sb-reward-js">
+/* ===== SHEIBIS · CANJE DE PUNTOS: confeti + producto GRATIS =====
+   Al llegar a 10 puntos (y a cada múltiplo de 10): confeti y ventana con productos GRATIS
+   de precio parecido al promedio de lo que el cliente ya compró (el servidor lo valida).
+   Al enviar el pedido con un producto gratis, la página se reinicia y vuelve a mostrar precios. */
+(function(){
+if(window.SB_REWARD)return;
+var R=window.SB_REWARD={info:null,loading:null};
+var STEP=10;
+function uid(){try{return(currentUser&&currentUser.id!=null&&currentUser.isGuest!==true)?String(currentUser.id):''}catch(e){return''}}
+function pts(){try{return Number(userPoints)||0}catch(e){return 0}}
+function maxFree(){try{return Number(CONFIG.maxFreeProductsPerOrder)||2}catch(e){return 2}}
+function kAvail(){return Math.min(Math.floor(pts()/STEP),maxFree())}
+function inCart(){try{return cart.filter(function(i){return i&&i.gratis})}catch(e){return[]}}
+function q2(n){return'Q'+(Number(n)||0).toFixed(2)}
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function toast(m,t,i){try{showToast(m,{title:t||'Puntos SHEIBIS',icon:i||'fa-gift',duration:5000})}catch(e){}}
+
+/* ---------- estilos ---------- */
+var st=document.createElement('style');st.textContent=
+'.sbr-ov{position:fixed;inset:0;z-index:2147483200;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(3px)}'
++'.sbr-box{background:#fff;color:#111;border-radius:24px;width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:26px 22px;box-shadow:0 30px 80px rgba(0,0,0,.35);font-family:inherit;animation:sbrPop .45s cubic-bezier(.2,1.25,.3,1)}'
++'@keyframes sbrPop{from{transform:scale(.88);opacity:0}to{transform:none;opacity:1}}'
++'.sbr-hd{text-align:center}.sbr-ic{width:64px;height:64px;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;margin:0 auto 10px;font-size:1.6rem}'
++'.sbr-hd h2{margin:0 0 6px;font-size:1.35rem}.sbr-hd p{margin:0;color:#555;font-size:.9rem;line-height:1.5}'
++'.sbr-g{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0 10px}'
++'.sbr-c{position:relative;border:1.5px solid #E4E4E4;border-radius:16px;padding:14px 12px;text-align:center;background:#FAFAFA}'
++'.sbr-c.on{border-color:#15803D;background:#F0FBF4}.sbr-c i.pi{font-size:1.5rem;color:#555;margin-bottom:6px;display:block}'
++'.sbr-n{font-weight:700;font-size:.85rem;line-height:1.25;min-height:2.5em}'
++'.sbr-free{display:inline-block;margin:8px 0 2px;background:#15803D;color:#fff;font-weight:900;letter-spacing:.12em;font-size:.82rem;padding:5px 14px;border-radius:999px}'
++'.sbr-old{display:block;color:#888;text-decoration:line-through;font-size:.78rem;margin-bottom:8px}'
++'.sbr-b{width:100%;border:0;border-radius:12px;padding:10px;font:800 .8rem inherit;background:#111;color:#fff;cursor:pointer}.sbr-b:disabled{background:#BBB;cursor:default}'
++'.sbr-b.ghost{background:#fff;color:#111;border:1.5px solid #DDD}.sbr-row{display:flex;gap:8px;margin-top:10px}.sbr-row .sbr-b{flex:1}'
++'.sbr-note{font-size:.74rem;color:#777;text-align:center;margin-top:10px;line-height:1.45}'
++'.sbr-pill{position:fixed;left:14px;bottom:92px;z-index:2147483000;display:none;align-items:center;gap:8px;border:0;border-radius:999px;background:#15803D;color:#fff;font:800 .8rem inherit;padding:11px 16px;box-shadow:0 10px 28px rgba(21,128,61,.45);cursor:pointer;animation:sbrPulse 2s infinite}'
++'@keyframes sbrPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}'
++'.sbr-cartbtn{display:none;width:100%;margin:8px 0;border:1.5px dashed #15803D;background:#F0FBF4;color:#14672F;border-radius:12px;padding:10px;font:800 .78rem inherit;cursor:pointer}'
++'.item-name .sbr-tag{display:inline-block;margin-left:6px;background:#15803D;color:#fff;border-radius:999px;font-size:.6rem;font-weight:900;letter-spacing:.1em;padding:2px 8px}'
++'@media(prefers-reduced-motion:reduce){.sbr-pill,.sbr-box{animation:none}}';
+document.head.appendChild(st);
+
+/* ---------- confeti ---------- */
+function confetti(){
+  var cv=document.createElement('canvas');cv.setAttribute('aria-hidden','true');
+  cv.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:2147483600;pointer-events:none';
+  document.body.appendChild(cv);
+  var dpr=Math.min(2,window.devicePixelRatio||1),W=cv.width=innerWidth*dpr,H=cv.height=innerHeight*dpr,c=cv.getContext('2d');
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,N=reduce?60:190,cols=['#FFD700','#FF4D6D','#4DA3FF','#2ECC71','#B388FF','#FF9F1C','#FFFFFF','#00D4C8'],P=[];
+  for(var i=0;i<N;i++){var left=i%2===0;P.push({x:(left?0.12:0.88)*W+(Math.random()-.5)*60*dpr,y:H*0.62,vx:(left?1:-1)*(3+Math.random()*9)*dpr,vy:-(9+Math.random()*13)*dpr,w:(6+Math.random()*7)*dpr,h:(9+Math.random()*9)*dpr,r:Math.random()*6.28,vr:(Math.random()-.5)*.35,col:cols[i%cols.length],t:0})}
+  var t0=performance.now(),DUR=reduce?2500:4800;
+  (function frame(now){var e=now-t0;c.clearRect(0,0,W,H);
+    P.forEach(function(p){p.vy+=.32*dpr;p.vx*=.992;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      c.save();c.globalAlpha=Math.max(0,Math.min(1,(DUR-e)/900));c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.col;c.fillRect(-p.w/2,-p.h/2,p.w,p.h);c.restore()});
+    if(e<DUR)requestAnimationFrame(frame);else cv.remove()})(t0)}
+R.confetti=confetti;
+
+/* ---------- datos del servidor ---------- */
+function loadInfo(){
+  var u=uid();if(!u)return Promise.resolve(null);
+  if(R.loading)return R.loading;
+  R.loading=apiRequest('getRewardInfo',{userId:u}).then(function(r){R.info={avg:Number(r.avg)||0,cap:Number(r.cap)||0,points:Number(r.points)||0};return R.info}).catch(function(){return R.info=null}).then(function(x){R.loading=null;return x});
+  return R.loading}
+function options(){
+  var i=R.info;if(!i||!(i.avg>0)||!(i.cap>0))return[];
+  return(window.PRODUCTOS||[]).filter(function(p){var pr=Number(p.precio)||0;return p&&!p.agotado&&pr>0&&pr<=i.cap&&isFinite(Number(p.id))})
+    .sort(function(a,b){return Math.abs(a.precio-i.avg)-Math.abs(b.precio-i.avg)}).slice(0,6)}
+
+/* ---------- elegir producto gratis ---------- */
+function pick(id){
+  var k=kAvail();if(!k){toast('Aún no tienes puntos suficientes para un producto gratis.');return false}
+  if(inCart().length>=k){toast('Ya elegiste '+(k===1?'tu producto gratis':'tus '+k+' productos gratis')+'. Quítalo del carrito si quieres cambiarlo.');return false}
+  var p=(window.PRODUCTOS||[]).filter(function(x){return String(x.id)===String(id)})[0];if(!p||p.agotado)return false;
+  if(R.info&&Number(p.precio)>R.info.cap){toast('Ese producto supera el valor de tu canje.');return false}
+  cart.push(Object.assign({},p,{id:-Number(p.id),realId:p.id,precioOriginal:p.precio,precio:0,cantidad:1,gratis:true,varianteId:'GRATIS'}));
+  try{updateCartUI()}catch(e){}
+  toast('«'+p.nombre+'» agregado GRATIS a tu carrito. Solicita tu pedido para canjearlo.','¡Producto gratis!');
+  refreshUI();return true}
+
+/* ---------- ventana de opciones ---------- */
+function closePicker(){var o=document.getElementById('sbrOv');if(o)o.remove();document.body.style.overflow=''}
+function openPicker(celebrate){
+  var u=uid();if(!u)return;
+  var k=kAvail();if(!k)return toast('Necesitas 10 puntos para canjear un producto gratis. Tienes '+pts()+'.');
+  closePicker();
+  var ov=document.createElement('div');ov.id='sbrOv';ov.className='sbr-ov';
+  ov.innerHTML='<div class="sbr-box"><div class="sbr-hd"><div class="sbr-ic"><i class="fas fa-gift"></i></div><h2>Cargando tu premio…</h2></div></div>';
+  document.body.appendChild(ov);document.body.style.overflow='hidden';
+  ov.addEventListener('click',function(e){if(e.target===ov)closePicker()});
+  loadInfo().then(function(info){render(ov,info,celebrate)})}
+function render(ov,info,celebrate){
+  if(!document.body.contains(ov))return;
+  var k=kAvail(),ops=options(),chosen=inCart().map(function(i){return String(i.realId)}),have=inCart().length;
+  var head='<div class="sbr-hd"><div class="sbr-ic"><i class="fas fa-gift"></i></div><h2>'+(celebrate?'¡Llegaste a '+pts()+' puntos!':'Tu producto GRATIS')+'</h2><p>Puedes llevarte <b>'+k+' producto'+(k>1?'s':'')+' gratis</b> en tu próximo pedido.'+(info&&info.avg>0?' Te mostramos productos con un precio parecido a lo que sueles comprar (promedio '+q2(info.avg)+').':'')+'</p></div>';
+  var body;
+  if(!info)body='<p class="sbr-note" style="margin:18px 0">No pudimos consultar tu premio ahora. Revisa tu conexión e inténtalo otra vez.</p>';
+  else if(!(info.avg>0))body='<p class="sbr-note" style="margin:18px 0">Aún no tenemos suficiente historial de compras para calcular tu producto gratis. Tus puntos están guardados.</p>';
+  else if(!ops.length)body='<p class="sbr-note" style="margin:18px 0">Por ahora no hay productos disponibles cerca de tu promedio de compra. Tus puntos siguen guardados.</p>';
+  else body='<div class="sbr-g">'+ops.map(function(p){var on=chosen.indexOf(String(p.id))>-1;
+    return'<div class="sbr-c'+(on?' on':'')+'"><i class="pi fas '+(/^fa-/.test(p.icono||'')?esc(p.icono):'fa-gift')+'"></i><div class="sbr-n">'+esc(p.nombre)+'</div><span class="sbr-free">GRATIS</span><span class="sbr-old">'+q2(p.precio)+'</span><button class="sbr-b" data-pk="'+esc(p.id)+'"'+(on||have>=k?' disabled':'')+'>'+(on?'Elegido ✓':'Elegir gratis')+'</button></div>'}).join('')+'</div>';
+  ov.innerHTML='<div class="sbr-box">'+head+body+'<div class="sbr-row"><button class="sbr-b ghost" id="sbrX">'+(have?'Seguir comprando':'Ahora no')+'</button>'+(have?'<button class="sbr-b" id="sbrCart">Ir al carrito</button>':'')+'</div><p class="sbr-note">Al enviar tu pedido se descuentan '+STEP+' puntos por cada producto gratis y la página se reinicia mostrando los precios normales.</p></div>';
+  ov.querySelector('#sbrX').onclick=closePicker;
+  var cb=ov.querySelector('#sbrCart');if(cb)cb.onclick=function(){closePicker();try{var c=document.getElementById('cart');if(c&&!c.classList.contains('active'))toggleCart()}catch(e){}};
+  Array.prototype.forEach.call(ov.querySelectorAll('[data-pk]'),function(b){b.onclick=function(){if(pick(b.dataset.pk))render(ov,info,false)}})}
+R.open=openPicker;R.pick=pick;
+
+/* ---------- botón flotante + botón dentro del carrito ---------- */
+function ensureUI(){
+  var pill=document.getElementById('sbrPill');
+  if(!pill){pill=document.createElement('button');pill.id='sbrPill';pill.type='button';pill.className='sbr-pill';pill.onclick=function(){openPicker(false)};document.body.appendChild(pill)}
+  var cb=document.getElementById('sbrCartBtn'),sum=document.querySelector('.cart-points-summary');
+  if(!cb&&sum&&sum.parentNode){cb=document.createElement('button');cb.id='sbrCartBtn';cb.type='button';cb.className='sbr-cartbtn';cb.onclick=function(){openPicker(false)};sum.parentNode.insertBefore(cb,sum)}
+  return{pill:pill,cb:cb}}
+function refreshUI(){
+  var el=ensureUI(),k=kAvail(),have=inCart().length,show=!!uid()&&k>0;
+  el.pill.style.display=(show&&have<k)?'inline-flex':'none';
+  el.pill.innerHTML='<i class="fas fa-gift"></i> Tienes '+pts()+' pts · ¡Elige tu producto GRATIS!';
+  if(el.cb){el.cb.style.display=show?'block':'none';el.cb.innerHTML='<i class="fas fa-gift"></i> '+(have>=k?'Tu producto gratis está en el carrito ✓':'Elegir mi producto GRATIS ('+k+' disponible'+(k>1?'s':'')+')')}}
+
+/* ---------- vigilancia de puntos ---------- */
+function check(){
+  var u=uid();
+  if(!u){refreshUI();return}
+  var p=pts(),lvl=Math.floor(p/STEP),key='sb_reward_seen_'+u,seen=0;
+  try{seen=Number(localStorage.getItem(key))||0}catch(e){}
+  /* si ya no alcanza para los productos gratis del carrito, se quitan */
+  var k=kAvail(),n=0,before=0;
+  try{before=cart.length;cart=cart.filter(function(i){if(!i||!i.gratis)return true;n++;return n<=k});if(cart.length!==before)updateCartUI()}catch(e){}
+  if(lvl<seen){try{localStorage.setItem(key,String(lvl))}catch(e){}seen=lvl}
+  refreshUI();
+  if(lvl>seen&&!document.getElementById('sbrOv')){
+    try{localStorage.setItem(key,String(lvl))}catch(e){}
+    confetti();setTimeout(function(){openPicker(true)},900)}}
+setInterval(check,1500);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)check()});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',check);else setTimeout(check,600);
+})();
+
+</script>
+
 <script id="sb-negocios-launcher">
 window.addEventListener("message",function(e){var d=e.data;if(!d||d.sbRole!=="NEGOCIO")return;try{currentUser.tipoUsuario="NEGOCIO"}catch(_){}try{var n=document.getElementById("userNameDisplay");if(n&&!/NEGOCIO/.test(n.textContent))n.textContent=(n.textContent||"")+" · NEGOCIO"}catch(_){}try{if(window.SHEIBIS_BACKEND_V2)window.SHEIBIS_BACKEND_V2.heartbeat()}catch(_){}});
 (function(){
