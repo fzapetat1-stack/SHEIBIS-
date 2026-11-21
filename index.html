@@ -6699,11 +6699,18 @@ function renderCatalogos() {
   const details=orderItems.map(function(i,n){return `  ${n+1}. ${i.nombre} x${i.cantidad} → ${i.gratis?'🎁 GRATIS (canje de puntos)':'Q'+(i.precio*i.cantidad).toFixed(2)}`;}).join('\n');
   const message=`🛍️ *SOLICITUD DE PEDIDO - SHEIBIS* 🛍️\n────────────────────\n📋 *Cliente:* ${currentUser.nombre}\n🆔 *Pedido:* ${orderId}\n📅 *Fecha:* ${now.toLocaleString('es-GT')}\n────────────────────\n📦 *Detalle del Pedido*\n${details}\n────────────────────\n💰 *TOTAL: Q${total.toFixed(2)}*\n💳 *Método de Pago:* ${paymentMethod}\n⭐ *Puntos generados:* ${points} pts${freeK?`\n🎁 *Canje:* ${freeK} producto(s) gratis (-${freeK*CONFIG.pointsThreshold} pts)`:''}\n────────────────────`;
   /* WhatsApp Business: se abre al instante, sin esperas ni redirecciones intermedias */
-  window.SB_WA.open(window.SB_WA.business,message);
+  /* SHEIBIS FIX: WhatsApp se abre más abajo, después de guardar el pedido y vaciar el carrito */
   const original=btn?btn.innerHTML:'';if(btn){btn.disabled=true;btn.dataset.originalText=original;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Registrando pedido...';}
   const orderData={orderId:orderId,orderNumber:orderId,userId:currentUser.id,nombre:currentUser.nombre||'',email:currentUser.email||'',date:now.toISOString(),total:total.toFixed(2),items:orderItems,itemsText:details,detalles:details,metodoPago:paymentMethod,status:'Pedido recibido',estadoPaquete:1,pointsEarned:points,pointsBefore:before,pointsAfter:after,reward:freeK?{ids:freeIds}:undefined,pointsSpent:freeK*CONFIG.pointsThreshold};
+  /* SHEIBIS FIX: guardar pedido pendiente + vaciar carrito al instante + abrir WhatsApp */
+  const __pend=Object.assign({},orderData,(window.SBX&&SBX.coupon&&SBX.disc()>0)?{cupon:SBX.coupon.code}:{});
+  try{localStorage.setItem('sheibis_pending_order_v1',JSON.stringify({order:__pend,t:Date.now()}));}catch(_){}
+  const __cartBackup=cart.map(function(i){return Object.assign({},i);});
+  cart=[];try{updateCartUI();}catch(_){}try{cartEl.classList.remove('active');}catch(_){}
+  window.SB_WA.open(window.SB_WA.business,message);
   try{
-    const result=await apiRequest('createOrder',{order:Object.assign(orderData,(window.SBX&&SBX.coupon&&SBX.disc()>0)?{cupon:SBX.coupon.code}:{})},{timeout:30000});
+    const result=await apiRequest('createOrder',{order:Object.assign(orderData,__pend.cupon?{cupon:__pend.cupon}:{})},{timeout:30000});
+    try{localStorage.removeItem('sheibis_pending_order_v1');}catch(_){}
     const finalPoints=Number.isFinite(Number(result&&result.pointsAfter))?Number(result.pointsAfter):after, finalEarned=Number.isFinite(Number(result&&result.pointsEarned))?Number(result.pointsEarned):points;
     orderData.pointsEarned=finalEarned;orderData.pointsAfter=finalPoints;
     if(result&&result.inventory)try{localStorage.setItem('sheibis_inventory_master_v1',JSON.stringify(result.inventory));}catch(_){}
@@ -6713,6 +6720,8 @@ function renderCatalogos() {
     if(freeK){setTimeout(function(){location.reload();},2800);}
   }catch(error){
     console.error('SHEIBIS · Error en Solicitar Aprobación:',error);
+    try{localStorage.removeItem('sheibis_pending_order_v1');}catch(_){}
+    cart=__cartBackup;try{updateCartUI();}catch(_){}
     if(error.code==='OUT_OF_STOCK')showToast(`El producto "${error.productName||'seleccionado'}" está agotado.`,{title:'Producto agotado',icon:'fa-box-open',duration:7500});
     else if(error.code==='INSUFFICIENT_STOCK')showToast(`"${error.productName||'El producto'}" no tiene suficiente stock. Disponible: ${error.available||0} unidad(es).`,{title:'Stock insuficiente',icon:'fa-triangle-exclamation',duration:7500});
     else showToast(error.message||'No se pudo registrar el pedido. El carrito se conservó.',{title:'No se pudo completar',icon:'fa-circle-exclamation',duration:7000});
@@ -7365,12 +7374,7 @@ setInterval(updateOnlineUsers, ONLINE_HEARTBEAT_MS);
         console.log('📊 Google Sheets URL:', CONFIG.googleSheetsUrl);
         console.log('🔗 Google Apps Script:', CONFIG.googleAppsScriptUrl);
 
-        document.addEventListener('click', (e) => {
-            const toggle = document.querySelector('.cart-top-btn');
-            if (cartEl.classList.contains('active') && !cartEl.contains(e.target) && !toggle.contains(e.target)) {
-                cartEl.classList.remove('active');
-            }
-        });
+        /* SHEIBIS FIX: el cierre por clic afuera ahora lo maneja el fondo (#sbCartBackdrop). */
 
         // Cerrar toast al hacer clic fuera
         document.addEventListener('click', (e) => {
@@ -21386,3 +21390,236 @@ html body:not(#pm) #cart .cart-item,html body:not(#pm) #cartItems>div{border-rad
   <i style="--x:64%;--s:20px;--d:18s;--t:-5s;--w:-14px;--y:94%"></i>
 </div>
 <div class="sb-aurora" aria-hidden="true"></div>
+
+<style id="sb-final-fix-css">
+/* =====================================================================
+   SHEIBIS · ARREGLO FINAL (va al final para ganar la cascada)
+   1) Productos: cuadrícula responsive limpia (celular, tablet, laptop, monitor)
+   2) Carrito: panel lateral en escritorio / hoja inferior en celular
+   ===================================================================== */
+
+/* ---------- 1) PRODUCTOS ---------- */
+html body #tabProducts #productList{
+  display:block!important;width:100%!important;max-width:1480px!important;
+  margin:0 auto!important;padding:0 clamp(10px,2.2vw,30px)!important;box-sizing:border-box!important}
+html body #tabProducts #productList .sbp-toolbar,
+html body #tabProducts #productList .sbp-subcats,
+html body #tabProducts #productList .sbp-desc-only{width:100%!important;max-width:none!important;box-sizing:border-box!important}
+html body #tabProducts #productList .sbp-toolbar{margin:0 0 18px!important}
+
+/* La cuadrícula real: ahora SÍ ocupa todo el ancho disponible */
+html body #tabProducts #productList .sbp-results{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,232px),1fr))!important;
+  gap:clamp(12px,1.6vw,22px)!important;
+  width:100%!important;max-width:none!important;margin:0!important;
+  align-items:stretch!important;grid-auto-rows:auto!important}
+html body #tabProducts #productList .sbp-results>.sbp-empty,
+html body #tabProducts #productList .sbp-results::before{grid-column:1/-1!important}
+
+/* Tarjeta */
+html body #tabProducts #productList .sbp-results .product-detail-item{
+  container-type:inline-size;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:12px!important;padding:12px!important;min-width:0!important;height:100%!important;
+  border-radius:22px!important;background:#fff!important;overflow:hidden!important;
+  border:1px solid rgba(17,17,17,.09)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.04),0 12px 28px -16px rgba(0,0,0,.22)!important;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s!important}
+html body #tabProducts #productList .sbp-results .product-detail-item:hover{
+  transform:translateY(-3px)!important;border-color:rgba(17,17,17,.22)!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.05),0 20px 36px -16px rgba(0,0,0,.3)!important}
+html body #tabProducts #productList .sbp-results .product-detail-image{
+  position:relative!important;flex:none!important;width:100%!important;height:auto!important;min-height:0!important;
+  aspect-ratio:1/1!important;border-radius:16px!important;overflow:hidden!important;
+  background:#f3f4f5!important;display:block!important}
+html body #tabProducts #productList .sbp-results .product-detail-image img{
+  width:100%!important;height:100%!important;object-fit:cover!important;padding:0!important;display:block!important}
+html body #tabProducts #productList .sbp-results .product-detail-info{
+  display:flex!important;flex-direction:column!important;flex:1 1 auto!important;
+  gap:6px!important;padding:0 2px 2px!important;min-width:0!important;justify-content:flex-start!important}
+html body #tabProducts #productList .sbp-results .product-detail-name{
+  font-size:1rem!important;font-weight:800!important;line-height:1.25!important;
+  display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden!important;
+  overflow-wrap:anywhere}
+html body #tabProducts #productList .sbp-results .product-detail-desc{
+  font-size:.8rem!important;line-height:1.45!important;
+  display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical;overflow:hidden!important}
+html body #tabProducts #productList .sbp-results .product-price-row{margin-top:auto!important;display:flex!important;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+html body #tabProducts #productList .sbp-results .product-price-current{font-size:1.35rem!important;line-height:1.1!important}
+
+/* Cantidad + botón Agregar: lado a lado si cabe, apilados si la tarjeta es angosta */
+html body #tabProducts #productList .sbp-results .product-detail-actions{
+  display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important;
+  gap:8px!important;margin:6px 0 0!important;flex-wrap:nowrap!important}
+html body #tabProducts #productList .sbp-results .qty-control-detail{align-self:center!important;justify-self:start!important}
+html body #tabProducts #productList .sbp-results .btn-add-detail{
+  width:100%!important;min-width:0!important;flex:none!important;height:42px!important;
+  border-radius:12px!important;font-size:.82rem!important;padding:0 10px!important;
+  white-space:nowrap!important;justify-content:center!important}
+@container (max-width:195px){
+  .product-detail-actions{grid-template-columns:minmax(0,1fr)!important}
+  .qty-control-detail{justify-self:stretch!important;justify-content:space-between!important;width:100%!important}
+}
+
+/* Pantallas muy grandes: columnas un poco más anchas */
+@media(min-width:1700px){
+  html body #tabProducts #productList .sbp-results{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))!important}
+}
+/* Tablet */
+@media(max-width:900px){
+  html body #tabProducts #productList .sbp-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr))!important}
+}
+/* Celular: 2 por fila */
+@media(max-width:640px){
+  html body #tabProducts #productList{padding:0 10px!important}
+  html body #tabProducts #productList .sbp-results{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  html body #tabProducts #productList .sbp-results .product-detail-item{padding:8px!important;gap:8px!important;border-radius:18px!important}
+  html body #tabProducts #productList .sbp-results .product-detail-image{border-radius:12px!important}
+  html body #tabProducts #productList .sbp-results .product-detail-name{font-size:.88rem!important}
+  html body #tabProducts #productList .sbp-results .product-detail-desc{display:none!important}
+  html body #tabProducts #productList .sbp-results .product-price-current{font-size:1.1rem!important}
+  html body #tabProducts #productList .sbp-results .product-detail-actions{grid-template-columns:minmax(0,1fr)!important}
+  html body #tabProducts #productList .sbp-results .qty-control-detail{justify-self:stretch!important;justify-content:space-between!important;width:100%!important}
+  html body #tabProducts #productList .sbp-results .btn-add-detail{height:40px!important;font-size:.78rem!important}
+}
+@media(max-width:340px){
+  html body #tabProducts #productList .sbp-results{grid-template-columns:minmax(0,1fr)!important}
+}
+
+/* ---------- 2) CARRITO: panel lateral (escritorio) ---------- */
+#sbCartBackdrop{position:fixed;inset:0;z-index:2147483050;background:rgba(10,10,12,.46);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);opacity:0;visibility:hidden;
+  transition:opacity .3s ease,visibility 0s linear .3s}
+#sbCartBackdrop.on{opacity:1;visibility:visible;transition:opacity .3s ease,visibility 0s}
+body.sb-cart-lock{overflow:hidden!important}
+
+html :is(body,body:not(#pm)) #cart{
+  position:fixed!important;top:0!important;right:0!important;bottom:0!important;left:auto!important;
+  width:min(460px,100vw)!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;max-height:none!important;
+  margin:0!important;padding:22px 22px 0!important;box-sizing:border-box!important;
+  border:0!important;border-radius:28px 0 0 28px!important;background:#fff!important;
+  box-shadow:-24px 0 80px rgba(0,0,0,.28)!important;
+  display:flex!important;flex-direction:column!important;overflow-y:auto!important;overscroll-behavior:contain;
+  z-index:2147483100!important;animation:none!important;
+  transform:translateX(104%);visibility:hidden;pointer-events:none;
+  transition:transform .38s cubic-bezier(.22,1,.36,1),visibility 0s linear .38s}
+html :is(body,body:not(#pm)) #cart.active{
+  transform:none;visibility:visible;pointer-events:auto;
+  transition:transform .38s cubic-bezier(.22,1,.36,1),visibility 0s}
+html :is(body,body:not(#pm)) #cart>*{flex:0 0 auto}
+html :is(body,body:not(#pm)) #cart h3{display:flex!important;align-items:center!important;gap:12px!important;
+  font-size:1.35rem!important;margin:0 0 14px!important;padding-bottom:14px!important}
+.sb-cart-close{margin-left:auto;width:38px;height:38px;flex:0 0 38px;border:0;border-radius:50%;
+  background:rgba(17,17,17,.07);color:#111;font-size:1rem;cursor:pointer;display:grid;place-items:center;
+  transition:background .2s,transform .2s}
+.sb-cart-close:hover{background:rgba(17,17,17,.14);transform:rotate(90deg)}
+html :is(body,body:not(#pm)) #cart .cart-total{margin-top:auto!important;font-size:1.7rem!important;padding:14px 0 10px!important}
+html :is(body,body:not(#pm)) #cart .cart-actions{
+  position:sticky;bottom:0;z-index:3;background:#fff;
+  display:grid!important;grid-template-columns:1fr 2fr!important;gap:10px!important;
+  padding:12px 0 calc(14px + env(safe-area-inset-bottom,0px))!important;
+  box-shadow:0 -14px 16px -14px rgba(0,0,0,.14)}
+html :is(body,body:not(#pm)) #cart .cart-actions .btn{min-height:50px!important}
+
+/* ---------- Carrito: hoja inferior en celular ---------- */
+@media(max-width:700px){
+  html :is(body,body:not(#pm)) #cart{
+    top:auto!important;left:0!important;right:0!important;bottom:0!important;
+    width:100%!important;height:auto!important;max-height:92vh!important;max-height:92dvh!important;
+    padding:18px 16px 0!important;border-radius:26px 26px 0 0!important;
+    box-shadow:0 -20px 70px rgba(0,0,0,.35)!important;transform:translateY(104%)}
+  html :is(body,body:not(#pm)) #cart.active{transform:none}
+  html :is(body,body:not(#pm)) #cart::before{content:"";display:block;width:44px;height:5px;border-radius:9px;
+    background:rgba(17,17,17,.18);margin:0 auto 12px;flex:none}
+  html :is(body,body:not(#pm)) #cart .cart-actions{grid-template-columns:1fr!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html :is(body,body:not(#pm)) #cart,#sbCartBackdrop{transition:none!important}
+}
+</style>
+
+<script id="sb-final-fix-js">
+(function(){
+  'use strict';
+  if(window.__sbFinalFix)return; window.__sbFinalFix=true;
+
+  /* ============ CARRITO: apertura/cierre determinista ============ */
+  var bd=null;
+  function cartEl(){return document.getElementById('cart');}
+  function isOpen(){var c=cartEl();return !!(c&&c.classList.contains('active'));}
+
+  function ensureBackdrop(){
+    if(bd&&bd.isConnected)return bd;
+    bd=document.getElementById('sbCartBackdrop');
+    if(!bd){bd=document.createElement('div');bd.id='sbCartBackdrop';document.body.appendChild(bd);}
+    bd.addEventListener('click',function(){closeCart();});
+    return bd;
+  }
+  function ensureCloseBtn(){
+    var c=cartEl();if(!c)return;
+    var h=c.querySelector('h3');
+    if(h&&!h.querySelector('.sb-cart-close')){
+      var b=document.createElement('button');
+      b.type='button';b.className='sb-cart-close';b.setAttribute('aria-label','Cerrar carrito');
+      b.innerHTML='<i class="fas fa-xmark"></i>';
+      b.addEventListener('click',function(e){e.stopPropagation();closeCart();});
+      h.appendChild(b);
+    }
+  }
+  /* Mantiene fondo, bloqueo de scroll y botón flotante sincronizados con el estado real del carrito */
+  function sync(){
+    var on=isOpen(),c=cartEl();
+    ensureBackdrop().classList.toggle('on',on);
+    document.body.classList.toggle('sb-cart-lock',on);
+    document.body.classList.toggle('sbx-cart-open',on);
+    if(c){c.setAttribute('aria-hidden',on?'false':'true');c.setAttribute('role','dialog');}
+    ensureCloseBtn();
+  }
+  function openCart(){
+    var c=cartEl();if(!c)return;
+    try{var pd=document.querySelector('#sbxPD.on [data-act="close"]');if(pd)pd.click();}catch(e){}
+    try{var m=document.getElementById('menuPanel');if(m&&m.classList.contains('open')&&typeof window.toggleMenu==='function')window.toggleMenu();}catch(e){}
+    try{if(typeof window.updateCartUI==='function')window.updateCartUI();}catch(e){}
+    c.classList.add('active');sync();c.scrollTop=0;
+  }
+  function closeCart(){var c=cartEl();if(c)c.classList.remove('active');sync();}
+
+  window.openCart=openCart;window.closeCart=closeCart;
+  window.toggleCart=function(){isOpen()?closeCart():openCart();};
+
+  (function watch(){
+    var c=cartEl();
+    if(!c){document.addEventListener('DOMContentLoaded',watch,{once:true});return;}
+    sync();
+    if(window.MutationObserver)new MutationObserver(sync).observe(c,{attributes:true,attributeFilter:['class']});
+    /* si otro script re-dibuja el encabezado, se vuelve a poner la X */
+    if(window.MutationObserver)new MutationObserver(ensureCloseBtn).observe(c,{childList:true});
+  })();
+
+  /* ============ APROBACIÓN: reintento de pedido pendiente ============
+     Si el celular pausó la página al abrir WhatsApp y el pedido no alcanzó a
+     registrarse, se registra solo al volver (el servidor evita duplicados). */
+  var KEY='sheibis_pending_order_v1',retrying=false;
+  function retryPending(){
+    if(retrying)return;
+    var raw=null;try{raw=localStorage.getItem(KEY);}catch(e){}
+    if(!raw)return;
+    var p=null;try{p=JSON.parse(raw);}catch(e){}
+    if(!p||!p.order||(Date.now()-(p.t||0))>24*3600*1000){try{localStorage.removeItem(KEY);}catch(e){}return;}
+    if(typeof apiRequest!=='function'||typeof currentUser==='undefined'||!currentUser||currentUser.isGuest)return;
+    if(String(p.order.userId)!==String(currentUser.id))return;
+    retrying=true;
+    apiRequest('createOrder',{order:p.order},{timeout:30000}).then(function(){
+      try{localStorage.removeItem(KEY);}catch(e){}
+      try{showToast('Tu pedido '+p.order.orderId+' quedó registrado.',{title:'Pedido registrado',icon:'fa-circle-check',duration:5000});}catch(e){}
+    }).catch(function(err){
+      /* si el servidor dice que ya existe o es inválido, no insistir */
+      var m=String(err&&err.message||'').toLowerCase();
+      if(m.indexOf('duplic')>-1||m.indexOf('ya existe')>-1||err&&(err.code==='OUT_OF_STOCK'||err.code==='INSUFFICIENT_STOCK')){try{localStorage.removeItem(KEY);}catch(e){}}
+    }).then(function(){retrying=false;});
+  }
+  window.addEventListener('load',function(){setTimeout(retryPending,4000);});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(retryPending,1500);});
+})();
+</script>
