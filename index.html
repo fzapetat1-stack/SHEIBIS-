@@ -4117,7 +4117,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbymS7a4lBq2eQqvixhgJ4WqzFG2J2jfu3L2cqVKiC3jWk0da__1StKLe9D5PvThEdpI/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzCQdA1uTydeNx1VD8MYqjul82aAr5e4cCZSr8opAnfPefy57Zrj6pIuJm87c1h_eCB/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5814,7 +5814,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbymS7a4lBq2eQqvixhgJ4WqzFG2J2jfu3L2cqVKiC3jWk0da__1StKLe9D5PvThEdpI/exec
+     https://script.google.com/macros/s/AKfycbzCQdA1uTydeNx1VD8MYqjul82aAr5e4cCZSr8opAnfPefy57Zrj6pIuJm87c1h_eCB/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -13639,7 +13639,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbymS7a4lBq2eQqvixhgJ4WqzFG2J2jfu3L2cqVKiC3jWk0da__1StKLe9D5PvThEdpI/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbzCQdA1uTydeNx1VD8MYqjul82aAr5e4cCZSr8opAnfPefy57Zrj6pIuJm87c1h_eCB/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -15987,7 +15987,7 @@ kbd{font:600 .7rem Plus Jakarta Sans,system-ui,sans-serif;border:1px solid #DADA
 <div class="top"><img class="lg" id="lg" alt="SHEIBIS"><div class="tt"><b>SHEIBIS Business</b><small id="who">Cambia tu cuenta a negocio</small></div><span class="pill on" id="bp" style="display:none"></span><button class="btn s" id="out" style="display:none">Cerrar sesión</button></div>
 <div class="wrap" id="v"></div>
 <script>
-var URL_API='https://script.google.com/macros/s/AKfycbymS7a4lBq2eQqvixhgJ4WqzFG2J2jfu3L2cqVKiC3jWk0da__1StKLe9D5PvThEdpI/exec',MODE='__MODE__';
+var URL_API='https://script.google.com/macros/s/AKfycbzCQdA1uTydeNx1VD8MYqjul82aAr5e4cCZSr8opAnfPefy57Zrj6pIuJm87c1h_eCB/exec',MODE='__MODE__';
 var LOGO='';try{var LE=parent.document.getElementById('sbLogoMaster');LOGO=(LE&&LE.src)||parent.SB_LOGO_SRC||''}catch(_){}
 var WA='49968121';
 var PAY_BANKS=['BI','Banrural','Zigi','Fri'];
@@ -20577,7 +20577,8 @@ html body .btn-add-detail{position:relative;overflow:hidden;border:0!important;b
 #sbxMd{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(20,12,60,.55);backdrop-filter:blur(8px)}#sbxMd.on{display:flex}
 @keyframes sbxPop{from{opacity:0;transform:scale(.85) translateY(20px)}}
 #sbxMd .sbref-card{position:relative;width:min(400px,100%);max-height:92vh;overflow-y:auto;overflow-x:hidden;padding:40px 22px 22px;border-radius:32px;background:radial-gradient(120% 60% at 50% -8%,rgba(124,92,255,.17),transparent 62%),#fff;border:1px solid rgba(124,92,255,.14);box-shadow:0 50px 100px -30px rgba(60,30,180,.65);color:#1c1240;font-family:'Plus Jakarta Sans',sans-serif;text-align:center;animation:sbxPop .45s cubic-bezier(.2,1.4,.4,1)}
-#sbxMd .sbref-card *{box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
+#sbxMd .sbref-card *{box-sizing:border-box}
+#sbxMd .sbref-card button,#sbxMd .sbref-card input,#sbxMd .sbref-card a,#sbxMd .sbref-card span,#sbxMd .sbref-card b{font-family:'Plus Jakarta Sans',sans-serif}
 #sbxMd .sbref-close{position:absolute;top:14px;right:14px;width:36px;height:36px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:rgba(124,92,255,.09);color:#5b3df5;font-size:.95rem;cursor:pointer;transition:background .2s,transform .2s}
 #sbxMd .sbref-close:hover{background:rgba(124,92,255,.18);transform:rotate(90deg)}
 #sbxMd .sbref-ico{width:72px;height:72px;margin:0 auto;border-radius:50%;display:grid;place-items:center;font-size:1.7rem;color:#fff;background:linear-gradient(135deg,#7c5cff,#ff5fa2);box-shadow:0 0 0 8px rgba(124,92,255,.10),0 16px 34px -6px rgba(124,92,255,.6)}
