@@ -19872,9 +19872,8 @@ html body .sbhm-sec.sbmq .sbhm-row.sbmq-static-row{overflow-x:auto!important;-we
   function scan(){
     [].forEach.call(document.querySelectorAll('#sbhmStrips .sbhm-sec'),function(sec){
       var h=sec.querySelector('.sbhm-hd h3');
-      if(!h||!/ofertas/i.test(h.textContent))return;
-      sec.classList.add('sbmq');
-      var row=sec.querySelector('.sbhm-row');if(row)build(row);
+      /* Ofertas ahora se ve igual que Recomendados: fila normal, sin carrusel automático ni recuadro gris. */
+      return;
     });
   }
   setInterval(scan,800);scan();
