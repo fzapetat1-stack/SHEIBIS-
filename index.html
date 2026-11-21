@@ -20575,14 +20575,44 @@ html body .btn-add-detail{position:relative;overflow:hidden;border:0!important;b
 .sbx-btn{height:42px;padding:0 18px;border:0;border-radius:12px;background:linear-gradient(120deg,#7c5cff,#22b8d8);color:#fff;font:800 .8rem 'Plus Jakarta Sans',sans-serif;cursor:pointer;box-shadow:0 8px 20px -6px rgba(124,92,255,.6);transition:transform .2s}.sbx-btn:hover{transform:translateY(-2px)}.sbx-btn.alt{background:#25d366}.sbx-btn.ghost{background:rgba(124,92,255,.12);color:#4a33c9;box-shadow:none}
 #sbxCpStatus{min-height:16px;margin-top:8px;font:700 .74rem 'Plus Jakarta Sans',sans-serif;color:#555}#sbxCpStatus.ok{color:#0a8f5b}#sbxCpStatus.bad{color:#d6336c}
 #sbxMd{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(20,12,60,.55);backdrop-filter:blur(8px)}#sbxMd.on{display:flex}
-.sbx-card{width:min(440px,100%);max-height:92vh;overflow:auto;border-radius:28px;padding:26px 22px;background:linear-gradient(180deg,#fff,#f7f4ff);box-shadow:0 40px 90px -20px rgba(60,30,180,.6);color:#1c1240;font-family:'Plus Jakarta Sans',sans-serif;text-align:center;animation:sbxPop .45s cubic-bezier(.2,1.4,.4,1)}
 @keyframes sbxPop{from{opacity:0;transform:scale(.85) translateY(20px)}}
-.sbx-card h3{margin:6px 0 4px;font-size:1.4rem;font-weight:900}.sbx-card p{margin:0 0 14px;font-size:.84rem;color:#5b5675;line-height:1.5}
-.sbx-ico{width:62px;height:62px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;background:linear-gradient(135deg,#7c5cff,#ff5fa2);box-shadow:0 14px 30px rgba(124,92,255,.5)}
-.sbx-code{margin:12px 0;padding:14px;border-radius:16px;font:900 1.7rem 'Plus Jakarta Sans',sans-serif;letter-spacing:5px;background:#fff;border:2px dashed #7c5cff;color:#5b3df5}
-.sbx-stats{display:flex;gap:10px;margin:14px 0}.sbx-stats div{flex:1;padding:12px;border-radius:16px;background:rgba(124,92,255,.08)}.sbx-stats b{display:block;font-size:1.4rem}.sbx-stats span{font-size:.68rem;color:#5b5675}
-.sbx-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.sbx-acts .sbx-btn{flex:1;min-width:130px}
-.sbx-x{margin-top:12px;background:none;border:0;color:#7a7596;font:700 .78rem 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+#sbxMd .sbref-card{position:relative;width:min(400px,100%);max-height:92vh;overflow-y:auto;overflow-x:hidden;padding:40px 22px 22px;border-radius:32px;background:radial-gradient(120% 60% at 50% -8%,rgba(124,92,255,.17),transparent 62%),#fff;border:1px solid rgba(124,92,255,.14);box-shadow:0 50px 100px -30px rgba(60,30,180,.65);color:#1c1240;font-family:'Plus Jakarta Sans',sans-serif;text-align:center;animation:sbxPop .45s cubic-bezier(.2,1.4,.4,1)}
+#sbxMd .sbref-card *{box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
+#sbxMd .sbref-close{position:absolute;top:14px;right:14px;width:36px;height:36px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:rgba(124,92,255,.09);color:#5b3df5;font-size:.95rem;cursor:pointer;transition:background .2s,transform .2s}
+#sbxMd .sbref-close:hover{background:rgba(124,92,255,.18);transform:rotate(90deg)}
+#sbxMd .sbref-ico{width:72px;height:72px;margin:0 auto;border-radius:50%;display:grid;place-items:center;font-size:1.7rem;color:#fff;background:linear-gradient(135deg,#7c5cff,#ff5fa2);box-shadow:0 0 0 8px rgba(124,92,255,.10),0 16px 34px -6px rgba(124,92,255,.6)}
+#sbxMd .sbref-title{margin:20px 0 6px;font-size:1.6rem;font-weight:900;letter-spacing:-.3px;color:#1c1240;line-height:1.15}
+#sbxMd .sbref-sub{max-width:300px;margin:0 auto 22px;font-size:.86rem;line-height:1.6;color:#5b5675}
+#sbxMd .sbref-sub b{color:#5b3df5;font-weight:900}
+#sbxMd .sbref-label{margin:0 0 8px;font-size:.66rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8a85a6}
+#sbxMd .sbref-code{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:16px 14px;border:2px dashed rgba(124,92,255,.55);border-radius:18px;background:rgba(124,92,255,.05);color:#5b3df5;font-size:clamp(1.25rem,6.2vw,1.6rem);font-weight:900;letter-spacing:.14em;white-space:nowrap;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
+#sbxMd .sbref-code span{padding-left:.14em}
+#sbxMd .sbref-code i{font-size:.9rem;letter-spacing:0;opacity:.55}
+#sbxMd .sbref-code:hover{background:rgba(124,92,255,.10);border-color:#7c5cff}
+#sbxMd .sbref-code:active{transform:scale(.98)}
+#sbxMd .sbref-code.ok{border-style:solid;border-color:#0a8f5b;background:rgba(10,143,91,.08);color:#0a8f5b}
+#sbxMd .sbref-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+#sbxMd .sbref-btn{height:48px;padding:0 14px;border:0;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:.84rem;font-weight:800;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+#sbxMd .sbref-btn:hover{transform:translateY(-2px)}
+#sbxMd .sbref-btn.ghost{background:rgba(124,92,255,.10);color:#4a33c9}
+#sbxMd .sbref-btn.ghost:hover{background:rgba(124,92,255,.17)}
+#sbxMd .sbref-btn.ghost.ok{background:rgba(10,143,91,.12);color:#0a8f5b}
+#sbxMd .sbref-btn.wa{background:linear-gradient(135deg,#2bdc6e,#1ebe5a);color:#fff;box-shadow:0 10px 22px -8px rgba(30,190,90,.75)}
+#sbxMd .sbref-btn.go{flex:0 0 auto;padding:0 24px;background:linear-gradient(120deg,#7c5cff,#22b8d8);color:#fff;box-shadow:0 10px 22px -8px rgba(124,92,255,.7)}
+#sbxMd .sbref-btn i{font-size:1rem}
+#sbxMd .sbref-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#sbxMd .sbref-stat{padding:16px 8px 14px;border-radius:20px;display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(124,92,255,.07);border:1px solid rgba(124,92,255,.10)}
+#sbxMd .sbref-stat i{font-size:.95rem;color:#7c5cff;margin-bottom:2px}
+#sbxMd .sbref-stat b{font-size:1.7rem;font-weight:900;line-height:1.1;color:#1c1240}
+#sbxMd .sbref-stat span{font-size:.72rem;font-weight:700;color:#6b6688}
+#sbxMd .sbref-divider{display:flex;align-items:center;gap:12px;margin:24px 0 14px;font-size:.8rem;font-weight:700;color:#6b6688}
+#sbxMd .sbref-divider:before,.sbref-divider:after{content:"";flex:1;height:1px;background:rgba(124,92,255,.18)}
+#sbxMd .sbref-row{display:flex;gap:10px;align-items:center}
+#sbxMd .sbref-in{flex:1 1 0;min-width:0;height:48px;padding:0 14px;border:1.5px solid rgba(124,92,255,.28);border-radius:14px;background:#fff;color:#1c1240;font-size:16px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-align:left;outline:0;box-shadow:none;transition:border-color .2s,box-shadow .2s}
+#sbxMd .sbref-in::placeholder{color:#a29cc0;font-weight:600;letter-spacing:0;text-transform:none}
+#sbxMd .sbref-in:focus{border-color:#7c5cff;box-shadow:0 0 0 4px rgba(124,92,255,.16)}
+#sbxMd .sbref-done{margin-top:22px;padding:13px 14px;border-radius:14px;background:rgba(10,143,91,.09);color:#0a8f5b;font-size:.8rem;font-weight:700}
+@media(max-width:380px){#sbxMd .sbref-card{padding:38px 16px 18px;border-radius:26px}#sbxMd .sbref-btn{font-size:.78rem;padding:0 8px}#sbxMd .sbref-btn.go{padding:0 16px}}
 </style>
 <script id="sbx-js">
 (function(){
@@ -20606,15 +20636,19 @@ html body .btn-add-detail{position:relative;overflow:hidden;border:0!important;b
    call('couponValidate',{userId:u.id,code:code,subtotal:sub()}).then(function(r){SBX.coupon={code:r.code,tipo:r.tipo,valor:r.valor,minimo:r.minimo};$('#sbxCpIn').value=r.code;$('#sbxCpIn').disabled=true;b.textContent='Quitar';SBX.refresh();toast('Cupón '+r.code+' aplicado: ahorras Q'+Number(r.discount).toFixed(2),'¡Cupón activado!','fa-ticket')})
    .catch(function(e){b.textContent='Aplicar';var st=$('#sbxCpStatus');st.className='bad';st.textContent=(e&&e.message)||'No se pudo validar el cupón.'}).then(function(){b.disabled=false})}}
  /* MODAL */
- function modal(html){var m=$('#sbxMd');if(!m){m=document.createElement('div');m.id='sbxMd';m.onclick=function(e){if(e.target===m)m.classList.remove('on')};document.body.appendChild(m)}m.innerHTML='<div class="sbx-card">'+html+'<button type="button" class="sbx-x" onclick="document.getElementById(\'sbxMd\').classList.remove(\'on\')">Cerrar</button></div>';m.classList.add('on')}
+ function modal(html){var m=$('#sbxMd');if(!m){m=document.createElement('div');m.id='sbxMd';m.onclick=function(e){if(e.target===m)m.classList.remove('on')};document.body.appendChild(m)}m.innerHTML='<div class="sbref-card" role="dialog" aria-modal="true" aria-label="Invita y gana"><button type="button" class="sbref-close" aria-label="Cerrar" onclick="document.getElementById(\'sbxMd\').classList.remove(\'on\')"><i class="fas fa-xmark"></i></button>'+html+'</div>';m.classList.add('on')}
  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
  function openRef(){var u=user();try{toggleMenu()}catch(e){}if(!u)return toast('Inicia sesión para invitar amigos y ganar puntos.','Cuenta requerida','fa-user-lock');
   call('referralInfo',{userId:u.id}).then(function(r){var link=location.href.split(/[?#]/)[0]+'?ref='+r.code,msg='¡Te invito a SHEIBIS! Usa mi código '+r.code+' y ganamos '+r.bonus+' puntos cada uno cuando hagas tu primera compra: '+link;
-   modal('<div class="sbx-ico"><i class="fas fa-gift"></i></div><h3>Invita y gana</h3><p>Tú y tu amigo ganan <b>'+r.bonus+' puntos</b> cuando él haga su primera compra.</p><div class="sbx-code" id="sbxRc">'+esc(r.code)+'</div>'
-   +'<div class="sbx-acts"><button class="sbx-btn ghost" id="sbxCopy" type="button"><i class="fas fa-copy"></i> Copiar enlace</button><a class="sbx-btn alt" style="display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(msg)+'"><i class="fab fa-whatsapp"></i> WhatsApp</a></div>'
-   +'<div class="sbx-stats"><div><b>'+r.invited+'</b><span>Invitados</span></div><div><b>'+r.paid+'</b><span>Ya compraron</span></div></div>'
-   +(r.applied?'':'<p style="margin:6px 0">¿Te invitó alguien?</p><div class="sbx-row"><input class="sbx-in" id="sbxRi" placeholder="CÓDIGO DE TU AMIGO" maxlength="12"><button class="sbx-btn" id="sbxRa" type="button">Aplicar</button></div>'));
-   $('#sbxCopy').onclick=function(){try{navigator.clipboard.writeText(link);this.innerHTML='<i class="fas fa-check"></i> ¡Copiado!'}catch(e){prompt('Copia tu enlace:',link)}};
+   modal('<div class="sbref-ico"><i class="fas fa-gift"></i></div><h3 class="sbref-title">Invita y gana</h3><p class="sbref-sub">Tú y tu amigo ganan <b>'+r.bonus+' puntos</b> cuando él haga su primera compra.</p>'
+   +'<div class="sbref-label">Tu código</div><button type="button" class="sbref-code" id="sbxRc" title="Toca para copiar"><span>'+esc(r.code)+'</span><i class="fas fa-copy"></i></button>'
+   +'<div class="sbref-acts"><button class="sbref-btn ghost" id="sbxCopy" type="button"><i class="fas fa-link"></i><span>Copiar enlace</span></button><a class="sbref-btn wa" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(msg)+'"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></a></div>'
+   +'<div class="sbref-stats"><div class="sbref-stat"><i class="fas fa-user-plus"></i><b>'+r.invited+'</b><span>Invitados</span></div><div class="sbref-stat"><i class="fas fa-bag-shopping"></i><b>'+r.paid+'</b><span>Ya compraron</span></div></div>'
+   +(r.applied?'<div class="sbref-done"><i class="fas fa-circle-check"></i> Ya activaste un código de invitación</div>':'<div class="sbref-divider"><span>¿Te invitó alguien?</span></div><div class="sbref-row"><input class="sbref-in" id="sbxRi" placeholder="Código de tu amigo" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="sbref-btn go" id="sbxRa" type="button">Aplicar</button></div>'));
+   function cp(t,el,html){var o=el.innerHTML,done=function(){el.innerHTML=html;el.classList.add('ok');setTimeout(function(){el.innerHTML=o;el.classList.remove('ok')},1800)};try{navigator.clipboard.writeText(t).then(done,function(){prompt('Copia:',t)})}catch(e){prompt('Copia:',t)}}
+   $('#sbxCopy').onclick=function(){cp(link,this,'<i class="fas fa-check"></i><span>¡Enlace copiado!</span>')};
+   $('#sbxRc').onclick=function(){cp(r.code,this,'<span>¡Código copiado!</span><i class="fas fa-check"></i>')};
+   var ri=$('#sbxRi');if(ri)ri.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();var bt=$('#sbxRa');if(bt)bt.click()}};
    var a=$('#sbxRa');if(a)a.onclick=function(){applyRef($('#sbxRi').value,true)}}).catch(function(e){toast((e&&e.message)||'No se pudo cargar tu código.','Error','fa-circle-exclamation')})}
  function applyRef(code,loud){var u=user();code=(code||'').trim().toUpperCase();if(!u||!code)return Promise.resolve();
   return call('referralApply',{userId:u.id,code:code}).then(function(r){try{localStorage.removeItem('sbx_ref')}catch(e){}toast('¡Código aplicado! Ganarás '+r.bonus+' puntos con tu primera compra.','Invitación activada','fa-gift');var m=$('#sbxMd');if(m)m.classList.remove('on')})
