@@ -19841,6 +19841,8 @@ html body .sbhm-sec.sbmq .sbhm-row{overflow:hidden!important;scroll-snap-type:no
 .sbmq-track{display:flex;width:max-content;animation:sbmq var(--d,40s) linear infinite;will-change:transform}
 .sbmq-g{display:flex;gap:16px;padding-right:16px}
 .sbmq-track:hover,.sbmq-track.paused{animation-play-state:paused}
+.sbmq-track.sbmq-static{animation:none!important;transform:none!important;margin:0 auto}
+html body .sbhm-sec.sbmq .sbhm-row.sbmq-static-row{overflow-x:auto!important;-webkit-mask-image:none!important;mask-image:none!important}
 @keyframes sbmq{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){.sbmq-track{animation:none}html body .sbhm-sec.sbmq .sbhm-row{overflow-x:auto!important}}
 </style>
@@ -19855,10 +19857,15 @@ html body .sbhm-sec.sbmq .sbhm-row{overflow:hidden!important;scroll-snap-type:no
     var g=document.createElement('div');g.className='sbmq-g';
     cards.forEach(function(c){g.appendChild(c)});
     tr.appendChild(g);row.appendChild(tr);
-    var w=row.clientWidth||window.innerWidth,n=0;
-    while(g.scrollWidth<w&&n<8){cards.forEach(function(c){g.appendChild(c.cloneNode(true))});n++}
-    var g2=g.cloneNode(true);g2.setAttribute('aria-hidden','true');tr.appendChild(g2);
-    tr.style.setProperty('--d',Math.max(18,Math.round(g.scrollWidth/55))+'s');
+    var w=row.clientWidth||window.innerWidth;
+    /* Solo se anima (y se duplica para el bucle) si hay 3+ productos que no caben en pantalla.
+       Con pocos productos se muestran tal cual, sin repetirlos. */
+    if(cards.length<3||g.scrollWidth<=w){
+      tr.classList.add('sbmq-static');row.classList.add('sbmq-static-row');
+    }else{
+      var g2=g.cloneNode(true);g2.setAttribute('aria-hidden','true');tr.appendChild(g2);
+      tr.style.setProperty('--d',Math.max(18,Math.round(g.scrollWidth/55))+'s');
+    }
     tr.addEventListener('touchstart',function(){tr.classList.add('paused')},{passive:true});
     tr.addEventListener('touchend',function(){setTimeout(function(){tr.classList.remove('paused')},1800)},{passive:true});
   }
@@ -22126,3 +22133,80 @@ html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.
   filter:none!important;-webkit-text-stroke:0!important}
 html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category.is-soon .catalog-name{filter:none!important}
 </style>
+
+<!-- ============ SHEIBIS · MÁQUINA DE ESCRIBIR + DISEÑO PULIDO ============ -->
+<style id="sb-typewriter-css">
+.tw-t{white-space:pre-wrap}
+.tw-t::after{content:"";display:inline-block;width:2px;height:1em;margin-left:2px;background:currentColor;vertical-align:-.14em;animation:sbTwBlink .6s steps(1) infinite}
+.tw-done .tw-t::after{display:none}
+.tw-g{visibility:hidden;white-space:pre-wrap}
+.tw-done .tw-g{display:none}
+@keyframes sbTwBlink{50%{opacity:0}}
+/* descripciones con estilo de máquina de escribir */
+html body:not(#pm):not(#pm2) .product-detail-desc[data-tw]{font-family:ui-monospace,'SFMono-Regular','Courier New',monospace!important;font-size:.8rem!important;line-height:1.5!important;letter-spacing:0!important;color:#4b4568!important}
+html body[data-theme^="d-"]:not(#pm):not(#pm2) .product-detail-desc[data-tw]{color:#cfc9ee!important}
+
+/* ---- pulido general ---- */
+html body:not(#pm):not(#pm2) .product-detail-item{transition:transform .35s ease,box-shadow .35s ease!important}
+html body:not(#pm):not(#pm2) .product-detail-item:hover{transform:translateY(-5px)!important;box-shadow:0 24px 44px -18px rgba(91,61,245,.45)!important}
+html body:not(#pm):not(#pm2) .product-detail-item .product-detail-image img{transition:transform .8s cubic-bezier(.2,.8,.2,1)!important}
+html body:not(#pm):not(#pm2) .product-detail-item:hover .product-detail-image img{transform:scale(1.06)!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-open-label{transition:transform .25s ease,box-shadow .25s ease!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category:hover .catalog-open-label{transform:translateX(4px)!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category:hover .catalog-image{transform:scale(1.07)!important}
+@media (prefers-reduced-motion:reduce){.tw-t::after{animation:none}}
+</style>
+<script id="sb-typewriter-js">
+(function(){
+  'use strict';
+  if(window.__sbTypewriter)return;window.__sbTypewriter=true;
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var SEL='.catalog-name,.product-detail-desc,.sbp-category-head p,.sbp-desc-only';
+  var done=Object.create(null),queue=[],busy=0,MAX=6;
+  var io='IntersectionObserver' in window?new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){io.unobserve(e.target);start(e.target);}});
+  },{threshold:.15}):null;
+
+  function skip(el){return el.closest('#sbAdminPanel,.sb-admin,#sbUltraSidebar,.auth-modal,[data-no-type]');}
+  function prep(el){
+    if(el.hasAttribute('data-tw')||el.children.length)return;
+    if(skip(el))return;
+    var txt=el.textContent;if(!txt||!txt.trim())return;
+    var key=el.className.split(' ')[0]+'|'+txt;
+    el.setAttribute('data-tw',done[key]?'1':'0');
+    if(done[key])return;               /* ya se escribió antes: se muestra completo */
+    el.__twText=txt;el.__twKey=key;
+    var t=document.createElement('span');t.className='tw-t';
+    var g=document.createElement('span');g.className='tw-g';g.textContent=txt;
+    el.textContent='';el.appendChild(t);el.appendChild(g);
+    el.setAttribute('aria-label',txt);
+    if(io)io.observe(el);else start(el);
+  }
+  function start(el){
+    if(!el.isConnected||el.__twRun)return;el.__twRun=1;
+    if(busy>=MAX){queue.push(el);return;}
+    run(el);
+  }
+  function run(el){
+    busy++;
+    var txt=el.__twText,i=0,step=txt.length>140?3:txt.length>60?2:1;
+    var t=el.querySelector('.tw-t'),g=el.querySelector('.tw-g');
+    var id=setInterval(function(){
+      if(!el.isConnected||!t){clearInterval(id);fin(el,false);return;}
+      i=Math.min(txt.length,i+step);
+      t.textContent=txt.slice(0,i);g.textContent=txt.slice(i);
+      if(i>=txt.length){clearInterval(id);fin(el,true);}
+    },22);
+  }
+  function fin(el,ok){
+    busy--;
+    if(ok){done[el.__twKey]=1;el.classList.add('tw-done');el.setAttribute('data-tw','1');}
+    var n;while((n=queue.shift())){if(n.isConnected){run(n);break;}}
+  }
+  var timer=0;
+  function scan(){timer=0;[].forEach.call(document.querySelectorAll(SEL),prep);}
+  function sched(){if(!timer)timer=setTimeout(scan,120);}
+  new MutationObserver(sched).observe(document.body,{childList:true,subtree:true});
+  scan();
+})();
+</script>
