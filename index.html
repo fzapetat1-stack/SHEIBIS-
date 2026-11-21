@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <meta id="sbVp" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <script>(function(){var m=document.getElementById("sbVp");function ap(){try{var s=Math.min(screen.width,screen.height),port=window.matchMedia("(orientation: portrait)").matches;m.setAttribute("content",(s<=600&&port)?"width=490, user-scalable=yes":"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes")}catch(e){}}ap();window.addEventListener("orientationchange",function(){setTimeout(ap,250)})})();</script>
     <title>SHEIBIS · Tienda Oficial</title>
     <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
@@ -20965,6 +20966,95 @@ html body:not(#pm) .sbr-pill::after{content:"GRATIS";position:absolute;top:-9px;
 html body:not(#pm) .sbr-pill:hover,html body:not(#pm) .sbr-pill:focus-visible{width:auto;padding:0 22px 0 18px!important;gap:10px!important;font-size:.8rem!important}
 html body:not(#pm) .sbr-pill:hover i,html body:not(#pm) .sbr-pill:focus-visible i{font-size:1.1rem!important}
 @media (max-width:700px){html body:not(#pm) .sbr-pill{left:14px!important;width:54px;height:54px}}
+
+/* =====================================================================
+   ACABADO "OTRO MUNDO": aurora suave, entrada escalonada, detalles finos
+   ===================================================================== */
+.sb-aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;
+  background:radial-gradient(38% 32% at 18% 22%,rgba(160,174,204,.38),transparent 70%),radial-gradient(34% 30% at 82% 12%,rgba(215,215,226,.55),transparent 70%),radial-gradient(44% 38% at 68% 86%,rgba(140,152,178,.30),transparent 70%);
+  filter:blur(36px);animation:sbAur 30s ease-in-out infinite alternate!important}
+@keyframes sbAur{to{transform:translate3d(5%,4%,0) rotate(7deg) scale(1.1)}}
+@media (prefers-reduced-motion:reduce){.sb-aurora{animation:none!important}}
+@keyframes sbRise{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
+html body:not(#pm) .sbhm-pts,html body:not(#pm) #sbAssistHome,html body:not(#pm) .catalog-stats,html body:not(#pm) .sbhm-sec{animation:sbRise .9s cubic-bezier(.2,.7,.2,1) backwards!important}
+html body:not(#pm) .catalog-card{animation:sbRise .9s cubic-bezier(.2,.7,.2,1) backwards!important}
+html body:not(#pm) .catalog-card:nth-child(2){animation-delay:.09s!important}html body:not(#pm) .catalog-card:nth-child(3){animation-delay:.18s!important}html body:not(#pm) .catalog-card:nth-child(4){animation-delay:.27s!important}html body:not(#pm) .catalog-card:nth-child(n+5){animation-delay:.34s!important}
+html body:not(#pm) .sbhm-pts{animation-delay:.12s!important}html body:not(#pm) #sbAssistHome{animation-delay:.2s!important}
+@media (prefers-reduced-motion:reduce){html body:not(#pm) .sbhm-pts,html body:not(#pm) #sbAssistHome,html body:not(#pm) .catalog-stats,html body:not(#pm) .sbhm-sec,html body:not(#pm) .catalog-card{animation:none!important}}
+/* barra superior flotante, más etérea */
+html body:not(#pm) .top-bar{background:rgba(255,255,255,.78)!important;-webkit-backdrop-filter:blur(22px) saturate(1.6)!important;backdrop-filter:blur(22px) saturate(1.6)!important;box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 26px 70px rgba(17,17,17,.12)!important}
+/* tarjetas de producto: luz que sigue el mouse */
+html body:not(#pm) .sbhm-c{position:relative}
+html body:not(#pm) .sbhm-c:hover .sbhm-i img{transform:scale(1.06)}
+html body:not(#pm) .sbhm-i img{transition:transform .8s cubic-bezier(.2,.7,.2,1)!important}
+html body:not(#pm) .catalog-card:hover .catalog-image-frame{transform:scale(1.02)}
+
+/* =====================================================================
+   TAMAÑO UNIFORME EN TELÉFONOS (diseño en ancho fijo de 490 px, ~20 % más alejado)
+   ===================================================================== */
+@media (max-width:700px){
+  html{font-size:17px}
+  html body:not(#pm) .sbhm-b,html body:not(#pm) .sbp-card-info span{font-size:.76rem!important}
+  html body:not(#pm) .sbhm-hd small{font-size:.86rem!important}
+  html body:not(#pm) .top-bar .top-nav-link{font-size:.76rem!important}
+  html body:not(#pm) .sbhm-n{font-size:1rem!important}
+  html body:not(#pm) .catalog-stats #onlineUsersStat .catalog-stat-label{font-size:.82rem!important}
+}
+
+/* =====================================================================
+   ANUNCIOS (los que el admin crea en la pestaña "Anuncios" y ven todos los usuarios)
+   Se conserva toda su lógica; aquí solo cambia el diseño.
+   ===================================================================== */
+html body:not(#pm) #sbAds{max-width:1320px;margin:4px auto 30px!important;border:0!important;border-radius:38px!important;background:#050506!important;box-shadow:0 34px 80px rgba(0,0,0,.34),0 2px 6px rgba(0,0,0,.2)!important;aspect-ratio:21/9;min-height:250px;max-height:560px;isolation:isolate;color:#fff;animation:sbRise .9s cubic-bezier(.2,.7,.2,1) backwards!important}
+html body:not(#pm) #sbAds .sb-ad-bg{background:radial-gradient(70% 120% at 88% 0,rgba(255,255,255,.17),transparent 58%),radial-gradient(60% 90% at 0 105%,rgba(150,160,185,.22),transparent 62%),linear-gradient(160deg,#1a1a1d,#050506 70%)!important}
+html body:not(#pm) #sbAds .sb-ad-shade{background:linear-gradient(180deg,rgba(0,0,0,.48) 0,rgba(0,0,0,0) 26%,rgba(0,0,0,0) 40%,rgba(0,0,0,.84) 100%)!important}
+html body:not(#pm) #sbAds .sb-ad.on .sb-ad-img{animation:sbadKB 9s ease-out both!important}
+@keyframes sbadKB{from{transform:scale(1.02)}to{transform:scale(1.09)}}
+html body:not(#pm) #sbAds .sb-ad-body{left:clamp(22px,4vw,48px)!important;bottom:clamp(30px,4.4vw,52px)!important;max-width:min(660px,86%)!important}
+html body:not(#pm) #sbAds .sb-ad-tag{background:rgba(255,255,255,.14)!important;color:#fff!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);padding:7px 15px!important;letter-spacing:.24em!important;font-size:.66rem!important}
+html body:not(#pm) #sbAds .sb-ad-title{font-family:'Bodoni Moda','Playfair Display',Georgia,serif!important;font-weight:500!important;font-size:clamp(1.7rem,3.4vw,3rem)!important;line-height:1.08!important;color:#fff!important;text-shadow:0 2px 24px rgba(0,0,0,.45)!important;text-wrap:balance}
+html body:not(#pm) #sbAds .sb-ad-text{color:rgba(255,255,255,.84)!important;font-size:clamp(.92rem,1.4vw,1.05rem)!important;text-shadow:0 1px 12px rgba(0,0,0,.5)}
+html body:not(#pm) #sbAds .sb-ad-cta{background:linear-gradient(180deg,#ffffff,#e2e4e9)!important;color:#0b0b0c!important;border:0!important;padding:14px 26px!important;box-shadow:inset 0 1px 0 #fff,0 12px 28px rgba(0,0,0,.40)!important}
+html body:not(#pm) #sbAds .sb-ad-cta,html body:not(#pm) #sbAds .sb-ad-cta *:not(img){color:#0b0b0c!important}
+html body:not(#pm) #sbAds .sb-ad-nav{background:rgba(255,255,255,.14)!important;color:#fff!important;border:0!important;width:46px!important;height:46px!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.24)}
+html body:not(#pm) #sbAds .sb-ad-nav:hover{background:#fff!important}
+html body:not(#pm) #sbAds .sb-ad-nav:hover,html body:not(#pm) #sbAds .sb-ad-nav:hover *:not(img){color:#111!important}
+html body:not(#pm) #sbAds .sb-ad-dots{right:26px!important;bottom:26px!important}
+html body:not(#pm) #sbAds .sb-ad-dots{align-items:center}
+html body:not(#pm) #sbAds .sb-ad-dots button{width:8px!important;height:8px!important;min-width:0!important;min-height:0!important;max-width:none!important;padding:0!important;margin:0!important;border:0!important;border-radius:999px!important;background:rgba(255,255,255,.45)!important;box-shadow:none!important;flex:none;transition:width .35s,background .35s!important}
+html body:not(#pm) #sbAds .sb-ad-dots button.on{width:28px!important;background:#fff!important}
+html body:not(#pm) #sbAds .sb-ad-sound{background:rgba(255,255,255,.16)!important;color:#fff!important;border:0!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26)}
+html body:not(#pm) #sbAds .sb-ad-progress{background:#fff!important;box-shadow:0 0 10px rgba(255,255,255,.6)}
+@media (max-width:700px){html body:not(#pm) #sbAds{aspect-ratio:auto;height:clamp(320px,84vw,440px);max-height:none;border-radius:32px!important;margin-bottom:26px!important}html body:not(#pm) #sbAds .sb-ad-dots{left:24px!important;right:auto!important;bottom:20px!important}html body:not(#pm) #sbAds .sb-ad-body{bottom:46px!important}html body:not(#pm) #sbAds .sb-ad-title{font-size:1.75rem!important}}
+@media (prefers-reduced-motion:reduce){html body:not(#pm) #sbAds,html body:not(#pm) #sbAds .sb-ad.on .sb-ad-img{animation:none!important}}
+
+/* =====================================================================
+   CARRITO PREMIUM + detalles
+   ===================================================================== */
+html body:not(#pm) .catalog-stats{overflow:visible!important}
+html body:not(#pm) #cart{border:0!important;border-radius:34px!important;background:#ffffff!important;box-shadow:inset 0 1px 0 #fff,0 40px 100px rgba(17,17,17,.30)!important}
+html body:not(#pm) #cart h3{font-family:var(--lux-serif)!important;font-size:1.8rem!important;font-weight:500!important;letter-spacing:0!important;color:#111!important;display:flex;align-items:center;gap:12px}
+html body:not(#pm) #cart h3 i{color:#111!important;font-size:1.2rem}
+html body:not(#pm) #cart .cart-points-summary{background:linear-gradient(#fbfbfc,#f0f1f3)!important;border:0!important;border-radius:26px!important;box-shadow:inset 0 0 0 1px rgba(17,17,17,.06)!important}
+html body:not(#pm) #cart .points-earn{font-weight:700!important;color:#111!important}
+html body:not(#pm) #cart .points-total{color:#0a7a3f!important;font-weight:800!important}
+html body:not(#pm) #cart .progress-bar-track{height:12px!important;border-radius:999px!important;background:rgba(17,17,17,.08)!important;box-shadow:inset 0 2px 4px rgba(0,0,0,.12)!important;overflow:hidden}
+html body:not(#pm) #cart .progress-bar-fill{background:linear-gradient(90deg,#9aa0a9,#111)!important;border-radius:999px!important}
+html body:not(#pm) #cart .progress-badge{border-radius:999px!important;background:#fff!important;border:0!important;color:#333!important;box-shadow:inset 0 0 0 1px rgba(17,17,17,.08)!important;font-weight:700!important}
+html body:not(#pm) #sbfPay{border:0!important;border-radius:26px!important;background:linear-gradient(#fbfbfc,#f0f1f3)!important;box-shadow:inset 0 0 0 1px rgba(17,17,17,.06)!important}
+html body:not(#pm) #sbfPay h4{font-family:var(--lux-serif)!important;font-size:1.2rem!important;font-weight:500!important;color:#111!important}
+html body:not(#pm) #sbfPay .sbf-opt{border:0!important;border-radius:999px!important;background:#fff!important;color:#111!important;font-weight:700!important;box-shadow:inset 0 0 0 1px rgba(17,17,17,.10),0 4px 10px rgba(17,17,17,.05)!important;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s!important}
+html body:not(#pm) #sbfPay .sbf-opt:hover{transform:translateY(-2px)}
+html body:not(#pm) #sbfPay .sbf-opt.on{background:var(--bb-pearl)!important;color:#fff!important;box-shadow:var(--bb-pearl-rim),0 10px 20px rgba(0,0,0,.28)!important}
+html body:not(#pm) #sbfPay .sbf-opt.on *{color:#fff!important}
+html body:not(#pm) #sbfPay .sbf-info{border-radius:18px!important}
+html body:not(#pm) #cart .cart-total{font-family:var(--lux-serif)!important;font-size:2.1rem!important;font-weight:600!important;color:#111!important;letter-spacing:0!important}
+html body:not(#pm) #cart .cart-actions{gap:12px!important}
+html body:not(#pm) #cart .btn-danger{background:#fff!important;color:#b91c1c!important;border:0!important;border-radius:999px!important;font-weight:800!important;box-shadow:inset 0 0 0 1px rgba(185,28,28,.35)!important}
+html body:not(#pm) #cart .btn-danger *{color:#b91c1c!important}
+html body:not(#pm) #cart .btn-whatsapp{background:var(--bb-pearl)!important;color:#fff!important;border:0!important;border-radius:999px!important;font-weight:800!important;letter-spacing:.03em;box-shadow:var(--bb-pearl-rim),0 16px 30px rgba(0,0,0,.30)!important}
+html body:not(#pm) #cart .btn-whatsapp *{color:#fff!important}
+html body:not(#pm) #cart .cart-item,html body:not(#pm) #cartItems>div{border-radius:22px!important}
 </style>
 <div class="sb-bubbles" aria-hidden="true">
   <i style="--x:6%;--s:46px;--d:26s;--t:-3s;--w:22px;--y:78%"></i>
@@ -20978,3 +21068,4 @@ html body:not(#pm) .sbr-pill:hover i,html body:not(#pm) .sbr-pill:focus-visible 
   <i style="--x:13%;--s:38px;--d:28s;--t:-17s;--w:20px;--y:8%"></i>
   <i style="--x:64%;--s:20px;--d:18s;--t:-5s;--w:-14px;--y:94%"></i>
 </div>
+<div class="sb-aurora" aria-hidden="true"></div>
