@@ -22057,89 +22057,60 @@ setInterval(inject,800);inject();
 
 
 <style id="sb-subcat-cards-fix">
-/* ===== SUBCATÁLOGOS · tarjetas claras, legibles y ordenadas ===== */
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid{
-  display:grid!important;grid-template-columns:repeat(auto-fill,minmax(310px,1fr))!important;gap:16px!important;max-width:none!important;margin:0!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{
+/* ===== TARJETAS DE CATÁLOGO / SUBCATÁLOGO · cuadritos con nombre blanco ===== */
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid,html body:not(#pm):not(#pm2) #tabCatalogs .catalog-grid,html body:not(#pm):not(#pm2) .catalog-grid{
+  display:grid!important;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))!important;gap:18px!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{
   position:relative!important;overflow:hidden!important;isolation:isolate;
-  display:grid!important;grid-template-columns:104px minmax(0,1fr)!important;
-  grid-template-areas:"img tag" "img name" "img info" "img go"!important;
-  grid-template-rows:auto 1fr auto auto!important;
-  column-gap:16px!important;row-gap:6px!important;align-items:center!important;align-content:center!important;
-  aspect-ratio:auto!important;min-height:136px!important;padding:14px!important;
-  border-radius:24px!important;text-align:left!important;
-  background:linear-gradient(135deg,#ffffff 0%,#f6f2ff 100%)!important;
-  border:1px solid rgba(124,92,255,.22)!important;
-  box-shadow:0 14px 32px -16px rgba(91,61,245,.38)!important;
-  transform:none;transition:transform .3s ease,box-shadow .3s ease!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category:hover{
-  transform:translateY(-4px)!important;box-shadow:0 22px 40px -16px rgba(91,61,245,.5)!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card::before,
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card::after{display:none!important;content:none!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-glow{display:none!important}
+  display:flex!important;flex-direction:column!important;justify-content:flex-end!important;align-items:flex-start!important;
+  aspect-ratio:1/1!important;min-height:0!important;padding:18px!important;gap:10px!important;
+  border:0!important;border-radius:26px!important;text-align:left!important;
+  background:linear-gradient(135deg,#5b3df5,#22b8d8)!important;
+  box-shadow:0 16px 34px -14px rgba(28,18,64,.55)!important;
+  transition:transform .35s ease,box-shadow .35s ease!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category:hover{transform:translateY(-5px)!important;box-shadow:0 24px 44px -14px rgba(28,18,64,.65)!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category::before{display:none!important;content:none!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category::after{content:""!important;display:block!important;position:absolute!important;inset:0!important;z-index:1;
+  background:linear-gradient(180deg,rgba(10,6,30,0) 35%,rgba(10,6,30,.55) 65%,rgba(10,6,30,.9) 100%)!important;
+  opacity:1!important;transform:none!important;pointer-events:none!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-glow{display:none!important}
 
-/* imagen / icono a la izquierda */
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-image-frame,
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-icon{
-  grid-area:img!important;position:relative!important;inset:auto!important;top:auto!important;left:auto!important;z-index:1;
-  width:104px!important;height:104px!important;aspect-ratio:1!important;margin:0!important;
-  border-radius:18px!important;overflow:hidden;border:0!important;
-  background:linear-gradient(135deg,#ede7ff,#dff6fb)!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-icon{
-  display:flex!important;align-items:center;justify-content:center;font-size:2rem!important;color:#6d4aff!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-image{
-  width:100%!important;height:100%!important;object-fit:cover!important;border-radius:0!important;display:block}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-image-frame{position:absolute!important;inset:0!important;z-index:0;width:100%!important;height:100%!important;
+  aspect-ratio:auto!important;margin:0!important;border:0!important;border-radius:0!important;background:none!important;overflow:hidden}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-image{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:0!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-icon{position:absolute!important;top:50%!important;left:50%!important;transform:translate(-50%,-70%)!important;z-index:1;
+  width:auto!important;height:auto!important;margin:0!important;background:none!important;border:0!important;
+  font-size:3.4rem!important;color:rgba(255,255,255,.92)!important}
 
-/* nombre: letra oscura bien legible */
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-name{
-  grid-area:name!important;position:relative;z-index:2;margin:0!important;padding:0!important;width:auto!important;
-  font:800 1.12rem/1.2 'Plus Jakarta Sans',system-ui,sans-serif!important;letter-spacing:0!important;
-  color:#1c1240!important;text-shadow:none!important;text-align:left!important;align-self:end!important}
+/* nombre: blanco, grande y con sombra para leerse sobre cualquier imagen */
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-name{position:relative;z-index:3;width:100%!important;margin:0!important;padding:0!important;
+  font:800 1.3rem/1.15 'Plus Jakarta Sans',system-ui,sans-serif!important;letter-spacing:0!important;
+  color:#ffffff!important;text-shadow:0 2px 10px rgba(0,0,0,.7),0 1px 2px rgba(0,0,0,.6)!important;text-align:left!important}
 
-/* etiqueta próximamente: pastilla pequeña, sin tapar nada */
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sb-soon-ribbon{
-  grid-area:tag!important;position:static!important;justify-self:start;align-self:end;
-  width:auto!important;left:auto!important;right:auto!important;top:auto!important;
-  padding:5px 11px!important;border-radius:999px!important;
-  font:800 .6rem/1 'Plus Jakarta Sans',system-ui,sans-serif!important;letter-spacing:.14em!important;
-  background:linear-gradient(90deg,#6d28d9,#c026d3)!important;color:#fff!important;
-  box-shadow:0 6px 14px -6px rgba(162,28,175,.6)!important;animation:none!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sb-soon-ribbon *{color:#fff!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon{filter:none!important}
-
-/* datos (productos / ofertas) */
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sbp-card-info{
-  grid-area:info!important;display:flex!important;flex-wrap:wrap;gap:6px!important;justify-content:flex-start!important;
-  margin:0!important;padding:0!important;width:auto!important;position:relative;z-index:2}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sbp-card-info span{
-  background:rgba(124,92,255,.12)!important;color:#3b2a8c!important;border:0!important;
-  padding:4px 10px!important;border-radius:999px!important;font:700 .7rem 'Plus Jakarta Sans',system-ui,sans-serif!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sbp-card-info span i{color:#6d4aff!important;margin-right:4px}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .sbp-card-info{display:none!important}
+/* se eliminan: productos / subcatálogos / ofertas */
+html body:not(#pm):not(#pm2) .catalog-card .sbp-card-info{display:none!important}
 
 /* botón */
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-open-label{
-  grid-area:go!important;position:relative;z-index:2;justify-self:start;margin:2px 0 0!important;
-  display:inline-flex!important;align-items:center;gap:8px;height:36px!important;padding:0 16px!important;
-  border-radius:999px!important;background:linear-gradient(120deg,#6d4aff,#22b8d8)!important;color:#fff!important;
-  font:800 .78rem 'Plus Jakarta Sans',system-ui,sans-serif!important;box-shadow:0 10px 20px -8px rgba(109,74,255,.6)!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-open-label *{color:#fff!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .catalog-open-label{
-  background:rgba(124,92,255,.12)!important;box-shadow:none!important;color:#4a35b8!important}
-html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .catalog-open-label *{color:#4a35b8!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-open-label{position:relative;z-index:3;margin:0!important;display:inline-flex!important;align-items:center;gap:8px;
+  height:38px!important;padding:0 16px!important;border-radius:999px!important;background:#ffffff!important;
+  font:800 .78rem 'Plus Jakarta Sans',system-ui,sans-serif!important;box-shadow:0 8px 18px -6px rgba(0,0,0,.45)!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-open-label,html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-open-label *{color:#1c1240!important}
 
-/* tema oscuro */
-html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{
-  background:linear-gradient(135deg,#241d4d,#1b1640)!important;border-color:rgba(160,140,255,.3)!important}
-html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-name{color:#f4f2ff!important}
-html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sbp-card-info span{background:rgba(160,140,255,.18)!important;color:#e6e1ff!important}
-html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .catalog-open-label,
-html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .catalog-open-label *{color:#e6e1ff!important}
+/* próximamente */
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .sb-soon-ribbon{position:absolute!important;top:0!important;left:0!important;right:0!important;width:auto!important;z-index:4;
+  padding:9px 10px!important;border-radius:0!important;text-align:center!important;
+  font:800 .66rem/1 'Plus Jakarta Sans',system-ui,sans-serif!important;letter-spacing:.2em!important;color:#fff!important;
+  background:linear-gradient(90deg,#6d28d9,#c026d3,#6d28d9)!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .sb-soon-ribbon *{color:#fff!important}
+html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category.is-soon{filter:none!important}
+
+/* el contenedor de subcatálogos sin recuadro raro */
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid{max-width:none!important;margin:0!important}
 
 @media (max-width:640px){
-  html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid{grid-template-columns:1fr!important}
-  html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{grid-template-columns:88px minmax(0,1fr)!important;min-height:116px!important;padding:12px!important}
-  html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-image-frame,
-  html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-icon{width:88px!important;height:88px!important}
+  html body:not(#pm):not(#pm2) .catalog-grid,html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+  html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{padding:12px!important;border-radius:20px!important}
+  html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-name{font-size:1rem!important}
+  html body:not(#pm):not(#pm2) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-open-label{height:32px!important;padding:0 12px!important;font-size:.7rem!important}
 }
 </style>
