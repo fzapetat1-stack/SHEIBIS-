@@ -21623,3 +21623,523 @@ html :is(body,body:not(#pm)) #cart .cart-actions .btn{min-height:50px!important}
   document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(retryPending,1500);});
 })();
 </script>
+<style id="sb-coupons-admin-css">
+/* =====================================================================
+   SHEIBIS · ADMIN · CUPONES
+   ===================================================================== */
+.sbcp{color:#111;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.sbcp *{box-sizing:border-box}
+.sbcp-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.sbcp-kpi{background:#fff;border:1px solid rgba(17,17,17,.1);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.sbcp-kpi i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#111;color:#fff;font-size:1rem;flex:none}
+.sbcp-kpi b{display:block;font-size:1.5rem;line-height:1;color:#111}
+.sbcp-kpi span{display:block;font-size:.72rem;color:#666;margin-top:3px;font-weight:600}
+.sbcp-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.sbcp-btn{border:1px solid rgba(17,17,17,.16);background:#fff;color:#111;border-radius:12px;padding:0 16px;height:42px;font:700 .82rem 'Plus Jakarta Sans',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;transition:transform .15s,background .2s,box-shadow .2s}
+.sbcp-btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(0,0,0,.35)}
+.sbcp-btn:disabled{opacity:.55;cursor:wait;transform:none}
+.sbcp-btn.pri{background:#111;color:#fff;border-color:#111}
+.sbcp-btn.magic{background:linear-gradient(135deg,#111,#3a3a3a);color:#fff;border-color:#111}
+.sbcp-btn.danger{color:#b91c1c;border-color:rgba(185,28,28,.35)}
+.sbcp-btn.sm{height:34px;padding:0 12px;font-size:.74rem;border-radius:10px}
+.sbcp-search{flex:1 1 200px;min-width:160px;height:42px;border:1px solid rgba(17,17,17,.16);border-radius:12px;padding:0 14px;font:600 .84rem 'Plus Jakarta Sans',sans-serif;background:#fff;color:#111}
+.sbcp-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.sbcp-chip{border:1px solid rgba(17,17,17,.14);background:#fff;color:#444;border-radius:999px;padding:7px 14px;font:700 .74rem 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.sbcp-chip.on{background:#111;color:#fff;border-color:#111}
+.sbcp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.sbcp-empty{grid-column:1/-1;text-align:center;padding:46px 18px;background:#fff;border:1px dashed rgba(17,17,17,.25);border-radius:20px;color:#555}
+.sbcp-empty i{font-size:2.2rem;color:#111;display:block;margin-bottom:10px}
+.sbcp-card{position:relative;background:#fff;border:1px solid rgba(17,17,17,.1);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04),0 14px 30px -20px rgba(0,0,0,.3);transition:transform .25s,box-shadow .25s}
+.sbcp-card:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(0,0,0,.05),0 22px 38px -20px rgba(0,0,0,.35)}
+.sbcp-card::before,.sbcp-card::after{content:"";position:absolute;top:96px;width:18px;height:18px;border-radius:50%;background:#f1f1f2;border:1px solid rgba(17,17,17,.1)}
+.sbcp-card::before{left:-10px}.sbcp-card::after{right:-10px}
+.sbcp-card.st-vencido,.sbcp-card.st-agotado{opacity:.78}
+.sbcp-card.st-vencido .sbcp-val,.sbcp-card.st-agotado .sbcp-val{color:#888}
+.sbcp-card.hl{animation:sbcpPop 1.4s ease 1;box-shadow:0 0 0 3px #111,0 22px 38px -16px rgba(0,0,0,.4)}
+@keyframes sbcpPop{0%{transform:scale(.94);opacity:0}40%{transform:scale(1.02);opacity:1}100%{transform:scale(1)}}
+.sbcp-ribbon{display:flex;align-items:center;gap:7px;font:800 .66rem 'Plus Jakarta Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#111;background:#f3f3f4;border-radius:10px;padding:7px 10px;margin:-4px 0 0}
+.sbcp-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sbcp-badge{font:800 .66rem 'Plus Jakarta Sans',sans-serif;letter-spacing:.08em;padding:5px 10px;border-radius:999px;background:#eee;color:#444}
+.sbcp-badge.activo{background:rgba(22,163,74,.14);color:#0f7a37}
+.sbcp-badge.pausado{background:rgba(217,119,6,.14);color:#a15a05}
+.sbcp-badge.vencido,.sbcp-badge.agotado{background:rgba(185,28,28,.12);color:#b91c1c}
+.sbcp-sw{position:relative;width:44px;height:26px;flex:none;cursor:pointer}
+.sbcp-sw input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0;z-index:2}
+.sbcp-sw i{position:absolute;inset:0;border-radius:99px;background:#cfd1d4;transition:background .25s}
+.sbcp-sw i::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:transform .25s}
+.sbcp-sw input:checked+i{background:#16a34a}.sbcp-sw input:checked+i::after{transform:translateX(18px)}
+.sbcp-val{font:900 2.6rem/1 'Plus Jakarta Sans',sans-serif;letter-spacing:-.03em;color:#111;margin-top:4px}
+.sbcp-val small{font-size:1.2rem;font-weight:800;margin-left:3px}
+.sbcp-val span{display:block;font:700 .74rem 'Plus Jakarta Sans',sans-serif;color:#666;letter-spacing:0;margin-top:4px}
+.sbcp-name{font-weight:800;font-size:.95rem;color:#111;min-height:1.2em}
+.sbcp-code{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:2px dashed rgba(17,17,17,.35);border-radius:14px;background:#fafafa;padding:11px 14px;cursor:pointer;font:800 1.05rem 'Space Grotesk','Plus Jakarta Sans',monospace;letter-spacing:.14em;color:#111}
+.sbcp-code:hover{background:#f0f0f1}.sbcp-code.ok{border-color:#16a34a;color:#0f7a37}
+.sbcp-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.74rem;color:#555;font-weight:600}
+.sbcp-meta i{margin-right:5px;color:#111}
+.sbcp-use{height:6px;border-radius:9px;background:#ececee;overflow:hidden}
+.sbcp-use b{display:block;height:100%;border-radius:9px;background:#111;transition:width .4s}
+.sbcp-timer{border-radius:14px;padding:11px 13px;background:#f4f7f5;border:1px solid rgba(22,163,74,.25);position:relative;overflow:hidden}
+.sbcp-timer .t{display:flex;align-items:center;gap:8px;font:800 .9rem 'Space Grotesk','Plus Jakarta Sans',sans-serif;color:#0f7a37;position:relative;z-index:1}
+.sbcp-timer .t small{font:700 .66rem 'Plus Jakarta Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#5a6b61;margin-left:auto}
+.sbcp-timer .p{position:absolute;left:0;bottom:0;height:3px;background:#16a34a;transition:width 1s linear}
+.sbcp-timer.warn{background:#fff8ec;border-color:rgba(217,119,6,.35)}.sbcp-timer.warn .t{color:#a15a05}.sbcp-timer.warn .p{background:#d97706}
+.sbcp-timer.hot{background:#fff0f0;border-color:rgba(185,28,28,.35)}.sbcp-timer.hot .t{color:#b91c1c;animation:sbcpBlink 1s ease-in-out infinite}.sbcp-timer.hot .p{background:#b91c1c}
+.sbcp-timer.dead{background:#f3f3f4;border-color:rgba(17,17,17,.12)}.sbcp-timer.dead .t{color:#777}.sbcp-timer.dead .p{width:0!important}
+.sbcp-timer.none{background:#f6f6f7;border-color:rgba(17,17,17,.1)}.sbcp-timer.none .t{color:#555}.sbcp-timer.none .p{display:none}
+@keyframes sbcpBlink{50%{opacity:.55}}
+.sbcp-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.sbcp-acts .sbcp-btn{flex:1 1 auto;justify-content:center}
+/* modal */
+#sbcpModal{position:fixed;inset:0;z-index:2147483300;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(10,10,12,.62);backdrop-filter:blur(5px)}
+#sbcpModal.on{display:flex}
+#sbcpModal .bx{width:min(560px,100%);max-height:94vh;overflow:auto;background:#fff;color:#111;border-radius:24px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.45);font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+#sbcpModal h3{margin:0 0 4px;font-size:1.25rem;font-weight:800}
+#sbcpModal p.sub{margin:0 0 16px;font-size:.8rem;color:#666}
+#sbcpModal .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#sbcpModal label.f{display:block;margin-bottom:12px;font:800 .68rem 'Plus Jakarta Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#555}
+#sbcpModal label.f input,#sbcpModal label.f textarea{display:block;width:100%;margin-top:6px;height:44px;border:1px solid rgba(17,17,17,.18);border-radius:12px;padding:0 13px;font:600 .92rem 'Plus Jakarta Sans',sans-serif;color:#111;background:#fff;text-transform:none;letter-spacing:0}
+#sbcpModal label.f textarea{height:62px;padding:10px 13px;resize:vertical}
+#sbcpModal .code{display:flex;gap:8px;align-items:flex-end}
+#sbcpModal .code label{flex:1;margin:0}
+#sbcpModal .code input{text-transform:uppercase;letter-spacing:.12em;font-weight:800}
+#sbcpModal .seg{display:flex;gap:6px;margin-top:6px}
+#sbcpModal .seg button{flex:1;height:44px;border-radius:12px;border:1px solid rgba(17,17,17,.18);background:#fff;font:800 .82rem 'Plus Jakarta Sans',sans-serif;cursor:pointer;color:#111}
+#sbcpModal .seg button.on{background:#111;color:#fff;border-color:#111}
+#sbcpModal .quick{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 12px}
+#sbcpModal .quick button{border:1px solid rgba(17,17,17,.16);background:#f6f6f7;border-radius:999px;padding:6px 12px;font:700 .72rem 'Plus Jakarta Sans',sans-serif;cursor:pointer;color:#111}
+#sbcpModal .quick button:hover{background:#111;color:#fff}
+#sbcpModal .prev{background:#f6f6f7;border-radius:14px;padding:12px 14px;font-size:.82rem;color:#333;margin:2px 0 14px}
+#sbcpModal .act{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid rgba(17,17,17,.12);border-radius:14px;margin-bottom:16px;font-weight:700;font-size:.86rem}
+#sbcpModal .foot{display:flex;gap:10px}
+#sbcpModal .foot .sbcp-btn{flex:1;justify-content:center;height:46px}
+#sbcpPw input{width:100%;height:46px;border:1px solid rgba(17,17,17,.2);border-radius:12px;padding:0 14px;font-size:1rem;margin-top:6px}
+#sbcpPw .err{color:#b91c1c;font-size:.78rem;min-height:1.1em;margin:8px 0 0}
+@media(max-width:860px){.sbcp-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.sbcp-grid{grid-template-columns:1fr}#sbcpModal .row{grid-template-columns:1fr}.sbcp-val{font-size:2.2rem}}
+</style>
+
+<script id="sb-coupons-admin-js">
+(function(){
+'use strict';
+if(window.__sbCouponsAdmin)return;window.__sbCouponsAdmin=true;
+
+var KEY_SS='sb_age_key';           /* misma clave de administrador que usa "Autorización" */
+var S={items:[],filter:'all',q:'',offset:0,loaded:false,hl:{},busy:false};
+
+function api(a,p){return apiRequest(a,p||{},{timeout:45000});}
+function say(m,t,ic){try{showToast(m,{title:t||'Cupones',icon:ic||'fa-ticket',duration:4200});}catch(e){alert(m);}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function pad(n){return n<10?'0'+n:''+n;}
+function now(){return Date.now()+S.offset;}
+function getKey(){try{return sessionStorage.getItem(KEY_SS)||'';}catch(e){return '';}}
+function setKey(k){try{sessionStorage.setItem(KEY_SS,k);}catch(e){}}
+function clearKey(){try{sessionStorage.removeItem(KEY_SS);}catch(e){}}
+function main(){return document.querySelector('#sbAdminPanel .sb-ultra-main');}
+function sec(){return document.getElementById('sbV11Coupons');}
+function isVisible(){var s=sec();return !!(s&&s.classList.contains('active')&&s.offsetParent!==null);}
+
+/* llamada al servidor con la clave de administrador */
+async function call(action,payload){
+  var r=await api(action,Object.assign({adminKey:getKey()},payload||{}));
+  if(r&&r.ok===false)throw new Error(r.error||'Error');
+  if(r&&r.serverTime){var t=new Date(r.serverTime).getTime();if(isFinite(t))S.offset=t-Date.now();}
+  return r;
+}
+function friendly(e){
+  var m=String(e&&e.message||e||'');
+  if(/autorizado/i.test(m)){clearKey();return 'Contraseña de administrador incorrecta o vencida.';}
+  if(/no reconocida|unknown action|acci[oó]n/i.test(m))return 'Tu Apps Script aún no tiene el código de cupones: pega el archivo POMOL actualizado y publica una nueva versión.';
+  return m||'Error inesperado.';
+}
+
+/* ---------- formato ---------- */
+function money(n){return 'Q'+(Math.round(n*100)/100).toString();}
+function discText(c){return c.tipo==='monto'?{v:money(c.valor),u:''}:{v:String(c.valor),u:'%'};}
+function fmtDur(ms){
+  var s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),x=s%60;
+  if(d>0)return d+'d '+h+'h '+pad(m)+'m';
+  if(h>0)return h+'h '+pad(m)+'m '+pad(x)+'s';
+  return pad(m)+'m '+pad(x)+'s';
+}
+function fmtDate(ms){
+  try{return new Date(ms).toLocaleString('es-GT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return '';}
+}
+function toLocalInput(iso){
+  if(!iso)return '';var d=new Date(iso);if(isNaN(d.getTime()))return '';
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+function rndCode(){var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='SHE';for(var i=0;i<5;i++)s+=A.charAt(Math.floor(Math.random()*A.length));return s;}
+
+/* ---------- temporizador ---------- */
+function timerLevel(rem){if(rem<=0)return 'dead';if(rem<=3600e3)return 'hot';if(rem<=86400e3)return 'warn';return '';}
+function timerHtml(c){
+  if(!c.venceEn)return '<div class="sbcp-timer none"><div class="t"><i class="fas fa-infinity"></i> Sin vencimiento</div></div>';
+  var exp=new Date(c.venceEn).getTime(),rem=exp-now(),cr=c.creado?new Date(c.creado).getTime():0;
+  var total=cr&&exp>cr?exp-cr:7*86400e3,pct=Math.max(0,Math.min(100,rem/total*100));
+  var lv=timerLevel(rem),label=rem<=0?'Venció':'Termina en';
+  return '<div class="sbcp-timer '+lv+'" data-exp="'+exp+'" data-total="'+total+'"><div class="t"><i class="fas fa-hourglass-half"></i><span class="tx">'+(rem<=0?'Vencido':fmtDur(rem))+'</span><small>'+label+' · '+esc(fmtDate(exp))+'</small></div><div class="p" style="width:'+pct+'%"></div></div>';
+}
+function tick(){
+  if(!isVisible())return;
+  var need=false,t=now();
+  sec().querySelectorAll('.sbcp-timer[data-exp]').forEach(function(el){
+    var exp=+el.dataset.exp,total=+el.dataset.total||1,rem=exp-t,lv=timerLevel(rem);
+    el.classList.remove('warn','hot','dead');if(lv)el.classList.add(lv);
+    var tx=el.querySelector('.tx');if(tx)tx.textContent=rem<=0?'Vencido':fmtDur(rem);
+    var p=el.querySelector('.p');if(p)p.style.width=Math.max(0,Math.min(100,rem/total*100))+'%';
+    if(rem<=0&&!el.dataset.done){el.dataset.done='1';need=true;}
+  });
+  if(need)setTimeout(function(){if(isVisible())load(true);},1200);
+}
+setInterval(tick,1000);
+
+/* ---------- datos ---------- */
+async function load(silent){
+  if(S.busy&&silent)return;S.busy=true;
+  try{
+    var r=await call('couponAdminList');
+    S.items=r.items||[];S.loaded=true;render();
+  }catch(e){
+    var m=friendly(e);
+    if(/Contraseña/.test(m)){ask(m);}else{
+      var g=document.getElementById('sbcpBody');if(g)g.innerHTML='<div class="sbcp-empty"><i class="fas fa-triangle-exclamation"></i>'+esc(m)+'<br><br><button class="sbcp-btn pri" id="sbcpRetry">Reintentar</button></div>';
+      var rb=document.getElementById('sbcpRetry');if(rb)rb.onclick=function(){load();};
+    }
+  }finally{S.busy=false;}
+}
+
+/* ---------- pantalla ---------- */
+function shell(){
+  var s=sec();
+  s.innerHTML='<div class="sbcp">'
+    +'<div class="sbcp-kpis" id="sbcpKpis"></div>'
+    +'<div class="sbcp-bar">'
+      +'<button class="sbcp-btn magic" id="sbcpGen1"><i class="fas fa-wand-magic-sparkles"></i> Generar cupón automático</button>'
+      +'<button class="sbcp-btn" id="sbcpGen3"><i class="fas fa-lightbulb"></i> 3 ideas</button>'
+      +'<button class="sbcp-btn pri" id="sbcpNew"><i class="fas fa-plus"></i> Nuevo cupón</button>'
+      +'<input class="sbcp-search" id="sbcpQ" type="search" placeholder="Buscar por código o nombre…" autocomplete="off">'
+    +'</div>'
+    +'<div class="sbcp-chips" id="sbcpChips"></div>'
+    +'<div id="sbcpBody"><div class="sbcp-empty"><i class="fas fa-spinner fa-spin"></i>Cargando cupones…</div></div>'
+  +'</div>';
+  s.querySelector('#sbcpGen1').onclick=function(){generate(1,this);};
+  s.querySelector('#sbcpGen3').onclick=function(){generate(3,this);};
+  s.querySelector('#sbcpNew').onclick=function(){openEditor(null);};
+  s.querySelector('#sbcpQ').oninput=function(){S.q=this.value.trim().toLowerCase();renderList();};
+  s.querySelector('#sbcpBody').onclick=onCardClick;
+  s.querySelector('#sbcpBody').onchange=onCardChange;
+}
+function counts(){
+  var c={all:S.items.length,activo:0,pausado:0,fin:0,soon:0,usos:0},t=now();
+  S.items.forEach(function(i){
+    if(i.estado==='activo'){c.activo++;if(i.venceEn&&new Date(i.venceEn).getTime()-t<86400e3)c.soon++;}
+    else if(i.estado==='pausado')c.pausado++;else c.fin++;
+    c.usos+=i.usos||0;
+  });return c;
+}
+function render(){
+  var c=counts();
+  document.getElementById('sbcpKpis').innerHTML=
+     kpi('fa-circle-check',c.activo,'Activos')+kpi('fa-pen-to-square',c.pausado,'Borradores / pausados')
+    +kpi('fa-bolt',c.soon,'Vencen en 24 h')+kpi('fa-receipt',c.usos,'Usos totales');
+  var ch=[['all','Todos',c.all],['activo','Activos',c.activo],['pausado','Borradores',c.pausado],['fin','Vencidos / agotados',c.fin]];
+  document.getElementById('sbcpChips').innerHTML=ch.map(function(x){return '<button class="sbcp-chip'+(S.filter===x[0]?' on':'')+'" data-f="'+x[0]+'">'+x[1]+' · '+x[2]+'</button>';}).join('');
+  document.getElementById('sbcpChips').onclick=function(e){var b=e.target.closest('[data-f]');if(!b)return;S.filter=b.dataset.f;render();};
+  renderList();
+}
+function kpi(ic,n,l){return '<div class="sbcp-kpi"><i class="fas '+ic+'"></i><div><b>'+n+'</b><span>'+l+'</span></div></div>';}
+function matches(i){
+  if(S.filter==='activo'&&i.estado!=='activo')return false;
+  if(S.filter==='pausado'&&i.estado!=='pausado')return false;
+  if(S.filter==='fin'&&(i.estado!=='vencido'&&i.estado!=='agotado'))return false;
+  if(S.q&&(i.codigo+' '+i.nombre).toLowerCase().indexOf(S.q)<0)return false;
+  return true;
+}
+function renderList(){
+  var host=document.getElementById('sbcpBody');if(!host)return;
+  var list=S.items.filter(matches);
+  if(!list.length){
+    host.innerHTML='<div class="sbcp-empty"><i class="fas fa-ticket"></i>'+(S.items.length?'No hay cupones con ese filtro.':'Aún no hay cupones.<br>Pulsa <b>Generar cupón automático</b> y el sistema crea uno listo para que lo revises.')+'</div>';
+    return;
+  }
+  host.innerHTML='<div class="sbcp-grid">'+list.map(cardHtml).join('')+'</div>';
+  Object.keys(S.hl).forEach(function(k){delete S.hl[k];});
+}
+function cardHtml(c){
+  var d=discText(c),draft=c.auto&&c.estado==='pausado'&&!c.usos;
+  var cond=[];
+  cond.push('<span><i class="fas fa-cart-shopping"></i>'+(c.minimo>0?'Mín. '+money(c.minimo):'Sin mínimo')+'</span>');
+  cond.push('<span><i class="fas fa-users"></i>'+(c.usosMax?c.usos+' / '+c.usosMax+' usos':c.usos+' usos · ilimitado')+'</span>');
+  var useBar=c.usosMax?'<div class="sbcp-use"><b style="width:'+Math.min(100,Math.round(c.usos/c.usosMax*100))+'%"></b></div>':'';
+  var badge={activo:'ACTIVO',pausado:draft?'BORRADOR':'PAUSADO',vencido:'VENCIDO',agotado:'AGOTADO'}[c.estado]||c.estado;
+  var acts=draft
+    ?'<button class="sbcp-btn pri sm" data-a="approve"><i class="fas fa-check"></i> Aprobar y activar</button><button class="sbcp-btn sm" data-a="edit"><i class="fas fa-pen"></i> Editar</button><button class="sbcp-btn danger sm" data-a="del"><i class="fas fa-trash"></i> Descartar</button>'
+    :'<button class="sbcp-btn sm" data-a="edit"><i class="fas fa-pen"></i> Editar</button><button class="sbcp-btn sm" data-a="wa"><i class="fab fa-whatsapp"></i> Compartir</button><button class="sbcp-btn danger sm" data-a="del"><i class="fas fa-trash"></i> Eliminar</button>';
+  return '<article class="sbcp-card st-'+c.estado+(S.hl[c.codigo]?' hl':'')+'" data-code="'+esc(c.codigo)+'">'
+    +(draft?'<div class="sbcp-ribbon"><i class="fas fa-wand-magic-sparkles"></i> Sugerido por el sistema · revísalo</div>':'')
+    +'<div class="sbcp-top"><span class="sbcp-badge '+c.estado+'">'+badge+'</span>'
+    +'<label class="sbcp-sw" title="Activar / pausar"><input type="checkbox" data-a="toggle" '+(c.activo?'checked':'')+'><i></i></label></div>'
+    +'<div class="sbcp-val">'+esc(d.v)+(d.u?'<small>'+d.u+'</small>':'')+'<span>de descuento</span></div>'
+    +'<div class="sbcp-name">'+esc(c.nombre||'Sin nombre')+'</div>'
+    +'<button type="button" class="sbcp-code" data-a="copy" title="Copiar código"><span>'+esc(c.codigo)+'</span><i class="fas fa-copy"></i></button>'
+    +'<div class="sbcp-meta">'+cond.join('')+'</div>'+useBar
+    +timerHtml(c)
+    +'<div class="sbcp-acts">'+acts+'</div></article>';
+}
+function find(code){for(var i=0;i<S.items.length;i++)if(S.items[i].codigo===code)return S.items[i];return null;}
+
+async function onCardClick(e){
+  var b=e.target.closest('[data-a]');if(!b||b.tagName==='INPUT')return;
+  var card=b.closest('.sbcp-card');if(!card)return;
+  var c=find(card.dataset.code);if(!c)return;
+  var a=b.dataset.a;
+  if(a==='copy'){
+    try{await navigator.clipboard.writeText(c.codigo);}catch(x){}
+    b.classList.add('ok');var sp=b.querySelector('span'),old=sp.textContent;sp.textContent='¡Copiado!';
+    setTimeout(function(){b.classList.remove('ok');sp.textContent=old;},1300);return;
+  }
+  if(a==='edit'){openEditor(c);return;}
+  if(a==='wa'){share(c);return;}
+  if(a==='approve'){await setActive(c,true,b);return;}
+  if(a==='del'){
+    var msg=c.usos?'Este cupón ya se usó '+c.usos+' vez/veces. ¿Eliminarlo de todas formas?':'¿Eliminar el cupón '+c.codigo+'?';
+    if(!confirm(msg))return;
+    b.disabled=true;
+    try{await call('couponAdminDelete',{codigo:c.codigo});say('Cupón '+c.codigo+' eliminado.','Cupones','fa-trash');await load(true);}
+    catch(err){say(friendly(err),'No se pudo eliminar','fa-circle-exclamation');b.disabled=false;}
+  }
+}
+async function onCardChange(e){
+  var i=e.target;if(!i||i.dataset.a!=='toggle')return;
+  var card=i.closest('.sbcp-card'),c=card&&find(card.dataset.code);if(!c)return;
+  await setActive(c,i.checked,i);
+}
+async function setActive(c,on,el){
+  if(el)el.disabled=true;
+  try{
+    await call('couponAdminToggle',{codigo:c.codigo,activo:on});
+    say(on?'Cupón '+c.codigo+' activado.':'Cupón '+c.codigo+' en pausa.','Cupones',on?'fa-circle-check':'fa-pause');
+  }catch(err){say(friendly(err),'No se pudo cambiar','fa-circle-exclamation');}
+  await load(true);
+}
+function share(c){
+  var d=c.tipo==='monto'?money(c.valor)+' de descuento':c.valor+'% de descuento';
+  var t='🎟️ Cupón SHEIBIS: *'+c.codigo+'*\n'+d+(c.minimo>0?' en compras desde '+money(c.minimo):'')
+    +(c.venceEn?'\n⏳ Válido hasta '+fmtDate(new Date(c.venceEn).getTime()):'')+'\nPégalo en tu carrito antes de pedir.';
+  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');
+}
+async function generate(n,btn){
+  btn.disabled=true;var old=btn.innerHTML;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Creando…';
+  try{
+    var r=await call('couponAdminGenerate',{count:n});
+    (r.created||[]).forEach(function(c){S.hl[c.codigo]=1;});
+    say((r.created||[]).length===1?'Se creó 1 cupón sugerido. Revísalo, edítalo y actívalo si te gusta.':'Se crearon '+(r.created||[]).length+' ideas. Revisa cuál te gusta y actívala.','Cupón generado','fa-wand-magic-sparkles');
+    S.filter='all';S.q='';var q=document.getElementById('sbcpQ');if(q)q.value='';
+    await load(true);
+  }catch(err){say(friendly(err),'No se pudo generar','fa-circle-exclamation');}
+  btn.disabled=false;btn.innerHTML=old;
+}
+
+/* ---------- editor ---------- */
+var modal=null;
+function ensureModal(){
+  if(modal&&modal.isConnected)return modal;
+  modal=document.createElement('div');modal.id='sbcpModal';modal.innerHTML='<div class="bx"></div>';
+  modal.addEventListener('mousedown',function(e){if(e.target===modal&&!modal.dataset.lock)closeModal();});
+  document.body.appendChild(modal);return modal;
+}
+function closeModal(){if(modal)modal.classList.remove('on');}
+function openEditor(c){
+  var m=ensureModal(),bx=m.firstChild,isNew=!c;bx.removeAttribute('id');
+  c=c||{codigo:rndCode(),nombre:'',descripcion:'',tipo:'porcentaje',valor:10,minimo:0,usosMax:50,venceEn:new Date(now()+86400e3).toISOString(),activo:false,usos:0};
+  var tipo=c.tipo;
+  bx.innerHTML='<h3>'+(isNew?'Nuevo cupón':'Editar cupón')+'</h3><p class="sub">'+(isNew?'Define el descuento y cuánto tiempo estará disponible.':'Los cambios se aplican al guardar.')+'</p>'
+  +'<div class="code"><label class="f">Código<input id="cpCode" maxlength="24" value="'+esc(c.codigo)+'" autocomplete="off" spellcheck="false"'+(c.usos?' readonly title="Ya se usó: no se puede cambiar el código"':'')+'></label>'
+  +(c.usos?'':'<button type="button" class="sbcp-btn" id="cpDice" style="height:44px;margin-bottom:12px" title="Generar otro código"><i class="fas fa-dice"></i></button>')+'</div>'
+  +'<label class="f">Nombre interno<input id="cpName" maxlength="60" value="'+esc(c.nombre)+'" placeholder="Ej. Relámpago de fin de semana"></label>'
+  +'<label class="f">Descripción (opcional)<textarea id="cpDesc" maxlength="160" placeholder="Para qué es este cupón">'+esc(c.descripcion||'')+'</textarea></label>'
+  +'<div class="row"><div><div style="font:800 .68rem Plus Jakarta Sans,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#555">Tipo</div><div class="seg"><button type="button" data-t="porcentaje" class="'+(tipo==='porcentaje'?'on':'')+'">% Porcentaje</button><button type="button" data-t="monto" class="'+(tipo==='monto'?'on':'')+'">Q Monto</button></div></div>'
+  +'<label class="f">Valor<input id="cpVal" type="number" min="1" step="any" value="'+esc(c.valor)+'" inputmode="decimal"></label></div>'
+  +'<div class="row"><label class="f">Compra mínima (Q)<input id="cpMin" type="number" min="0" step="any" value="'+esc(c.minimo||0)+'" inputmode="decimal"></label>'
+  +'<label class="f">Usos máximos (0 = ilimitado)<input id="cpMax" type="number" min="0" step="1" value="'+esc(c.usosMax||0)+'" inputmode="numeric"></label></div>'
+  +'<label class="f">Vence el<input id="cpExp" type="datetime-local" value="'+esc(toLocalInput(c.venceEn))+'"></label>'
+  +'<div class="quick" id="cpQuick"><button type="button" data-h="1">+1 hora</button><button type="button" data-h="24">+24 horas</button><button type="button" data-h="72">+3 días</button><button type="button" data-h="168">+7 días</button><button type="button" data-h="0">Sin vencimiento</button></div>'
+  +'<div class="prev" id="cpPrev"></div>'
+  +'<div class="act"><span>Cupón activo (visible para canjear)</span><label class="sbcp-sw"><input type="checkbox" id="cpAct" '+(c.activo?'checked':'')+'><i></i></label></div>'
+  +'<div class="foot"><button type="button" class="sbcp-btn" id="cpCancel">Cancelar</button><button type="button" class="sbcp-btn pri" id="cpSave"><i class="fas fa-floppy-disk"></i> Guardar</button></div>';
+  m.classList.add('on');
+  var $=function(id){return bx.querySelector('#'+id);};
+  function preview(){
+    var v=parseFloat($('cpVal').value)||0,min=parseFloat($('cpMin').value)||0,base=Math.max(100,min),off=tipo==='monto'?v:base*v/100;off=Math.min(base,off);
+    $('cpPrev').innerHTML='<b>Ejemplo:</b> compra de '+money(base)+' → descuento '+money(off)+' → paga <b>'+money(base-off)+'</b>';
+  }
+  bx.querySelectorAll('.seg button').forEach(function(b){b.onclick=function(){tipo=b.dataset.t;bx.querySelectorAll('.seg button').forEach(function(x){x.classList.toggle('on',x===b);});preview();};});
+  ['cpVal','cpMin'].forEach(function(id){$(id).oninput=preview;});preview();
+  var dice=$('cpDice');if(dice)dice.onclick=function(){$('cpCode').value=rndCode();};
+  $('cpCode').oninput=function(){var p=this.selectionStart;this.value=this.value.toUpperCase().replace(/[^A-Z0-9_-]/g,'');try{this.setSelectionRange(p,p);}catch(e){}};
+  $('cpQuick').onclick=function(e){var b=e.target.closest('[data-h]');if(!b)return;var h=+b.dataset.h;$('cpExp').value=h?toLocalInput(new Date(now()+h*3600e3).toISOString()):'';};
+  $('cpCancel').onclick=closeModal;
+  $('cpSave').onclick=async function(){
+    var btn=this,code=$('cpCode').value.trim().toUpperCase(),val=parseFloat($('cpVal').value);
+    if(code.length<3){say('El código debe tener al menos 3 caracteres.','Revisa el cupón','fa-circle-exclamation');return;}
+    if(!(val>0)){say('El valor del descuento debe ser mayor que 0.','Revisa el cupón','fa-circle-exclamation');return;}
+    if(tipo==='porcentaje'&&val>100){say('El porcentaje no puede pasar de 100.','Revisa el cupón','fa-circle-exclamation');return;}
+    var exp=$('cpExp').value?new Date($('cpExp').value):null;
+    if($('cpExp').value&&isNaN(exp.getTime())){say('La fecha de vencimiento no es válida.','Revisa el cupón','fa-circle-exclamation');return;}
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Guardando…';
+    try{
+      await call('couponAdminSave',{coupon:{original:isNew?'':c.codigo,codigo:code,nombre:$('cpName').value.trim(),descripcion:$('cpDesc').value.trim(),
+        tipo:tipo,valor:val,minimo:parseFloat($('cpMin').value)||0,usosMax:parseInt($('cpMax').value,10)||0,
+        venceEn:exp?exp.toISOString():'',activo:$('cpAct').checked}});
+      S.hl[code]=1;closeModal();say('Cupón '+code+' guardado.','Cupones','fa-circle-check');await load(true);
+    }catch(err){say(friendly(err),'No se pudo guardar','fa-circle-exclamation');btn.disabled=false;btn.innerHTML='<i class="fas fa-floppy-disk"></i> Guardar';}
+  };
+  setTimeout(function(){var f=$(isNew?'cpName':'cpVal');if(f)f.focus();},60);
+}
+
+/* ---------- contraseña de administrador ---------- */
+function ask(err){
+  if(document.body.classList.contains('sbw-worker-session')){say('Esta sección es solo para el administrador.','Cupones','fa-lock');return;}
+  var m=ensureModal(),bx=m.firstChild;m.dataset.lock='';
+  bx.id='sbcpPw';
+  bx.innerHTML='<h3><i class="fas fa-ticket" style="margin-right:8px"></i>Cupones</h3><p class="sub">Escribe tu contraseña de administrador para continuar.</p>'
+    +'<input type="password" id="cpPw" autocomplete="current-password" placeholder="Contraseña"><p class="err" id="cpErr">'+esc(err||'')+'</p>'
+    +'<div class="foot" style="margin-top:12px"><button type="button" class="sbcp-btn" id="cpPwC">Cancelar</button><button type="button" class="sbcp-btn pri" id="cpPwG">Entrar</button></div>';
+  m.classList.add('on');
+  var pw=bx.querySelector('#cpPw'),go=bx.querySelector('#cpPwG');setTimeout(function(){pw.focus();},50);
+  bx.querySelector('#cpPwC').onclick=function(){bx.removeAttribute('id');closeModal();};
+  async function submit(){
+    if(!pw.value)return;go.disabled=true;go.textContent='Verificando…';
+    try{
+      var r=await api('couponAdminList',{adminKey:pw.value});
+      if(r&&r.ok){setKey(pw.value);bx.removeAttribute('id');closeModal();openSection(r);}
+      else{go.disabled=false;go.textContent='Entrar';bx.querySelector('#cpErr').textContent='Contraseña incorrecta.';}
+    }catch(e){go.disabled=false;go.textContent='Entrar';var mm=friendly(e);bx.querySelector('#cpErr').textContent=/Contraseña/.test(mm)?'Contraseña incorrecta.':mm;}
+  }
+  go.onclick=submit;pw.onkeydown=function(e){if(e.key==='Enter')submit();};
+}
+
+/* ---------- sección dentro del panel ---------- */
+function hideAll(){
+  var p=document.getElementById('sbAdminPanel');if(!p)return;
+  p.classList.remove('workspace-products','workspace-inventory','workspace-merchandising');
+  p.querySelectorAll('.sb-v11-section').forEach(function(x){x.classList.remove('active');x.style.display='none';});
+  ['sbProductAdminContent','sbInventoryView','sbPrintTools','sbAutomationCenter'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
+}
+function openSection(first){
+  var m=main();if(!m)return;hideAll();
+  document.querySelectorAll('#sbAdminPanel .sb-ultra-item').forEach(function(b){b.classList.toggle('active',b.hasAttribute('data-sb-cup'));});
+  var s=sec();
+  if(!s){s=document.createElement('section');s.id='sbV11Coupons';s.className='sb-v11-section';m.appendChild(s);}
+  s.style.display='block';s.classList.add('active');
+  var old=document.getElementById('sbWorkspaceTitle');if(old)old.remove();
+  var d=document.createElement('div');d.id='sbWorkspaceTitle';d.className='sb-workspace-title';
+  d.innerHTML='<div><h1><i class="fas fa-ticket" style="margin-right:8px"></i>Cupones</h1><p>Crea cupones, deja que el sistema te sugiera nuevos y controla su temporizador en vivo.</p></div><div class="sb-workspace-status"><i class="fas fa-lock"></i> ACCESO PROTEGIDO</div>';
+  m.prepend(d);
+  shell();
+  if(first&&first.items){S.items=first.items;S.loaded=true;if(first.serverTime){var t=new Date(first.serverTime).getTime();if(isFinite(t))S.offset=t-Date.now();}render();}
+  else load();
+}
+function entry(){
+  if(document.body.classList.contains('sbw-worker-session')){say('Esta sección es solo para el administrador.','Cupones','fa-lock');return;}
+  if(getKey()){openSection(null);} else ask();
+}
+function inject(){
+  var sb=document.getElementById('sbUltraSidebar');if(!sb||sb.querySelector('[data-sb-cup]'))return;
+  var anchor=sb.querySelector('[data-sb-auth]')||sb.querySelector('[data-ultra-action="users"]');if(!anchor)return;
+  var b=document.createElement('button');b.type='button';b.className='sb-ultra-item';b.setAttribute('data-sb-cup','1');
+  b.innerHTML='<i class="fas fa-ticket"></i><span><b>Cupones</b><small style="display:block;color:#555555;font-size:9px">Descuentos y temporizador</small></span>';
+  b.onclick=entry;anchor.parentNode.insertBefore(b,anchor.nextSibling);
+}
+setInterval(inject,800);inject();
+})();
+</script>
+
+
+<style id="sb-subcat-cards-fix">
+/* ===== SUBCATÁLOGOS · tarjetas claras, legibles y ordenadas ===== */
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid{
+  display:grid!important;grid-template-columns:repeat(auto-fill,minmax(310px,1fr))!important;gap:16px!important;max-width:none!important;margin:0!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{
+  position:relative!important;overflow:hidden!important;isolation:isolate;
+  display:grid!important;grid-template-columns:104px minmax(0,1fr)!important;
+  grid-template-areas:"img tag" "img name" "img info" "img go"!important;
+  grid-template-rows:auto 1fr auto auto!important;
+  column-gap:16px!important;row-gap:6px!important;align-items:center!important;align-content:center!important;
+  aspect-ratio:auto!important;min-height:136px!important;padding:14px!important;
+  border-radius:24px!important;text-align:left!important;
+  background:linear-gradient(135deg,#ffffff 0%,#f6f2ff 100%)!important;
+  border:1px solid rgba(124,92,255,.22)!important;
+  box-shadow:0 14px 32px -16px rgba(91,61,245,.38)!important;
+  transform:none;transition:transform .3s ease,box-shadow .3s ease!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category:hover{
+  transform:translateY(-4px)!important;box-shadow:0 22px 40px -16px rgba(91,61,245,.5)!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card::before,
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card::after{display:none!important;content:none!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-glow{display:none!important}
+
+/* imagen / icono a la izquierda */
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-image-frame,
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-icon{
+  grid-area:img!important;position:relative!important;inset:auto!important;top:auto!important;left:auto!important;z-index:1;
+  width:104px!important;height:104px!important;aspect-ratio:1!important;margin:0!important;
+  border-radius:18px!important;overflow:hidden;border:0!important;
+  background:linear-gradient(135deg,#ede7ff,#dff6fb)!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-icon{
+  display:flex!important;align-items:center;justify-content:center;font-size:2rem!important;color:#6d4aff!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-image{
+  width:100%!important;height:100%!important;object-fit:cover!important;border-radius:0!important;display:block}
+
+/* nombre: letra oscura bien legible */
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-name{
+  grid-area:name!important;position:relative;z-index:2;margin:0!important;padding:0!important;width:auto!important;
+  font:800 1.12rem/1.2 'Plus Jakarta Sans',system-ui,sans-serif!important;letter-spacing:0!important;
+  color:#1c1240!important;text-shadow:none!important;text-align:left!important;align-self:end!important}
+
+/* etiqueta próximamente: pastilla pequeña, sin tapar nada */
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sb-soon-ribbon{
+  grid-area:tag!important;position:static!important;justify-self:start;align-self:end;
+  width:auto!important;left:auto!important;right:auto!important;top:auto!important;
+  padding:5px 11px!important;border-radius:999px!important;
+  font:800 .6rem/1 'Plus Jakarta Sans',system-ui,sans-serif!important;letter-spacing:.14em!important;
+  background:linear-gradient(90deg,#6d28d9,#c026d3)!important;color:#fff!important;
+  box-shadow:0 6px 14px -6px rgba(162,28,175,.6)!important;animation:none!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sb-soon-ribbon *{color:#fff!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon{filter:none!important}
+
+/* datos (productos / ofertas) */
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sbp-card-info{
+  grid-area:info!important;display:flex!important;flex-wrap:wrap;gap:6px!important;justify-content:flex-start!important;
+  margin:0!important;padding:0!important;width:auto!important;position:relative;z-index:2}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sbp-card-info span{
+  background:rgba(124,92,255,.12)!important;color:#3b2a8c!important;border:0!important;
+  padding:4px 10px!important;border-radius:999px!important;font:700 .7rem 'Plus Jakarta Sans',system-ui,sans-serif!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sbp-card-info span i{color:#6d4aff!important;margin-right:4px}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .sbp-card-info{display:none!important}
+
+/* botón */
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-open-label{
+  grid-area:go!important;position:relative;z-index:2;justify-self:start;margin:2px 0 0!important;
+  display:inline-flex!important;align-items:center;gap:8px;height:36px!important;padding:0 16px!important;
+  border-radius:999px!important;background:linear-gradient(120deg,#6d4aff,#22b8d8)!important;color:#fff!important;
+  font:800 .78rem 'Plus Jakarta Sans',system-ui,sans-serif!important;box-shadow:0 10px 20px -8px rgba(109,74,255,.6)!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-open-label *{color:#fff!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .catalog-open-label{
+  background:rgba(124,92,255,.12)!important;box-shadow:none!important;color:#4a35b8!important}
+html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .catalog-open-label *{color:#4a35b8!important}
+
+/* tema oscuro */
+html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{
+  background:linear-gradient(135deg,#241d4d,#1b1640)!important;border-color:rgba(160,140,255,.3)!important}
+html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-name{color:#f4f2ff!important}
+html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-card .sbp-card-info span{background:rgba(160,140,255,.18)!important;color:#e6e1ff!important}
+html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .catalog-open-label,
+html body[data-theme^="d-"]:not(#pm):not(#pm2) .sbp-subcats .catalog-card.is-soon .catalog-open-label *{color:#e6e1ff!important}
+
+@media (max-width:640px){
+  html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid{grid-template-columns:1fr!important}
+  html body:not(#pm):not(#pm2) .sbp-subcats .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{grid-template-columns:88px minmax(0,1fr)!important;min-height:116px!important;padding:12px!important}
+  html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-image-frame,
+  html body:not(#pm):not(#pm2) .sbp-subcats .catalog-card .catalog-icon{width:88px!important;height:88px!important}
+}
+</style>
