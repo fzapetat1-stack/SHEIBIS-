@@ -3691,6 +3691,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
 <style id="sb-biz-cta-css">.sb-biz-cta{display:none;width:100%;align-items:center;gap:14px;margin:0 0 16px;padding:14px 16px;border:0;border-radius:20px;background:#111;color:#fff;text-align:left;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.18)}.sb-biz-cta .ic{width:46px;height:46px;border-radius:14px;background:#fff;color:#111;display:grid;place-items:center;font-size:1.2rem;flex:0 0 auto}.sb-biz-cta .tx{flex:1;min-width:0}.sb-biz-cta b{display:block;font-size:1rem}.sb-biz-cta small{display:block;opacity:.75;font-size:.76rem;margin-top:2px}@media(max-width:1100px){.sb-biz-cta{display:flex}}</style>
 <style id="sb-bizp-css">#sbBizP{margin:26px 0 10px}#sbBizP h2{font:800 1.35rem Plus Jakarta Sans,sans-serif;margin:0 0 4px;color:#111}#sbBizP .sub{color:#666;font:400 .85rem Plus Jakarta Sans,sans-serif;margin:0 0 14px}.sbbp-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}.sbbp-c{background:#fff;border:1px solid #e5e5e5;border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 18px rgba(0,0,0,.05)}.sbbp-c img,.sbbp-ph{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#f1f1f1}.sbbp-c b{font:700 .9rem Plus Jakarta Sans,sans-serif;color:#111}.sbbp-v{display:inline-flex;align-items:center;gap:3px;background:#E8F1FF;color:#1D6FE0;border-radius:99px;padding:2px 8px;font-size:.62rem;font-weight:800;letter-spacing:0;text-transform:none;margin-left:4px}.sbbp-t{font:600 .68rem Plus Jakarta Sans,sans-serif;color:#666;letter-spacing:.5px;text-transform:uppercase}.sbbp-p{font:800 1rem Plus Jakarta Sans,sans-serif;color:#111}.sbbp-p s{font-weight:400;color:#888;font-size:.75rem;margin-left:4px}.sbbp-q{display:flex;align-items:center;justify-content:space-between;margin-top:auto}.sbbp-q button{width:38px;height:38px;border-radius:50%;border:1px solid #ddd;background:#fff;font:700 1.1rem Plus Jakarta Sans;cursor:pointer}.sbbp-q button.pl{background:#111;color:#fff;border-color:#111}.sbbp-bar{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:9000;display:flex;justify-content:center}.sbbp-bar button{border:0;background:#111;color:#fff;border-radius:99px;padding:14px 22px;font:700 .95rem Plus Jakarta Sans,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.3);cursor:pointer}.sbbp-m{position:fixed;inset:0;z-index:2147481000;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}.sbbp-m.on{display:flex}.sbbp-box{background:#fff;color:#111;width:min(460px,100%);max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px;font-family:Plus Jakarta Sans,sans-serif}.sbbp-box label{display:block;font-size:.78rem;color:#555;margin:12px 0 4px}.sbbp-box input{width:100%;min-height:46px;padding:10px 12px;border:1px solid #ddd;border-radius:12px;font:inherit}.sbbp-box .go{width:100%;margin-top:14px;min-height:48px;border:0;border-radius:99px;background:#111;color:#fff;font:700 .95rem Plus Jakarta Sans;cursor:pointer}.sbbp-box .x{width:100%;margin-top:8px;min-height:44px;border:1px solid #ddd;border-radius:99px;background:#fff;cursor:pointer;font:600 .9rem Plus Jakarta Sans}.sbbp-err{color:#c0392b;font-size:.82rem;min-height:18px;margin-top:8px}@media(min-width:700px){.sbbp-m{align-items:center}.sbbp-box{border-radius:22px}}</style>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script>(function(){try{var n=navigator,c=n.connection||{},ua=n.userAgent||'',mobile=/Android|iPhone|iPad|iPod|Mobile|Opera Mini/i.test(ua)||(window.matchMedia&&matchMedia('(pointer:coarse)').matches),low=(n.hardwareConcurrency||8)<=4||(n.deviceMemory||8)<=4||c.saveData===true||/(^|-)2g$/.test(c.effectiveType||'');if(mobile||low){window.__sbLite=true;document.documentElement.classList.add('sb-lite','sb-low')}}catch(e){}})();</script>
 </head>
 <body>
 
@@ -3884,8 +3885,12 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
             </div>
             <div class="menu-item" onclick="menuAction('orders')">
                 <i class="fas fa-box"></i>
-                <span>Historial de Pedidos</span>
+                <span>Historial de pedidos</span>
                 <span class="menu-badge" id="menuBadgeOrders">0</span>
+            </div>
+            <div class="menu-item" onclick="menuAction('tracking')">
+                <i class="fas fa-truck-fast"></i>
+                <span>Estado de mi paquete</span>
             </div>
             <div class="menu-item" onclick="menuAction('photo')">
                 <i class="fas fa-camera"></i>
@@ -3931,10 +3936,6 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
                 <span class="menu-badge">WhatsApp</span>
             </div>
         </div>
-
-        <button type="button" class="logout-btn menu-logout-btn" onclick="toggleMenu();handleLogout()">
-            <i class="fas fa-sign-out-alt"></i> Salir
-        </button>
 
         <div class="menu-footer-text">
             SHEIBIS v5.0 · Sistema Administrativo
@@ -4033,18 +4034,26 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
     ================================================================ -->
     <div class="sb-account-modal" id="sbAccountModal" onclick="if(event.target===this)closeAccountModal()">
         <div class="sb-account-card">
+            <div class="sba-cover"></div>
+            <button type="button" class="sba-x" onclick="closeAccountModal()" aria-label="Cerrar"><i class="fas fa-times"></i></button>
             <div class="sb-account-head">
-                <img class="sb-account-photo" id="sbAccountPhoto" src="https://www.gravatar.com/avatar/default?d=identicon&s=200" alt="Foto de perfil">
-                <div><h3 class="sb-account-title" id="sbAccountName">ANÓNIMO</h3><p class="sb-account-sub" id="sbAccountEmail"></p></div>
+                <div class="sba-avatar">
+                    <img class="sb-account-photo" id="sbAccountPhoto" src="https://www.gravatar.com/avatar/default?d=identicon&s=200" alt="Foto de perfil">
+                    <button type="button" class="sba-cam" onclick="chooseProfilePhoto()" aria-label="Cambiar foto"><i class="fas fa-camera"></i></button>
+                </div>
+                <h3 class="sb-account-title" id="sbAccountName">ANÓNIMO</h3>
+                <p class="sb-account-sub" id="sbAccountEmail"></p>
             </div>
             <div class="sb-account-grid">
-                <div class="sb-account-stat"><span>Puntos</span><strong id="sbAccountPoints">0</strong></div>
-                <div class="sb-account-stat"><span>Compras</span><strong id="sbAccountOrders">0</strong></div>
+                <div class="sb-account-stat"><i class="fas fa-star sba-si"></i><div><span>Puntos</span><strong id="sbAccountPoints">0</strong></div></div>
+                <div class="sb-account-stat"><i class="fas fa-bag-shopping sba-si"></i><div><span>Compras</span><strong id="sbAccountOrders">0</strong></div></div>
             </div>
             <div class="sb-account-actions">
-                <button class="primary" onclick="chooseProfilePhoto()"><i class="fas fa-camera"></i> Foto / Avatar</button>
-                <button class="danger" onclick="showDeleteAccountModal()"><i class="fas fa-user-xmark"></i> Eliminar cuenta</button>
-                <button onclick="closeAccountModal()">Cerrar</button>
+                <button type="button" class="sba-row" onclick="chooseProfilePhoto()"><span class="sba-ic"><i class="fas fa-camera"></i></span><span class="sba-tx"><b>Foto / Avatar</b><small>Cambia tu foto de perfil</small></span><i class="fas fa-chevron-right sba-ch"></i></button>
+            </div>
+            <div class="sba-foot">
+                <button type="button" class="sba-logout" onclick="closeAccountModal();handleLogout()"><i class="fas fa-right-from-bracket"></i> Cerrar sesión</button>
+                <button type="button" class="sba-del" onclick="showDeleteAccountModal()"><i class="fas fa-user-xmark"></i> Eliminar cuenta</button>
             </div>
         </div>
     </div>
@@ -7750,21 +7759,71 @@ function renderPackageTracking(phase, order){
     `;
 }
 
+
+function sboEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]});}
+
+function sboProductImage(it){
+    try{
+        const ps=typeof getProducts==='function'?getProducts():[];
+        const p=ps.find(function(x){return String(x.id)===String(it.id);});
+        if(!p) return '';
+        return (Array.isArray(p.imagenes)&&p.imagenes.length?p.imagenes[0]:p.imagen)||'';
+    }catch(e){return '';}
+}
+
+function sboPhaseInfo(phase){
+    const ph=normalizePackagePhase(phase);
+    const map={
+        1:{t:'Pedido recibido',tone:'new',ic:'fa-clipboard-check'},
+        2:{t:'Pedido preparado',tone:'prep',ic:'fa-box-open'},
+        3:{t:'Pedido enviado',tone:'go',ic:'fa-truck-fast'},
+        4:{t:'En camino',tone:'go',ic:'fa-route'},
+        5:{t:'Entregado',tone:'ok',ic:'fa-circle-check'}
+    };
+    return map[ph];
+}
+
+function sboFormatDate(v){
+    const d=new Date(v);
+    return isNaN(d)?(v||'—'):d.toLocaleString('es-GT',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+function sboItemsMarkup(o){
+    const items=Array.isArray(o.items)?o.items:[];
+    if(!items.length){
+        const txt=sboEsc(o.itemsText||o.detalles||'').replace(/\r?\n/g,'<br>');
+        return txt?`<div class="sbo-plain">${txt}</div>`:'<div class="sbo-plain">Sin detalle de productos.</div>';
+    }
+    return items.map(function(it){
+        const img=sboProductImage(it);
+        const qty=Math.max(1,parseInt(it.cantidad,10)||1);
+        const price=Number(it.precio)||0;
+        return `
+        <div class="sbo-it">
+            <div class="sbo-th"><i class="fas fa-image"></i>${img?`<img src="${sboEsc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''}</div>
+            <div class="sbo-itx">
+                <b>${sboEsc(it.nombre||'Producto')}</b>
+                <small>${qty} × ${it.gratis?'Gratis':'Q'+price.toFixed(2)}</small>
+            </div>
+            <div class="sbo-ip">${it.gratis?'<span class="sbo-free">GRATIS</span>':'Q'+(qty*price).toFixed(2)}</div>
+        </div>`;
+    }).join('');
+}
+
 async function openOrdersView(){
     const orders=userOrders||[];
 
     if(!orders.length){
         openPremiumView(
-            'Historial de Pedidos',
-            'Consulta tus compras y estados',
+            'Historial de pedidos',
+            'Tus compras con todos sus detalles',
             `
             <div class="premium-empty">
                 <i class="fas fa-box-open"></i>
                 <h3>No tienes pedidos aún</h3>
                 <p>Realiza tu primer pedido y aparecerá aquí.</p>
                 <div class="premium-action-row">
-                    <button class="premium-btn primary"
-                        onclick="closePremiumView();goHome();">
+                    <button class="premium-btn primary" onclick="closePremiumView();goHome();">
                         <i class="fas fa-store"></i> Explorar catálogo
                     </button>
                 </div>
@@ -7774,103 +7833,178 @@ async function openOrdersView(){
         return;
     }
 
-    /*
-     * El último pedido es el que actualmente está en proceso.
-     * Los pedidos anteriores conservan su estado, incluyendo ENTREGADO.
-     */
-    const lastOrder=orders[orders.length-1];
+    const lastIndex=orders.length-1;
+    const phaseOf=function(o){
+        if(o.status==='Entregado'||o.entregado===true) return 5;
+        return normalizePackagePhase(o.estadoPaquete);
+    };
+    const totalAcum=orders.reduce(function(s,o){return s+(parseFloat(o.total)||0);},0);
+    const delivered=orders.filter(function(o){return phaseOf(o)===5;}).length;
+    const points=orders.reduce(function(s,o){return s+(parseInt(o.pointsEarned,10)||0);},0);
+
+    const cards=orders.map(function(o,i){return {o:o,i:i};}).reverse().map(function(r,n){
+        const o=r.o,i=r.i,isLast=i===lastIndex;
+        const ph=phaseOf(o);
+        const info=sboPhaseInfo(ph);
+        const items=Array.isArray(o.items)?o.items:[];
+        const units=items.reduce(function(s,it){return s+(parseInt(it.cantidad,10)||1);},0);
+        const pts=parseInt(o.pointsEarned,10)||0;
+        const thumbs=items.slice(0,4).map(function(it){
+            const img=sboProductImage(it);
+            return `<span class="sbh-th"><i class="fas fa-image"></i>${img?`<img src="${sboEsc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''}</span>`;
+        }).join('')+(items.length>4?`<span class="sbh-th sbh-more">+${items.length-4}</span>`:'');
+        const segs=[1,2,3,4,5].map(function(k){return `<i class="${k<=ph?'on':''}"></i>`;}).join('');
+        return `
+        <article class="sbh-card" data-t="${info.tone}" data-s="${ph===5?'done':'wip'}" ${isLast?'data-last="1"':''} style="--i:${n}">
+            <div class="sbh-top">
+                <div>
+                    <div class="sbh-lbl">Pedido</div>
+                    <div class="sbh-num">#${sboEsc(o.orderNumber||o.orderId||i+1)}</div>
+                    <div class="sbh-date"><i class="fas fa-calendar-day"></i> ${sboEsc(sboFormatDate(o.date))}</div>
+                </div>
+                <div class="sbh-right">
+                    <div class="sbh-total">Q${(parseFloat(o.total)||0).toFixed(2)}</div>
+                    <span class="sbo-chip ${info.tone}"><i class="fas ${info.ic}"></i>&nbsp;${info.t}</span>
+                </div>
+            </div>
+            <div class="sbh-prog">
+                <div class="sbh-segs">${segs}</div>
+                <div class="sbh-ptxt">Paso ${ph} de 5 · ${info.t}</div>
+            </div>
+            <details class="sbh-det">
+                <summary>
+                    <div class="sbh-thumbs">${thumbs||'<span class="sbh-th"><i class="fas fa-box"></i></span>'}</div>
+                    <div class="sbh-sumtx"><b>${items.length?(units+' producto'+(units===1?'':'s')):'Detalle del pedido'}</b><small>Toca para ver el detalle</small></div>
+                    <i class="fas fa-chevron-down sbh-chev"></i>
+                </summary>
+                <div class="sbh-detbody">
+                    ${sboItemsMarkup(o)}
+                    <div class="sbh-sum">
+                        ${o.metodoPago?`<div><span>Método de pago</span><b>${sboEsc(o.metodoPago)}</b></div>`:''}
+                        ${pts>0?`<div><span>Puntos ganados</span><b>+${pts}</b></div>`:''}
+                        <div class="sbh-sumtot"><span>Total pagado</span><b>Q${(parseFloat(o.total)||0).toFixed(2)}</b></div>
+                    </div>
+                </div>
+            </details>
+            ${isLast?`<div class="sbh-act"><button type="button" class="sbo-link" onclick="openPackageStatusView()"><i class="fas fa-truck-fast"></i> Seguir mi paquete</button></div>`:''}
+        </article>`;
+    }).join('');
 
     openPremiumView(
-        'Historial de Pedidos',
-        'Consulta tus compras y estados',
+        'Historial de pedidos',
+        'Tus compras con todos sus detalles',
         `
-        <div class="premium-note">
-            <i class="fas fa-cloud-arrow-down"></i>
-            Estado sincronizado con Google Sheets
-        </div>
-
-        <div id="packageTrackingContainer"></div>
-        <div class="premium-note" style="margin-top:10px;">
-            <i class="fas fa-rotate"></i>
-            El estado se actualiza automáticamente cada 15 segundos desde Google Sheets.
-        </div>
-
-        <div class="premium-kpis">
-            <div class="premium-kpi">
-                <strong>${orders.length}</strong>
-                <span>Pedidos registrados</span>
+        <section class="sbh-hero">
+            <i class="fas fa-bag-shopping sbh-bg"></i>
+            <div class="sbh-hl">TOTAL EN COMPRAS</div>
+            <div class="sbh-ha">Q${totalAcum.toFixed(2)}</div>
+            <div class="sbh-stats">
+                <div><b>${orders.length}</b><span>Pedidos</span></div>
+                <div><b id="sbhDone">${delivered}</b><span>Entregados</span></div>
+                <div><b>${points}</b><span>Puntos</span></div>
             </div>
-
-            <div class="premium-kpi">
-                <strong>
-                    Q${orders.reduce(
-                        (s,o)=>s+(parseFloat(o.total)||0),0
-                    ).toFixed(2)}
-                </strong>
-                <span>Total acumulado · Q</span>
-            </div>
+        </section>
+        <div class="sbh-tabs" role="tablist">
+            <button type="button" class="on" onclick="sboFilterOrders(this,'all')">Todos</button>
+            <button type="button" onclick="sboFilterOrders(this,'wip')">En proceso</button>
+            <button type="button" onclick="sboFilterOrders(this,'done')">Entregados</button>
         </div>
+        <div class="sbh-list">${cards}<div class="sbh-none" id="sbhNone">No hay pedidos en esta categoría.</div></div>
+        `
+    );
 
-        <div class="premium-table-wrap">
-            <table class="premium-table">
-                <thead>
-                    <tr>
-                        <th>PEDIDO</th>
-                        <th>FECHA</th>
-                        <th>TOTAL</th>
-                        <th>ESTADO</th>
-                    </tr>
-                </thead>
+    /* El pedido más reciente toma su estado real del seguimiento */
+    try{
+        const phase=await getPackagePhaseFromSheet();
+        const card=document.querySelector('#premiumViewBody .sbh-card[data-last]');
+        if(card&&phase){
+            const info=sboPhaseInfo(phase);
+            card.setAttribute('data-t',info.tone);
+            card.setAttribute('data-s',phase===5?'done':'wip');
+            const chip=card.querySelector('.sbo-chip');
+            if(chip){chip.className='sbo-chip '+info.tone;chip.innerHTML='<i class="fas '+info.ic+'"></i>&nbsp;'+info.t;}
+            card.querySelectorAll('.sbh-segs i').forEach(function(el,k){el.className=(k+1<=phase)?'on':'';});
+            const pt=card.querySelector('.sbh-ptxt');
+            if(pt) pt.textContent='Paso '+phase+' de 5 · '+info.t;
+            const d=document.getElementById('sbhDone');
+            if(d) d.textContent=document.querySelectorAll('#premiumViewBody .sbh-card[data-s="done"]').length;
+        }
+    }catch(e){}
+}
 
-                <tbody>
-                    ${orders.map((o,i)=>{
-                        const orderPhase=normalizePackagePhase(o.estadoPaquete);
+window.sboFilterOrders=function(btn,mode){
+    const bar=btn.parentNode;
+    bar.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b===btn);});
+    let shown=0;
+    document.querySelectorAll('#premiumViewBody .sbh-card').forEach(function(c){
+        const ok=mode==='all'||c.getAttribute('data-s')===mode;
+        c.style.display=ok?'':'none';
+        if(ok) shown++;
+    });
+    const none=document.getElementById('sbhNone');
+    if(none) none.style.display=shown?'none':'block';
+};
 
-                        let estado=o.status||'Pedido recibido';
+async function openPackageStatusView(){
+    const orders=userOrders||[];
 
-                        if(orderPhase===4){
-                            estado='Entregado';
-                        }else if(orderPhase===3){
-                            estado='En camino';
-                        }else if(orderPhase===2){
-                            estado='Enviado';
-                        }else if(orderPhase===1){
-                            estado='Pedido preparado';
-                        }else if(orderPhase===0){
-                            estado='Pedido recibido';
-                        }
+    if(!orders.length){
+        openPremiumView(
+            'Estado de mi paquete',
+            'Sigue tu pedido paso a paso',
+            `
+            <div class="premium-empty">
+                <i class="fas fa-truck-fast"></i>
+                <h3>Aún no tienes paquetes en camino</h3>
+                <p>Cuando hagas un pedido, aquí verás en qué etapa va.</p>
+                <div class="premium-action-row">
+                    <button class="premium-btn primary" onclick="closePremiumView();goHome();">
+                        <i class="fas fa-store"></i> Explorar catálogo
+                    </button>
+                </div>
+            </div>
+            `
+        );
+        return;
+    }
 
-                        return `
-                        <tr>
-                            <td>#${o.orderNumber||i+1}</td>
-                            <td>${o.date||'—'}</td>
-                            <td>Q${o.total||'0.00'}</td>
-                            <td>${estado}</td>
-                        </tr>
-                        `;
-                    }).join('')}
-                </tbody>
-            </table>
+    const lastOrder=orders[orders.length-1];
+    const storedPhase=(lastOrder.status==='Entregado'||lastOrder.entregado===true)?5:normalizePackagePhase(lastOrder.estadoPaquete);
+
+    openPremiumView(
+        'Estado de mi paquete',
+        'Sigue tu pedido paso a paso',
+        `
+        <div class="sbo-hero" id="sboHero"></div>
+        <div id="packageTrackingContainer">${renderPackageTracking(storedPhase,lastOrder)}</div>
+        <div class="sbo-sec-title">Productos de este pedido</div>
+        <div class="sbo-card"><div class="sbo-body">${sboItemsMarkup(lastOrder)}</div>
+            <div class="sbo-foot"><span class="sbo-meta"><i class="fas fa-receipt"></i> Total Q${(parseFloat(lastOrder.total)||0).toFixed(2)}</span>
+            <button type="button" class="sbo-link" onclick="openOrdersView()"><i class="fas fa-clock-rotate-left"></i> Ver historial de pedidos</button></div>
         </div>
         `
     );
 
-    /*
-     * El estado global de Google Sheets controla solamente
-     * el pedido más reciente. Cuando llega a 4 se guarda
-     * permanentemente como entregado.
-     */
-    const phase=await getPackagePhaseFromSheet();
-
-    const container=document.getElementById('packageTrackingContainer');
-
-    if(container){
-        container.innerHTML=renderPackageTracking(
-            phase,
-            lastOrder
-        );
+    function paintHero(phase){
+        const hero=document.getElementById('sboHero');
+        if(!hero) return;
+        const info=sboPhaseInfo(phase);
+        const desc=PACKAGE_PHASES[phaseIndexForUI(phase)].desc;
+        hero.innerHTML=`<div class="sbo-hero-ic ${info.tone}"><i class="fas ${info.ic}"></i></div><div><b>${info.t}</b><small>${sboEsc(desc)}</small></div>`;
     }
+    paintHero(storedPhase);
+
+    try{
+        const phase=await getPackagePhaseFromSheet();
+        if(phase){
+            paintHero(phase);
+            const container=document.getElementById('packageTrackingContainer');
+            if(container) container.innerHTML=renderPackageTracking(phase,lastOrder);
+        }
+    }catch(e){}
 }
+window.openPackageStatusView=openPackageStatusView;
+window.openOrdersView=openOrdersView;
 
 
 let sheibisTrackingTimer = null;
@@ -7942,7 +8076,7 @@ window.premiumMenuAction=async function(action){
         return;
     }
 
-    const restricted=['orders'];
+    const restricted=['orders','tracking'];
 
     if(!currentUser && restricted.includes(action)){
         showToast('⚠️ Inicia sesión para acceder a esta opción');
@@ -7952,6 +8086,10 @@ window.premiumMenuAction=async function(action){
 
     if(action==='orders'){
         return openOrdersView();
+    }
+
+    if(action==='tracking'){
+        return openPackageStatusView();
     }
 
         window.calcGlassApartado=function(){
@@ -14498,8 +14636,6 @@ function ui(){
   q.oninput=function(){var v=nz(q.value);[].forEach.call(lb.children,function(b){b.style.display=b.dataset.s.indexOf(v)>-1?'':'none'})};
   wrap.appendChild(q);wrap.appendChild(lb);
   row(sec,'sbLangRow','fa-language','Idioma',wrap);
-  var tb=document.createElement('div');tb.id='sbThemeBox';
-  row(sec,'sbThemeRow','fa-palette','Colores',tb);
   u.parentNode.insertBefore(sec,u.nextSibling);
   var dv=document.createElement('div');dv.className='menu-divider';sec.parentNode.insertBefore(dv,sec.nextSibling);
   mark();
@@ -14555,7 +14691,7 @@ function build(){
 function set(t){var b=document.body;if(t==='jade')b.removeAttribute('data-theme');else b.setAttribute('data-theme',t);try{localStorage.setItem(LS,t)}catch(e){}
   var bx=document.getElementById('sbThemeBox');if(bx)[].forEach.call(bx.children,function(d){d.classList.toggle('on',d.dataset.t===t)})}
 function init(){
-  var cur='jade';try{cur=localStorage.getItem(LS)||'jade'}catch(e){}
+  var cur='jade';try{localStorage.removeItem(LS)}catch(e){}
   if(!T.some(function(t){return t[0]===cur}))cur='jade';
   build();var bx=document.getElementById('sbThemeBox');
   if(bx)T.forEach(function(t){var d=document.createElement('button');d.type='button';d.dataset.t=t[0];
@@ -20897,7 +21033,7 @@ html body:not(#pm):not(#pm2):not(#cpa):not(#cpb) .catalog-card .sbp-card-info:no
 <style id="sb-profile-hub-css">
 /* ===== SHEIBIS · Idioma, Colores, Foto, Pedidos y Eliminar cuenta SOLO dentro del perfil ===== */
 #menuPanel #sbPrefs,#menuPanel #sbPrefs + .menu-divider,#menuPanel .sbm-actions,#menuPanel .sbm-del,#menuPanel .menu-danger-item,
-#menuPanel .menu-item[onclick*="nuAction('orders')"],#menuPanel .menu-item[onclick*="nuAction('photo')"],#menuPanel .menu-item[onclick*="nuAction('deleteAccount')"]{display:none!important}
+#menuPanel .menu-item[onclick*="nuAction('photo')"],#menuPanel .menu-item[onclick*="nuAction('deleteAccount')"]{display:none!important}
 .sb-account-card{max-height:calc(100vh - 36px);max-height:calc(100dvh - 36px);overflow-y:auto;overscroll-behavior:contain}
 .sb-account-actions button.sb-acc-orders{position:relative}
 .sb-acc-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:999px;background:#111;color:#fff;font-size:.68rem;font-weight:800}
@@ -20921,23 +21057,14 @@ html body:not(#cpa):not(#cpb) #sbAccHub .menu-item{margin:0 0 8px!important;widt
 (function(){
  if(window.__sbHub)return;window.__sbHub=1;
  function build(){
-  var card=document.querySelector('#sbAccountModal .sb-account-card'),acts=card&&card.querySelector('.sb-account-actions');
+  var card=document.querySelector('#sbAccountModal .sb-account-card'),acts=card&&card.querySelector('.sb-account-actions'),foot=card&&card.querySelector('.sba-foot');
   var prefs=document.getElementById('sbPrefs');
-  if(!card||!acts||!prefs)return false;
+  if(!card||!acts||!foot||!prefs)return false;
   if(document.getElementById('sbAccHub'))return true;
-  var ob=document.createElement('button');ob.type='button';ob.className='sb-acc-orders';
-  ob.innerHTML='<i class="fas fa-box"></i> Pedidos <b class="sb-acc-badge" data-z="1"></b>';
-  ob.addEventListener('click',function(){
-   try{window.closeAccountModal()}catch(e){}
-   var t=window.toggleMenu;window.toggleMenu=function(){};
-   try{window.menuAction('orders')}catch(e){console.error(e)}finally{window.toggleMenu=t}
-  });
-  var del=acts.querySelector('button.danger');
-  acts.insertBefore(ob,del||acts.lastElementChild);
   var hub=document.createElement('div');hub.id='sbAccHub';
   var dv=prefs.nextElementSibling;if(dv&&dv.classList.contains('menu-divider'))dv.remove();
   hub.appendChild(prefs);
-  card.appendChild(hub);
+  card.insertBefore(hub,foot);
   return true;
  }
  function badge(){
@@ -22904,7 +23031,7 @@ html body:not(#cpa):not(#cpb) #sbfPay,html body:not(#cpa):not(#cpb) #sbxCp{borde
 <script id="sheibis-aqua-js">
 /* SHEIBIS AQUA v3 · motor de ondas de agua en canvas (60 fps) */
 (function(){
-  if(window.__sbAqua)return;window.__sbAqua=1;
+  if(window.__sbAqua)return;window.__sbAqua=1;if(window.__sbLite)return;
   try{
     if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     var body=document.body;if(!body)return;
@@ -23221,7 +23348,7 @@ html body:not(#cpa):not(#cpb) #sbfPay,html body:not(#cpa):not(#cpb) #sbxCp{borde
       if(av){var s=av.getAttribute('src');if(!s||s==='')av.src=DEF}
       var items=document.querySelectorAll('#menuPanel .menu-item[onclick]');
       for(var i=0;i<items.length;i++){var oc=items[i].getAttribute('onclick')||'';
-        if(oc.indexOf("menuAction('photo')")>-1||oc.indexOf("menuAction('orders')")>-1||oc.indexOf("menuAction('deleteAccount')")>-1)items[i].classList.add('sbm-moved')}
+        if(oc.indexOf("menuAction('photo')")>-1||oc.indexOf("menuAction('deleteAccount')")>-1)items[i].classList.add('sbm-moved')}
       var del=document.querySelector('#menuPanel .sbm-del');if(del)del.hidden=isGuest();
       var src=document.getElementById('menuBadgeOrders'),dst=document.querySelector('#menuPanel .sbm-badge');
       if(src&&dst){var v=(src.textContent||'').trim();dst.textContent=v;dst.setAttribute('data-z',(!v||v==='0')?'1':'0')}
@@ -23368,4 +23495,153 @@ html body .catalog-card .sbp-card-info{display:none!important}
   html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category.is-soon{padding-top:54px!important}
   html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-name{font-size:1.2rem!important}
 }
+</style>
+
+<style id="sheibisProfileOrdersLite">
+/* ===== PERFIL ===== */
+html body #sbAccountModal.sb-account-modal{background:rgba(3,12,13,.74);padding:12px}
+html body #sbAccountModal .sb-account-card{position:relative;width:min(440px,100%)!important;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;padding:0!important;border-radius:30px!important;background:#fff!important;border:0!important;box-shadow:0 40px 90px -24px rgba(0,0,0,.7)!important}
+html body #sbAccountModal .sba-cover{height:116px;background:radial-gradient(120% 150% at 88% 0,rgba(227,199,136,.42),transparent 58%),linear-gradient(135deg,#10272A,#1F7A6D)}
+html body #sbAccountModal .sba-x{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:1rem;cursor:pointer;z-index:3;display:grid;place-items:center}
+html body #sbAccountModal .sb-account-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;margin-top:-56px;padding:0 22px;position:relative;z-index:2}
+html body #sbAccountModal .sba-avatar{position:relative;width:108px;height:108px}
+html body #sbAccountModal .sb-account-photo{width:108px!important;height:108px!important;border-radius:32px!important;border:5px solid #fff!important;object-fit:cover;background:#eef3f2;box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
+html body #sbAccountModal .sba-cam{position:absolute;right:-6px;bottom:-6px;width:38px;height:38px;border-radius:13px;border:3px solid #fff;background:linear-gradient(135deg,#F2D9A0,#B98B3E);color:#10272A;cursor:pointer;display:grid;place-items:center;font-size:.85rem}
+html body #sbAccountModal .sb-account-title{margin:14px 0 0!important;color:#0f1f1e!important;font:800 1.4rem 'Plus Jakarta Sans',system-ui,sans-serif!important;letter-spacing:.2px}
+html body #sbAccountModal .sb-account-sub{margin:8px 0 0!important;padding:6px 14px;border-radius:999px;background:#F1F5F4;color:#46605c!important;font:600 .8rem 'Plus Jakarta Sans',system-ui,sans-serif!important;max-width:100%;overflow-wrap:anywhere}
+html body #sbAccountModal .sb-account-sub:empty{display:none}
+html body #sbAccountModal .sb-account-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 22px 0!important}
+html body #sbAccountModal .sb-account-stat{display:flex;align-items:center;gap:12px;padding:14px!important;border-radius:20px!important;background:#F4F7F6!important;border:1px solid #E3EAE8!important}
+html body #sbAccountModal .sba-si{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#10272A;color:#E3C788;font-size:1rem;flex:none}
+html body #sbAccountModal .sb-account-stat span{display:block;color:#5b6e6b!important;font:700 .62rem 'Plus Jakarta Sans',sans-serif!important;letter-spacing:1.4px;text-transform:uppercase}
+html body #sbAccountModal .sb-account-stat strong{display:block;margin-top:2px!important;color:#0f1f1e!important;font:800 1.5rem/1.1 'Plus Jakarta Sans',sans-serif!important}
+html body #sbAccountModal .sb-account-actions{display:flex;flex-direction:column;gap:8px;margin:16px 22px 0!important}
+html body #sbAccountModal .sb-account-actions .sba-row{display:flex;align-items:center;gap:12px;width:100%;flex:none;min-width:0;padding:11px 14px;border-radius:18px;background:#F4F7F6!important;border:1px solid #E3EAE8!important;color:#0f1f1e!important;text-align:left;cursor:pointer;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+html body #sbAccountModal .sba-row:active{background:#E8F0EE!important}
+html body #sbAccountModal .sba-row *{color:inherit!important;-webkit-text-fill-color:currentColor!important}
+html body #sbAccountModal .sba-ic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#10272A;flex:none}
+html body #sbAccountModal .sba-ic i{color:#E3C788!important}
+html body #sbAccountModal .sba-tx{display:flex;flex-direction:column;flex:1;min-width:0}
+html body #sbAccountModal .sba-tx b{font-weight:800;font-size:.95rem}
+html body #sbAccountModal .sba-tx small{color:#5b6e6b!important;font-size:.72rem;font-weight:500}
+html body #sbAccountModal .sba-ch{font-size:.75rem;color:#8da09c!important}
+html body #sbAccountModal .sb-acc-badge{background:#10272A!important;color:#fff!important;margin:0 4px 0 0}
+html body #sbAccountModal #sbAccHub{margin:14px 22px 0!important;padding-top:0!important;border-top:0!important}
+html body #sbAccountModal .sba-foot{display:flex;flex-direction:column;gap:6px;margin:16px 22px 22px}
+html body #sbAccountModal .sba-logout{display:flex;align-items:center;justify-content:center;gap:10px;height:52px;border-radius:18px;border:0;cursor:pointer;background:linear-gradient(135deg,#10272A,#1F5A55);color:#fff!important;font:800 .95rem 'Plus Jakarta Sans',system-ui,sans-serif;box-shadow:0 14px 26px -14px rgba(16,39,42,.8)}
+html body #sbAccountModal .sba-logout i{color:#E3C788}
+html body #sbAccountModal .sba-del{background:none;border:0;padding:10px;color:#b42318!important;font:700 .82rem 'Plus Jakarta Sans',system-ui,sans-serif;cursor:pointer}
+
+/* ===== HISTORIAL DE PEDIDOS ===== */
+#premiumViewBody .premium-kpi{background:#F4F7F6!important;border:1px solid #E3EAE8!important;box-shadow:none!important}
+#premiumViewBody .premium-kpi strong{color:#10272A!important}
+.sbo-list{display:grid;gap:12px;margin-top:6px}
+.sbo-card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px;border-radius:22px;background:#fff;border:1px solid #E3EAE8;box-shadow:0 8px 20px -14px rgba(16,39,42,.4)}
+.sbo-ic{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:#10272A;color:#E3C788;font-size:1.1rem}
+.sbo-top{font:800 1rem 'Plus Jakarta Sans',system-ui,sans-serif;color:#0f1f1e}
+.sbo-date{margin-top:2px;color:#5b6e6b;font-size:.78rem}
+.sbo-total{font:800 1.1rem 'Plus Jakarta Sans',system-ui,sans-serif;color:#0f1f1e;text-align:right;white-space:nowrap}
+.sbo-chip{display:inline-flex;align-items:center;margin-top:8px;padding:4px 11px;border-radius:999px;font:800 .68rem 'Plus Jakarta Sans',sans-serif;letter-spacing:.3px}
+.sbo-chip.ok{background:#E3F6EA;color:#0B6B3A}.sbo-chip.go{background:#E4EEFB;color:#1B4F9C}.sbo-chip.prep{background:#FFF1D6;color:#8A5A00}.sbo-chip.new{background:#EEF1F0;color:#4a5b59}
+.sbo-items{grid-column:1/-1;border-top:1px dashed #D8E2DF;padding-top:10px;color:#46605c;font-size:.8rem;line-height:1.55}
+.sbo-items summary{cursor:pointer;font-weight:800;color:#10272A;font-size:.8rem}
+.sbo-items div{margin-top:8px}
+#premiumViewBody .package-tracking{margin-bottom:18px}
+@media(max-width:480px){.sbo-card{grid-template-columns:auto 1fr;gap:12px}.sbo-total{grid-column:2;text-align:left}}
+
+/* ===== MODO LIGERO (celulares y equipos de gama baja) ===== */
+html.sb-lite #sbFx,html.sb-lite #sbAquaBg,html.sb-lite #particles-canvas{display:none!important}
+html.sb-lite *:not(.fa-spin):not(.fa-pulse):not([class*="spin"]):not([class*="loader"]),
+html.sb-lite *:not(.fa-spin):not(.fa-pulse):not([class*="spin"]):not([class*="loader"])::before,
+html.sb-lite *:not(.fa-spin):not(.fa-pulse):not([class*="spin"]):not([class*="loader"])::after{
+  animation-duration:.001s!important;animation-iteration-count:1!important;animation-delay:0s!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;scroll-behavior:auto!important}
+html.sb-lite .catalog-card,html.sb-lite .product-detail-item,html.sb-lite .catalog-stat,html.sb-lite .top-bar,html.sb-lite .menu-panel{box-shadow:0 2px 8px rgba(0,0,0,.22)!important;will-change:auto!important}
+html.sb-lite .catalog-image,html.sb-lite .catalog-card img{filter:none!important}
+html.sb-lite .catalog-card:hover,html.sb-lite .product-detail-item:hover{transform:none!important}
+html.sb-lite .catalog-card:hover .catalog-image{transform:none!important}
+html.sb-lite .sb-account-modal,html.sb-lite .menu-overlay{background:rgba(3,12,13,.8)!important}
+</style>
+
+<style id="sheibisOrdersV2">
+#premiumViewBody .sbo-card{display:block;padding:0;overflow:hidden;border-radius:22px;background:#fff;border:1px solid #E3EAE8;box-shadow:0 8px 20px -14px rgba(16,39,42,.4)}
+#premiumViewBody .sbo-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 16px;background:#F4F7F6;border-bottom:1px solid #E3EAE8}
+#premiumViewBody .sbo-total{font:800 1.15rem 'Plus Jakarta Sans',sans-serif;color:#0f1f1e;white-space:nowrap}
+#premiumViewBody .sbo-chip i{font-size:.7rem}
+.sbo-body{padding:4px 0}
+.sbo-it{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid #EEF2F1}
+.sbo-it:last-child{border-bottom:0}
+.sbo-th{position:relative;width:64px;height:64px;border-radius:16px;overflow:hidden;background:#EEF3F2;display:grid;place-items:center;color:#9db0ac;font-size:1.2rem}
+.sbo-th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sbo-itx{min-width:0}
+.sbo-itx b{display:block;color:#0f1f1e;font:700 .9rem/1.3 'Plus Jakarta Sans',sans-serif;overflow-wrap:anywhere}
+.sbo-itx small{color:#5b6e6b;font-size:.76rem}
+.sbo-ip{font:800 .92rem 'Plus Jakarta Sans',sans-serif;color:#0f1f1e;white-space:nowrap}
+.sbo-free{background:#E3F6EA;color:#0B6B3A;padding:3px 8px;border-radius:999px;font-size:.66rem}
+.sbo-plain{padding:12px 16px;color:#46605c;font-size:.84rem;line-height:1.55}
+.sbo-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid #EEF2F1;background:#FBFCFC}
+.sbo-meta{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#EEF3F2;color:#38504c;font:700 .72rem 'Plus Jakarta Sans',sans-serif}
+.sbo-link{margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:12px;border:0;background:#10272A;color:#fff;font:800 .76rem 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.sbo-link i{color:#E3C788}
+.sbo-hero{display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:16px;border-radius:22px;background:linear-gradient(135deg,#10272A,#1F5A55);color:#fff}
+.sbo-hero b{display:block;font:800 1.15rem 'Plus Jakarta Sans',sans-serif;color:#fff}
+.sbo-hero small{color:#cfe3df;font-size:.82rem}
+.sbo-hero-ic{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#F2D9A0,#B98B3E);color:#10272A;font-size:1.3rem;flex:none}
+.sbo-sec-title{margin:20px 0 10px;color:#10272A;font:800 .78rem 'Plus Jakarta Sans',sans-serif;letter-spacing:1.4px;text-transform:uppercase}
+@media(max-width:480px){.sbo-it{grid-template-columns:56px 1fr auto;gap:10px}.sbo-th{width:56px;height:56px}.sbo-link{margin-left:0;width:100%;justify-content:center}}
+</style>
+
+<style id="sheibisOrdersV3">
+/* ===== HISTORIAL DE PEDIDOS · diseño premium ===== */
+.sbh-hero{position:relative;overflow:hidden;border-radius:28px;padding:24px 22px 20px;color:#fff;background:radial-gradient(120% 150% at 100% 0,rgba(227,199,136,.38),transparent 55%),linear-gradient(135deg,#0B1E20 0%,#17504A 100%);box-shadow:0 24px 44px -24px rgba(16,39,42,.8)}
+.sbh-bg{position:absolute;right:-14px;bottom:-26px;font-size:9rem;color:#fff;opacity:.07;transform:rotate(-12deg)}
+.sbh-hl{font:800 .68rem 'Plus Jakarta Sans',sans-serif;letter-spacing:2px;color:#E3C788}
+.sbh-ha{margin-top:6px;font:800 clamp(2rem,8vw,2.8rem)/1.05 'Plus Jakarta Sans',sans-serif;color:#fff;letter-spacing:-.5px}
+.sbh-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px;position:relative}
+.sbh-stats div{padding:11px 8px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);text-align:center}
+.sbh-stats b{display:block;font:800 1.3rem 'Plus Jakarta Sans',sans-serif;color:#F2D9A0}
+.sbh-stats span{font:600 .68rem 'Plus Jakarta Sans',sans-serif;color:#cfe3df;letter-spacing:.5px}
+.sbh-tabs{display:flex;gap:8px;margin:18px 0 14px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.sbh-tabs::-webkit-scrollbar{display:none}
+.sbh-tabs button{flex:none;padding:9px 18px;border-radius:999px;border:1px solid #D8E2DF;background:#fff;color:#38504c;font:700 .8rem 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.sbh-tabs button.on{background:#10272A;border-color:#10272A;color:#F2D9A0}
+.sbh-card{--c:#6b8e88;position:relative;margin-bottom:14px;border-radius:24px;background:#fff;border:1px solid #E3EAE8;box-shadow:0 16px 30px -22px rgba(16,39,42,.6);overflow:hidden;animation:sbhIn .45s both;animation-delay:calc(var(--i)*60ms)}
+.sbh-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c)}
+.sbh-card[data-t="ok"]{--c:#1FA971}.sbh-card[data-t="go"]{--c:#2F6FDE}.sbh-card[data-t="prep"]{--c:#E0A100}
+@keyframes sbhIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.sbh-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:16px 18px 0 22px}
+.sbh-lbl{font:800 .62rem 'Plus Jakarta Sans',sans-serif;letter-spacing:1.6px;color:#6b8e88;text-transform:uppercase}
+.sbh-num{font:800 1.3rem 'Plus Jakarta Sans',sans-serif;color:#0f1f1e;margin-top:1px}
+.sbh-date{margin-top:4px;color:#5b6e6b;font-size:.76rem}
+.sbh-date i{color:#B98B3E;margin-right:4px}
+.sbh-right{text-align:right}
+.sbh-total{font:800 1.35rem 'Plus Jakarta Sans',sans-serif;color:#0f1f1e;white-space:nowrap}
+.sbh-right .sbo-chip{margin-top:6px}
+.sbh-prog{padding:14px 18px 4px 22px}
+.sbh-segs{display:flex;gap:5px}
+.sbh-segs i{flex:1;height:7px;border-radius:99px;background:#E3EAE8}
+.sbh-segs i.on{background:var(--c)}
+.sbh-ptxt{margin-top:7px;color:#5b6e6b;font:600 .72rem 'Plus Jakarta Sans',sans-serif}
+.sbh-det{margin-top:8px;border-top:1px solid #EEF2F1}
+.sbh-det summary{display:flex;align-items:center;gap:14px;padding:14px 18px 14px 22px;cursor:pointer;list-style:none}
+.sbh-det summary::-webkit-details-marker{display:none}
+.sbh-thumbs{display:flex;align-items:center}
+.sbh-th{position:relative;width:46px;height:46px;border-radius:15px;border:3px solid #fff;background:#EEF3F2;overflow:hidden;display:grid;place-items:center;color:#9db0ac;font-size:.9rem;margin-left:-14px;box-shadow:0 4px 10px -4px rgba(0,0,0,.3)}
+.sbh-th:first-child{margin-left:0}
+.sbh-th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sbh-more{background:#10272A;color:#E3C788;font:800 .78rem 'Plus Jakarta Sans',sans-serif}
+.sbh-sumtx{flex:1;min-width:0}
+.sbh-sumtx b{display:block;color:#0f1f1e;font:800 .92rem 'Plus Jakarta Sans',sans-serif}
+.sbh-sumtx small{color:#7b8f8b;font-size:.72rem}
+.sbh-chev{color:#10272A;font-size:.8rem;transition:transform .25s;width:30px;height:30px;border-radius:50%;background:#EEF3F2;display:grid;place-items:center}
+.sbh-det[open] .sbh-chev{transform:rotate(180deg)}
+.sbh-detbody{background:#FBFCFC;border-top:1px dashed #D8E2DF;padding:6px 0 4px}
+.sbh-sum{margin:6px 18px 12px 22px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #E3EAE8}
+.sbh-sum div{display:flex;justify-content:space-between;gap:10px;padding:5px 0;color:#46605c;font-size:.8rem}
+.sbh-sum b{color:#0f1f1e;font-weight:800}
+.sbh-sum .sbh-sumtot{margin-top:4px;padding-top:9px;border-top:1px dashed #D8E2DF;font-size:.92rem}
+.sbh-sum .sbh-sumtot b{font-size:1.05rem}
+.sbh-act{padding:0 18px 16px 22px}
+.sbh-act .sbo-link{margin:0;width:100%;justify-content:center;height:46px;border-radius:15px;background:linear-gradient(135deg,#10272A,#1F5A55);font-size:.86rem}
+.sbh-none{display:none;text-align:center;padding:30px 10px;color:#5b6e6b;font-weight:600}
 </style>
