@@ -1,6 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script id="sb-perf-boot">
+/* SHEIBIS · RENDIMIENTO (se ejecuta primero) */
+(function(){
+ if(window.__SB_PERF__)return;window.__SB_PERF__=1;
+ /* 1) Temporizadores: sin sondeos rápidos y en pausa con la pestaña oculta */
+ var _si=window.setInterval.bind(window);
+ window.setInterval=function(fn,ms){
+  var a=Array.prototype.slice.call(arguments,2);
+  ms=+ms||0;
+  if(ms>=150&&ms<1500&&ms!==1000)ms=1500;
+  if(typeof fn!=='function')return _si.apply(null,[fn,ms].concat(a));
+  return _si(function(){ if(document.hidden)return; return fn.apply(this,a); },ms);
+ };
+ /* 2) MutationObserver: agrupa avisos (máx. 1 ejecución cada ~150 ms) */
+ var _MO=window.MutationObserver;
+ if(_MO){
+  window.MutationObserver=function(cb){
+   var q=[],t=0,self,real=new _MO(function(recs){
+     for(var i=0;i<recs.length;i++)q.push(recs[i]);
+     if(q.length>3000)q=q.slice(-3000);
+     if(t)return;
+     t=setTimeout(function(){t=0;var r=q;q=[];try{cb.call(self,r,self)}catch(e){console.error(e)}},150);
+   });
+   self={observe:function(n,o){return real.observe(n,o)},disconnect:function(){q=[];if(t){clearTimeout(t);t=0}return real.disconnect()},takeRecords:function(){var r=q;q=[];return r.concat(real.takeRecords())}};
+   return self;
+  };
+  window.MutationObserver.prototype=_MO.prototype;
+ }
+})();
+</script>
+
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#10272A">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20838,6 +20869,24 @@ html,body{max-width:100%}
   html body header.top-bar .top-bar-left,
   html body header.top-bar .top-bar-right{gap:5px!important}
 }
+</style>
+<style id="sb-perf-css">
+/* ===== SHEIBIS · RENDIMIENTO: quitar efectos que trababan el celular/PC ===== */
+*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.bg-orb,.particle-grid,#particles-canvas,.sb-aurora,#sbw-bg,.sb-bubbles,#sbAquaBg{display:none!important}
+.bg-orb,.sb-premium-notice-glow,.toast-glass-glow{filter:none!important}
+body::before,body::after{animation:none!important}
+.top-bar:after,.auth-box::before,.auth-box::after,.menu-user-info::before,.catalog-title,.catalog-image,
+.product-detail-image::after,.product-detail-image img,.btn-add-detail:after,.auth-form .btn-auth::after,
+#cart .btn-whatsapp,#cart h3 i,.sbx-cta,#sbxFab.has::after,.splash-brand,.catalog-stats #onlineUsersStat,
+.sb-soon-ribbon,.sb-pts-new,.cart-top-btn .fa-shopping-bag,#sbv7Prog,.progress-bar-fill,
+.catalog-grid>.catalog-card{animation:none!important}
+img:not(.sbx-ld){animation:none!important}
+.catalog-card,.product-card,.cart-item,.catalog-grid>*{box-shadow:0 1px 4px rgba(0,0,0,.10)!important;content-visibility:auto;contain-intrinsic-size:auto 320px}
+.catalog-card,.product-card,.top-bar,.menu-panel,#cart{will-change:auto!important}
+.catalog-card,.product-card{transition:transform .2s ease,box-shadow .2s ease!important}
+html{scroll-behavior:auto!important}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </body>
 </html>
