@@ -6567,7 +6567,7 @@ function renderCatalogos() {
             catalogGrid.innerHTML=d.categories.map(function(cat){
                 const hasImage=cat.imagen&&cat.imagen!=='';
                 const count=d.products.filter(function(p){return String(p.categoria)===String(cat.id);}).length;
-                return `<div class="catalog-card catalog-card-visible catalog-only-category" onclick="openCatalog('${String(cat.id).replace(/'/g,"\\'")}')" data-aos="fade-up" aria-label="Abrir catálogo ${cat.nombre}">${hasImage?`<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy"></div>`:`<span class="catalog-icon"><i class="fas ${cat.icono||'fa-folder-open'}"></i></span>`}<div class="catalog-name">${cat.nombre}</div><div class="catalog-open-label"><i class="fas fa-arrow-right"></i> Ver catálogo · ${count} producto${count===1?'':'s'}</div><div class="catalog-glow"></div></div>`;
+                return `<div class="catalog-card catalog-card-visible catalog-only-category" onclick="openCatalog('${String(cat.id).replace(/'/g,"\\'")}')" data-aos="fade-up" aria-label="Abrir catálogo ${cat.nombre}">${hasImage?`<div class="catalog-image-frame"><img src="${cat.imagen}" alt="${cat.nombre}" class="catalog-image" loading="lazy"></div>`:`<span class="catalog-icon"><i class="fas ${cat.icono||'fa-folder-open'}"></i></span>`}<div class="catalog-name">${cat.nombre}</div><div class="catalog-glow"></div></div>`;
             }).join('');
             if(!d.categories.length)catalogGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(17,17,17,0.55)">Todavía no hay catálogos disponibles.</div>';
             if(typeof AOS!=='undefined')AOS.refresh();
@@ -10283,7 +10283,7 @@ function isSubCat(c){var p=getCategories().find(function(x){return String(x.id)=
 function topCats(){return getCategories().filter(function(c){return !isSubCat(c)})}
 function childCats(id){return getCategories().filter(function(c){return isSubCat(c)&&String(c.padre)===String(id)})}
 function categoryCardData(cat){var ids=[String(cat.id)].concat(childCats(cat.id).map(function(k){return String(k.id)}));var ps=getProducts().filter(function(p){return ids.indexOf(String(p.categoria))!==-1});var b=priceBounds(ps),discounts=ps.filter(function(p){return productDiscount(p)>0}).length;return {count:ps.length,b:b,discounts:discounts,subs:childCats(cat.id).length};}
-function catCardMarkup(cat){var d=categoryCardData(cat),has=cat.imagen&&cat.imagen!=='',soon=cat.proximamente===true;return '<div class="catalog-card catalog-card-visible catalog-only-category'+(soon?' is-soon':'')+'" onclick="openCatalog(\''+safe(String(cat.id)).replace(/'/g,"\\'")+'\')" aria-label="Abrir catálogo '+safe(cat.nombre)+'">'+(has?'<div class="catalog-image-frame"><img src="'+safe(cat.imagen)+'" alt="'+safe(cat.nombre)+'" class="catalog-image" loading="lazy"></div>':'<span class="catalog-icon"><i class="fas '+safe(cat.icono||'fa-folder-open')+'"></i></span>')+'<div class="catalog-name">'+safe(cat.nombre)+'</div><div class="catalog-open-label"><i class="fas fa-arrow-right"></i> Ver catálogo</div><div class="sbp-card-info"><span><i class="fas fa-box"></i> '+d.count+' productos</span>'+(d.subs?'<span><i class="fas fa-layer-group"></i> '+d.subs+' subcatálogo'+(d.subs===1?'':'s')+'</span>':'')+(d.discounts?'<span><i class="fas fa-percent"></i> '+d.discounts+' oferta'+(d.discounts===1?'':'s')+'</span>':'')+'</div><div class="catalog-glow"></div>'+(soon?'<div class="sb-soon-ribbon"><i class="fas fa-hourglass-half"></i> PRÓXIMAMENTE</div>':'')+'</div>';}
+function catCardMarkup(cat){var d=categoryCardData(cat),has=cat.imagen&&cat.imagen!=='',soon=cat.proximamente===true;return '<div class="catalog-card catalog-card-visible catalog-only-category'+(soon?' is-soon':'')+'" onclick="openCatalog(\''+safe(String(cat.id)).replace(/'/g,"\\'")+'\')" aria-label="Abrir catálogo '+safe(cat.nombre)+'">'+(has?'<div class="catalog-image-frame"><img src="'+safe(cat.imagen)+'" alt="'+safe(cat.nombre)+'" class="catalog-image" loading="lazy"></div>':'<span class="catalog-icon"><i class="fas '+safe(cat.icono||'fa-folder-open')+'"></i></span>')+'<div class="catalog-name">'+safe(cat.nombre)+'</div><div class="catalog-glow"></div>'+(soon?'<div class="sb-soon-ribbon"><i class="fas fa-hourglass-half"></i> PRÓXIMAMENTE</div>':'')+'</div>';}
 function subsMarkup(cat,kids){return '<div class="sbp-subcats" style="margin-bottom:26px"><div class="sbp-category-head" style="margin-bottom:14px"><p>'+safe(cat.descripcion||'Elige una categoría para ver sus productos.')+'</p></div><div class="catalog-grid">'+kids.map(catCardMarkup).join('')+'</div></div>';}
 function renderCatalogosPro(){
  var grid=document.getElementById('catalogGrid');if(!grid)return;
@@ -23334,4 +23334,38 @@ html body:not(#cpa):not(#cpb) #cart .cart-total #cartTotal{color:var(--u-ink)!im
 html body:not(#cpa):not(#cpb) #cart .btn-danger{background:rgba(255,120,100,.16)!important;color:#FF9C8E!important}
 html body:not(#cpa):not(#cpb) #cart::-webkit-scrollbar-thumb{background:var(--u-gold2);border-radius:9px}
 @media (prefers-reduced-motion:reduce){.product-detail-item::before{animation:none!important}}
+</style>
+
+<style id="sheibisCatalogCardsFinal">
+/* ===== Tarjetas de catálogo: más grandes, nombre arriba y bien visible ===== */
+html body:not(#cpa):not(#cpb):not(#zz) .catalog-grid{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr))!important;
+  gap:26px!important;max-width:1400px!important;margin-left:auto!important;margin-right:auto!important}
+html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{
+  justify-content:flex-start!important;align-items:stretch!important;
+  aspect-ratio:1/.92!important;min-height:300px!important;max-height:none!important;height:auto!important;
+  padding:26px 24px!important;border-radius:32px!important}
+html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category.is-soon{padding-top:70px!important}
+/* Nombre arriba, color dorado claro con sombra para que resalte sobre cualquier foto */
+html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-name{
+  order:1;align-self:stretch;width:100%!important;margin:0!important;padding:0!important;text-align:left!important;
+  font-size:clamp(1.7rem,2.4vw,2.25rem)!important;line-height:1.1!important;font-weight:900!important;letter-spacing:-.3px!important;
+  color:#FFD97A!important;-webkit-text-fill-color:#FFD97A!important;background:none!important;
+  text-shadow:0 2px 2px rgba(0,0,0,.95),0 4px 24px rgba(0,0,0,.9)!important}
+html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-name *{
+  color:inherit!important;-webkit-text-fill-color:inherit!important;background:none!important}
+/* Degradado oscuro arriba para que el nombre se lea incluso con fotos claras */
+html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-image-frame::after{
+  background:linear-gradient(180deg,rgba(6,16,18,.85) 0%,rgba(6,16,18,.55) 30%,rgba(6,16,18,.08) 62%,rgba(6,16,18,.22) 100%)!important}
+html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-image{object-fit:cover!important;object-position:center!important}
+/* Fuera "Ver catálogo" y la pastilla de ofertas */
+html body .catalog-card .catalog-open-label,
+html body .catalog-card .sbp-card-info{display:none!important}
+@media (max-width:600px){
+  html body:not(#cpa):not(#cpb):not(#zz) .catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+  html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category{aspect-ratio:1/1.15!important;min-height:0!important;padding:16px 14px!important;border-radius:24px!important}
+  html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category.is-soon{padding-top:54px!important}
+  html body:not(#pm):not(#pm2):not(#cpa):not(#cpb):not(#zz) .catalog-grid > .catalog-card.catalog-card-visible.catalog-only-category .catalog-name{font-size:1.2rem!important}
+}
 </style>
