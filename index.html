@@ -25007,3 +25007,273 @@ html.sb-lite .sb-account-modal,html.sb-lite .menu-overlay{background:rgba(3,12,1
   setInterval(inject,900);inject();
 })();
 </script>
+
+<style id="sb-admin-pro-css">
+/* =====================================================================
+   SHEIBIS · ADMIN PRO  — rediseño completo del panel de administración
+   Capa final: transform/opacity para fluidez, tokens de color unificados
+   ===================================================================== */
+#sbAdminPanel{--ad-bg:#F4F2EE;--ad-card:#fff;--ad-line:#E8E3DB;--ad-line2:#F0ECE5;--ad-ink:#1B1713;--ad-text:#2A251F;--ad-mute:#7B7367;--ad-side:#14110E;--ad-side2:#1D1914;--ad-acc:#C8643C;--ad-acc2:#E59870;--ad-ok:#2E8B57;--ad-warn:#D69A22;--ad-bad:#C2432F;--ad-info:#3B7DD8;--ad-r:16px;--ad-sh:0 1px 2px rgba(27,23,19,.05),0 6px 20px -10px rgba(27,23,19,.14);font-family:'Plus Jakarta Sans','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+html body #sbAdminPanel{padding:0!important;background:#0B0907!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body #sbAdminPanel .sb-box.sb-ultra-layout{width:100vw!important;max-width:none!important;height:100vh!important;height:100dvh!important;max-height:none!important;border-radius:0!important;border:0!important;box-shadow:none!important;background:var(--ad-bg)!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+html body #sbAdminPanel .sb-ultra-body{display:flex!important;flex:1 1 auto!important;min-height:0!important;background:transparent!important}
+/* ---------- Barra superior ---------- */
+html body #sbAdminPanel .sb-box.sb-ultra-layout>.sb-head,html body #sbAdminPanel .sb-head{display:flex!important;visibility:visible!important;align-items:center!important;gap:14px!important;height:66px!important;min-height:66px!important;padding:0 22px!important;background:#fff!important;border-bottom:1px solid var(--ad-line)!important;box-shadow:0 1px 0 rgba(255,255,255,.8) inset!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body #sbAdminPanel .sb-head h2{margin:0!important;font:800 1.08rem/1.2 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;color:var(--ad-ink)!important;letter-spacing:-.01em!important}
+html body #sbAdminPanel .sb-head h2{font-size:0!important}
+html body #sbAdminPanel .sb-head h2::before{content:'SHEIBIS · Administración';font-size:1.08rem;font-weight:800;color:var(--ad-ink)}
+html body #sbAdminPanel .sb-head>div:not(.sbp-tools) small{display:none!important}
+html body #sbAdminPanel .sb-head small{color:var(--ad-mute)!important;font-size:.72rem!important;font-weight:600!important;margin-top:2px!important}
+html body #sbAdminPanel .sb-head>div:not(.sbp-tools){min-width:0;margin-right:auto}
+html body #sbAdminPanel .sb-head>.sb-btn{order:9;margin-left:4px!important;padding:9px 16px!important;border-radius:11px!important;border:1px solid rgba(194,67,47,.3)!important;background:#FFF4F1!important;color:var(--ad-bad)!important;font:700 .78rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;cursor:pointer;transition:transform .18s ease,background .2s ease!important}
+html body #sbAdminPanel .sb-head>.sb-btn:hover{background:#FFE9E4!important;transform:translateY(-1px)}
+.sbp-tools{display:flex;align-items:center;gap:10px;order:5}
+.sbp-search{position:relative;width:min(340px,32vw)}
+.sbp-search input{width:100%;box-sizing:border-box;height:40px;padding:0 54px 0 38px!important;border-radius:12px!important;border:1px solid var(--ad-line)!important;background:#F7F5F1!important;color:var(--ad-ink)!important;font:600 .82rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;transition:border-color .2s,box-shadow .2s,background .2s}
+.sbp-search input:focus{outline:none;background:#fff!important;border-color:var(--ad-acc)!important;box-shadow:0 0 0 4px rgba(200,100,60,.14)}
+.sbp-search>i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--ad-mute);font-size:.8rem;pointer-events:none}
+.sbp-search kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font:700 .65rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-family:inherit;color:var(--ad-mute);background:#fff;border:1px solid var(--ad-line);border-radius:6px;padding:3px 6px;pointer-events:none}
+.sbp-res{position:absolute;left:0;right:0;top:46px;background:#fff;border:1px solid var(--ad-line);border-radius:14px;box-shadow:0 24px 60px -20px rgba(27,23,19,.35);padding:6px;max-height:340px;overflow:auto;z-index:20;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s ease,transform .22s ease,visibility 0s linear .22s}
+.sbp-res.on{opacity:1;visibility:visible;transform:none;transition:opacity .18s ease,transform .22s ease}
+.sbp-res button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 11px;border:0;background:transparent;border-radius:10px;text-align:left;cursor:pointer;font:600 .82rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-family:inherit;color:var(--ad-text);transition:background .15s}
+.sbp-res button:hover,.sbp-res button.sel{background:#F7F1EA}
+.sbp-res button i{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:#F4EBE2;color:var(--ad-acc);font-size:.78rem;flex:none}
+.sbp-res button small{margin-left:auto;color:var(--ad-mute);font-weight:600;font-size:.68rem}
+.sbp-res .sbp-empty{padding:16px;text-align:center;color:var(--ad-mute);font-size:.8rem}
+.sbp-pill{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px;border-radius:999px;background:#F2F8F4;border:1px solid #D5E8DB;color:#25724A;font:700 .72rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-family:inherit;white-space:nowrap}
+.sbp-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ad-ok);box-shadow:0 0 0 0 rgba(46,139,87,.5);animation:sbpPulse 2.2s infinite}
+.sbp-pill.off{background:#FFF4F1;border-color:#F3D3CB;color:var(--ad-bad)}.sbp-pill.off::before{background:var(--ad-bad);animation:none}
+@keyframes sbpPulse{0%{box-shadow:0 0 0 0 rgba(46,139,87,.45)}70%{box-shadow:0 0 0 7px rgba(46,139,87,0)}100%{box-shadow:0 0 0 0 rgba(46,139,87,0)}}
+.sbp-clock{display:flex;flex-direction:column;line-height:1.15;text-align:right;font-family:inherit}
+.sbp-clock b{font:800 .9rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-family:inherit;color:var(--ad-ink);font-variant-numeric:tabular-nums}.sbp-clock small{font:600 .66rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit;color:var(--ad-mute)!important;margin:0!important}
+.sbp-burger{display:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--ad-line);background:#fff;color:var(--ad-ink);cursor:pointer;font-size:1rem;flex:none}
+/* ---------- Barra lateral oscura ---------- */
+html body #sbAdminPanel .sb-ultra-sidebar{order:0!important;width:278px!important;flex:0 0 278px!important;padding:14px 12px 18px!important;background:linear-gradient(180deg,var(--ad-side),#0F0D0A)!important;border:0!important;border-right:1px solid #000!important;box-shadow:none!important;color:#E9E3DA!important;overflow-y:auto!important;transition:width .3s cubic-bezier(.2,.8,.2,1),flex-basis .3s cubic-bezier(.2,.8,.2,1)!important;scrollbar-width:thin;scrollbar-color:#3a332b transparent}
+html body #sbAdminPanel .sb-ultra-sidebar::-webkit-scrollbar-thumb{background:#3a332b!important}
+html body #sbAdminPanel .sb-ultra-brand{position:relative;margin:0 0 12px!important;padding:16px 14px!important;border-radius:16px!important;border:1px solid rgba(255,255,255,.07)!important;background:linear-gradient(135deg,rgba(200,100,60,.22),rgba(255,255,255,.03))!important;box-shadow:none!important;overflow:hidden}
+html body #sbAdminPanel .sb-ultra-brand *{color:#fff!important;font-family:inherit!important;letter-spacing:0!important;text-transform:none!important}
+html body #sbAdminPanel .sb-ultra-brand::before,html body #sbAdminPanel .sb-ultra-brand::after{color:#E9B79B!important;font-family:inherit!important}
+html body #sbAdminPanel .sb-ultra-brand b{padding-right:34px!important;display:block!important;font-size:1rem!important;line-height:1.25!important;font-weight:800!important;margin:8px 0 4px!important;letter-spacing:-.01em!important;color:#fff!important}
+html body #sbAdminPanel .sb-ultra-brand span{display:block!important;font-size:.7rem!important;font-weight:600!important;color:#C9BFB2!important;margin:0!important}
+html body #sbAdminPanel .sb-ultra-brand strong,html body #sbAdminPanel .sb-ultra-brand h1,html body #sbAdminPanel .sb-ultra-brand h2,html body #sbAdminPanel .sb-ultra-brand h3{font-size:1.02rem!important;line-height:1.25!important;font-weight:800!important;margin:6px 0 4px!important}
+html body #sbAdminPanel .sb-ultra-brand small,html body #sbAdminPanel .sb-ultra-brand p,html body #sbAdminPanel .sb-ultra-brand span{font-size:.68rem!important;font-weight:600!important;color:#C9BFB2!important;opacity:.95}
+html body #sbAdminPanel .sb-ultra-group{display:flex;flex-direction:column;gap:3px;margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html body #sbAdminPanel .sb-ultra-group-title{margin:14px 8px 6px!important;font:800 .62rem/1 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:#8A8074!important}
+html body #sbAdminPanel .sb-ultra-sep{height:0!important;margin:2px 0!important;border:0!important;background:transparent!important}
+html body #sbAdminPanel .sb-ultra-item,html body #sbAdminPanel .sb-ultra-btn{position:relative;display:flex!important;align-items:center!important;gap:12px!important;width:100%!important;min-height:46px;padding:9px 12px!important;border-radius:12px!important;border:1px solid transparent!important;background:transparent!important;box-shadow:none!important;color:#D7CFC4!important;text-align:left!important;cursor:pointer;transition:background .18s ease,color .18s ease,transform .18s ease!important;margin:0!important}
+html body #sbAdminPanel .sb-ultra-item>i{flex:none;width:32px;height:32px;display:grid!important;place-items:center;border-radius:10px;background:rgba(255,255,255,.06)!important;color:#CBBFB0!important;font-size:.82rem!important;transition:background .18s,color .18s}
+html body #sbAdminPanel .sb-ultra-item b{display:block;font:700 .83rem/1.2 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;color:inherit!important}
+html body #sbAdminPanel .sb-ultra-item small{display:block!important;font:600 .66rem/1.2 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;color:#8E8578!important;margin-top:3px!important}
+html body #sbAdminPanel .sb-ultra-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important;transform:translateX(2px)}
+html body #sbAdminPanel .sb-ultra-item:hover>i{background:rgba(255,255,255,.1)!important;color:#fff!important}
+html body #sbAdminPanel .sb-ultra-item.active{background:linear-gradient(90deg,rgba(200,100,60,.28),rgba(200,100,60,.08))!important;color:#fff!important;border-color:rgba(200,100,60,.35)!important;transform:none}
+html body #sbAdminPanel .sb-ultra-item.active::before{content:"";position:absolute;left:-12px;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--ad-acc2)}
+html body #sbAdminPanel .sb-ultra-item.active>i{background:var(--ad-acc)!important;color:#fff!important;box-shadow:0 6px 16px -6px rgba(200,100,60,.9)}
+html body #sbAdminPanel .sb-ultra-item.active small{color:#E6B9A0!important}
+html body #sbAdminPanel .sb-ultra-danger{margin-top:8px!important;color:#F2A99B!important}
+html body #sbAdminPanel .sb-ultra-danger>i{background:rgba(194,67,47,.18)!important;color:#F2A99B!important}
+html body #sbAdminPanel .sb-ultra-danger:hover{background:rgba(194,67,47,.18)!important}
+html body #sbAdminPanel .sb-ultra-btn{justify-content:center!important;margin-top:6px!important;border:1px solid rgba(255,255,255,.12)!important;font:700 .76rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important}
+.sbp-collapse{position:absolute;right:10px;top:10px;width:28px;height:28px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.7rem;z-index:2;transition:transform .3s,background .2s}
+.sbp-collapse:hover{background:rgba(255,255,255,.14)}
+/* barra lateral colapsada */
+#sbAdminPanel.sbp-collapsed .sb-ultra-sidebar{width:78px!important;flex-basis:78px!important;padding-left:10px!important;padding-right:10px!important}
+#sbAdminPanel.sbp-collapsed .sb-ultra-item>span,#sbAdminPanel.sbp-collapsed .sb-ultra-brand>b,#sbAdminPanel.sbp-collapsed .sb-ultra-brand>span,#sbAdminPanel.sbp-collapsed .sb-ultra-group-title,#sbAdminPanel.sbp-collapsed .sb-ultra-btn{display:none!important}
+#sbAdminPanel.sbp-collapsed .sb-ultra-item{justify-content:center!important;padding:9px 0!important}
+#sbAdminPanel.sbp-collapsed .sb-ultra-brand{height:54px;padding:0!important;background:rgba(200,100,60,.2)!important}
+#sbAdminPanel.sbp-collapsed .sbp-collapse{right:auto;left:50%;top:13px;margin-left:-14px;transform:rotate(180deg)}
+#sbAdminPanel.sbp-collapsed .sb-ultra-item.active::before{left:-10px}
+/* ---------- Contenido ---------- */
+html body #sbAdminPanel .sb-ultra-main{order:1!important;flex:1 1 auto!important;min-width:0!important;padding:24px 28px 40px!important;background:var(--ad-bg)!important;overflow-y:auto!important;overflow-x:hidden!important;scroll-behavior:smooth;scrollbar-width:thin}
+html body #sbAdminPanel .sb-ultra-main>*{max-width:1500px}
+html body #sbAdminPanel .sb-workspace-title{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;margin:0 0 20px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;animation:sbpIn .45s cubic-bezier(.2,.8,.2,1) both}
+html body #sbAdminPanel .sb-workspace-title h1{margin:0!important;font:800 1.65rem/1.15 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;color:var(--ad-ink)!important;letter-spacing:-.025em!important;-webkit-text-fill-color:var(--ad-ink)!important;background:none!important;text-shadow:none!important}
+html body #sbAdminPanel .sb-workspace-title p{margin:5px 0 0!important;font:600 .84rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;color:var(--ad-mute)!important}
+html body #sbAdminPanel .sb-workspace-status{padding:8px 14px!important;border-radius:999px!important;border:1px solid #D5E8DB!important;background:#F2F8F4!important;color:#25724A!important;font:800 .66rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;letter-spacing:.06em!important;white-space:nowrap}
+@keyframes sbpIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+html body #sbAdminPanel .sb-19000-headline{display:flex!important;align-items:center!important;gap:12px!important;margin:0 0 16px!important;padding:12px 16px!important;border-radius:var(--ad-r)!important;border:1px solid var(--ad-line)!important;background:#fff!important;box-shadow:var(--ad-sh)!important}
+html body #sbAdminPanel .sb-19000-headline *{color:var(--ad-text)!important;font-family:inherit!important}
+/* Pestañas */
+html body #sbAdminPanel .sb-v11-tabs,html body #sbAdminPanel .sb-admin-tabs,html body #sbAdminPanel .sbv-tabs{flex-wrap:wrap;gap:4px!important;width:fit-content;max-width:100%;padding:5px!important;margin:0 0 18px!important;border-radius:14px!important;border:1px solid var(--ad-line)!important;background:#EDE8E0!important;box-shadow:none!important}
+html body #sbAdminPanel .sb-v11-tab,html body #sbAdminPanel .sb-admin-tab,html body #sbAdminPanel .sbv-tab{padding:9px 15px!important;border-radius:10px!important;border:0!important;background:transparent!important;color:var(--ad-mute)!important;font:700 .78rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;cursor:pointer;box-shadow:none!important;transition:background .2s ease,color .2s ease,transform .18s ease!important}
+html body #sbAdminPanel .sb-v11-tab:hover,html body #sbAdminPanel .sb-admin-tab:hover,html body #sbAdminPanel .sbv-tab:hover{color:var(--ad-ink)!important}
+html body #sbAdminPanel .sb-v11-tab.active,html body #sbAdminPanel .sb-admin-tab.active,html body #sbAdminPanel .sbv-tab.active{background:#fff!important;color:var(--ad-ink)!important;box-shadow:0 2px 8px -2px rgba(27,23,19,.18)!important}
+/* Tarjetas */
+html body #sbAdminPanel .sb-v11-card,html body #sbAdminPanel .sb-v11-tool,html body #sbAdminPanel .sb-v11-kpi,html body #sbAdminPanel .sb-i10-card,html body #sbAdminPanel .sb-auto-center,html body #sbAdminPanel .sb-print-tools,html body #sbAdminPanel .sb-inv-v2-summary>*,html body #sbAdminPanel .sbp-card{background:var(--ad-card)!important;border:1px solid var(--ad-line)!important;border-radius:var(--ad-r)!important;box-shadow:var(--ad-sh)!important;color:var(--ad-text)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html body #sbAdminPanel .sb-v11-card,html body #sbAdminPanel .sbp-card{padding:20px!important}
+html body #sbAdminPanel .sb-v11-card h4,html body #sbAdminPanel .sb-v11-tool h4,html body #sbAdminPanel .sbp-card h4{margin:0 0 12px!important;font:800 .74rem/1.2 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:var(--ad-mute)!important}
+html body #sbAdminPanel .sb-v11-card p,html body #sbAdminPanel .sb-v11-tool p{color:var(--ad-mute)!important}
+/* Hero */
+html body #sbAdminPanel .sb-v11-hero{display:grid!important;grid-template-columns:minmax(0,1fr) 300px;gap:16px!important;margin:0 0 16px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html body #sbAdminPanel .sb-v11-welcome{position:relative;overflow:hidden;padding:28px!important;border-radius:20px!important;border:0!important;background:radial-gradient(520px 240px at 100% 0,rgba(229,152,112,.45),transparent 60%),linear-gradient(135deg,#1F1A15,#3A2519 70%,#6B3A22)!important;box-shadow:0 18px 40px -22px rgba(60,30,15,.7)!important;color:#fff!important}
+html body #sbAdminPanel .sb-v11-welcome h3{margin:0 0 8px!important;font:800 1.5rem/1.2 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;color:#fff!important;letter-spacing:-.02em!important}
+html body #sbAdminPanel .sb-v11-welcome p{margin:0!important;color:#E4D6C8!important;font-size:.88rem!important;max-width:560px;line-height:1.55!important}
+html body #sbAdminPanel .sb-v11-welcome .sb-v11-btn{background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.22)!important;color:#fff!important;box-shadow:none!important}
+html body #sbAdminPanel .sb-v11-welcome .sb-v11-btn:first-child{background:#fff!important;color:#7A3A1C!important;border-color:#fff!important}
+html body #sbAdminPanel .sb-v11-welcome .sb-v11-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.2)!important}
+html body #sbAdminPanel .sb-v11-welcome .sb-v11-btn:first-child:hover{background:#FFF4EC!important}
+html body #sbAdminPanel .sb-v11-hero>:nth-child(2){border-radius:20px!important;border:1px solid var(--ad-line)!important;background:#fff!important;box-shadow:var(--ad-sh)!important;color:var(--ad-text)!important;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px!important}
+/* KPIs */
+html body #sbAdminPanel .sb-v11-kpis{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important;gap:14px!important;margin:0 0 16px!important}
+html body #sbAdminPanel .sb-v11-kpi{position:relative;padding:18px 18px 16px!important;overflow:hidden;border-left:1px solid var(--ad-line)!important;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease!important}
+html body #sbAdminPanel .sb-v11-kpi:hover{transform:translateY(-3px);box-shadow:0 14px 30px -16px rgba(27,23,19,.3)!important}
+html body #sbAdminPanel .sb-v11-kpi::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--k,var(--ad-acc))}
+html body #sbAdminPanel .sb-v11-kpi:nth-child(2){--k:var(--ad-ok)}html body #sbAdminPanel .sb-v11-kpi:nth-child(3){--k:var(--ad-warn)}html body #sbAdminPanel .sb-v11-kpi:nth-child(4){--k:var(--ad-bad)}html body #sbAdminPanel .sb-v11-kpi:nth-child(5){--k:var(--ad-info)}
+html body #sbAdminPanel .sb-v11-kpi span{display:block;font:800 .66rem/1.2 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:var(--ad-mute)!important}
+html body #sbAdminPanel .sb-v11-kpi strong{display:block;margin:8px 0 4px!important;font:800 1.9rem/1.1 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;color:var(--ad-ink)!important;letter-spacing:-.03em!important;font-variant-numeric:tabular-nums}
+html body #sbAdminPanel .sb-v11-kpi em{font:600 .74rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;font-style:normal!important;color:var(--ad-mute)!important}
+html body #sbAdminPanel .sb-v11-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))!important;gap:16px!important}
+/* Novedades del día */
+html body #sbAdminPanel #sbNovedades{margin:0 0 16px!important;padding:20px!important;border-radius:20px!important;border:1px solid #F0DCCD!important;background:linear-gradient(135deg,#FFF9F4,#FFF1E8)!important;box-shadow:var(--ad-sh)!important}
+html body #sbAdminPanel #sbNovedades>*:first-child{font:800 .74rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#9A4A26!important}
+/* Botones */
+html body #sbAdminPanel .sb-v11-btn,html body #sbAdminPanel .sb-btn:not(.sb-muted),html body #sbAdminPanel .sb-inv-btn,html body #sbAdminPanel .sbx-btn,html body #sbAdminPanel .sbc-btn-main{display:inline-flex;align-items:center;gap:7px;padding:10px 16px!important;border-radius:12px!important;border:0!important;background:linear-gradient(135deg,#D26C41,#B8552D)!important;color:#fff!important;font:700 .8rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;cursor:pointer;box-shadow:0 8px 18px -10px rgba(200,100,60,.9)!important;transition:transform .18s ease,box-shadow .2s ease,filter .2s!important}
+html body #sbAdminPanel .sb-v11-btn:hover,html body #sbAdminPanel .sb-btn:not(.sb-muted):hover{transform:translateY(-1px);filter:brightness(1.06)}
+html body #sbAdminPanel .sb-v11-btn:active,html body #sbAdminPanel .sb-btn:active{transform:scale(.97)}
+html body #sbAdminPanel .sb-btn.sb-muted:not(.sb-head>.sb-btn){background:#fff!important;border:1px solid var(--ad-line)!important;color:var(--ad-text)!important;box-shadow:none!important}
+html body:not(#a):not(#b) #sbAdminPanel button.sbx-btn:not(#c),html body:not(#a):not(#b) #sbAdminPanel button.sbc-btn-main:not(#c){background:linear-gradient(135deg,#D26C41,#B8552D)!important;color:#fff!important;border:0!important;box-shadow:0 8px 18px -10px rgba(200,100,60,.9)!important;border-radius:12px!important}
+html body:not(#a):not(#b) #sbAdminPanel button.sbx-btn:not(#c):hover,html body:not(#a):not(#b) #sbAdminPanel button.sbc-btn-main:not(#c):hover{filter:brightness(1.07);transform:translateY(-1px)}
+/* Tablas */
+html body #sbAdminPanel .sb-v11-table,html body #sbAdminPanel table.sb-inv-table,html body #sbAdminPanel .sb-inv-sheet table{width:100%;border-collapse:separate!important;border-spacing:0!important;background:#fff!important;color:var(--ad-text)!important;font-family:inherit!important}
+html body #sbAdminPanel .sb-v11-table th,html body #sbAdminPanel .sb-inv-sheet th{position:sticky;top:0;padding:12px 14px!important;background:#FAF8F4!important;border-bottom:1px solid var(--ad-line)!important;font:800 .64rem/1.2 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif!important;font-family:inherit!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:var(--ad-mute)!important;text-align:left;white-space:nowrap}
+html body #sbAdminPanel .sb-v11-table td,html body #sbAdminPanel .sb-inv-sheet td{padding:12px 14px!important;border-bottom:1px solid var(--ad-line2)!important;font-size:.82rem!important;color:var(--ad-text)!important;vertical-align:middle}
+html body #sbAdminPanel .sb-v11-table tbody tr{transition:background .15s}html body #sbAdminPanel .sb-v11-table tbody tr:hover{background:#FBF8F3!important}
+/* Formularios */
+html body #sbAdminPanel input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),html body #sbAdminPanel select,html body #sbAdminPanel textarea{border-radius:11px!important;border:1px solid var(--ad-line)!important;background:#fff!important;color:var(--ad-ink)!important;font-family:inherit!important;font-size:.84rem!important;transition:border-color .2s,box-shadow .2s}
+html body #sbAdminPanel input:focus,html body #sbAdminPanel select:focus,html body #sbAdminPanel textarea:focus{outline:none!important;border-color:var(--ad-acc)!important;box-shadow:0 0 0 4px rgba(200,100,60,.14)!important}
+/* Lista de productos */
+html body #sbAdminPanel .sb-list>*{background:#fff!important;border:1px solid var(--ad-line)!important;border-radius:14px!important;box-shadow:var(--ad-sh)!important;transition:transform .2s ease,box-shadow .2s ease!important}
+html body #sbAdminPanel .sb-list>*:hover{transform:translateY(-2px);box-shadow:0 14px 30px -18px rgba(27,23,19,.35)!important}
+html body #sbAdminPanel .sb-toolbar{padding:12px!important;border-radius:14px!important;border:1px solid var(--ad-line)!important;background:#fff!important;box-shadow:var(--ad-sh)!important;margin-bottom:14px!important}
+/* Extras del panel pro */
+.sbp-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin:0 0 16px}
+.sbp-bars{display:grid;gap:12px}
+.sbp-bar b{display:flex;justify-content:space-between;font:700 .8rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-family:inherit;color:var(--ad-text);margin-bottom:6px}
+.sbp-bar b span{color:var(--ad-mute);font-weight:700}
+.sbp-bar i{display:block;height:9px;border-radius:99px;background:#F0EBE3;overflow:hidden}
+.sbp-bar i::after{content:"";display:block;height:100%;width:var(--w,0%);border-radius:99px;background:linear-gradient(90deg,var(--ad-acc),var(--ad-acc2));transform-origin:left;animation:sbpGrow .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sbpGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.sbp-att{display:grid;gap:8px}
+.sbp-att div{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:#FAF8F4;border:1px solid var(--ad-line2);font:600 .8rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-family:inherit;color:var(--ad-text)}
+.sbp-att div::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c,var(--ad-warn));flex:none}
+.sbp-att div span{margin-left:auto;color:var(--ad-mute);font-size:.72rem;font-weight:700;white-space:nowrap}
+.sbp-att .e{--c:var(--ad-bad)}.sbp-att .w{--c:var(--ad-warn)}.sbp-att .ok{--c:var(--ad-ok)}
+.sbp-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin-top:22px;padding-top:16px;border-top:1px dashed var(--ad-line);font:600 .72rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-family:inherit;color:var(--ad-mute)}
+.sbp-foot kbd{font:700 .66rem 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-family:inherit;background:#fff;border:1px solid var(--ad-line);border-radius:6px;padding:2px 6px;color:var(--ad-text)}
+/* Responsive */
+@media(max-width:1100px){html body #sbAdminPanel .sb-v11-hero{grid-template-columns:1fr}.sbp-clock{display:none}.sbp-search{width:min(240px,30vw)}}
+@media(max-width:900px){
+ .sbp-burger{display:grid;place-items:center;order:-1}
+ html body #sbAdminPanel .sb-ultra-sidebar{position:fixed!important;z-index:30;left:0;top:0;bottom:0;width:min(300px,86vw)!important;flex-basis:auto!important;transform:translateX(-102%);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s!important;box-shadow:none!important;max-height:none!important}
+ html body #sbAdminPanel.sbp-open .sb-ultra-sidebar{transform:none;box-shadow:24px 0 60px rgba(0,0,0,.5)!important}
+ html body #sbAdminPanel .sb-head h2::before{content:'SHEIBIS Admin'}
+ .sbp-scrim{position:fixed;inset:0;z-index:29;background:rgba(10,8,6,.55);opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s linear .3s}
+ #sbAdminPanel.sbp-open .sbp-scrim{opacity:1;visibility:visible;transition:opacity .3s}
+ html body #sbAdminPanel .sb-ultra-main{padding:16px 14px 32px!important}
+ html body #sbAdminPanel .sb-head{padding:0 12px!important;gap:10px!important}
+ .sbp-search,.sbp-pill{display:none}
+ html body #sbAdminPanel .sb-workspace-title h1{font-size:1.3rem!important}
+ .sbp-collapse{display:none}
+ #sbAdminPanel.sbp-collapsed .sb-ultra-sidebar{width:min(300px,86vw)!important}
+ #sbAdminPanel.sbp-collapsed .sb-ultra-item>span{display:block!important}
+}
+@media(prefers-reduced-motion:reduce){#sbAdminPanel *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+<script id="sb-admin-pro-js">
+(function(){
+'use strict';
+if(window.__SB_ADMIN_PRO__)return;window.__SB_ADMIN_PRO__=true;
+var P=null,COL='sbp_collapsed';
+function $(s,r){return(r||document).querySelector(s)}
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function q2(n){return 'Q'+(Number(n)||0).toLocaleString('es-GT',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function panel(){return P||(P=document.getElementById('sbAdminPanel'))}
+
+/* ---------- Barra superior: buscador, estado, reloj, menú móvil ---------- */
+function installTop(){
+  var p=panel(),h=p&&$('.sb-head',p);if(!h||h.getAttribute('data-pro'))return;h.setAttribute('data-pro','1');
+  var b=document.createElement('button');b.type='button';b.className='sbp-burger';b.setAttribute('aria-label','Menú');b.innerHTML='<i class="fas fa-bars"></i>';
+  b.onclick=function(){p.classList.toggle('sbp-open')};h.insertBefore(b,h.firstChild);
+  var t=document.createElement('div');t.className='sbp-tools';
+  t.innerHTML='<div class="sbp-search"><i class="fas fa-magnifying-glass"></i><input id="sbpQ" type="search" autocomplete="off" placeholder="Buscar sección o acción…" aria-label="Buscar en el panel"><kbd>/</kbd><div class="sbp-res" id="sbpRes"></div></div>'+
+    '<span class="sbp-pill" id="sbpNet">Conectado</span><div class="sbp-clock"><b id="sbpT">--:--</b><small id="sbpD"></small></div>';
+  var close=h.querySelector('.sb-btn');h.insertBefore(t,close);
+  var sc=document.createElement('div');sc.className='sbp-scrim';sc.onclick=function(){p.classList.remove('sbp-open')};p.appendChild(sc);
+  bindSearch();tick();
+}
+function tick(){
+  var d=new Date(),t=document.getElementById('sbpT'),dd=document.getElementById('sbpD'),n=document.getElementById('sbpNet');
+  if(t)t.textContent=d.toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'});
+  if(dd)dd.textContent=d.toLocaleDateString('es-GT',{weekday:'short',day:'2-digit',month:'short'});
+  if(n){var on=navigator.onLine!==false;n.textContent=on?'Sincronizado':'Sin conexión';n.classList.toggle('off',!on)}
+}
+setInterval(tick,15000);window.addEventListener('online',tick);window.addEventListener('offline',tick);
+
+/* ---------- Buscador de secciones y acciones ---------- */
+function entries(){
+  var L=[],p=panel();if(!p)return L;
+  p.querySelectorAll('#sbUltraSidebar .sb-ultra-item[data-ultra-action],#sbUltraSidebar .sb-ultra-item[data-sb-auth],#sbUltraSidebar .sb-guide-item').forEach(function(b){
+    var nm=$('b',b),sm=$('small',b),ic=$('i',b);if(!nm)return;
+    L.push({t:nm.textContent.trim(),s:sm?sm.textContent.trim():'',i:ic?ic.className:'fas fa-circle',go:function(){b.click()}})});
+  var A=window.SB_ADMIN;
+  if(A){L.push({t:'Nuevo producto',s:'Acción',i:'fas fa-plus',go:function(){try{A.add();A.showTab('products')}catch(e){}}});
+        L.push({t:'Crear respaldo',s:'Acción',i:'fas fa-floppy-disk',go:function(){try{A.backup()}catch(e){}}});}
+  return L}
+function bindSearch(){
+  var q=document.getElementById('sbpQ'),r=document.getElementById('sbpRes'),sel=-1,cur=[];
+  function draw(){var v=q.value.trim().toLowerCase();
+    cur=entries().filter(function(e){return!v||(e.t+' '+e.s).toLowerCase().indexOf(v)>-1}).slice(0,8);sel=cur.length?0:-1;
+    r.innerHTML=cur.length?cur.map(function(e,i){return'<button type="button" data-i="'+i+'" class="'+(i===0?'sel':'')+'"><i class="'+esc(e.i)+'"></i><span>'+esc(e.t)+'</span><small>'+esc(e.s)+'</small></button>'}).join(''):'<div class="sbp-empty">Sin resultados para “'+esc(q.value)+'”</div>';
+    r.classList.add('on')}
+  function run(i){var e=cur[i];if(!e)return;r.classList.remove('on');q.value='';q.blur();panel().classList.remove('sbp-open');setTimeout(e.go,30)}
+  q.addEventListener('input',draw);q.addEventListener('focus',draw);
+  q.addEventListener('keydown',function(e){
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!cur.length)return;sel=(sel+(e.key==='ArrowDown'?1:-1)+cur.length)%cur.length;
+      [].forEach.call(r.querySelectorAll('button'),function(b,i){b.classList.toggle('sel',i===sel)})}
+    else if(e.key==='Enter'){e.preventDefault();run(Math.max(sel,0))}
+    else if(e.key==='Escape'){r.classList.remove('on');q.blur();e.stopPropagation()}});
+  r.addEventListener('mousedown',function(e){var b=e.target.closest('button[data-i]');if(b){e.preventDefault();run(+b.dataset.i)}});
+  q.addEventListener('blur',function(){setTimeout(function(){r.classList.remove('on')},120)});
+  document.addEventListener('keydown',function(e){
+    if(!panel()||!panel().classList.contains('sb-show'))return;
+    var tg=(e.target&&e.target.tagName)||'';if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(tg)){e.preventDefault();q.focus()}})}
+
+/* ---------- Barra lateral: colapsar ---------- */
+function installSide(){
+  var p=panel(),br=p&&$('.sb-ultra-brand',p);if(!br||br.getAttribute('data-pro'))return;br.setAttribute('data-pro','1');
+  var b=document.createElement('button');b.type='button';b.className='sbp-collapse';b.title='Contraer menú';b.setAttribute('aria-label','Contraer menú');b.innerHTML='<i class="fas fa-chevron-left"></i>';
+  b.onclick=function(){var c=p.classList.toggle('sbp-collapsed');try{localStorage.setItem(COL,c?'1':'0')}catch(e){}};
+  br.appendChild(b);try{if(localStorage.getItem(COL)==='1')p.classList.add('sbp-collapsed')}catch(e){}
+  /* en el modo colapsado cada botón muestra su nombre al pasar el mouse */
+  p.querySelectorAll('#sbUltraSidebar .sb-ultra-item').forEach(function(x){var n=$('b',x);if(n&&!x.title)x.title=n.textContent.trim()})}
+
+/* ---------- Dashboard: stock por catálogo + atención requerida ---------- */
+function drawExtras(){
+  var d=document.getElementById('sbV11Dashboard');if(!d||!d.classList.contains('active')&&d.style.display==='none')return;
+  var grid=$('.sb-v11-grid',d);if(!grid)return;
+  var prods=(window.PRODUCTOS||[]).filter(function(p){return p&&p.nombre}),cats=window.CATALOGOS||[];
+  var box=document.getElementById('sbpExtras');
+  var sig=prods.length+'|'+prods.reduce(function(a,p){return a+(Number(p.stock)||0)},0)+'|'+cats.length;
+  if(box&&box.getAttribute('data-sig')===sig&&box.parentNode===grid.parentNode)return;
+  if(!box){box=document.createElement('div');box.id='sbpExtras';box.className='sbp-row'}
+  box.setAttribute('data-sig',sig);
+  var name={};cats.forEach(function(c){name[String(c.id)]=c.nombre});
+  var by={};prods.forEach(function(p){var k=String(p.categoria);by[k]=(by[k]||0)+(Number(p.stock)||0)});
+  var rows=Object.keys(by).map(function(k){return{n:name[k]||k,u:by[k]}}).sort(function(a,b){return b.u-a.u}).slice(0,6),mx=Math.max.apply(null,rows.map(function(r){return r.u}).concat([1]));
+  var out=prods.filter(function(p){return p.disponible!==false&&(Number(p.stock)||0)<=0}),low=prods.filter(function(p){var s=Number(p.stock)||0;return p.disponible!==false&&s>0&&s<=3});
+  var att=out.slice(0,3).map(function(p){return'<div class="e">'+esc(p.nombre)+'<span>Agotado</span></div>'}).concat(low.slice(0,4).map(function(p){return'<div class="w">'+esc(p.nombre)+'<span>Quedan '+(Number(p.stock)||0)+'</span></div>'}));
+  var val=prods.reduce(function(a,p){return a+(Number(p.stock)||0)*(Number(p.precio)||0)},0);
+  box.innerHTML='<div class="sb-v11-card sbp-card"><h4>Unidades por catálogo</h4>'+(rows.length?'<div class="sbp-bars">'+rows.map(function(r){return'<div class="sbp-bar"><b>'+esc(r.n)+'<span>'+r.u+' u.</span></b><i style="--w:'+Math.max(3,Math.round(r.u/mx*100))+'%"></i></div>'}).join('')+'</div>':'<p style="margin:0">Aún no hay productos con stock.</p>')+'</div>'+
+    '<div class="sb-v11-card sbp-card"><h4>Atención requerida</h4><div class="sbp-att">'+(att.length?att.join(''):'<div class="ok">Todo en orden: sin agotados ni stock bajo.<span>✓</span></div>')+'</div>'+
+    '<div class="sbp-foot" style="margin-top:14px"><span>Valor del inventario: <b style="color:var(--ad-ink)">'+q2(val)+'</b></span></div></div>';
+  grid.parentNode.insertBefore(box,grid)}
+
+/* ---------- Pie con atajos ---------- */
+function installFoot(){
+  var m=panel()&&$('.sb-ultra-main',panel());if(!m||document.getElementById('sbpFoot'))return;
+  var f=document.createElement('div');f.id='sbpFoot';f.className='sbp-foot';
+  f.innerHTML='<span><kbd>/</kbd> Buscar</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd> Herramientas</span><span><kbd>Ctrl</kbd>+<kbd>B</kbd> Respaldo</span><span style="margin-left:auto">SHEIBIS Admin · Los cambios se guardan en Google Sheets</span>';m.appendChild(f)}
+
+setInterval(function(){var p=panel();if(!p||!p.classList.contains('sb-show'))return;installTop();installSide();installFoot();try{drawExtras()}catch(e){}},900);
+})();
+</script>
