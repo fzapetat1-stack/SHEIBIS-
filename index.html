@@ -11714,6 +11714,142 @@ function showAdsTab(){
   if(m){var d=document.createElement('div');d.id='sbWorkspaceTitle';d.className='sb-workspace-title';d.innerHTML='<div><h1><i class="fas fa-bullhorn" style="color:#111111;margin-right:8px"></i>Anuncios</h1><p>Publica imágenes, videos y avisos en el inicio, en catálogos y en subcatálogos, y cambia su diseño.</p></div><div class="sb-workspace-status"><i class="fas fa-circle"></i> ÁREA ACTIVA</div>';m.prepend(d);m.appendChild(sec)}
   adminRender(sec);fetchAds();
 }
+
+/* ======================= CREDENCIALES · bóveda con 3 fases de seguridad ======================= */
+var CR={sid:'',step:0,pinSet:false,email:'',users:[],q:'',timer:null,watch:null,msg:'',err:'',temp:null,shown:{},exp:0};
+function crApi(a,d){d=d||{};d.sid=CR.sid;return api(a,d,{timeout:30000})}
+function crCopy(t){try{if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t)}catch(e){}var x=document.createElement('textarea');x.value=t;x.style.cssText='position:fixed;opacity:0';document.body.appendChild(x);x.select();try{document.execCommand('copy')}catch(e){}x.remove();return Promise.resolve()}
+function crLock(msg){
+  if(CR.sid){try{api('credLogout',{sid:CR.sid},{timeout:8000}).catch(function(){})}catch(e){}}
+  clearTimeout(CR.timer);clearInterval(CR.watch);
+  CR.sid='';CR.step=0;CR.users=[];CR.q='';CR.temp=null;CR.shown={};CR.err=msg||'';CR.msg='';
+  var el=document.getElementById('sbV11Cred');if(el)crRender(el);
+}
+function crOpened(){
+  CR.exp=Date.now()+600000;clearInterval(CR.watch);
+  CR.watch=setInterval(function(){
+    var el=document.getElementById('sbV11Cred');
+    if(!el||!el.offsetParent){crLock('La bóveda se cerró porque saliste de esta sección.');return}
+    var left=CR.exp-Date.now();if(left<=0){crLock('La bóveda se cerró sola por inactividad (10 min).');return}
+    var c=document.getElementById('sbCrCd');if(c){var m=Math.floor(left/60000),sec=Math.floor(left/1000)%60;c.textContent=m+':'+(sec<10?'0':'')+sec}
+  },1000);
+}
+function crStepper(){
+  var n=['Contraseña de admin','Código por correo','PIN de seguridad'];
+  return '<div class="sbcr-steps">'+n.map(function(t,i){var st=CR.step>i?'done':(CR.step===i?'cur':'');return '<div class="sbcr-st '+st+'"><b>'+(CR.step>i?'✓':(i+1))+'</b><span>'+t+'</span></div>'}).join('')+'</div>';
+}
+function crRows(){
+  var q=CR.q.trim().toLowerCase();
+  var l=CR.users.filter(function(u){return !q||(u.id+' '+u.nombre+' '+u.email).toLowerCase().indexOf(q)>=0});
+  if(!l.length)return '<tr><td colspan="5" class="sbcr-empty">No hay usuarios que coincidan.</td></tr>';
+  return l.map(function(u){
+    var pw;
+    if(u.estado==='texto'){var sh=CR.shown[u.id];pw='<span class="sbcr-warn">⚠️ Sin cifrar</span> <code class="sbcr-code">'+(sh?esc(u.password):'••••••••')+'</code> <button class="sbx-btn sbcr-mini" data-act="eye" data-id="'+esc(u.id)+'">'+(sh?'🙈':'👁')+'</button> <button class="sbx-btn sbcr-mini" data-act="cpw" data-id="'+esc(u.id)+'">Copiar</button>'}
+    else if(u.estado==='cifrada')pw='<span class="sbcr-badge" title="Se guarda cifrada (SHA-256): no existe forma de verla. Usa Restablecer para darle una nueva.">🔒 Cifrada · no visible</span>';
+    else pw='<span class="sbcr-badge off">— sin contraseña —</span>';
+    return '<tr><td><code class="sbcr-code">'+esc(u.id)+'</code> <button class="sbx-btn sbcr-mini" data-act="cid" data-id="'+esc(u.id)+'">Copiar</button></td><td>'+esc(u.nombre||'—')+'</td><td>'+esc(u.email||'—')+(u.email?' <button class="sbx-btn sbcr-mini" data-act="cem" data-id="'+esc(u.id)+'">Copiar</button>':'')+'</td><td>'+pw+'</td><td><button class="sbx-btn sbcr-mini" data-act="rst" data-id="'+esc(u.id)+'">🔄 Restablecer</button></td></tr>';
+  }).join('');
+}
+function crRender(el){
+  if(!el)return;
+  var h='<div class="sbcr-card"><h3>🔐 Credenciales de usuarios</h3><small>Acceso protegido con 3 fases de seguridad verificadas en el servidor. Cada acceso queda registrado en la hoja Actividad.</small>'+crStepper();
+  if(CR.err)h+='<div class="sbcr-msg bad">'+esc(CR.err)+'</div>';
+  if(CR.msg)h+='<div class="sbcr-msg ok">'+esc(CR.msg)+'</div>';
+  if(CR.step===0){
+    h+='<div class="sbcr-box"><label>FASE 1 DE 3 · CONTRASEÑA DE ADMINISTRADOR</label><div class="sbcr-row"><input id="sbCrK" type="password" autocomplete="off" placeholder="Contraseña de administrador"><button class="sbx-btn gold" data-act="go1">Continuar</button></div></div>';
+  }else if(CR.step===1){
+    h+='<div class="sbcr-box"><label>FASE 2 DE 3 · CÓDIGO ENVIADO POR CORREO</label><p class="sbcr-p">Enviamos un código de 6 dígitos a <b>'+esc(CR.email)+'</b>. Es válido por 5 minutos.</p><div class="sbcr-row"><input id="sbCrO" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000"><button class="sbx-btn gold" data-act="go2">Verificar</button><button class="sbx-btn" data-act="resend">Reenviar código</button></div></div>';
+  }else if(CR.step===2){
+    if(CR.pinSet)h+='<div class="sbcr-box"><label>FASE 3 DE 3 · PIN DE SEGURIDAD</label><div class="sbcr-row"><input id="sbCrP" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="PIN de 6 dígitos"><button class="sbx-btn gold" data-act="go3">Abrir bóveda</button></div></div>';
+    else h+='<div class="sbcr-box"><label>FASE 3 DE 3 · CREA TU PIN DE SEGURIDAD</label><p class="sbcr-p">Es la primera vez: crea un PIN de 6 dígitos. Lo pedirá siempre como última fase.</p><div class="sbcr-row"><input id="sbCrP" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="PIN nuevo (6 dígitos)"><input id="sbCrP2" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Repite el PIN"><button class="sbx-btn gold" data-act="setpin">Crear PIN y abrir</button></div></div>';
+  }else{
+    h+='<div class="sbcr-bar"><input id="sbCrQ" class="sbcr-q" placeholder="Buscar por ID, nombre o correo…" value="'+esc(CR.q)+'"><span class="sbcr-cd">⏱ Se cierra en <b id="sbCrCd">10:00</b></span><button class="sbx-btn" data-act="reload">↻ Actualizar</button><button class="sbx-btn danger" data-act="lock">🔒 Bloquear ahora</button></div>';
+    if(CR.temp)h+='<div class="sbcr-temp">🔑 Nueva contraseña temporal de <b>'+esc(CR.temp.email||CR.temp.id)+'</b>: <code class="sbcr-code big">'+esc(CR.temp.password)+'</code> <button class="sbx-btn sbcr-mini" data-act="ctemp">Copiar</button><br><small>Anótala o envíasela ahora: no se volverá a mostrar. Pídele que la cambie al entrar.</small></div>';
+    h+='<div class="sbcr-wrap"><table class="sbcr-tb"><thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Contraseña</th><th></th></tr></thead><tbody id="sbCrBody">'+crRows()+'</tbody></table></div><small>Las contraseñas de clientes se guardan cifradas (SHA-256), por eso no se pueden ver. Solo aparecen las antiguas que aún estén en texto plano. Para las demás usa <b>Restablecer</b>.</small>';
+  }
+  el.innerHTML=h+'</div>';
+  var f=el.querySelector('#sbCrK,#sbCrO,#sbCrP');if(f&&CR.step<3)setTimeout(function(){try{f.focus()}catch(e){}},50);
+  if(CR.step===3){var c=document.getElementById('sbCrCd');if(c){var left=Math.max(0,CR.exp-Date.now()),m=Math.floor(left/60000),sc=Math.floor(left/1000)%60;c.textContent=m+':'+(sc<10?'0':'')+sc}}
+}
+async function crAct(act,id,el){
+  var u=CR.users.filter(function(x){return x.id===id})[0],setE=function(m){CR.err=m;CR.msg='';crRender(el)},setM=function(m){CR.msg=m;CR.err='';crRender(el)};
+  try{
+    if(act==='go1'){var k=document.getElementById('sbCrK').value;if(!k){setE('Escribe la contraseña de administrador.');return}
+      var r=await api('credStart',{adminKey:k},{timeout:30000});document.getElementById('sbCrK').value='';
+      CR.sid=r.sid;CR.step=1;CR.pinSet=!!r.pinSet;CR.email=r.email||'';CR.err='';CR.msg='Fase 1 superada. Enviando código…';crRender(el);
+      var o=await crApi('credSendOtp');CR.email=o.email||CR.email;setM('Código enviado a '+CR.email+'.');return}
+    if(act==='resend'){var o2=await crApi('credSendOtp');setM('Código reenviado a '+(o2.email||CR.email)+'.');return}
+    if(act==='go2'){var c=(document.getElementById('sbCrO').value||'').trim();if(!/^\d{6}$/.test(c)){setE('Escribe los 6 dígitos del código.');return}
+      var v=await crApi('credVerifyOtp',{code:c});CR.step=2;CR.pinSet=!!v.pinSet;setM('Fase 2 superada.');return}
+    if(act==='go3'){var pn=(document.getElementById('sbCrP').value||'').trim();if(!/^\d{6}$/.test(pn)){setE('El PIN tiene 6 dígitos.');return}
+      await crApi('credVerifyPin',{pin:pn});await crLoad(el);return}
+    if(act==='setpin'){var a=document.getElementById('sbCrP').value,b2=document.getElementById('sbCrP2').value;
+      await crApi('credSetPin',{pin:a,pin2:b2});await crLoad(el);return}
+    if(act==='reload'){await crLoad(el);return}
+    if(act==='lock'){crLock('Bóveda cerrada.');return}
+    if(act==='eye'){CR.shown[id]=!CR.shown[id];var tb=document.getElementById('sbCrBody');if(tb)tb.innerHTML=crRows();return}
+    if(act==='cpw'&&u){await crCopy(u.password);setM('Contraseña copiada.');return}
+    if(act==='cid'){await crCopy(id);CR.msg='ID copiado.';CR.err='';return crFlash(el)}
+    if(act==='cem'&&u){await crCopy(u.email);CR.msg='Correo copiado.';CR.err='';return crFlash(el)}
+    if(act==='ctemp'&&CR.temp){await crCopy(CR.temp.password);CR.msg='Contraseña temporal copiada.';CR.err='';return crFlash(el)}
+    if(act==='rst'&&u){
+      if(!confirm('¿Restablecer la contraseña de '+(u.email||u.id)+'?\n\nSe creará una contraseña temporal nueva y la actual dejará de funcionar.'))return;
+      var rr=await crApi('credReset',{userId:id});CR.temp={id:id,email:u.email,password:rr.password};u.estado='cifrada';u.password='';CR.msg='Contraseña restablecida.';CR.err='';crRender(el);return}
+  }catch(e){
+    var m=(e&&e.message)||'Error';
+    if(/caduc|no válida|Empieza de nuevo/i.test(m)&&CR.step>0){crLock(m);return}
+    setE(m);
+  }
+}
+function crFlash(el){var tb=document.getElementById('sbCrBody');var bar=el.querySelector('.sbcr-msg');if(!bar){crRender(el);return}bar.textContent=CR.msg;}
+async function crLoad(el){
+  var r=await crApi('credList');CR.users=r.users||[];CR.step=3;CR.err='';CR.msg='✅ Bóveda abierta · '+CR.users.length+' usuarios.';crOpened();crRender(el);
+}
+function crWire(el){
+  if(el.__crW)return;el.__crW=true;
+  el.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-act]');if(!b||!el.contains(b))return;crAct(b.getAttribute('data-act'),b.getAttribute('data-id'),el)});
+  el.addEventListener('keydown',function(e){if(e.key!=='Enter')return;var t=e.target;if(!t||!t.id)return;var m={sbCrK:'go1',sbCrO:'go2',sbCrP:CR.pinSet?'go3':'',sbCrP2:'setpin'}[t.id];if(m)crAct(m,'',el)});
+  el.addEventListener('input',function(e){if(e.target&&e.target.id==='sbCrQ'){CR.q=e.target.value;var tb=document.getElementById('sbCrBody');if(tb)tb.innerHTML=crRows()}});
+}
+function showCredTab(){
+  if(!window.SB_ADMIN||!SB_ADMIN.adminActive)return;
+  if(document.body.classList.contains('sbw-worker-session'))return;
+  var panel=document.getElementById('sbAdminPanel');if(!panel)return;
+  panel.classList.remove('workspace-products','workspace-inventory','workspace-merchandising');
+  $$('#sbAdminPanel .sb-v11-section').forEach(function(x){x.classList.remove('active');x.style.display='none'});
+  ['sbProductAdminContent','sbInventoryView','sbPrintTools','sbAutomationCenter'].forEach(function(i){var n=document.getElementById(i);if(n)n.style.display='none'});
+  $$('#sbAdminPanel .sb-ultra-item').forEach(function(x){x.classList.toggle('active',x.hasAttribute('data-sb-cred'))});
+  $$('.sb-v11-tab').forEach(function(x){x.classList.toggle('active',x.dataset.v11Tab==='cred')});
+  var sec=document.getElementById('sbV11Cred'),host=adsMainHost();
+  if(!sec){sec=document.createElement('section');sec.id='sbV11Cred';sec.className='sb-v11-section'}
+  if(host&&sec.parentNode!==host)host.appendChild(sec);
+  sec.style.display='block';sec.classList.add('active');
+  var m=$('#sbAdminPanel .sb-ultra-main'),old=document.getElementById('sbWorkspaceTitle');if(old)old.remove();
+  if(m){var d=document.createElement('div');d.id='sbWorkspaceTitle';d.className='sb-workspace-title';d.innerHTML='<div><h1><i class="fas fa-shield-halved" style="color:#111111;margin-right:8px"></i>Credenciales</h1><p>ID, correo y estado de contraseña de los usuarios. Requiere 3 fases de seguridad.</p></div><div class="sb-workspace-status"><i class="fas fa-lock"></i> ÁREA PROTEGIDA</div>';m.prepend(d);m.appendChild(sec)}
+  crWire(sec);crRender(sec);
+}
+function installCredAdmin(){
+  var tries=0;
+  (function tick(){
+    tries++;
+    var panel=document.getElementById('sbAdminPanel');
+    if(window.SB_ADMIN&&panel&&!document.body.classList.contains('sbw-worker-session')){
+      var tabs=document.getElementById('sbV11Tabs');
+      if(tabs&&!tabs.querySelector('[data-v11-tab="cred"]')){var b=document.createElement('button');b.className='sb-v11-tab';b.dataset.v11Tab='cred';b.setAttribute('data-sb-cred','1');b.textContent='🔐 Credenciales';b.onclick=function(){SB_ADMIN.showTab('cred')};tabs.appendChild(b)}
+      var side=document.getElementById('sbUltraSidebar');
+      if(side&&!side.querySelector('[data-sb-cred]')){
+        var ref=side.querySelector('[data-sb-ads]')||side.querySelector('[data-ultra-action="merchandising"]');
+        var nb=document.createElement('button');nb.type='button';nb.className='sb-ultra-item';nb.setAttribute('data-sb-cred','1');
+        nb.innerHTML='<i class="fas fa-shield-halved"></i><span><b>Credenciales</b><small style="display:block;color:#555555;font-size:8px;margin-top:2px">Acceso con 3 fases</small></span>';
+        nb.addEventListener('click',showCredTab);
+        if(ref&&ref.parentNode)ref.parentNode.insertBefore(nb,ref.nextSibling);else side.appendChild(nb);
+      }
+      if(!SB_ADMIN.__sbCredW){SB_ADMIN.__sbCredW=true;var cur=SB_ADMIN.showTab;var w=function(tab){if(tab==='cred'){showCredTab();return}return cur.apply(SB_ADMIN,arguments)};SB_ADMIN.showTab=w}
+    }
+    if(tries<40)setTimeout(tick,tries<10?400:1500);
+  })();
+}
+
 function installAdsAdmin(){
   var tries=0;
   (function tick(){
@@ -11816,7 +11952,7 @@ function onMut(){
   },120);
 }
 function boot(){
-  installAssistant();renderAds();startSlides();installAdsAdmin();onMut();
+  installAssistant();renderAds();startSlides();installAdsAdmin();installCredAdmin();onMut();
   fetchAds();
   setInterval(function(){if(!document.hidden)fetchAds()},60000);
   if(window.MutationObserver){mo=new MutationObserver(onMut);var t=document.getElementById('tabProducts'),c=document.getElementById('tabCatalogs');if(t)mo.observe(t,{childList:true,subtree:true});if(c)mo.observe(c,{childList:true})}
@@ -23023,6 +23159,39 @@ html body:not(#pm) .sb-ad-pv.pv-mo .sb-ad[data-ts="l"] .sb-ad-title{font-size:2.
 .sbpv-card .l{display:block;height:8px;border-radius:4px;background:#e5e5e8;margin-bottom:6px}.sbpv-card .l.s{width:55%}
 .sbpv-card .pr{display:block;height:10px;width:35%;border-radius:5px;background:#d6d6dc}
 
+
+
+/* ===== Credenciales · bóveda con 3 fases ===== */
+body.sbw-worker-session [data-sb-cred]{display:none!important}
+.sbcr-card{display:block;background:#fff;border:1px solid rgba(0,0,0,.112);border-radius:18px;padding:18px;margin-bottom:16px}
+.sbcr-card h3{margin:0 0 4px;color:#111;font:700 1rem Plus Jakarta Sans,sans-serif}
+.sbcr-card small{display:block;color:rgba(17,17,17,.55);margin-top:8px;line-height:1.5}
+.sbcr-steps{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.sbcr-st{flex:1;min-width:150px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(0,0,0,.12);background:#fafafa;color:#777;font:700 .72rem Plus Jakarta Sans,sans-serif}
+.sbcr-st b{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#e6e6ea;color:#555;font-size:.72rem;flex:none}
+.sbcr-st.cur{border-color:#111;background:#fff;color:#111}.sbcr-st.cur b{background:#111;color:#fff}
+.sbcr-st.done{border-color:rgba(37,160,90,.45);background:rgba(37,211,102,.08);color:#1c6b3d}.sbcr-st.done b{background:#25a35a;color:#fff}
+.sbcr-box{padding:14px;border-radius:14px;background:#f7f7f9;border:1px solid rgba(0,0,0,.08)}
+.sbcr-box label{display:block;font:700 .62rem Plus Jakarta Sans,sans-serif;letter-spacing:1px;color:rgba(17,17,17,.6);margin-bottom:8px}
+.sbcr-p{margin:0 0 10px;font-size:.8rem;color:#333}
+.sbcr-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sbcr-row input,.sbcr-q{flex:1;min-width:170px;box-sizing:border-box;padding:11px 13px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,.175);color:#111;font:600 .9rem Plus Jakarta Sans,sans-serif}
+.sbcr-msg{margin:12px 0;padding:10px 12px;border-radius:10px;font-size:.78rem;font-weight:600}
+.sbcr-msg.bad{background:rgba(255,60,60,.08);color:#a11;border:1px solid rgba(255,60,60,.25)}
+.sbcr-msg.ok{background:rgba(37,211,102,.1);color:#1c6b3d;border:1px solid rgba(37,160,90,.3)}
+.sbcr-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:6px 0 12px}
+.sbcr-cd{font-size:.74rem;color:#555}.sbcr-cd b{color:#111;font-variant-numeric:tabular-nums}
+.sbcr-wrap{overflow-x:auto;border:1px solid rgba(0,0,0,.1);border-radius:12px;margin-bottom:10px}
+.sbcr-tb{width:100%;border-collapse:collapse;font:500 .78rem Plus Jakarta Sans,sans-serif;min-width:760px}
+.sbcr-tb th{position:sticky;top:0;text-align:left;padding:10px 12px;background:#111;color:#fff;font:700 .64rem Plus Jakarta Sans,sans-serif;letter-spacing:1px;text-transform:uppercase}
+.sbcr-tb td{padding:9px 12px;border-top:1px solid rgba(0,0,0,.07);color:#111;vertical-align:middle}
+.sbcr-tb tr:nth-child(even) td{background:#fafafb}
+.sbcr-empty{text-align:center;color:#888;padding:22px!important}
+.sbcr-code{font:600 .76rem ui-monospace,Menlo,Consolas,monospace;background:#f0f0f3;padding:3px 7px;border-radius:6px;color:#111}.sbcr-code.big{font-size:1rem;letter-spacing:.06em}
+.sbcr-mini{padding:4px 9px;font-size:.64rem;margin-left:4px}
+.sbcr-badge{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(0,0,0,.06);color:#444;font:700 .66rem Plus Jakarta Sans,sans-serif}.sbcr-badge.off{opacity:.6}
+.sbcr-warn{display:inline-block;padding:3px 8px;border-radius:99px;background:rgba(255,170,0,.16);color:#8a5a00;font:800 .6rem Plus Jakarta Sans,sans-serif}
+.sbcr-temp{margin:0 0 12px;padding:12px 14px;border-radius:12px;background:#fff8e1;border:1px solid rgba(220,160,0,.4);font-size:.82rem;color:#4a3500}
 
 /* =====================================================================
    CARRITO PREMIUM + detalles
