@@ -4168,7 +4168,7 @@ body.sheibis-modal-open{overflow:hidden!important}.sb-premium-notice{position:fi
         // 3. CONFIGURACIÓN
         // ================================================================
         const CONFIG = {
-            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbzv_9PI2mnn_YXU4bqtocOI6Uf5gCjj0ol5JlDpjZvoOlr3ZINtDmtNgFUfXQNhpqNg/exec',
+            googleAppsScriptUrl: 'https://script.google.com/macros/s/AKfycbxMYBPt7QnamSf0tnQSiLXjnv6xuos-cJNifPRZsBrkeFNd19M8pDvbTtK0wOfvqthu/exec',
             googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1MgZVSwOgwoajUJA-yrs9KHtnC-5nUmv4a5QjQm5LvIw/edit?usp=sharing',
             phoneNumber: '40512960',
             splashDelay: 250,
@@ -5865,7 +5865,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <!-- SHEIBIS 2.2
      Google Apps Script conectado:
-     https://script.google.com/macros/s/AKfycbwGQ9FSO_E3AFjKc0E89TSO-H-NV7SnALN6PYmKEZw3NCCGR-4Ox9TOLMaRBPlUFNzD/exec
+     https://script.google.com/macros/s/AKfycbxMYBPt7QnamSf0tnQSiLXjnv6xuos-cJNifPRZsBrkeFNd19M8pDvbTtK0wOfvqthu/exec
 
      PTS:
      - Usuario registrado: consulta el valor actual de Usuarios.puntos al pulsar PTS.
@@ -13853,7 +13853,7 @@ body.sbw-deny-pointsEdit #sbV11Users .sbs-btn{pointer-events:none}
   }
   /* ---- URL del mini servidor SOLO de reseñas (pégala aquí entre las comillas) ----
      Si se deja vacía, las reseñas usan el servidor principal de la tienda. */
-  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbwGQ9FSO_E3AFjKc0E89TSO-H-NV7SnALN6PYmKEZw3NCCGR-4Ox9TOLMaRBPlUFNzD/exec';
+  window.SBX_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbxMYBPt7QnamSf0tnQSiLXjnv6xuos-cJNifPRZsBrkeFNd19M8pDvbTtK0wOfvqthu/exec';
   function rvApi(a,p,o){
     var u=String(window.SBX_REVIEWS_URL||'').trim();
     if(!u)return api(a,p||{},o||{});
@@ -16454,7 +16454,7 @@ kbd{font:600 .7rem Plus Jakarta Sans,system-ui,sans-serif;border:1px solid #DADA
 <div class="top"><img class="lg" id="lg" alt="SHEIBIS"><div class="tt"><b>SHEIBIS Business</b><small id="who">Cambia tu cuenta a negocio</small></div><span class="pill on" id="bp" style="display:none"></span><button class="btn s" id="out" style="display:none">Cerrar sesión</button></div>
 <div class="wrap" id="v"></div>
 <script>
-var URL_API='https://script.google.com/macros/s/AKfycbwGQ9FSO_E3AFjKc0E89TSO-H-NV7SnALN6PYmKEZw3NCCGR-4Ox9TOLMaRBPlUFNzD/exec',MODE='__MODE__';
+var URL_API='https://script.google.com/macros/s/AKfycbxMYBPt7QnamSf0tnQSiLXjnv6xuos-cJNifPRZsBrkeFNd19M8pDvbTtK0wOfvqthu/exec',MODE='__MODE__';
 var LOGO='';try{var LE=parent.document.getElementById('sbLogoMaster');LOGO=(LE&&LE.src)||parent.SB_LOGO_SRC||''}catch(_){}
 var WA='49968121';
 var PAY_BANKS=['BI','Banrural','Zigi','Fri'];
@@ -17988,13 +17988,13 @@ var on=PROF.filter(function(u){return u.online}).length,ng=PROF.filter(function(
 document.getElementById('sbCn').textContent=on+(on===1?' persona':' personas')+' en línea';
 b.innerHTML='<input class="csr" id="sbCq" type="search" placeholder="🔎 Buscar por nombre…" value="'+esc(QS)+'"><div class="cch">'+[['on','En línea ('+on+')']].map(function(x){return'<button type="button" data-f="'+x[0]+'" class="'+(F===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div><div id="sbCl"></div>';
 function paint(){var q=QS.toLowerCase(),L=PROF.filter(function(u){return(F==='all'||(F==='on'&&u.online)||(F==='neg'&&u.tipo==='NEGOCIO'))&&(!q||u.nombre.toLowerCase().indexOf(q)>-1)});
-document.getElementById('sbCl').innerHTML=L.length?L.map(function(u){return'<button type="button" class="cu" data-id="'+esc(u.id)+'">'+av(u)+'<span><b>'+esc(u.nombre)+(me&&String(me.id)===String(u.id)?'<span class="cb2">Tú</span>':'')+'</b><small>'+(u.online?'<span class="on-d"></span>En línea':'Desconectado')+(u.tipo==='NEGOCIO'?'<span class="cb2 gold">'+esc(badge(u))+'</span>':'')+'</small></span></button>'}).join(''):'<div class="cem">No hay usuarios en línea en este momento.</div>';
+document.getElementById('sbCl').innerHTML=L.length?L.map(function(u){return'<button type="button" class="cu" data-id="'+esc(u.id)+'">'+av(u)+'<span><b>'+esc(u.nombre)+((u.verificado||(window.sbIsVerified&&sbIsVerified(u.id)))&&window.sbVerifiedBadge?sbVerifiedBadge(15):'')+(me&&String(me.id)===String(u.id)?'<span class="cb2">Tú</span>':'')+'</b><small>'+(u.online?'<span class="on-d"></span>En línea':'Desconectado')+(u.tipo==='NEGOCIO'?'<span class="cb2 gold">'+esc(badge(u))+'</span>':'')+'</small></span></button>'}).join(''):'<div class="cem">No hay usuarios en línea en este momento.</div>';
 document.querySelectorAll('#sbCl .cu').forEach(function(x){x.onclick=function(){profile(PROF.filter(function(u){return String(u.id)===x.dataset.id})[0])}})}
 document.getElementById('sbCq').oninput=function(){QS=this.value;paint()};
 document.querySelectorAll('#sbComm .cch button').forEach(function(x){x.onclick=function(){F=x.dataset.f;renderList()}});paint()}
 function profile(u){
 if(!u)return;var b=document.getElementById('sbCb'),me=user();
-function view(p){b.innerHTML='<button class="cbk" type="button" id="sbBk">← Volver</button><div class="cpf">'+av(p,1)+'<h3>'+esc(p.nombre)+'</h3><div>'+(me&&String(me.id)===String(p.id)?'<span class="cb2">Tú</span>':'')+(p.tipo==='NEGOCIO'?'<span class="cb2 gold">'+esc(badge(p))+'</span>':'<span class="cb2">Cliente</span>')+'</div><div style="margin-top:14px"><div class="rw"><span>Estado</span><b>'+(p.online?'<span class="on-d"></span>En línea ahora':'Desconectado')+'</b></div>'+(p.tipo==='NEGOCIO'&&p.negocio?'<div class="rw"><span>Negocio</span><b>'+esc(p.negocio)+'</b></div>':'')+'<div class="rw"><span>Miembro desde</span><b>'+esc(fdate(p.desde))+'</b></div></div></div>';
+function view(p){b.innerHTML='<button class="cbk" type="button" id="sbBk">← Volver</button><div class="cpf">'+av(p,1)+'<h3>'+esc(p.nombre)+((p.verificado||(window.sbIsVerified&&sbIsVerified(p.id)))&&window.sbVerifiedBadge?sbVerifiedBadge(20):'')+'</h3><div>'+(me&&String(me.id)===String(p.id)?'<span class="cb2">Tú</span>':'')+(p.tipo==='NEGOCIO'?'<span class="cb2 gold">'+esc(badge(p))+'</span>':'<span class="cb2">Cliente</span>')+'</div><div style="margin-top:14px"><div class="rw"><span>Estado</span><b>'+(p.online?'<span class="on-d"></span>En línea ahora':'Desconectado')+'</b></div>'+(p.tipo==='NEGOCIO'&&p.negocio?'<div class="rw"><span>Negocio</span><b>'+esc(p.negocio)+'</b></div>':'')+'<div class="rw"><span>Miembro desde</span><b>'+esc(fdate(p.desde))+'</b></div></div></div>';
 document.getElementById('sbBk').onclick=renderList}
 view(u);
 if(u.tieneFoto&&!u.avatar){call('getPublicProfile',{id:u.id}).then(function(r){if(r&&r.user&&r.user.avatar){u.avatar=r.user.avatar;if(document.getElementById('sbBk'))view(u)}}).catch(function(){})}}
@@ -18002,6 +18002,58 @@ window.openOnlineUsersModal=function(){openCommunity()};
 window.openCommunityModal=openCommunity;
 })();
 </script>
+
+<style id="sb-verified-css">
+.sb-vbadge{display:inline-flex;flex:none;width:var(--s,16px);height:var(--s,16px);margin-left:5px;vertical-align:-.2em;filter:drop-shadow(0 1px 2px rgba(40,151,255,.35));animation:sbVPop .55s cubic-bezier(.2,1.4,.3,1) both;cursor:help}
+.sb-vbadge svg{width:100%;height:100%;display:block}
+@keyframes sbVPop{from{transform:scale(.3) rotate(-25deg);opacity:0}to{transform:none;opacity:1}}
+.sb-vtog{border:1.5px solid rgba(40,151,255,.5);background:#fff;color:#1d7fe0;border-radius:10px;padding:7px 11px;font:700 .72rem inherit;font-family:inherit;cursor:pointer;white-space:nowrap;transition:transform .18s ease,background .2s ease}
+.sb-vtog:hover{transform:translateY(-1px);background:#EEF6FF}.sb-vtog:active{transform:scale(.97)}
+.sb-vtog.on{background:#2897FF;color:#fff;border-color:#2897FF}.sb-vtog:disabled{opacity:.55;cursor:wait}
+@media(prefers-reduced-motion:reduce){.sb-vbadge{animation:none}}
+</style>
+<script id="sb-verified-js">
+(function(){
+'use strict';
+if(window.__SB_VER__)return;window.__SB_VER__=true;
+var KEY='sb_ver_ids',ids={},SVG='<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><path d="M96.9 50.0 L96.6 51.6 L95.8 53.2 L94.7 54.7 L93.3 56.1 L91.9 57.4 L90.7 58.7 L89.9 60.0 L89.6 61.3 L89.6 62.9 L90.0 64.6 L90.5 66.4 L91.0 68.3 L91.3 70.1 L91.2 71.9 L90.6 73.4 L89.6 74.7 L88.1 75.7 L86.3 76.4 L84.4 76.9 L82.6 77.4 L81.0 77.9 L79.6 78.6 L78.6 79.6 L77.9 81.0 L77.4 82.6 L76.9 84.4 L76.4 86.3 L75.7 88.1 L74.7 89.6 L73.5 90.6 L71.9 91.2 L70.1 91.3 L68.3 91.0 L66.4 90.5 L64.6 90.0 L62.9 89.6 L61.3 89.6 L60.0 89.9 L58.7 90.7 L57.4 91.9 L56.1 93.3 L54.7 94.7 L53.2 95.8 L51.6 96.6 L50.0 96.9 L48.4 96.6 L46.8 95.8 L45.3 94.7 L43.9 93.3 L42.6 91.9 L41.3 90.7 L40.0 89.9 L38.7 89.6 L37.1 89.6 L35.4 90.0 L33.6 90.5 L31.7 91.0 L29.9 91.3 L28.1 91.2 L26.6 90.6 L25.3 89.6 L24.3 88.1 L23.6 86.3 L23.1 84.4 L22.6 82.6 L22.1 81.0 L21.4 79.6 L20.4 78.6 L19.0 77.9 L17.4 77.4 L15.6 76.9 L13.7 76.4 L11.9 75.7 L10.4 74.7 L9.4 73.4 L8.8 71.9 L8.7 70.1 L9.0 68.3 L9.5 66.4 L10.0 64.6 L10.4 62.9 L10.4 61.3 L10.1 60.0 L9.3 58.7 L8.1 57.4 L6.7 56.1 L5.3 54.7 L4.2 53.2 L3.4 51.6 L3.1 50.0 L3.4 48.4 L4.2 46.8 L5.3 45.3 L6.7 43.9 L8.1 42.6 L9.3 41.3 L10.1 40.0 L10.4 38.7 L10.4 37.1 L10.0 35.4 L9.5 33.6 L9.0 31.7 L8.7 29.9 L8.8 28.1 L9.4 26.5 L10.4 25.3 L11.9 24.3 L13.7 23.6 L15.6 23.1 L17.4 22.6 L19.0 22.1 L20.4 21.4 L21.4 20.4 L22.1 19.0 L22.6 17.4 L23.1 15.6 L23.6 13.7 L24.3 11.9 L25.3 10.4 L26.5 9.4 L28.1 8.8 L29.9 8.7 L31.7 9.0 L33.6 9.5 L35.4 10.0 L37.1 10.4 L38.7 10.4 L40.0 10.1 L41.3 9.3 L42.6 8.1 L43.9 6.7 L45.3 5.3 L46.8 4.2 L48.4 3.4 L50.0 3.1 L51.6 3.4 L53.2 4.2 L54.7 5.3 L56.1 6.7 L57.4 8.1 L58.7 9.3 L60.0 10.1 L61.3 10.4 L62.9 10.4 L64.6 10.0 L66.4 9.5 L68.3 9.0 L70.1 8.7 L71.9 8.8 L73.5 9.4 L74.7 10.4 L75.7 11.9 L76.4 13.7 L76.9 15.6 L77.4 17.4 L77.9 19.0 L78.6 20.4 L79.6 21.4 L81.0 22.1 L82.6 22.6 L84.4 23.1 L86.3 23.6 L88.1 24.3 L89.6 25.3 L90.6 26.5 L91.2 28.1 L91.3 29.9 L91.0 31.7 L90.5 33.6 L90.0 35.4 L89.6 37.1 L89.6 38.7 L89.9 40.0 L90.7 41.3 L91.9 42.6 L93.3 43.9 L94.7 45.3 L95.8 46.8 L96.6 48.4Z" fill="#2897FF"/><path d="M29 51.5L43.5 65.5L72 36" fill="none" stroke="#fff" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+try{ids=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+function badge(px){return '<span class="sb-vbadge" title="Cuenta verificada" aria-label="Cuenta verificada" style="--s:'+(px||16)+'px">'+SVG+'</span>'}
+window.sbVerifiedBadge=badge;
+window.sbIsVerified=function(id){return !!ids[String(id)]};
+function me(){try{return(typeof currentUser!=='undefined'&&currentUser&&!currentUser.isGuest&&currentUser.id)?String(currentUser.id):''}catch(e){return ''}}
+function setIds(list){ids={};(list||[]).forEach(function(i){ids[String(i)]=1});try{localStorage.setItem(KEY,JSON.stringify(ids))}catch(e){}paint()}
+function load(){if(typeof apiRequest!=='function')return;apiRequest('verIds',{},{timeout:20000}).then(function(r){if(r&&r.ok)setIds(r.ids)}).catch(function(){})}
+/* ---- insignia junto al nombre de la propia cuenta (menú, perfil, barra) ---- */
+var NAMES=['userNameDisplay','menuUserName','sbAccountName'];
+function paint(){
+  var ok=!!ids[me()];
+  NAMES.forEach(function(id){
+    var el=document.getElementById(id);if(!el||!el.parentNode)return;
+    var ex=el.parentNode.querySelector('.sb-vbadge[data-f="'+id+'"]');
+    if(ok&&!ex){el.insertAdjacentHTML('afterend',badge(id==='sbAccountName'?20:16));var b=el.nextElementSibling;if(b)b.setAttribute('data-f',id)}
+    else if(!ok&&ex)ex.remove()})}
+setInterval(paint,1200);
+/* ---- botón "Verificar" en la lista de usuarios del administrador ---- */
+function akey(){var k='';try{k=sessionStorage.getItem('sb_age_key')||''}catch(e){}if(!k){k=prompt('Clave de administrador:')||'';if(k){try{sessionStorage.setItem('sb_age_key',k)}catch(e){}}}return k}
+function decorate(){
+  var t=document.querySelector('#sbUsersTable table.sb-points-table');if(!t||t.getAttribute('data-ver'))return;t.setAttribute('data-ver','1');
+  var hr=t.querySelector('thead tr');if(hr){var th=document.createElement('th');th.textContent='Verificado';hr.appendChild(th)}
+  t.querySelectorAll('tbody tr').forEach(function(tr){
+    var inp=tr.querySelector('input[id^="sbPts_"]');if(!inp)return;var id=inp.id.slice(6);
+    var td=document.createElement('td'),b=document.createElement('button');b.type='button';b.className='sb-vtog';td.appendChild(b);tr.appendChild(td);
+    function draw(){var on=!!ids[id];b.classList.toggle('on',on);b.textContent=on?'✓ Verificado':'Verificar'}draw();
+    b.onclick=async function(){
+      var on=!ids[id],k=akey();if(!k)return;b.disabled=true;
+      try{var r=await apiRequest('verSet',{adminKey:k,userId:id,value:on},{timeout:30000});if(r&&r.ok){setIds(r.ids);draw()}else throw new Error((r&&r.error)||'Error')}
+      catch(e){var m=String(e&&e.message||e);if(/autorizado/i.test(m))try{sessionStorage.removeItem('sb_age_key')}catch(_){}try{showToast(/no reconocida/i.test(m)?'Falta actualizar el Apps Script con el código nuevo.':m,{title:'NO SE PUDO GUARDAR',icon:'fa-circle-exclamation'})}catch(_){alert(m)}}
+      b.disabled=false}})}
+setInterval(decorate,1000);
+load();setInterval(function(){if(!document.hidden)load()},300000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)load()});
+})();
+</script>
+
 
 
 <!-- ============================================================
